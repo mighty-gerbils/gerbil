@@ -71,14 +71,14 @@
       (else
        (log.debug "no reactor for method"
                   actor:   self.handle.name
-                  message: msg
+                  messagexo: msg
                   method:  msg.method))))))
 
 (implement BroadcastHandler basic-actor
   (receive!
    (lambda (self msg)
      (cond
-      ((broadcast-reactor-get self.react-broadcast msg.method msg.group)
+      ((broadcast-reactor-get self.react-broadcast msg.method msg.dest)
        => (lambda ((handler :- BroadcastMessageHandler))
             (handler.handle-message! self.this msg)))
       (else
@@ -441,7 +441,7 @@
                         (method     : :string)
                         (completion : Completion)
                         (expire     : :integer))
-  => UnicastReactor
+  => unicast-reactor
   (let* ((timeout-thread
           (spawn/name ['timeout method]
            (lambda ()
@@ -451,15 +451,13 @@
                  completion
                  (Timeout "reply timeout"
                           where: method)))
-               (do-with-lock self.mx
-                 (self.reactors.delete! method))))))
+               (unicast-reactor-delete! self.react-unicast method)))))
          (handler
           (MessageHandler
            (unicast-reply-handler completion timeout-thread))))
-    (UnicastReactor handler:  handler
-                    method:   method
-                    expire:   expire
-                    one-shot: #t)))
+    (unicast-reactor handler:  handler
+                     expire:   expire
+                     one-shot: #t)))
 
 (defstruct unicast-reply-handler
   ((completion     : Completion)
@@ -476,22 +474,20 @@
                                   (channel : Channel)
                                   (expire  : :integer)
                                   (limit   : :fixnum))
-  => UnicastReactor
+  => unicast-reactor
   (let* ((timeout-thread
           (spawn/name ['timeout method]
             (lambda ()
               (thread-receive (seconds->time expire) #f)
               (ignore-errors (channel-close channel))
-              (do-with-lock self.mx
-                (self.reactors.delete! method)))))
+              (unicast-reactor-delete! self.react-unicast method))))
          (handler
           (MessageHandler
            (broadcast-reply-handler channel
                                     (make-mutex 'broadcast-reply)
                                     0 limit timeout-thread))))
-    (UnicastReactor handler:  handler
-                    method:   method
-                    expire:   expire)))
+    (unicast-reactor handler:  handler
+                     expire:   expire)))
 
 (defstruct broadcast-reply-handler
   ((channel        :  Channel)
@@ -517,28 +513,23 @@
                           (handler  :  MessageHandler)
                           (expire   :  :integer)
                           (one-shot :  :boolean))
-  => UnicastReactor
-  (let* ((timeout-thread
+  => unicast-reactor
+  (let* ((thread
           (and (fx> expire 0)
                (spawn/name ['timeout method]
                  (lambda ()
                    (unless (thread-receive (seconds->time expire) #f)
-                     (do-with-lock self.mx
-                       (self.reactors.delete! method)))))))
+                     (unicast-reactor-delete! self.react-unicast method))))))
          (handler
-          (if timeout-thread
+          (if thread
             (MessageHandler
-             (unicast-message-handler handler one-shot timeout-thread))
+             (unicast-message-handler handler: handler
+                                      one-shot: one-shot
+                                      thread: thread))
             handler)))
-    (UnicastReactor handler:  handler
-                    method:   method
-                    expire:   expire
-                    one-shot: one-shot)))
-
-(defstruct unicast-message-handler
-  ((handler  : MessageHandler)
-   (one-shot : :boolean)
-   (thread   :? :thread)))
+    (unicast-reactor handler:  handler
+                     expire:   expire
+                     one-shot: one-shot)))
 
 (implement MessageHandler unicast-message-handler
   (handle-message!
@@ -553,29 +544,23 @@
                             (handler  :  BroadcastMessageHandler)
                             (expire   :  :integer)
                             (one-shot :  :boolean))
-  => BroadcastReactor
+  => broadcast-reactor
   (let* ((thread
           (and (fx> expire 0)
                (spawn/name ['timeout method]
                  (lambda ()
                    (unless (thread-receive (seconds->time expire) #f)
-                     (do-with-lock self.mx
-                       (self.bcast-reactors.delete! method)))))))
+                     (broadcast-reactor-delete! self.react-broadcast method group))))))
          (handler
           (if thread
             (BroadcastMessageHandler
-             (broadcast-message-handler handler one-shot thread))
+             (broadcast-message-handler handler: handler
+                                        one-shot: one-shot
+                                        thread: thread))
             handler)))
-    (BroadcastReactor handler:  handler
-                      method:   method
-                      group:    group
-                      expire:   expire
-                      one-shot: one-shot)))
-
-(defstruct broadcast-message-handler
-  ((handler  : BroadcastMessageHandler)
-   (one-shot : :boolean)
-   (thread   :? :thread)))
+    (broadcast-reactor handler:  handler
+                       expire:   expire
+                       one-shot: one-shot)))
 
 (implement MessageHandler broadcast-message-handler
   (handle-message!
@@ -583,26 +568,3 @@
      (when (and self.one-shot self.thread)
        (thread-send self.thread 't))
       (self.handler.handle-message! actor msg))))
-
-(def (spawn-reactor (self   : basic-actor)
-                    (msg    : MessageBody)
-                    (thunk  : :procedure))
-  => :thread
-  (rec thread
-    (spawn/name
-     ['reactor msg.method]
-     (lambda ()
-       (try
-        (log.debug "dispatch message"
-                   actor: self.handle.name
-                   method: msg.method
-                   message: msg)
-        (thunk)
-        (catch (e)
-          (log.error "unhandled exception in reactor"
-                     actor: self.handle.name
-                     method: msg.method
-                     exception: (exception->string e)))
-        (finally
-         (do-with-lock self.mx
-           (self.active.delete! thread))))))))

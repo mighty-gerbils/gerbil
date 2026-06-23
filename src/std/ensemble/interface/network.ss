@@ -10,7 +10,8 @@
         (only-in :std/os/device
                  DIRECTION-IN
                  DIRECTION-OUT)
-        ./ucan)
+        ./ucan
+        ./message)
 (export #t
         DIRECTION-IN
         DIRECTION-OUT)
@@ -129,7 +130,7 @@
   => :t
 
   ;; unsubscribe from a previously subscribed group
-  (usnsubscribe (t : :t))
+  (unsubscribe! (t : :t))
   => :void
 
   ;; the currently joined broadcast groups

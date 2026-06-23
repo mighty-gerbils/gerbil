@@ -3,6 +3,7 @@
 ;;; ensemble ucan interfaces
 (import :std/crypto/pkey
         :std/serde/interface
+        :std/serde/deserialize
         :std/io)
 (export #t)
 

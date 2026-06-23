@@ -266,7 +266,8 @@
        #'(defmethod {untaint! klass}
            (lambda (self seen)
              (untaint-slot! klass slot self seen)
-             ...)
+             ...
+             #!void)
            interface: ObjectDeserializer
            )))))
 

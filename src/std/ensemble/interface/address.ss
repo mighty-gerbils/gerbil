@@ -8,6 +8,7 @@
         :std/net/address/parser
         :std/string/stringer
         :std/serde/interface
+        :std/serde/deserialize
         :std/os/hostname)
 (export (struct-out LocalAddress
                     RelayAddress))
@@ -70,7 +71,7 @@
                (path (substring str (fx1+ i) (string-length str))))
          (LocalAddress
           (UnixAddress path)
-          (if (string-empty? id) (hostid) id))))
+          (if (string-empty? id) (hostid) id)))))
    (else
     (raise-bad-argument string->local-address "malformed relay address"
                         str))))

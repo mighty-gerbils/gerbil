@@ -83,7 +83,7 @@
 
   ;; receive notifications about changes in the host
   ;; returns a channel to receive Events
-  (notify)
+  (notify!)
   => Channel
 
   ;; emit a notification in the host notification bus

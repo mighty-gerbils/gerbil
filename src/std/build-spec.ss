@@ -65,6 +65,7 @@
     "net/address/parser"
     "net/address/stringer"
     "net/address/resolver"
+    "net/address/serde"
     "net/address/api"
     "net/address"
 
@@ -95,7 +96,6 @@
     "io/bio/memory"
     "io/bio/srcsnk"
     "io/bio/port"
-    ;;"io/bio/message"
     "io/bio/api"
     "io/file"
     "io/tempfile"
@@ -263,9 +263,11 @@
 
     "ensemble/config"
 
+    "ensemble/network/network"
     "ensemble/network"
 
     "ensemble/broadcast"
+    "ensemble/broadcast/broadcast"
 
     "ensemble/host/types"
     "ensemble/host/util"

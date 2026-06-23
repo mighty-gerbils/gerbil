@@ -11,16 +11,19 @@
 (export #t)
 
 (defmethod {:init! host-db}
-  (lambda (self (path : :string))
+  (lambda (self (path : :string) (tgroup : :thread-group))
     (let ((init-db? (not (file-exists? path)))
           (db (new-db (sqlite-open path))))
       (when init-db?
         (DB-exec! db sql-schema []))
       (set! self.mx (make-mutex 'host/db))
       (set! self.db db)
-      (set! self.statements (StatementCache))
+      (set! self.statements (StatementCache db))
       (set! self.thread
-        (spawn (cut db-cleanup self))))))
+        (spawn-actor (cut host-db-cleanup self)
+                     []
+                     'host/db-cleanup
+                     tgroup)))))
 
 (def (host-db-close (self : host-db))
   => :void

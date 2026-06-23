@@ -1,11 +1,12 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; DB statement cache
-(import ./interface)
+(import :std/iter
+        ./interface)
 (export #t)
 
 (defstruct StatementCache
-  ((db : DB)
+  ((db    : DB)
    (table : HashTable))
   constructor: :init!
   final: #t)
@@ -29,7 +30,7 @@
       (self.table.set! sql stmt)
       stmt))))
 
-(def (statement-cache-close (self : statement-cache))
+(def (statement-cache-close (self : StatementCache))
   => :void
   (for (stmt (hash-values self.table) :- Statement)
     (stmt.close))

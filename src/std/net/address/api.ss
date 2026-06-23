@@ -4,7 +4,8 @@
 (import ./types
         ./parser
         ./stringer
-        ./resolver)
+        ./resolver
+        ./serde)
 (export (struct-out
          Address
          NullAddress

@@ -4,11 +4,12 @@
 (import :std/error
         :std/interface
         :std/io
+        :std/io/bio/buffer
         :std/log
         :std/serde/unmarshal
         ../interface
         ./types)
-(export new-host-actor-steram-handler)
+(export new-host-actor-stream-handler)
 
 (deflogger log name: "/ensemble/host/actor")
 
@@ -17,17 +18,17 @@
   (StreamHandler
    (host-actor-stream-handler host)))
 
-(def (host-actor-handle-stream! (self   : host-actor-handler)
+(def (host-actor-handle-stream! (self   : host-actor-stream-handler)
                                 (stream : Stream))
   => :void
-  (try
-   (using ((conn (stream.connection)
-                 : Connection)
-           (reader (open-buffered-reader (stream.reader))
-                   : BufferedReader))
+  (using ((conn (stream.connection)
+                : Connection)
+          (reader (open-buffered-reader (stream.reader))
+                  : BufferedReader))
+    (try
      (while #t
        (let (size (reader.read-varuint))
-         (if (fx> size self.host.limits.network.max-message-size)
+         (if (fx> size self.host.limits.network.message-size)
            (begin
              (log.warn "skipping oversize message"
                        protocol: (stream.protocol)
@@ -42,7 +43,7 @@
                 (if (!VerificationOK? result)
                   (do-with-lock self.host.mx
                     (if (fx< self.host.actor-threads
-                             self.host.limits.host.max-actor-threads)
+                             self.host.limits.host.actor-threads)
                       (cond
                        ((self.host.actors.ref (Message-dest msg) #f)
                         => (lambda ((handler :- ActorHandler))
@@ -69,14 +70,16 @@
                           exception: (exception->string e)))
               (finally
                (buffer-detach! reader)))))))
-   (catch (e)
-     (log.error "unhandled exception in stream handler"
-                peer:      (conn.peer-name)
-                exception: (exception->string e)))
-   (finally
-    (stream.close)))))
+     (catch (Closed? e)
+       #!void)
+     (catch (e)
+       (log.error "unhandled exception in stream handler"
+                  peer:      (conn.peer-name)
+                  exception: (exception->string e)))
+     (finally
+      (ignore-errors (stream.close))))))
 
-(def (host-actor-dispatch-message (self    : host-actor-handler)
+(def (host-actor-dispatch-message (self    : host-actor-stream-handler)
                                   (handler : ActorHandler)
                                   (msg     : Message))
   (try
@@ -92,8 +95,8 @@
 
 (implement
   (Closer
-   (host-actor-handler
+   (host-actor-stream-handler
     (close void)))
   (StreamHandler
-   (host-actor-handler
+   (host-actor-stream-handler
     (handle-stream! __host-actor-handle-stream!))))

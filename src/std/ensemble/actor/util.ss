@@ -20,6 +20,6 @@
             next)))
     (string-append "/tmp/reply/" (number->string next-reply))))
 
-(definline (marshal-body body)
+(definline (marshal-body (body : :t))
   => :u8vector
   (marshal body (marshal-context dag: #t)))

@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; ensemble host stream handler
-(import :std/interface
+(import :std/error
+        :std/interface
         :std/log
         ../interface
         ./types)
@@ -17,46 +18,46 @@
 (def (stream-handler-handle-stream! (self   : host-stream-handler)
                                     (stream : Stream))
   => :void
-  (def (accept! message dispatch?)
-    (using (conn (stream.connection) : Connection)
+  (using (conn (stream.connection) : Connection)
+
+    (def (accept! message dispatch?)
       (log.debug message
                  protocol: (stream.protocol)
                  address:  (conn.address)
-                 peer:     (conn.peer-address)))
-    dispatch?)
-  (def (reject! message)
-    (ignore-errors (stream.close))
-    (using (conn (stream.connection) : Connection)
+                 peer:     (conn.peer-address))
+      dispatch?)
+
+    (def (reject! message)
+      (ignore-errors (stream.close))
       (log.warn message
                 protocol: (stream.protocol)
                 address:  (conn.address)
-                peer:     (conn.peer-address)))
-    #f)
+                peer:     (conn.peer-address))
+      #f)
 
-  (let (dispatch?
-        (do-with-lock self.mx
-          (if (fx= (conn.direction) DIRECTION-IN)
-            (if (fx< self.host.streams-in self.host.limit.streams-in)
-              (begin
-                (set! self.host.streams-in
-                  (fx+ self.host.streams-in 1))
-                (accept! "accepted incoming stream" #t))
-              (reject! "rejected incoming stream; limit exceeded"))
-            (if (fx< self.host.streams-out self.host.limit.streams-out)
-              (begin
-                (set! self.host.streams-out
-                  (fx+ self.host.streams-out 1))
-                (accept! "new outgoing stream" #f))
-              (reject! "rejected outgoing stream; limit exceeded")))))
-    (when dispatch?
-      (cond
-       ((stream-handler-get-reactor self (stream.protocol))
-        => (lambda ((reactor :- stream-reactor))
-             (spawn-actor
-              (cut reactor.handler.handle-stream! stream)
-              [] 'host/stream self.host.tgroup)))
-       (else
-        (using (conn (stream.connection) : Connection)
+    (let (dispatch?
+          (do-with-lock self.host.mx
+            (if (fx= (conn.direction) DIRECTION-IN)
+              (if (fx< self.host.streams-in self.host.limits.host.streams-in)
+                (begin
+                  (set! self.host.streams-in
+                    (fx+ self.host.streams-in 1))
+                  (accept! "accepted incoming stream" #t))
+                (reject! "rejected incoming stream; limit exceeded"))
+              (if (fx< self.host.streams-out self.host.limits.host.streams-out)
+                (begin
+                  (set! self.host.streams-out
+                    (fx+ self.host.streams-out 1))
+                  (accept! "new outgoing stream" #f))
+                (reject! "rejected outgoing stream; limit exceeded")))))
+      (when dispatch?
+        (cond
+         ((stream-handler-get-reactor self (stream.protocol))
+          => (lambda ((reactor :- stream-reactor))
+               (spawn-actor
+                (cut reactor.handler.handle-stream! stream)
+                [] 'host/stream self.host.tgroup)))
+         (else
           (ignore-errors (stream.close))
           (stream-handler-close self stream)
           (log.warn "no reactor for stream"

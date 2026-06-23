@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; ensemble host connection handler
-(import :std/interface
+(import :std/error
+        :std/interface
         :std/log
         ../interface
         ./types
@@ -33,13 +34,13 @@
 
   (do-with-lock self.host.mx
     (if (fx= (conn.direction) DIRECTION-IN)
-      (if (fx< self.host.connections-in self.host.limit.connections-in)
+      (if (fx< self.host.connections-in self.host.limits.host.connections-in)
         (begin
           (set! self.host.connections-in
             (fx+ self.host.connections-in 1))
           (accept! "accepted incoming connection"))
         (reject! "rejected incoming connection; limit exceeded"))
-      (if (fx< self.host.connections-out self.host.limit.connections-out)
+      (if (fx< self.host.connections-out self.host.limits.host.connections-out)
         (begin
           (set! self.host.connections-out
             (fx+ self.host.connections-out 1))

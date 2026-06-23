@@ -2,6 +2,8 @@
 ;;; © vyzo
 ;;; ensemble actor stream reactors
 (import :std/error
+        :std/interface
+        :std/iter
         :std/sync/completion
         :std/sync/channel
         ../interface
@@ -17,6 +19,14 @@
 
 (defmethod {:init! broadcast-reaction}
   reaction-init!)
+
+(def (reaction-close (self : reaction))
+  => :void
+  (do-with-lock self.mx
+    (for (r (in-hash-values self.table) :- reactor)
+      (when r.thread
+        (thread-send r.thread 't)))
+    (self.table.clear!)))
 
 (defrule (reactor-get self method get-handler klass)
   (do-with-lock (reaction-mx self) :- klass
@@ -38,19 +48,22 @@
       (raise-contract-violation reactor-set! "duplicate reactor"
                                 method: method))
      (else
-      (let (r (make method: method
-                    expire: expire
+      (let (r (make expire: expire
                     one-shot: one-shot
                     handler: handler))
         (when (> expire 0)
-          (let (thread (spawn reactor-expire self method r expire))
+          (let (thread (spawn reactor-timeout self method r expire))
             (set! (reactor-thread r) thread)))
         (hash-put! (reaction-table self) method r))))))
 
-(def (reactor-expire (self   : reaction)
-                     (method : :string)
-                     (r      : reactor)
-                     (expire : :integer))
+(defrule (reactor-delete! self method)
+  (do-with-lock (reaction-mx self)
+    (hash-remove! (reaction-table self) method)))
+
+(def (reactor-timeout (self   : reaction)
+                      (method : :string)
+                      (r      : reactor)
+                      (expire : :integer))
   => :void
   (unless (thread-receive (seconds->time expire) #f)
     (do-with-lock self.mx
@@ -72,6 +85,11 @@
   => :void
   (reactor-set! self method unicast-reactor handler expire one-shot))
 
+(def (unicast-reactor-delete! (self : unicast-reaction)
+                              (method   : :string))
+  => :void
+  (reactor-delete! self method))
+
 (def (unicast-reactor-set-reply! (self       : unicast-reaction)
                                  (method     : :string)
                                  (completion : Completion)
@@ -81,7 +99,6 @@
     (let (thread (spawn unicast-reply-timeout self method completion expire))
     (self.table.set! method
                      (unicast-reactor
-                      method: method
                       expire: expire
                       one-shot: #t
                       thread: thread
@@ -109,11 +126,10 @@
     (let (thread (spawn broadcast-reply-timeout self method channel expire))
       (self.table.set! method
                        (unicast-reactor
-                        method: method
                         expire: expire
                         one-shot: #f
                         thread: thread
-                        handler: (MessageHandler (new-broadcast-reply-reactor channel limit)))))))
+                        handler: (MessageHandler (broadcast-reply-reactor channel limit)))))))
 
 (def (broadcast-reply-timeout (self    : unicast-reaction)
                               (method  : :string)
@@ -146,16 +162,25 @@
   (let (method (string-append group "!" method))
     (reactor-set! self method broadcast-reactor handler expire one-shot)))
 
+(def (broadcast-reactor-delete! (self : broadcast-reaction)
+                                (method   : :string)
+                                (group    : :string))
+  => :void
+  (let (method (string-append group "!" method))
+    (reactor-delete! self method)))
+
 (implement MessageHandler
   (unicast-reply-reactor
-   (lambda (self actor msg)
-     (completion-post! self.completion msg)))
+   (handle-message!
+    (lambda (self actor msg)
+      (completion-post! self.completion msg))))
   (broadcast-reply-reactor
-   (lambda (self actor msg)
-     (if self.limit
-       (when (fx> self.limit 0)
-         (channel-put self.channel msg)
-         (set! self.limit (fx- self.limit 1))
-         (when (fx= self.limit 0)
-           (channel-close self.channel)))
-       (channel-put self.channel msg)))))
+   (handle-message!
+    (lambda (self actor msg)
+      (if self.limit
+        (when (fx> self.limit 0)
+          (channel-put self.channel msg)
+          (set! self.limit (fx- self.limit 1))
+          (when (fx= self.limit 0)
+            (channel-close self.channel)))
+        (channel-put self.channel msg))))))

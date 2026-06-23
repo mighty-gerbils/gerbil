@@ -3,6 +3,7 @@
 ;;; ensemble actor messages
 (import :std/io/interface
         :std/serde/interface
+        :std/serde/deserialize
         ./ucan)
 (export #t)
 

@@ -3,6 +3,7 @@
 ;;; ucan capability context db
 (import :std/error
         :std/interface
+        :std/iter
         :std/db
         :std/io/interface
         :std/db/sqlite
@@ -77,7 +78,7 @@
       (set! self.mx
         (make-mutex 'ucan/db))
       (set! self.statements
-        (StatementCache))
+        (StatementCache db))
       (set! self.private-keys
         (make-hash-table-string))
       (set! self.public-keys
@@ -119,7 +120,7 @@
     (unless (thread-receive db-cleanup-interval #f)
       (do-with-lock self.mx
         (let (now (CoarseTime-seconds (current-time-coarse)))
-          (db-exec! db sql-cleanup-root-input-anchors [now])
+          (db-exec! self sql-cleanup-root-input-anchors [now])
           (set! self.root-input-anchors
             (filter-tokens now self.root-input-anchors))
           (db-exec! self sql-cleanup-root-output-anchors [now])

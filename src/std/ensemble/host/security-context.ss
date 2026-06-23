@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; ensemble host security context
 (import :std/interface
+        :std/io/interface
         :std/serde/marshal
         :std/crypto/pkey
         :std/crypto/random
@@ -24,6 +25,8 @@
                        #'self #'self ".cap.get-principal")
                       (msg.source.did
                        #'msg #'msg ".source.did")
+                      (msg.nonce
+                       #'msg #'msg ".nonce")
                       (msg.signature
                        #'msg #'msg ".signature"))
      #'(let* ((privk (self.cap.get-principal msg.source.did))
@@ -42,8 +45,8 @@
 (def (security-context-verify-message (self : security-context)
                                       (msg  : Message))
   => VerificationResult
-  (let (now (coarse-time now))
-    (if (<= now msg.expire)
+  (let (now (coarse-time-now))
+    (if (<= msg.expire now)
       !MessageExpiredVerificationError
       (let loop ((rest msg.auth))
         => VerificationResult
@@ -75,8 +78,8 @@
 (def (security-context-verify-broadcast-message (self : security-context)
                                                 (msg  : BroadcastMessage))
   => VerificationResult
-  (let (now (coarse-time now))
-    (if (<= now msg.expire)
+  (let (now (coarse-time-now))
+    (if (<= msg.expire now)
       !MessageExpiredVerificationError
       (let loop ((rest msg.auth))
         => VerificationResult

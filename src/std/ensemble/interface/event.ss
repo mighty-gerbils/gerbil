@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; ensemble host notifications
-(import ./host)
+(import ./network
+        ./host)
 (export #t)
 
 (defstruct (ConnectionEvent Event)

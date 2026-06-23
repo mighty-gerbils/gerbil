@@ -6,5 +6,5 @@
         ../config)
 (export new-network)
 
-(def (new-network (host : Host) (limits : NetworkLimits))
+(def (new-network (host : Host) (limits : Limits))
   (TODO new-network))

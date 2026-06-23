@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; actor server hostnames
 (import :std/ffi)
-(export hostname)
+(export hostname hostid)
 
 (def +hostname+ #f)
 (def +hostid+   #f)
@@ -11,7 +11,7 @@
   => :string
   (if +hostname+
     (: +hostname+ :string)
-    (let (name (gethostname))
+    (let (name (:- (gethostname) :string))
       (set! +hostname+ name)
       name)))
 
@@ -28,9 +28,8 @@
 (C-ffi-macrology)
 (C-include "<unistd.h>")
 (C-declare #<<END-C
-
+__thread char hostname_buf[1024];
 static char* ffi_gethostname() {
-  char hostname_buf[1024];
   gethostname(hostname_buf, sizeof(hostname_buf));
   return hostname_buf;
 }

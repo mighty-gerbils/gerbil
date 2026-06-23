@@ -1,7 +1,9 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; ensemble host stream cache
-(import :std/time/precise
+(import :std/error
+        :std/iter
+        ../interface
         ./types
         ./util)
 (export #t)
@@ -18,7 +20,7 @@
       (make-hash-table-string))
     (set! self.thread
       (spawn-actor
-       (cut stream-cache-cleanup-thread ctx)
+       (cut stream-cache-cleanup-thread self)
        [] name host.tgroup))))
 
 (def (stream-cache-get (self : stream-cache)
@@ -28,14 +30,14 @@
         (do-with-lock self.mx
           (cond
            (self.closed?
-            (raise-io-closed stream-cache-get))
+            (raise-io-closed stream-cache-get "stream cache is closed"))
            ((self.table.ref dest #f)
             => refresh-stream-ttl!)
            (else #f))))
     (if cached
       (: cached cached-stream)
-      (let (stream (self.host.this.open-stream! peer self.proto))
-        (stream-cache-put! self peer stream)))))
+      (let (stream (self.host.this.open-stream! dest self.proto))
+        (stream-cache-put! self dest stream)))))
 
 (def (stream-cache-put! (self : stream-cache)
                         (dest : :string)
@@ -45,7 +47,7 @@
     (cond
      (self.closed?
       (ignore-errors (stream.close))
-      (raise-io-closed stream-cache-put!))
+      (raise-io-closed stream-cache-put! "stream cache is closed"))
      ((self.table.ref dest #f)
       => (lambda (other-stream)
            (ignore-errors (stream.close))

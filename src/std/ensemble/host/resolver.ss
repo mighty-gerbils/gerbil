@@ -3,9 +3,14 @@
 ;;; ensemble host resolver
 (import :std/error
         :std/interface
+        :std/io/interface
+        :std/net/address
+        :std/iter
+        :std/serde/deserialize
         ../interface
         ../actor
-        ./types)
+        ./types
+        ./db)
 (export new-resolver)
 
 (def resolver-address-ttl 3600)
@@ -15,7 +20,7 @@
   ("/host/resolver/lookup"
    (lookup (host   : :string) ; host for which addresses are requested
            (origin : :string) ; origin host for the request
-           (addrs  : :list)))  ; list of addresses of origin host
+           (addrs  : :list))) ; list of addresses of origin host
   ;; unicast resolve a host
   ("/host/resolver/resolve"
    (resolve (host : :string)))
@@ -43,14 +48,15 @@
 
 (def (new-resolver (host : basic-host) (remote-resolver :? :string))
   => Resolver
-  (let (resolver (host-resolver host remote-resolver #f))
+  (using (resolver (host-resolver host remote-resolver #f)
+                   : host-resolver)
     (set! resolver.actor
       (new-actor host.this actor:/host/resolver))
     (HostResolver::host-resolver resolver.actor resolver)
     (Resolver resolver)))
 
-(def (host-resolver-add-addresses! (self : host-resolver)
-                                   (peer : :string)
+(def (host-resolver-add-addresses! (self  : host-resolver)
+                                   (peer  : :string)
                                    (addrs : :list))
   => :void
   (host-db-add-host-addresses! self.host.db peer addrs resolver-address-ttl))
@@ -69,9 +75,9 @@
              (result
               (with-actor-reply
                (self.actor.invoke! resolver
-                                   HostResolver::method::resolve
+                                   HostResolver::resolve
                                    (HostResolver.resolve peer))
-               :~ (list-of Address?)
+               :~ (list-of? Address?)
                :- :list)))
         (host-resolver-add-addresses! self peer result)
         result))
@@ -79,14 +85,14 @@
       (using (host self.host : server-host)
         (let* ((chan (self.actor.broadcast-invoke!
                       group:/host/resolver
-                      HostResolver::method::lookup
+                      HostResolver::lookup
                       (HostResolver.lookup peer
                                            host.name
                                            host.announce)))
                (result
                 (reverse!
                  (for/fold (r []) (lst chan)
-                   (if ((list-of Address?) lst)
+                   (if ((list-of? Address?) lst)
                      (foldl cons r lst)
                      r)))))
           (host-resolver-add-addresses! self peer result)

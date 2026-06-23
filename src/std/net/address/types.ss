@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; network address types
-(import :std/string/utf8
-        :std/serde/interface)
+(import :std/string/utf8)
 (export #t)
 
 ;; address base type
@@ -114,13 +113,6 @@
     (set! self.host host)
     (set! self.port port)
     (set! self.resolved [])))
-
-(defobject-untaint NullAddress)
-(defobject-untaint IP4Address)
-(defobject-untaint IP6Address)
-(defobject-untaint InetAddress)
-(defobject-untaint UnixAddress)
-(defobject-untaint DNSAddress)
 
 (def inaddr-any4
   (IP4Address #u8(0 0 0 0)))

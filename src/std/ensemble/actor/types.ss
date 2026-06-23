@@ -1,12 +1,13 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; ensemble actor types
-(import ../interface)
+(import :std/sync/completion
+        :std/sync/channel
+        ../interface)
 (export #t)
 
 (defstruct reactor
-  ((method   : :string)
-   (expire   : :integer)
+  ((expire   : :integer)
    (one-shot : :boolean)
    (thread   :? :thread)))
 
@@ -29,7 +30,7 @@
 
 (defstruct reaction
   ((mx    : :mutex)
-   (table : HashTable))
+   (table : HashTable)))
 
 (defclass (unicast-reaction reaction)
   ()
@@ -39,6 +40,18 @@
 (defclass (broadcast-reaction reaction)
   ()
   constructor: :init!
+  final: #t)
+
+(defstruct message-handler
+  ((one-shot : :boolean)
+   (thread   :? :thread)))
+
+(defclass (unicast-message-handler message-handler)
+  ((handler  : MessageHandler))
+  final: #t)
+
+(defclass (broadcast-message-handler message-handler)
+  ((handler  : BroadcastMessageHandler))
   final: #t)
 
 (defclass basic-actor

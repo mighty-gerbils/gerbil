@@ -6,19 +6,19 @@
 ;;; configuration classes
 
 (defclass HostLimits
-  ((max-connections-in  : :fixnum)
-   (max-connections-out : :fixnum)
-   (max-streams-in      : :fixnum)
-   (max-streams-out     : :fixnum)
-   (max-actor-threads   : :fixnum))
+  ((connections-in  : :fixnum)
+   (connections-out : :fixnum)
+   (streams-in      : :fixnum)
+   (streams-out     : :fixnum)
+   (actor-threads   : :fixnum))
   final: #t)
 
 (defclass BroadcastLimits
-  ((max-handler-threads : :fixnum))
+  ((handler-threads : :fixnum))
   final: #t)
 
 (defclass NetworkLimits
-  ((max-message-size    : :fixnum))
+  ((message-size    : :fixnum))
   final: #t)
 
 (defclass Limits

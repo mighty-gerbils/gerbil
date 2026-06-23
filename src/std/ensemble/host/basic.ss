@@ -5,6 +5,10 @@
         :std/interface
         :std/io/interface
         :std/iter
+        :std/sync/channel
+        :std/os/hostname
+        :std/net/address
+        :std/log
         ../interface
         ../ucan/context
         ../config
@@ -12,7 +16,7 @@
         ../broadcast
         ./db
         ./types
-        ./reactor
+        ./stream-handler
         ./conn-handler
         ./actor-handler
         ./security-context
@@ -22,10 +26,12 @@
         ./bus)
 (export #t)
 
+(deflogger log name: "/ensemble/host")
+
 (defmethod {:init! basic-host}
   (lambda (self (cfg : BasicHostConfig))
     (set! self.mx              (make-mutex 'host))
-    (set! self.tgroup          (make-thread-group [host cfg.name])
+    (set! self.tgroup          (make-thread-group ['host cfg.name]))
     (set! self.name            cfg.name)
     (set! self.did             cfg.did)
     (set! self.limits          cfg.limits)
@@ -33,7 +39,8 @@
     (set! self.connections-out 0)
     (set! self.streams-in      0)
     (set! self.streams-out     0)
-    (let* ((this : (Host self))
+    (set! self.actor-threads   0)
+    (let* ((this (Host self))
            (_ (set! self.this this))
            (actors
             (make-hash-table))
@@ -42,26 +49,26 @@
             (make-hash-table-string))
            (_ (set! self.reactors reactors))
            (bus
-            (new-event-bus))
+            (event-bus))
            (_ (set! self.bus bus))
            (host-db-path
             (path-expand "host.db" cfg.dir))
            (host-db
-            (host-db host-db-path))
+            (host-db host-db-path self.tgroup))
            (_ (set! self.db host-db))
            (cap-db-path
             (path-expand "cap.db" cfg.dir))
            (capability-ctx
-            (new-capability-context cap-db-path))
+            (new-capability-context cap-db-path cfg.passphrase))
            (_ (set! self.capability-context capability-ctx))
            (security-ctx
             (new-security-context self))
            (_ (set! self.security-context security-ctx))
            (network
-            (new-network this cfg.limits.network))
+            (new-network this cfg.limits))
            (_ (set! self.network network))
            (broadcast
-            (new-broadcast this cfg.limits.broadcast cfg.limits.network))
+            (new-broadcast this cfg.limits))
            (_ (set! self.broadcast broadcast))
            (resolver
             (new-resolver self cfg.resolver))
@@ -71,24 +78,23 @@
            (_ (set! self.actor-space actor-space))
            (actor-context
             (new-actor-context self))
-           (_ (set! self.actor-context actor-ctx)))
+           (_ (set! self.actor-context actor-context)))
       (self.network.set-connection-handler!
        (new-host-connection-handler self))
       (basic-host-set-stream-handler!
        self proto:/host/actor
        (new-host-actor-stream-handler self)
-       0 #f)))))
+       0 #f))))
 
-(def (basic-host-close (host : basic-host))
+(def (basic-host-close (self : basic-host))
   => :void
-  (let ((values actors reactors)
+  (let (reactors
         (do-with-lock self.mx
           (if self.closed?
-            (values [] [])
-            (let ((actors (hash-values self.actors))
-                  (reactors (hash-values self.reactors)))
+            []
+            (let (reactors (hash-values self.reactors))
               (hash-clear! self.actors)
-              (hash-clear! self.stream-reactors)
+              (hash-clear! self.reactors)
               (report-errors (self.actor-context.close))
               (report-errors (self.actor-space.close))
               (report-errors (self.resolver.close))
@@ -98,9 +104,7 @@
               (report-errors (self.capability-context.close))
               (report-errors (event-bus-close self.bus))
               (report-errors (host-db-close self.db))
-              (values actors reactors)))))
-    (for (actor actors :- ActorHandler)
-      (ignore-errors (actor.close)))
+              reactors))))
     (for (reactor reactors :- stream-reactor)
       (ignore-errors (stream-reactor-close reactor)))))
 
@@ -135,7 +139,10 @@
         (match rest
           ([addr . rest]
            (try
-            (self.network.connect! addr self.tls-context)
+            (log.debug "connecting to peer"
+                       peer: peer
+                       address: addr)
+            (self.network.connect! peer addr self.tls-context)
             (catch (e)
               (log.debug "error connecting to peer"
                          peer: peer
@@ -197,11 +204,15 @@
      (else
       (using (reactor (stream-reactor handler:  handler
                                       proto:    proto
-                                      one-shot: one-shot)
+                                      one-shot: one-shot
+                                      thread:   #f)
                       : stream-reactor)
         (when (> expire 0)
           (set! reactor.thread
-            (spawn stream-reactor-expire self proto reactor expire)))
+            (spawn-actor (cut stream-reactor-expire self proto reactor expire)
+                         []
+                         ['reactor/expire proto]
+                         self.tgroup)))
         (self.reactors.set! proto reactor))))))
 
 (def (stream-reactor-expire (self     : basic-host)
@@ -216,9 +227,9 @@
 
 (def (stream-reactor-close (reactor : stream-reactor))
   (when reactor.thread
-    (thread-send! reactor.thread 't)))
+    (thread-send reactor.thread 't)))
 
-(def (basic-host-notify (self : basic-host))
+(def (basic-host-notify! (self : basic-host))
   => Channel
   (event-bus-get-channel self.bus))
 
@@ -241,7 +252,7 @@
   (register-actor!     __basic-host-register-actor!)
   (unregister-actor!   __basic-host-unregister-actor!)
   (connect!            __basic-host-connect!)
-  (open-steam!         __basic-host-open-stream!)
+  (open-stream!        __basic-host-open-stream!)
   (set-stream-handler! __basic-host-set-stream-handler!)
   (notify!             __basic-host-notify!)
   (emit!               __basic-host-emit!))

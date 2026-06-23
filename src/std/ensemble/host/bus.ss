@@ -1,15 +1,17 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; ensemble host event bus
-(import :std/sync/channel
+(import :std/error
         :std/iter
-        ../interface)
+        :std/sync/channel
+        ../interface
+        ./types)
 (export #t)
 
-(def (new-event-bus)
-  => event-bus
-  (event-bus (make-mutex 'event-bus)
-             []))
+(defmethod {:init! event-bus}
+  (lambda (self)
+    (set! self.mx (make-mutex 'event-bus))
+    (set! self.channels [])))
 
 (def (event-bus-close (self : event-bus))
   => :void
@@ -19,7 +21,7 @@
     (set! self.channels [])))
 
 (def (event-bus-emit! (self : event-bus)
-                      (evt : Event))
+                      (evt  : Event))
   => :void
   (let* ((channels (do-with-lock self.mx self.channels))
          (closed []))
@@ -36,5 +38,5 @@
 (def (event-bus-get-channel (self : event-bus))
   (let (ch (make-channel))
     (do-with-lock self.mx
-      (set! self.channels (cons ch channels)))
+      (set! self.channels (cons ch self.channels)))
     ch))

@@ -7,6 +7,5 @@
 (export new-broadcast)
 
 (def (new-broadcast (host : Host)
-                    (limits : BroadcastLimits)
-                    (net-limits : NetworkLimits))
+                    (limits : Limits))
   (TODO new-broadcast))

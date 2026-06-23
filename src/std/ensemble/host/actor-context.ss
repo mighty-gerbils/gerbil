@@ -3,6 +3,9 @@
 ;;; ensemble host actor context
 (import :std/error
         :std/interface
+        :std/io
+        :std/io/bio/buffer
+        :std/serde/marshal
         ../interface
         ./types
         ./util
@@ -26,7 +29,7 @@
   (let* ((blob (marshal msg (marshal-context dag: #t)))
          (size (u8vector-length blob)))
 
-    (when (fx> size self.host.limits.network.max-message-size)
+    (when (fx> size self.host.limits.network.message-size)
       (raise-contract-violation actor-context-send! "message too large"
                                 message: msg))
 

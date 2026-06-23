@@ -11,7 +11,7 @@
 (deftype @Actor Actor)
 
 ;; the actor space
-(interface ActorSpace
+(interface (ActorSpace Closer)
   ;; resolve an actor by name in a host
   ;; if the host is #f then the actor is resolved
   ;; in the local host

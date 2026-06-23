@@ -3,6 +3,8 @@
 ;;; ensemble actor implementation macros
 (import :std/interface
         :std/serde/interface
+        :std/serde/marshal
+        :std/serde/unmarshal
         ../interface
         )
 (export #t)
@@ -25,7 +27,9 @@
     (cond
      ((find (lambda ((minfo :- protocol-method-info))
               (and (eq? minfo.id (stx-e id))
-                   minfo.method-identifier))))
+                   minfo.method-identifier))
+            info.methods)
+      => protocol-method-info-method-identifier)
      (else
       (raise-syntax-error #f "unknown protocol method" stx id))))
 
@@ -33,7 +37,9 @@
     (cond
      ((find (lambda ((minfo :- protocol-method-info))
               (and (eq? minfo.id (stx-e id))
-                   minfo.type-identifier))))
+                   minfo.type-identifier))
+            info.methods)
+     => protocol-method-info-type-identifier)
      (else
       (raise-syntax-error #f "unknown protocol method" stx id))))
 
@@ -72,19 +78,19 @@
    (with-syntax (((method-identifier ...)
                   (map (cut stx-identifier #'protocol #'protocol "::" <>)
                        #'(id ...)))
-                 ((type-identifer ...)
+                 ((type-identifier ...)
                   (map (cut stx-identifier #'protocol #'protocol "." <>)
                        #'(id ...))))
      #'(begin
          (defsyntax protocol
            (protocol-info
-            'protocol
-            [(protocol-method-info
-              id: 'id
-              method: 'method
-              method-identifier: (quote-syntax method-identifier)
-              type-identifier: (quote-syntax type-identifier))
-             ...]))
+            name: 'protocol
+            methods: [(protocol-method-info
+                       id: 'id
+                       method: 'method
+                       method-identifier: (quote-syntax method-identifier)
+                       type-identifier: (quote-syntax type-identifier))
+                      ...]))
          (defstruct type-identifier (slot-spec ...)
            final: #t)
          ...
@@ -150,7 +156,7 @@
         (syntax-local-class-type-info? #'klass)
         (andmap identifier? #'(id ...)))
    (let (info (syntax-local-value #'protocol))
-     (with-syntax* ((((method-id hanler-struct-id) ...)
+     (with-syntax* ((((method-id handler-struct-id) ...)
                      (map (lambda (id)
                             [(stx-identifier id #'protocol "::" #'klass "::" id)
                              (stx-identifier id #'protocol "::" #'klass "::handler""" id)])
@@ -228,7 +234,7 @@
                                   (struct-id
                                    (handle-message!
                                     (lambda (self actor msg)
-                                      (using (body (unmarshal (Message-body msg)) : message-class)
+                                      (using (body (unmarshal (Message-body msg) (unmarshal-environment dag: #t)) : message-class)
                                         (method-id (struct-object self)
                                                    actor msg
                                                    body))))))))
@@ -247,7 +253,7 @@
                                   (struct-id
                                    (handle-message!
                                     (lambda (self actor msg)
-                                      (using (body (unmarshal (Message-body msg)) : message-class)
+                                      (using (body (unmarshal (BroadcastMessage-body msg) (unmarshal-environment dag: #t)) : message-class)
                                         (method-id (struct-object self)
                                                    actor msg
                                                    body))))))))

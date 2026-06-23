@@ -2,7 +2,8 @@
 ;;; © vyzo
 ;;; ensemble host types
 (import :std/db
-        ../interface)
+        ../interface
+        ../config)
 (export #t)
 
 (defstruct host-db
@@ -14,9 +15,10 @@
   constructor: :init!
   final: #t)
 
-(defclass event-bus
+(defstruct event-bus
   ((mx : :mutex)
    (channels : :list))
+  constructor: :init!
   final: #t)
 
 (defstruct basic-host
@@ -61,7 +63,7 @@
    (limits          : Limits)
    (connections-in  : :fixnum)
    (connections-out : :fixnum)
-   (steams-in       : :fixnum)
+   (streams-in      : :fixnum)
    (streams-out     : :fixnum)
    (actor-threads   : :fixnum)
    )
@@ -144,7 +146,7 @@
   final: #t)
 
 (defstruct cached-stream
-  ((steam     : Stream)
+  ((stream    : Stream)
    (mx        : :mutex)
    (last-use  : :integer))
   final: #t)
