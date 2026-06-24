@@ -25,17 +25,20 @@
 (interface StreamHandler
   (handle-stream! (stream : @Stream))
   => :void
+  )
 
-  (close (stream : @Stream))
+(interface (StreamMonitor StreamHandler)
+  (on-close (stream : @Stream))
   => :void
   )
 
 ;; incoming connection handler
 (interface ConnectionHandler
   (handle-connection! (conn : @Connection))
-  => :void
+  => :void)
 
-  (close (conn : @Connection))
+(interface (ConnectionMonitor ConnectionHandler)
+  (on-close (conn : @Connection))
   => :void
 )
 
@@ -75,10 +78,10 @@
                 (auth  :? Token))
   => @Stream
 
-  ;; set the connection's incoming stream handler
-  ;; the stream handler is invoked every time a new
-  ;; stream is opened in this connection
-  (set-stream-handler! (handler : StreamHandler))
+  ;; set the connection's incoming stream monitor
+  ;; the stream monitor is invoked every time a new
+  ;; stream is opened or closed in this connection
+  (set-stream-monitor! (monitor : StreamMonitor))
   )
 
 ;; low level data streams
@@ -169,8 +172,8 @@
            (tls-context :~ (? (or not SSL_CTX?))))
   => :void
 
-  ;; set the network's connection handler
+  ;; set the network's connection monitor
   ;; the connection handler is invoked every time a new
-  ;; connection is established.
-  (set-connection-handler! (handler : ConnectionHandler))
+  ;; connection is established or closed
+  (set-connection-monitor! (monitor : ConnectionMonitor))
   )

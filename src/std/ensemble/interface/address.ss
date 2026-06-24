@@ -26,8 +26,9 @@
   constructor: :init!
   final: #t)
 
-(defobject-untaint LocalAddress)
-(defobject-untaint RelayAddress)
+(defobject-untaint
+  LocalAddress
+  RelayAddress)
 
 (defmethod {:init! LocalAddress}
   (lambda (self (addr   : UnixAddress)

@@ -1,28 +1,28 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; ensemble host connection handler
+;;; ensemble host connection monitor
 (import :std/error
         :std/interface
         :std/log
         ../interface
         ./types
-        ./stream-handler)
-(export new-host-connection-handler)
+        ./stream-monitor)
+(export new-host-connection-monitor)
 
 (deflogger log name: "/ensemble/host/connection")
 
-(def (new-host-connection-handler (host : basic-host))
-  => ConnectionHandler
-  (ConnectionHandler
-   (host-connection-handler
+(def (new-host-connection-monitor (host : basic-host))
+  => ConnectionMonitor
+  (ConnectionMonitor
+   (host-connection-monitor
     host
-    (new-host-stream-handler host))))
+    (new-host-stream-monitor host))))
 
-(def (connection-handler-handle-connection! (self : host-connection-handler)
+(def (connection-monitor-handle-connection! (self : host-connection-monitor)
                                             (conn : Connection))
   => :void
   (def (accept! message)
-    (conn.set-stream-handler! self.stream-handler)
+    (conn.set-stream-monitor! self.stream-monitor)
     (log.debug message
                address: (conn.address)
                peer:    (conn.peer-address)))
@@ -47,8 +47,8 @@
           (accept! "new outgoing connection"))
         (reject! "rejected outgoing connection; limit exceeded")))))
 
-(def (connection-handler-close (self : host-connection-handler)
-                               (conn : Connection))
+(def (connection-monitor-on-close (self : host-connection-monitor)
+                                  (conn : Connection))
   => :void
   (do-with-lock self.host.mx
     (if (fx= (conn.direction) DIRECTION-IN)
@@ -57,6 +57,6 @@
       (set! self.host.connections-out
         (fx- self.host.connections-out 1)))))
 
-(implement ConnectionHandler host-connection-handler
-  (handle-connection! __connection-handler-handle-connection!)
-  (close              __connection-handler-close))
+(implement ConnectionMonitor host-connection-monitor
+  (handle-connection! __connection-monitor-handle-connection!)
+  (on-close           __connection-monitor-on-close))

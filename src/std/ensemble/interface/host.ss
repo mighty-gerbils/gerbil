@@ -18,6 +18,11 @@
 (defstruct Event
   ((ts : CoarseTime)))
 
+;; stream reaction interface
+(interface (StreamReactor StreamHandler)
+  (on-expire)
+  => :void)
+
 ;; network address resolver
 (interface (Resolver Closer)
   ;; resolve a peer host to a list of addresses
@@ -74,9 +79,9 @@
                 (auth  :? Token := #f))
   => Stream
 
-  ;; register a stream handler for a protocol
-  (set-stream-handler! (proto     : :string)
-                       (handler   : StreamHandler)
+  ;; register a stream reactor for a protocol
+  (set-stream-reactor! (proto     : :string)
+                       (handler   : StreamReactor)
                        (expire    : :integer := 0)
                        (one-shot? : :boolean := #f))
   => :void

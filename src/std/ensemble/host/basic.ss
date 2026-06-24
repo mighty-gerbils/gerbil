@@ -16,8 +16,8 @@
         ../broadcast
         ./db
         ./types
-        ./stream-handler
-        ./conn-handler
+        ./stream-monitor
+        ./conn-monitor
         ./actor-handler
         ./security-context
         ./actor-context
@@ -79,20 +79,21 @@
            (actor-context
             (new-actor-context self))
            (_ (set! self.actor-context actor-context)))
-      (self.network.set-connection-handler!
-       (new-host-connection-handler self))
-      (basic-host-set-stream-handler!
+      (self.network.set-connection-monitor!
+       (new-host-connection-monitor self))
+      (basic-host-set-stream-reactor!
        self proto:/host/actor
-       (new-host-actor-stream-handler self)
+       (new-host-actor-stream-reactor self)
        0 #f))))
 
 (def (basic-host-close (self : basic-host))
   => :void
-  (let (reactors
+  (let ((values actors reactors)
         (do-with-lock self.mx
           (if self.closed?
-            []
-            (let (reactors (hash-values self.reactors))
+            (values [] [])
+            (let ((actors   (hash-values self.actors))
+                  (reactors (hash-values self.reactors)))
               (hash-clear! self.actors)
               (hash-clear! self.reactors)
               (report-errors (self.actor-context.close))
@@ -104,7 +105,9 @@
               (report-errors (self.capability-context.close))
               (report-errors (event-bus-close self.bus))
               (report-errors (host-db-close self.db))
-              reactors))))
+              (values actors reactors)))))
+    (for (actor actors :- ActorHandler)
+      (ignore-errors (actor.close)))
     (for (reactor reactors :- stream-reactor)
       (ignore-errors (stream-reactor-close reactor)))))
 
@@ -191,18 +194,18 @@
                : Connection)
     (conn.open-stream! proto auth)))
 
-(def (basic-host-set-stream-handler! (self     : basic-host)
+(def (basic-host-set-stream-reactor! (self     : basic-host)
                                      (proto    : :string)
-                                     (handler  : StreamHandler)
+                                     (reactor  : StreamReactor)
                                      (expire   : :integer)
                                      (one-shot : :boolean))
   => :void
   (do-with-lock self.mx
     (cond
      ((self.reactors.ref proto #f)
-      (raise-contract-violation set-stream-handler! "stream handler already exists" proto: proto))
+      (raise-contract-violation set-stream-reactor! "stream reactor already exists" proto: proto))
      (else
-      (using (reactor (stream-reactor handler:  handler
+      (using (reactor (stream-reactor reactor:  reactor
                                       proto:    proto
                                       one-shot: one-shot
                                       thread:   #f)
@@ -221,6 +224,12 @@
                             (expire   : :integer))
   => :void
   (unless (thread-receive (seconds->time expire) #f)
+    (try
+     (reactor.reactor.on-expire)
+     (catch (e)
+       (log.warn "unhandled exception in reactor on-expire"
+                 protocol: proto
+                 exception: (exception->string e))))
     (do-with-lock self.mx
       (when (eq? (self.reactors.ref proto #f) reactor)
         (self.reactors.delete! proto)))))
@@ -253,6 +262,6 @@
   (unregister-actor!   __basic-host-unregister-actor!)
   (connect!            __basic-host-connect!)
   (open-stream!        __basic-host-open-stream!)
-  (set-stream-handler! __basic-host-set-stream-handler!)
+  (set-stream-reactor! __basic-host-set-stream-reactor!)
   (notify!             __basic-host-notify!)
   (emit!               __basic-host-emit!))

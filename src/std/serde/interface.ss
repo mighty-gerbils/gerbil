@@ -269,7 +269,10 @@
              ...
              #!void)
            interface: ObjectDeserializer
-           )))))
+           ))))
+  ((_ klass ...)
+   #'(begin
+       (defobject-untaint klass) ...)))
 
 (defsyntax-case untaint-slot! ()
   ((_ klass slot self seen)

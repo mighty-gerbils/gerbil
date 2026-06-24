@@ -9,16 +9,16 @@
         :std/serde/unmarshal
         ../interface
         ./types)
-(export new-host-actor-stream-handler)
+(export new-host-actor-stream-reactor)
 
 (deflogger log name: "/ensemble/host/actor")
 
-(def (new-host-actor-stream-handler (host : basic-host))
-  => StreamHandler
-  (StreamHandler
-   (host-actor-stream-handler host)))
+(def (new-host-actor-stream-reactor (host : basic-host))
+  => StreamReactor
+  (StreamReactor
+   (host-actor-stream-reactor host)))
 
-(def (host-actor-handle-stream! (self   : host-actor-stream-handler)
+(def (host-actor-handle-stream! (self   : host-actor-stream-reactor)
                                 (stream : Stream))
   => :void
   (using ((conn (stream.connection)
@@ -79,7 +79,7 @@
      (finally
       (ignore-errors (stream.close))))))
 
-(def (host-actor-dispatch-message (self    : host-actor-stream-handler)
+(def (host-actor-dispatch-message (self    : host-actor-stream-reactor)
                                   (handler : ActorHandler)
                                   (msg     : Message))
   (try
@@ -94,9 +94,7 @@
         (fx- self.host.actor-threads 1))))))
 
 (implement
-  (Closer
-   (host-actor-stream-handler
-    (close void)))
-  (StreamHandler
-   (host-actor-stream-handler
+  (StreamReactor
+   (host-actor-stream-reactor
+    (on-expire void)
     (handle-stream! __host-actor-handle-stream!))))

@@ -17,7 +17,6 @@
     (basic-host:::init! self cfg)
     (for (a cfg.listen :- Address)
       (self.network.listen! a self.tls-context))
-    ;; TODO listen for children hosts to setup relay
     ))
 
 (defmethod {:init! inet-server-host}

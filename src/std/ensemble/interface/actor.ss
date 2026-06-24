@@ -47,7 +47,7 @@
   )
 
 ;; low level actor handler
-(interface ActorHandler
+(interface (ActorHandler Closer)
   ;; receive a message
   (receive! (ctx : ActorContext)
             (msg : Message))
@@ -66,7 +66,7 @@
   => :void
   )
 
-(interface Actor
+(interface (Actor Closer)
   ;; the handle for this actor
   (handle)
   => Handle

@@ -8,10 +8,18 @@
         ./message)
 (export #t)
 
+;; generic remote invocation success
+(defstruct !OK
+  ((result : :t))
+  final: #t)
+
+(defobject-untaint !OK)
+
 ;; remote invocation errors
 (defstruct !Error
-  ((message : :string)
-   (trace   : :string))
+  ((message   : :string)
+   (irritants : :list)
+   (trace     : :string))
   constructor: :init!
   final: #t)
 
@@ -20,14 +28,25 @@
     (set! self.message
       (or (error-message exn)
           "unhandled exception"))
-    (set! self.trace (exception->string exn))))
+    ;; irritants are not expected to be unmarshalable in general
+    ;; so just null
+    (set! self.irritants [])
+    (set! self.trace
+      (exception->string exn))))
+
+(def (!Error/c (msg : :string) . irritants)
+  (using (e (new-instance !Error::t) :- !Error)
+    (set! e.message msg)
+    (set! e.irritants irritants)
+    (set! e.trace "?")))
 
 (defobject-untaint !Error)
 
 (deferror-class ActorError () actor-error?)
-(defraise/context (raise-actor-error where actor-error irritants ...)
+(defraise/context (raise-actor-error where actor-error)
   (ActorError (!Error-message actor-error)
-              irritants: [(!Error-trace actor-error) irritants ...]))
+              irritants: [(!Error-irritants actor-error) (... ...)
+                          trace: (!Error-trace actor-error)]))
 
 (defrule (with-actor-error expr rest ...)
   (try expr rest ...
@@ -67,7 +86,7 @@
        (raise-actor-error macro result)))))
 
 
-;; host protocols
+;; basic host protocols
 (def proto:/host/actor
   "/host/actor/v0")
 
