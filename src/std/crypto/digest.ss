@@ -105,6 +105,11 @@
               (EVP_DigestUpdate (digest-context digest) buffer 0 rd))
             (loop (+ count rd))))))))
 
+(def (digest-from-reader! (digest : Digest)
+                          (reader : Reader))
+  (digest-update-from-reader! digest reader)
+  (digest-final! digest))
+
 (defsyntax-case defdigest ()
   ((_ name)
    (with-identifiers

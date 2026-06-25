@@ -285,6 +285,9 @@
     "ensemble/host/server"
 
     "ensemble/tls/context"
+
+    "ensemble/svc/loader/protocol"
+    "ensemble/svc/loader/server"
     ))
 
 #;(def (build-spec . _)
