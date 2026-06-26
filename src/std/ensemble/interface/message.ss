@@ -7,16 +7,29 @@
         ./ucan)
 (export #t)
 
+;; a HostID identifies an actor host in the ensemble space
+;; it is composed by two components:
+;; - the did (distributed identifier), which is uniquely identifying
+;;   public key.
+;; - the name, which is a non uniquely identifying
+;;   semantic (human meaningful) name in standard host dotted
+;;   notation
+(defstruct HostID
+  ((name : :string)
+   (did  : :string))
+  final: #t)
+
+(defobject-untaint HostID)
+
 (defstruct Handle
-  ((did  : :string)   ; the DID of the actor
-   (host : :string)   ; the path of the host in the ensemble space
-   (name : :string))  ; the path of the actor in the actor space
+  ((host  : HostID)    ; the host
+   (actor : :string))  ; the name of the actor in the host
   final: #t)
 
 (defobject-untaint Handle)
 
 (defstruct ReplyTo
-  ((actor  : Handle)        ; the actor to reply to
+  ((handle : Handle)        ; the actor to reply to
    (auth   : Token)         ; UCAN authorization for the reply
    (method : :string))      ; the method to invoke in the reply
   final: #t)

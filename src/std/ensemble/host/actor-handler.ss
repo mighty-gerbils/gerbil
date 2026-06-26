@@ -8,7 +8,8 @@
         :std/log
         :std/serde/unmarshal
         ../interface
-        ./types)
+        ./types
+        ./actor-dispatch)
 (export new-host-actor-stream-reactor)
 
 (deflogger log name: "/ensemble/host/actor")
@@ -32,7 +33,7 @@
            (begin
              (log.warn "skipping oversize message"
                        protocol: (stream.protocol)
-                       peer:     (conn.peer-name)
+                       peer:     (conn.peer)
                        size:     size)
              (reader.skip size))
            (using (reader (reader.delimit size) : BufferedReader)
@@ -41,32 +42,22 @@
                              Message))
                      (result (self.host.security-context.verify-message msg)))
                 (if (!VerificationOK? result)
-                  (do-with-lock self.host.mx
-                    (if (fx< self.host.actor-threads
-                             self.host.limits.host.actor-threads)
-                      (cond
-                       ((self.host.actors.ref (Message-dest msg) #f)
-                        => (lambda ((handler :- ActorHandler))
-                             (set! self.host.actor-threads
-                               (fx+ self.host.actor-threads 1))
-                             (spawn-actor
-                              (cut host-actor-dispatch-message self handler msg)
-                              [] 'actor/dispatch self.host.tgroup)))
-                       (else
-                        (log.warn "message for unknown actor; dropping message"
-                                  peer:    (conn.peer-name)
+                  (let (handler
+                        (do-with-lock self.host.mx
+                          (self.host.actors.ref (Message-dest msg) #f)))
+                    (if handler
+                      (spawn-actor-dispatch self.host handler msg)
+                      (log.warn "message for unknown actor; dropping message"
+                                  peer:    (conn.peer)
                                   actor:   (Message-dest msg)
                                   message: msg)))
-                      (log.warn "actor thread limit exceeded; dropping message"
-                                peer:    (conn.peer-name)
-                                message: msg)))
                   (log.warn "message verification failed"
-                            peer:    (conn.peer-name)
+                            peer:    (conn.peer)
                             reason:  (VerificationError-reason result)
                             message: msg)))
               (catch (e)
                 (log.warn "error dispatching message"
-                          peer:      (conn.peer-name)
+                          peer:      (conn.peer)
                           exception: (exception->string e)))
               (finally
                (buffer-detach! reader)))))))
@@ -74,24 +65,10 @@
        #!void)
      (catch (e)
        (log.error "unhandled exception in stream handler"
-                  peer:      (conn.peer-name)
+                  peer:      (conn.peer)
                   exception: (exception->string e)))
      (finally
       (ignore-errors (stream.close))))))
-
-(def (host-actor-dispatch-message (self    : host-actor-stream-reactor)
-                                  (handler : ActorHandler)
-                                  (msg     : Message))
-  (try
-   (handler.receive! self.host.actor-context msg)
-   (catch (e)
-     (log.error "unhandled exception in actor message dispatch"
-                message:   msg
-                exception: (exception->string e)))
-   (finally
-    (do-with-lock self.host.mx
-      (set! self.host.actor-threads
-        (fx- self.host.actor-threads 1))))))
 
 (implement
   (StreamReactor

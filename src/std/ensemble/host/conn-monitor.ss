@@ -25,12 +25,12 @@
     (conn.set-stream-monitor! self.stream-monitor)
     (log.debug message
                address: (conn.address)
-               peer:    (conn.peer-address)))
+               peer:    (conn.peer)))
   (def (reject! message)
     (ignore-errors (conn.close))
     (log.warn message
               address: (conn.address)
-              peer:    (conn.peer-address)))
+              peer:    (conn.peer)))
 
   (do-with-lock self.host.mx
     (if (fx= (conn.direction) DIRECTION-IN)

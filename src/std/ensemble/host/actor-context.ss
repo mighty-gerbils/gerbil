@@ -3,14 +3,18 @@
 ;;; ensemble host actor context
 (import :std/error
         :std/interface
+        :std/log
         :std/io
         :std/io/bio/buffer
         :std/serde/marshal
         ../interface
         ./types
         ./util
+        ./actor-dispatch
         ./stream-cache)
 (export new-actor-context)
+
+(deflogger log name: "/host/actor/context")
 
 (def (new-actor-context (host : basic-host))
   => ActorContext
@@ -26,28 +30,37 @@
   (when (< msg.expire (coarse-time-now))
     (raise-contract-violation actor-context-send! "message expired"
                               message: msg))
-  (let* ((blob (marshal msg (marshal-context dag: #t)))
-         (size (u8vector-length blob)))
+  (if (equal? msg.dest.host (self.host.id))
+    (let (handler
+          (do-with-lock self.host.mx
+            (self.host.actors.ref (Message-dest msg) #f)))
+          (if handler
+            (spawn-actor-dispatch self.host handler msg)
+            (log.warn "message for unknown actor; dropping message"
+                      actor:   msg.dest
+                      message: msg)))
+    (let* ((blob (marshal msg (marshal-context dag: #t)))
+           (size (u8vector-length blob)))
 
-    (when (fx> size self.host.limits.network.message-size)
-      (raise-contract-violation actor-context-send! "message too large"
-                                message: msg))
+      (when (fx> size self.host.limits.network.message-size)
+        (raise-contract-violation actor-context-send! "message too large"
+                                  message: msg))
 
-    (using ((cached (stream-cache-get self.streams msg.dest.host)
-                    : cached-stream)
-            (writer (open-buffered-writer (cached.stream.writer))
-                    : BufferedWriter))
-      (do-with-lock cached.mx
-        (try
-         (writer.write-varuint size)
-         (writer.write blob)
-         (writer.flush)
-         (catch (e)
-           ;; stream is unusable
-           (stream-cache-remove! self.streams msg.dest.host)
-           (raise e))
-         (finally
-          (ignore-errors (buffer-detach! writer))))))))
+      (using ((cached (stream-cache-get self.streams msg.dest.host)
+                      : cached-stream)
+              (writer (open-buffered-writer (cached.stream.writer))
+                      : BufferedWriter))
+        (do-with-lock cached.mx
+          (try
+           (writer.write-varuint size)
+           (writer.write blob)
+           (writer.flush)
+           (catch (e)
+             ;; stream is unusable
+             (stream-cache-remove! self.streams msg.dest.host)
+             (raise e))
+           (finally
+            (ignore-errors (buffer-detach! writer)))))))))
 
 (def (actor-context-broadcast! (self : actor-context)
                                (msg  : BroadcastMessage)

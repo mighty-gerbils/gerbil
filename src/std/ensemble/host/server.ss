@@ -12,14 +12,14 @@
 (export #t)
 
 (defmethod {:init! server-host}
-  (lambda (self (cfg : ServerHostConfig))
+  (lambda (self (cfg : ServerHostConfig) (passphrase : :string))
     (set! self.announce cfg.announce)
-    (basic-host:::init! self cfg)
+    (basic-host:::init! self cfg passphrase)
     (for (a cfg.listen :- Address)
       (self.network.listen! a self.tls-context))
     ))
 
 (defmethod {:init! inet-server-host}
-  (lambda (self (cfg : InetServerHostConfig))
-    (set! self.tls-context (make-tls-context cfg.tls-path cfg.name))
-    (server-host:::init! self cfg)))
+  (lambda (self (cfg : InetServerHostConfig) (passphrase : :string))
+    (set! self.tls-context (make-tls-context cfg.tls-path cfg.id.name))
+    (server-host:::init! self cfg passphrase)))

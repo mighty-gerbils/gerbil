@@ -25,6 +25,8 @@
 
 (defstruct basic-host
   ((this : Host)
+   ;; the host id
+   (id   : HostID)
    ;; thread group for host threads
    (tgroup : :thread-group)
    ;; access mutex for state
@@ -75,7 +77,7 @@
 
 (defstruct (server-host basic-host)
   (;; list of addresses to announce in response to resolver queries
-   (announce :~ (list-of? Address?) :- :list)))
+   (announce :~ (list-of? HostAddress?) :- :list)))
 
 (defstruct (inet-server-host server-host)
   ()
@@ -120,7 +122,7 @@
 
 (defstruct host-resolver
   ((host     : basic-host)
-   (resolver :? :string)
+   (resolver :? HostID)
    (actor    : Actor))
   final: #t)
 

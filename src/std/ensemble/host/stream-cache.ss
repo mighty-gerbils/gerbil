@@ -17,14 +17,14 @@
     (set! self.mx
       (make-mutex name))
     (set! self.table
-      (make-hash-table-string))
+      (make-hash-table))
     (set! self.thread
       (spawn-actor
        (cut stream-cache-cleanup-thread self)
        [] name host.tgroup))))
 
 (def (stream-cache-get (self : stream-cache)
-                       (dest : :string))
+                       (dest : HostID))
   => cached-stream
   (let (cached
         (do-with-lock self.mx
@@ -40,7 +40,7 @@
         (stream-cache-put! self dest stream)))))
 
 (def (stream-cache-put! (self : stream-cache)
-                        (dest : :string)
+                        (dest : HostID)
                         (stream : Stream))
   => cached-stream
   (do-with-lock self.mx :- cached-stream
@@ -60,7 +60,7 @@
         c)))))
 
 (def (stream-cache-remove! (self : stream-cache)
-                           (dest : :string))
+                           (dest : HostID))
   => :void
   (do-with-lock self.mx
     (cond

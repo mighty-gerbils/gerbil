@@ -12,17 +12,10 @@
 
 ;; the actor space
 (interface (ActorSpace Closer)
-  ;; resolve an actor by name in a host
-  ;; if the host is #f then the actor is resolved
-  ;; in the local host
-  (resolve (name : :string)
-           (host :? :string := #f))
-  => Handle
-
   ;; list actors in a host
   ;; if the host is #f it lists actors in the local host
   ;; returns a list of Handles
-  (list (host :? :string := #f))
+  (list (host :? HostID := #f))
   => :list
   )
 

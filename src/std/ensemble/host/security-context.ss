@@ -23,13 +23,13 @@
   ((_ self msg)
    (with-identifiers ((self.cap.get-principal
                        #'self #'self ".cap.get-principal")
-                      (msg.source.did
-                       #'msg #'msg ".source.did")
+                      (msg.source.host.did
+                       #'msg #'msg ".source.host.did")
                       (msg.nonce
                        #'msg #'msg ".nonce")
                       (msg.signature
                        #'msg #'msg ".signature"))
-     #'(let* ((privk (self.cap.get-principal msg.source.did))
+     #'(let* ((privk (self.cap.get-principal msg.source.host.did))
               (nonce (random-bytes nonce-length))
               (_ (set! msg.nonce nonce))
               (blob  (marshal msg))
@@ -56,14 +56,14 @@
              (cond
               ((not (eq? token.type INVOKE))
                (loop rest))
-              ((not (equal? token.issuer msg.source.did))
+              ((not (equal? token.issuer msg.source.host.did))
                (loop rest))
-              ((not (equal? token.audience msg.dest.did))
+              ((not (equal? token.audience msg.dest.host.did))
                (loop rest))
               ((not (capability-includes? token.method msg.method))
                (loop rest))
               (else
-               (let (result (self.cap.verify token msg.dest.did))
+               (let (result (self.cap.verify token msg.dest.host.did))
                  (if (!VerificationOK? result)
                    !VerificationOK
                    (loop rest)))))))
@@ -89,7 +89,7 @@
              (cond
               ((not (eq? token.type BROADCAST))
                (loop rest))
-              ((not (equal? token.issuer msg.source.did))
+              ((not (equal? token.issuer msg.source.host.did))
                (loop rest))
               ((not (equal? token.audience "*"))
                (loop rest))

@@ -234,8 +234,8 @@
                              (token
                               (self.capability.grant!
                                DELEGATE
-                               (self.host.did)
-                               msg.source.did
+                               (HostID-did (self.host.id))
+                               msg.source.host.did
                                stream-name ""
                                expire))
                              (stream-reactor

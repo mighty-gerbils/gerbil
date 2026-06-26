@@ -28,27 +28,18 @@
     (ActorResolver::actor-space as.actor as)
   (ActorSpace as)))
 
-(def (actor-space-resolve (self : actor-space)
-                          (name : :string)
-                          (host :? :string))
-  => Handle
-  (if (or (not host)
-          (equal? host self.host.name))
-    (Handle self.host.did self.host.name name)
-    (using (conn (self.host.this.connect! host) : Connection)
-      (Handle (conn.peer-did) host name))))
-
 (def (actor-space-list (self : actor-space)
-                       (host :? :string))
+                       (host :? HostID))
   => :list
   (if (or (not host)
-          (equal? host self.host.name))
+          (equal? host self.host.id))
     (do-with-lock self.host.mx
       (hash-keys self.host.actors))
     (using (conn (self.host.this.connect! host)
                  : Connection)
       (with-actor-reply
-       (self.actor.invoke! (Handle (conn.peer-did) host actor:/host/space)
+       (self.actor.invoke! (Handle (HostAddress-host (conn.peer))
+                                   actor:/host/space)
                            ActorResolver::list
                            (ActorResolver.list))
        :~ (list-of? Handle?)
@@ -56,7 +47,5 @@
 
 (implement Closer actor-space
   (close   void))
-
 (implement ActorSpace actor-space
-  (resolve __actor-space-resolve)
   (list    __actor-space-list))

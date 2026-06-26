@@ -7,10 +7,12 @@
         ./ucan
         ./message
         ./actor
-        ./network)
+        ./network
+        ./address)
 (export #t)
 
-;; the current host
+;; the current host parameterization
+;; automatically set in host threads (actor handlers or stream reactors)
 (def current-host
   (make-parameter #f))
 
@@ -25,20 +27,26 @@
 
 ;; network address resolver
 (interface (Resolver Closer)
-  ;; resolve a peer host to a list of addresses
-  (resolve (peer : :string))
+  ;; resolve a peer host by name to a list of HostAddress
+  ;; names in the ensemble are semantic, and not necessarily
+  ;; unique which allows for trivial anycast.
+  (resolve-by-name (peer : :string)
+                   (limit :? :fixnum := #f))
+  => :list
+
+  ;; resolve a HostID to a list of HostAddress
+  (resolve (peer : HostID))
   => :list
   )
 
 ;; the ensemble host
+;; the host is the orchestrator of the ensemble actor system
+;; it provides several views to the system and methods for
+;; specifying reactions (stream reactions and actor registration)
 (interface (Host Closer)
-  ;; the name of the host in the ensemble space
-  (name)
-  => :string
-
-  ;; the did of the host, as contained in the TLS certificate
-  (did)
-  => :string
+  ;; the host id
+  (id)
+  => HostID
 
   ;; the host's network interface
   (network)
@@ -60,7 +68,7 @@
   (actor-context)
   => ActorContext
 
-  ;; register an actor in the host
+  ;; register an actor
   (register-actor! (name : :string)
                    (handler : ActorHandler))
   => Handle
@@ -70,11 +78,11 @@
   => :void
 
   ;; connect to a host
-  (connect! (host : :string))
-  => Connection
+  (connect! (host : HostID))
+  => :void
 
   ;; open a stream to a peer for a particular protocol
-  (open-stream! (peer  : :string)
+  (open-stream! (peer  : HostID)
                 (proto : :string)
                 (auth  :? Token := #f))
   => Stream

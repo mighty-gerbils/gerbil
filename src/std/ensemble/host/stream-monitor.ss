@@ -24,7 +24,7 @@
       (log.debug message
                  protocol: (stream.protocol)
                  address:  (conn.address)
-                 peer:     (conn.peer-address))
+                 peer:     (conn.peer))
       dispatch?)
 
     (def (reject! message)
@@ -32,7 +32,7 @@
       (log.warn message
                 protocol: (stream.protocol)
                 address:  (conn.address)
-                peer:     (conn.peer-address))
+                peer:     (conn.peer))
       #f)
 
     (let (dispatch?
@@ -63,7 +63,7 @@
           (log.warn "no reactor for stream"
                     protocol: (stream.protocol)
                     address:  (conn.address)
-                    peer:     (conn.peer-address))))))))
+                    peer:     (conn.peer))))))))
 
 (def (stream-monitor-get-reactor (self  : host-stream-monitor)
                                  (proto : :string))

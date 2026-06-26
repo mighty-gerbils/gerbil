@@ -273,6 +273,7 @@
     "ensemble/host/util"
     "ensemble/host/db"
     "ensemble/host/bus"
+    "ensemble/host/actor-dispatch"
     "ensemble/host/actor-context"
     "ensemble/host/actor-handler"
     "ensemble/host/actor-space"

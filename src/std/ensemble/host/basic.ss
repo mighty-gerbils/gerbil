@@ -29,12 +29,10 @@
 (deflogger log name: "/ensemble/host")
 
 (defmethod {:init! basic-host}
-  (lambda (self (cfg : BasicHostConfig))
+  (lambda (self (cfg : BasicHostConfig) (passphrase : :string))
     (set! self.mx              (make-mutex 'host))
-    (set! self.tgroup          (make-thread-group ['host cfg.name]))
-    (set! self.name            cfg.name)
-    (set! self.did             cfg.did)
-    (set! self.limits          cfg.limits)
+    (set! self.id              cfg.id)
+    (set! self.tgroup          (make-thread-group ['host cfg.id.name]))
     (set! self.connections-in  0)
     (set! self.connections-out 0)
     (set! self.streams-in      0)
@@ -59,7 +57,7 @@
            (cap-db-path
             (path-expand "cap.db" cfg.dir))
            (capability-ctx
-            (new-capability-context cap-db-path cfg.passphrase))
+            (new-capability-context cap-db-path passphrase))
            (_ (set! self.capability-context capability-ctx))
            (security-ctx
             (new-security-context self))
@@ -115,7 +113,7 @@
                                  (name    : :string)
                                  (handler : ActorHandler))
   => Handle
-  (let (handle (Handle self.did self.name name))
+  (let (handle (Handle self.id name))
     (do-with-lock self.mx
       (cond
        ((self.actors.ref handle #f)
@@ -131,68 +129,28 @@
     (self.actors.delete! handle)))
 
 (def (basic-host-connect! (self : basic-host)
-                          (peer : :string))
-  => Connection
-  (cond
-   ((self.network.peer-connection peer)
-    => (cut : <> Connection))
-   (else
-    (let (addrs (select-addresses (self.resolver.resolve peer)))
-      (let loop ((rest addrs))
-        (match rest
-          ([addr . rest]
-           (try
-            (log.debug "connecting to peer"
-                       peer: peer
-                       address: addr)
-            (self.network.connect! peer addr self.tls-context)
-            (catch (e)
-              (log.debug "error connecting to peer"
-                         peer: peer
-                         address: addr
-                         exception: (exception->string e))
-              (loop rest))))
-          (else
-           (raise-contract-violation connect! "no usable addresses"
-                                     addrs))))))))
-
-(def (select-addresses (lst : :list))
-  => :list
-  (let ((localhost (hostid))
-        (inet  [])
-        (local [])
-        (relay []))
-    (for (addr lst)
-      (cond
-       ((InetAddress? addr)
-        (set! inet (cons addr inet)))
-       ((LocalAddress? addr)
-        (when (equal? (LocalAddress-hostid addr)
-                      localhost)
-          (set! local (cons addr local))))
-       ((RelayAddress? addr)
-        (let loop ((through (RelayAddress-address addr)))
-          (cond
-           ((InetAddress? through)
-            (set! relay (cons addr relay)))
-           ((LocalAddress? through)
-            (when (equal? (LocalAddress-hostid through)
-                          localhost)
-              (set! relay (cons addr relay))))
-           ((RelayAddress? through)
-            (loop (RelayAddress-address through))))))))
-    (append (reverse! local)
-            (reverse! inet)
-            (reverse! relay))))
+                          (peer : HostID))
+  => :void
+  (unless (null? (self.network.peer-connections peer))
+    (let (addrs (self.resolver.resolve peer))
+      (self.network.connect-any! addrs self.tls-context)
+      #!void)))
 
 (def (basic-host-open-stream! (self  : basic-host)
-                              (peer  : :string)
+                              (peer  : HostID)
                               (proto : :string)
                               (auth  :? Token))
   => Stream
-  (using (conn (basic-host-connect! self peer)
-               : Connection)
-    (conn.open-stream! proto auth)))
+  (basic-host-connect! self peer)
+  (let (conns (self.network.peer-connections peer))
+    (match conns
+      ([conn . _]
+       (using (conn : Connection)
+         (conn.open-stream! proto auth)))
+      (else
+       (raise-io-error open-stream! "cannot open stream; no connection to host"
+                       peer: peer
+                       proto: proto)))))
 
 (def (basic-host-set-stream-reactor! (self     : basic-host)
                                      (proto    : :string)
@@ -251,8 +209,7 @@
   (close __basic-host-close))
 
 (implement Host basic-host
-  (name          &basic-host-name)
-  (did           &basic-host-did)
+  (id            &basic-host-id)
   (network       &basic-host-network)
   (resolver      &basic-host-resolver)
   (broadcast     &basic-host-broadcast)

@@ -6,6 +6,7 @@
         :std/serde/marshal
         :std/serde/unmarshal
         :std/iter
+        ../interface
         ./types
         ./util)
 (export #t)
@@ -48,75 +49,102 @@
             (loop)))))))
 
 (def (host-db-get-host-addresses (self : host-db)
-                            (host : :string))
+                                 (host : HostID))
   => :list
   (do-with-lock self.mx
-    (using (stmt (statement-cache-get self.statements sql-select-known-addresses) : Statement)
-      (stmt.bind! [host])
-      (let (known (for/collect (a (stmt.query)) (unmarshal a)))
-        (using (stmt (statement-cache-get self.statements sql-select-host-addresses) : Statement)
-          (stmt.bind! [host (coarse-time-now)])
-          (let (active (for/collect (a (stmt.query)) (unmarshal a)))
-            (foldr (lambda (a r)
-                     (if (member a r) r (cons a r)))
-                   active known)))))))
+    (using (stmt (statement-cache-get self.statements sql-select-known-addresses-by-name-and-did) : Statement)
+      (stmt.bind! [host.name host.did])
+      (reverse!
+       (let (known
+             (for/fold (r []) (a (stmt.query))
+               (let (a (unmarshal a))
+                 (if (member a r) r (cons a r)))))
+         (using (stmt (statement-cache-get self.statements sql-select-host-addresses-by-name-and-did) : Statement)
+           (stmt.bind! [host.name host.did (coarse-time-now)])
+           (for/fold (r known) (a (stmt.query))
+             (let (a (unmarshal a))
+               (if (member a r) r (cons a r))))))))))
 
-(def (host-db-add-host-addresses! (self  : host-db)
-                             (host  : :string)
-                             (addrs : :list)
-                             (ttl   : :integer))
+(def (host-db-get-host-addresses-by-name (self : host-db)
+                                         (name : :string))
+  => :list
+  (do-with-lock self.mx
+    (using (stmt (statement-cache-get self.statements sql-select-known-addresses-by-name) : Statement)
+      (stmt.bind! [name])
+      (reverse!
+       (let (known
+             (for/fold (r []) (a (stmt.query))
+               (let (a (unmarshal a))
+                 (if (member a r) r (cons a r)))))
+         (using (stmt (statement-cache-get self.statements sql-select-host-addresses-by-name) : Statement)
+           (stmt.bind! [name (coarse-time-now)])
+           (for/fold (r known) (a (stmt.query))
+             (let (a (unmarshal a))
+               (if (member a r) r (cons a r))))))))))
+
+(def (host-db-add-host-address! (self  : host-db)
+                                (addr  : HostAddress)
+                                (expire : :integer))
   => :void
   (do-with-lock self.mx
     (using (stmt (statement-cache-get self.statements sql-insert-host-address) : Statement)
-      (let (expire (+ (coarse-time-now) ttl))
-        (for (a addrs)
-          (let (blob (marshal a))
-            (stmt.bind! [host blob expire])
-            (stmt.exec!)
-            (stmt.reset!)))))))
+      (let (blob (marshal addr))
+        (stmt.bind! [addr.host.name addr.host.did blob expire])
+        (stmt.exec!)))))
 
-(def (host-db-add-known-addresses! (self  : host-db)
-                              (host  : :string)
-                              (addrs : :list))
+(def (host-db-add-known-address! (self : host-db)
+                                 (addr : HostAddress))
   => :void
   (do-with-lock self.mx
     (using (stmt (statement-cache-get self.statements sql-insert-known-address) : Statement)
-      (for (a addrs)
-        (let (blob (marshal a))
-          (stmt.bind! [host blob])
-          (stmt.exec!)
-          (stmt.reset!))))))
+      (let (blob (marshal addr))
+          (stmt.bind! [addr.host.name addr.host.did blob])
+          (stmt.exec!)))))
 
 ;;; sql stuffs
 (def sql-schema #<<END-SQL
 CREATE TABLE KnownAddresses (
- host VARCHAR,
+ name VARCHAR,
+ did VARCHAR,
  address BLOB
 );
 
 CREATE INDEX KnownAddressesIndex
   ON KnownAddresses
-  (host);
+  (name);
+
+CREATE INDEX KnownAddressesDIDIndex
+  ON KnownAddresses
+  (did);
 
 CREATE TABLE HostAddresses (
- host VARCHAR,
- address BLOB,
- expire INTEGER64
+  name VARCHAR,
+  did VARCHAR,
+  address BLOB,
+  expire INTEGER64
 );
 
 CREATE INDEX HostAddressesIndex
   ON HostAddresses
-  (host);
+  (name);
+
+CREATE INDEX HostAddressesDIDIndex
+  ON KnownAddresses
+  (did);
 END-SQL
 )
 
 (def sql-insert-known-address
-  "INSERT INTO KnownAddresses (host, address) VALUES (?, ?)")
+  "INSERT INTO KnownAddresses (name, did, address) VALUES (?, ?, ?)")
 (def sql-insert-host-address
-  "INSERT INTO HostAddresses (host, address, expire) VALUES (?, ?, ?)")
-(def sql-select-known-addresses
-  "SELECT address from KnownAddresses WHERE host = ?")
-(def sql-select-host-addresses
-  "SELECT address from HostAddresses WHERE host = ? AND expire > ?")
+  "INSERT INTO HostAddresses (name, did, address, expire) VALUES (?, ?, ?, ?)")
+(def sql-select-known-addresses-by-name
+  "SELECT address from KnownAddresses WHERE name = ?")
+(def sql-select-known-addresses-by-name-and-did
+  "SELECT address from KnownAddresses WHERE name = ? AND did = ?")
+(def sql-select-host-addresses-by-name
+  "SELECT address from HostAddresses WHERE name = ? AND expire > ?")
+(def sql-select-host-addresses-by-name-and-did
+  "SELECT address from HostAddresses WHERE name = ? AND did = ? AND expire > ?")
 (def sql-delete-expired-addresses
   "DELETE FROM HostAddresses WHERE expire < ?")

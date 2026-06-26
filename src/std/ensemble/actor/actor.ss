@@ -70,7 +70,7 @@
             (handler.handle-message! self.this msg)))
       (else
        (log.debug "no reactor for method"
-                  actor:   self.handle.name
+                  actor:   self.handle.actor
                   messagexo: msg
                   method:  msg.method))))))
 
@@ -80,10 +80,11 @@
      (cond
       ((broadcast-reactor-get self.react-broadcast msg.method msg.dest)
        => (lambda ((handler :- BroadcastMessageHandler))
-            (handler.handle-message! self.this msg)))
+            (parameterize ((current-host self.host))
+              (handler.handle-message! self.this msg))))
       (else
        (log.debug "no broadcast reactor for method"
-                  actor:   self.handle.name
+                  actor:   self.handle.actor
                   message: msg
                   method:  msg.method))))))
 
@@ -101,8 +102,8 @@
             (expire (message-expire ttl))
             (auth
              (self.capability.provide-invoke!
-              self.handle.did
-              dest.did
+              self.handle.host.did
+              dest.host.did
               method ""
               expire))
             (msg
@@ -123,15 +124,15 @@
             (expire (message-expire ttl))
             (auth
              (self.capability.provide-invoke!
-              self.handle.did
-              dest.did
+              self.handle.host.did
+              dest.host.did
               method ""
               expire))
             (reply-auth
              (self.capability.grant!
               DELEGATE
-              self.handle.did
-              dest.did
+              self.handle.host.did
+              dest.host.did
               reply-method ""
               expire))
             (replyto
@@ -165,14 +166,14 @@
             (token
              (self.capability.invoke!
               replyto-msg.replyto.auth
-              self.handle.did
-              replyto-msg.replyto.actor.did
+              self.handle.host.did
+              replyto-msg.replyto.handle.host.did
               replyto-msg.replyto.method ""
               replyto-msg.expire))
             (msg
              (Message
               source:  self.handle
-              dest:    replyto-msg.replyto.actor
+              dest:    replyto-msg.replyto.handle
               method:  replyto-msg.replyto.method
               body:    body
               expire:  replyto-msg.expire
@@ -189,15 +190,15 @@
             (token
              (self.capability.invoke!
               replyto-msg.replyto.auth
-              self.handle.did
-              replyto-msg.replyto.actor.did
+              self.handle.host.did
+              replyto-msg.replyto.handle.host.did
               replyto-msg.replyto.method ""
               expire))
             (reply-auth
              (self.capability.grant!
               DELEGATE
-              self.handle.did
-              replyto-msg.replyto.actor.did
+              self.handle.host.did
+              replyto-msg.replyto.handle.host.did
               reply-method ""
               expire))
             (replyto
@@ -208,7 +209,7 @@
             (msg
              (Message
               source:  self.handle
-              dest:    replyto-msg.replyto.actor
+              dest:    replyto-msg.replyto.handle
               method:  replyto-msg.replyto.method
               body:    body
               expire:  replyto-msg.expire
@@ -230,15 +231,15 @@
             (expire (message-expire ttl))
             (auth
              (self.capability.provide-invoke!
-              self.handle.did
-              dest.did
+              self.handle.host.did
+              dest.host.did
               method ""
               expire))
             (reply-auth
              (self.capability.grant!
               DELEGATE
-              self.handle.did
-              dest.did
+              self.handle.host.did
+              dest.host.did
               reply-method ""
               expire))
             (replyto
@@ -263,7 +264,7 @@
             (expire (message-expire ttl))
             (auth
              (self.capability.provide-broadcast!
-              self.handle.did
+              self.handle.host.did
               method dest
               expire))
             (msg
@@ -284,13 +285,13 @@
             (expire (message-expire ttl))
             (auth
              (self.capability.provide-broadcast!
-              self.handle.did
+              self.handle.host.did
               method dest
               expire))
             (reply-auth
              (self.capability.grant!
               DELEGATE
-              self.handle.did
+              self.handle.host.did
               "*"
               reply-method ""
               expire))
@@ -324,14 +325,14 @@
             (token
              (self.capability.invoke!
               replyto-msg.replyto.auth
-              self.handle.did
-              replyto-msg.replyto.actor.did
+              self.handle.host.did
+              replyto-msg.replyto.handle.host.did
               replyto-msg.replyto.method ""
               replyto-msg.expire))
             (msg
              (Message
               source:  self.handle
-              dest:    replyto-msg.replyto.actor
+              dest:    replyto-msg.replyto.handle
               method:  replyto-msg.replyto.method
               body:    body
               expire:  replyto-msg.expire
@@ -348,15 +349,15 @@
             (token
              (self.capability.invoke!
               replyto-msg.replyto.auth
-              self.handle.did
-              replyto-msg.replyto.actor.did
+              self.handle.host.did
+              replyto-msg.replyto.handle.host.did
               replyto-msg.replyto.method ""
               expire))
             (reply-auth
              (self.capability.grant!
               DELEGATE
-              self.handle.did
-              replyto-msg.replyto.actor.did
+              self.handle.host.did
+              replyto-msg.replyto.handle.host.did
               reply-method ""
               expire))
             (replyto
@@ -367,7 +368,7 @@
             (msg
              (Message
               source:  self.handle
-              dest:    replyto-msg.replyto.actor
+              dest:    replyto-msg.replyto.handle
               method:  replyto-msg.replyto.method
               body:    body
               expire:  replyto-msg.expire
@@ -389,13 +390,13 @@
             (expire (message-expire ttl))
             (auth
              (self.capability.provide-broadcast!
-              self.handle.did
+              self.handle.host.did
               method dest
               expire))
             (reply-auth
              (self.capability.grant!
               DELEGATE
-              self.handle.did
+              self.handle.host.did
               "*"
               reply-method ""
               expire))

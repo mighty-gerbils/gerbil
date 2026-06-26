@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; ensemble configuration
-(import :std/net/address)
+(import :std/net/address
+        ./interface)
 (export #t)
 
 ;;; configuration classes
@@ -32,12 +33,8 @@
 (defclass BasicHostConfig
   (;; the host's base directory for persistent data and state
    (dir : :string)
-   ;; the host's passphrase for private key material
-   (passphrase : :string)
-   ;; the host's name
-   (name : :string)
-   ;; the host's did -- it must match the TLS certificate URI
-   (did : :string)
+   ;; the host's id
+   (id : HostID)
    ;; (optional) host to use as name resolver
    (resolver :? :string)
    ;; network configuration
@@ -53,17 +50,14 @@
 ;; server hosts
 (defclass (ServerHostConfig BasicHostConfig)
   (;; the host's listen addresses
-   (listen :~ (list-of? Address?) :- :list)
+   (listen :~ (list-of? HostAddress?) :- :list)
    ;; the host announce addresses
-   (announce :~ (list-of? Address?) :- :list)
+   (announce :~ (list-of? HostAddress?) :- :list)
    ))
 
 ;; parent hosts
 (defstruct ParentHostConfig
-  (;; parent server name
-   (name : :string)
-   ;; parent address
-   (address : Address)))
+  ((parent :? HostAddress)))
 
 ;;; the server configuration taxonomy
 

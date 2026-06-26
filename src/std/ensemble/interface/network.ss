@@ -11,7 +11,8 @@
                  DIRECTION-IN
                  DIRECTION-OUT)
         ./ucan
-        ./message)
+        ./message
+        ./address)
 (export #t
         DIRECTION-IN
         DIRECTION-OUT)
@@ -48,25 +49,15 @@
   => :void
   )
 
-(interface Peer
-  ;; the name of the peer
-  (peer-name)
-  => :string
-
-  ;; the did of the peer
-  (peer-did)
-  => :string
-
-  ;; the address of the peer
-  (peer-address)
-  => Address
-  )
-
-;; network connections
-(interface (Connection Peer Closer)
+;; network connection abstraction
+(interface (Connection NetworkTimeout Closer)
   ;; the address of the connection
   (address)
-  => Address
+  => HostAddress
+
+  ;; the peer address of the connection
+  (peer)
+  => HostAddress
 
   ;; the connection iniator direction
   ;; DIRECTION-IN or DIRECTION-OUT
@@ -144,7 +135,7 @@
 ;; the network abstraction
 (interface (Network Closer)
   ;; current network peers
-  ;; returns an alist of peer - did
+  ;; returns a list of HostAddress
   (peers)
   => :list
 
@@ -153,23 +144,35 @@
   (connections)
   => :list
 
-  ;; retrieve the network's listening addresses
-  (addresses)
+  ;; retrieve connections to a peer, if any
+  (peer-connections (peer : HostID))
   => :list
 
-  ;; retrieve an existing connection to a peer, if any
-  (peer-connection (peer : :string))
-  => :t
+  ;; retrieve the network's listening addresses
+  ;; return a list of HostAddress
+  (listening)
+  => :list
 
-  ;; connect to an inet peer in address
-  (connect! (peer        : :string)
-            (addr        :  Address)
+  ;; connect to a peer
+  (connect! (peer        : HostAddress)
             (tls-context :~ (? (or not SSL_CTX?))))
   => Connection
 
+  ;; connect to any one address (or reuse an existing connect)
+  (connect-any! (addrs       :~ (list-of? HostAddress?)
+                             :- :list)
+                (tls-context :~ (? (or not SSL_CTX?))))
+  => Connection
+
   ;; listen to an address
-  (listen! (addr        : Address)
+  (listen! (addr        :- HostAddress)
            (tls-context :~ (? (or not SSL_CTX?))))
+  => :void
+
+  ;; listen to all addresses in a list
+  (listen-all! (addrs       :~ (list-of? HostAddress?)
+                            :- :list)
+               (tls-context :~ (? (or not SSL_CTX?))))
   => :void
 
   ;; set the network's connection monitor
