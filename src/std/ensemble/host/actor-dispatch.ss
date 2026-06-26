@@ -38,7 +38,8 @@
    (catch (e)
      (log.error "unhandled exception in actor message dispatch"
                 message:   msg
-                exception: (exception->string e)))
+                exception: (exception->string e))
+     (host.actor-context.send-error-reply! msg (!Error e)))
    (finally
     (do-with-lock host.mx
       (set! host.actor-threads

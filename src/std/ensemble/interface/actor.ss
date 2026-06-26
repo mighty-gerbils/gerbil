@@ -3,7 +3,8 @@
 ;;; ensemble actor implementation interface
 (import :std/io/interface
         :std/sync/channel
-        ./message)
+        ./message
+        ./protocol)
 (export #t)
 
 (def default-message-ttl 5)
@@ -36,6 +37,11 @@
   ;; broadcast a signed message
   (broadcast! (msg       : BroadcastMessage)
               (loopback? : :boolean := #f))
+  => :void
+
+  ;; send an error reply to a message
+  (send-error-reply! (msg : Message)
+                     (err : !Error))
   => :void
   )
 

@@ -51,10 +51,15 @@
                                   peer:    (conn.peer)
                                   actor:   (Message-dest msg)
                                   message: msg)))
-                  (log.warn "message verification failed"
-                            peer:    (conn.peer)
-                            reason:  (VerificationError-reason result)
-                            message: msg)))
+                  (begin
+                    (log.warn "message verification failed"
+                              peer:    (conn.peer)
+                              reason:  (VerificationError-reason result)
+                              message: msg)
+                    (self.host.actor-context.send-error-reply!
+                     msg
+                     (!Error/c "message verification failed"
+                               'reason: (VerificationError-reason result))))))
               (catch (e)
                 (log.warn "error dispatching message"
                           peer:      (conn.peer)

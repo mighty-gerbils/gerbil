@@ -8,6 +8,7 @@
         :std/io/bio/buffer
         :std/serde/marshal
         ../interface
+        ../ucan/ext
         ./types
         ./util
         ./actor-dispatch
@@ -36,9 +37,14 @@
             (self.host.actors.ref (Message-dest msg) #f)))
           (if handler
             (spawn-actor-dispatch self.host handler msg)
-            (log.warn "message for unknown actor; dropping message"
-                      actor:   msg.dest
-                      message: msg)))
+            (begin
+              (log.warn "message for unknown actor"
+                        actor:   msg.dest
+                        message: msg)
+              (actor-context-send-error-reply!
+               self msg
+               (!Error/c "unknown actor"
+                         'actor: msg.dest)))))
     (let* ((blob (marshal msg (marshal-context dag: #t)))
            (size (u8vector-length blob)))
 
@@ -71,6 +77,32 @@
                               message: msg))
   (self.host.broadcast.broadcast! msg loopback))
 
+(def (actor-context-send-error-reply! (self : actor-context)
+                                      (msg : Message)
+                                      (err : !Error))
+  => :void
+  (when msg.replyto
+    (ignore-errors
+     (using (replyto msg.replyto : ReplyTo)
+      (let* ((body (marshal err))
+             (token
+              (self.host.capability-context.invoke!
+               replyto.auth
+               msg.dest.host.did
+               replyto.handle.host.did
+               replyto.method ""
+               msg.expire))
+             (reply-msg
+              (Message
+               source:  msg.dest.host
+               dest:    replyto.handle
+               method:  replyto.method
+               body:    body
+               expire:  msg.expire
+               auth:    [token])))
+        (self.host.security-context.sign-message! reply-msg)
+        (actor-context-send! self reply-msg))))))
+
 (def (actor-context-close (self : actor-context))
   (stream-cache-close self.streams))
 
@@ -84,5 +116,6 @@
   (security-context
    (lambda (self)
      self.host.security-context))
-  (send!      __actor-context-send!)
-  (broadcast! __actor-context-broadcast!))
+  (send!             __actor-context-send!)
+  (broadcast!        __actor-context-broadcast!)
+  (send-error-reply! __actor-context-send-error-reply!))

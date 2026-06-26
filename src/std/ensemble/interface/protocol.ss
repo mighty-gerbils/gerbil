@@ -54,6 +54,14 @@
          (!Error e))))
 
 (defrules with-actor-reply (: :~)
+  ((macro expr)
+   (let* ((reply expr)
+          (result
+           (unmarshal (Message-body reply)
+                      (unmarshal-environment dag: #t))))
+     (if (not (!Error? result))
+       result
+       (raise-actor-error macro result))))
   ((macro expr : klass)
    (let* ((reply expr)
           (result

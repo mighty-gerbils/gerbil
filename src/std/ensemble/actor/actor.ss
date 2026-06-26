@@ -71,8 +71,13 @@
       (else
        (log.debug "no reactor for method"
                   actor:   self.handle.actor
-                  messagexo: msg
-                  method:  msg.method))))))
+                  message: msg
+                  method:  msg.method)
+       (ActorContext-send-error-reply!
+        (self.host.actor-context)
+        msg
+        (!Error/c "no reactor for method"
+                  'method: msg.method)))))))
 
 (implement BroadcastHandler basic-actor
   (receive!
