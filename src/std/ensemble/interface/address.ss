@@ -78,6 +78,11 @@
       (resolve->endpoint self.address)))))
 
 (implement Stringer
+  (HostID
+   (to-string
+    (lambda (self)
+      (string-append self.name "!"
+                     self.did ))))
   (LocalAddress
    (to-string
     (lambda (self)
@@ -93,6 +98,21 @@
                      self.host.did "!"
                      (address->string self.address))))))
 
+(def (string->host-id (str : :string))
+  => HostID
+  (cond
+   ((string-index str #\!)
+    => (lambda (i)
+         (let ((name (substring str 0 i))
+               (did (substring str (fx1+ i) (string-length str))))
+           (if (string-prefix? "did:" did)
+             (HostID name did)
+             (raise-bad-argument string->host-id "malformed host id"
+                                 str)))))
+   (else
+    (raise-bad-argument string->host-id "malformed host id"
+                        str))))
+
 (def (string->local-address (str : :string))
   => LocalAddress
   (cond
@@ -100,9 +120,9 @@
     => (lambda (i)
          (let ((id (substring str 0 i))
                (path (substring str (fx1+ i) (string-length str))))
-         (LocalAddress
-          (UnixAddress path)
-          (if (string-empty? id) (hostid) id)))))
+           (LocalAddress
+            (UnixAddress path)
+            (if (string-empty? id) (hostid) id)))))
    (else
     (raise-bad-argument string->local-address "malformed local address"
                         str))))
@@ -122,8 +142,11 @@
              => (lambda (j)
                   (let ((did (substring str (fx+ i 1) j))
                         (addr (substring str (fx+ j 1) (string-length str))))
-                    (HostAddress (HostID name did)
-                                 (string->address addr)))))
+                    (if (string-prefix? "did:" did)
+                      (HostAddress (HostID name did)
+                                   (string->address addr))
+                      (raise-bad-argument string->host-address "malformed host id"
+                                          str)))))
             (else
              (raise-bad-argument string->host-address "malformed host address"
                                  str))))))
@@ -133,4 +156,4 @@
 
 (hash-put! domain-table "local" __string->local-address)
 (hash-put! domain-table "relay" __string->relay-address)
-(hash-put! domain-table "host" __string->host-address)
+(hash-put! domain-table "host"  __string->host-address)
