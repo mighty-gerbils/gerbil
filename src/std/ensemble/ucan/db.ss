@@ -12,6 +12,7 @@
         :std/crypto/pkey
         :std/crypto/cipher
         :std/crypto/digest
+        :std/crypto/random
         :std/crypto/kdf
         :std/encoding/hex
         :std/time/precise
@@ -69,12 +70,14 @@
           (db (new-db (sqlite-open path)))
           (now (CoarseTime-seconds (current-time-coarse))))
       (when init-db?
-        (DB-exec! db sql-schema []))
+        (DB-exec! db sql-schema [])
+        (DB-exec! db sql-insert-salt [(random-bytes 32)]))
       (set! self.db db)
       (set! self.secret-key
-        (scrypt (string->utf8 passphrase)
-                (string->utf8 "capability-db")
-                32))
+        (let (salt (car (DB-query db sql-select-salt [])))
+          (scrypt (string->utf8 passphrase)
+                  salt
+                  32)))
       (set! self.mx
         (make-mutex 'ucan/db))
       (set! self.statements
@@ -476,6 +479,10 @@ CREATE TABLE RevokedTokens (
  token BLOB
 );
 
+CREATE TABLE Salt (
+ salt BLOB
+);
+
 END-SQL
 )
 
@@ -546,3 +553,8 @@ END-SQL
   "INSERT INTO RevokedTokens (tokenId, token) VALUES (?, ?)")
 (def sql-select-revoked-token
   "SELECT token FROM RevokedTokens WHERE tokenId = ?")
+
+(def sql-insert-salt
+  "INSERT INTO Salt (salt) VALUES (?)")
+(def sql-select-salt
+  "SELECT salt FROM Salt")
