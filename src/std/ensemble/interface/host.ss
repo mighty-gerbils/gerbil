@@ -27,6 +27,18 @@
 
 ;; network address resolver
 (interface (Resolver Closer)
+  ;; resolve a peer host by name to a HostID
+  ;; note that names are not unique so this is an anycast
+  ;; operation
+  (resolve-host-name-any (name : :string))
+  => HostID
+
+  ;; resolve a host name to all available HostIDs
+  ;; who bear the name
+  (resolve-host-name (name : :string)
+                     (limit :? :fixnum := #f))
+  => :list
+
   ;; resolve a peer host by name to a list of HostAddress
   ;; names in the ensemble are semantic, and not necessarily
   ;; unique which allows for trivial anycast.

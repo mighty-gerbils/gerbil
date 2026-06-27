@@ -97,6 +97,22 @@
     (for (a addrs :- HostAddress)
       (host-db-add-host-address! self.host.db a expire))))
 
+(def (host-resolver-resolve-host-name-any (self : host-resolver)
+                                          (name : :string))
+  => HostID
+  (let (hosts (host-resolver-resolve-host-name self name 1))
+    (if (null? hosts)
+      (raise-bad-argument resolve-host-name-any "unknown host" name)
+      (: (car hosts) HostID))))
+
+(def (host-resolver-resolve-host-name (self  : host-resolver)
+                                      (name  : :string)
+                                      (limit :? :fixnum))
+  (let (addrs (host-resolver-resolve-by-name self name limit))
+    (for/fold (r []) (a addrs :- HostAddress)
+        (let (host a.host)
+          (if (member host r) r (cons host r))))))
+
 (def (host-resolver-resolve (self : host-resolver)
                             (peer : HostID))
   => :list
@@ -177,5 +193,8 @@
 (implement Closer host-resolver
   (close   void))
 (implement Resolver host-resolver
-  (resolve         __host-resolver-resolve)
-  (resolve-by-name __host-resolver-resolve-by-name))
+  (resolve               __host-resolver-resolve)
+  (resolve-by-name       __host-resolver-resolve-by-name)
+  (resolve-host-name     __host-resolver-resolve-host-name)
+  (resolve-host-name-any __host-resolver-resolve-host-name-any)
+  )
