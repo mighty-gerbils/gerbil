@@ -6,18 +6,21 @@
         :std/serde/marshal
         :std/crypto/pkey
         :std/crypto/random
+        :std/time/precise
         ../interface
-        ../ucan/cap
-        ./types
-        ./util)
+        ./cap)
 (export new-security-context)
 
 (def nonce-length 16)
 
-(def (new-security-context (host : basic-host))
+(defstruct security-context
+  ((cap  : CapabilityContext))
+  final: #t)
+
+(def (new-security-context (cap : CapabilityContext))
   => SecurityContext
   (SecurityContext
-   (security-context host host.capability-context)))
+   (security-context cap)))
 
 (defsyntax-case sign-message! ()
   ((_ self msg)
@@ -45,7 +48,7 @@
 (def (security-context-verify-message (self : security-context)
                                       (msg  : Message))
   => VerificationResult
-  (let (now (coarse-time-now))
+  (let (now (current-time-seconds))
     (if (<= msg.expire now)
       !MessageExpiredVerificationError
       (let loop ((rest msg.auth))
@@ -78,7 +81,7 @@
 (def (security-context-verify-broadcast-message (self : security-context)
                                                 (msg  : BroadcastMessage))
   => VerificationResult
-  (let (now (coarse-time-now))
+  (let (now (current-time-seconds))
     (if (<= msg.expire now)
       !MessageExpiredVerificationError
       (let loop ((rest msg.auth))

@@ -7,11 +7,11 @@
         :std/net/address
         :std/iter
         :std/serde/deserialize
+        :std/time/precise
         ../interface
         ../actor
         ./types
-        ./db
-        ./util)
+        ./db)
 (export new-resolver)
 
 (def resolver-address-ttl 300)
@@ -93,7 +93,7 @@
 (def (host-resolver-add-addresses! (self  : host-resolver)
                                    (addrs : :list))
   => :void
-  (let (expire (+ (coarse-time-now) resolver-address-ttl))
+  (let (expire (+ (current-time-seconds) resolver-address-ttl))
     (for (a addrs :- HostAddress)
       (host-db-add-host-address! self.host.db a expire))))
 

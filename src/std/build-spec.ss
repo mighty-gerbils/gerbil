@@ -253,6 +253,7 @@
     "ensemble/ucan/did"
     "ensemble/ucan/db"
     "ensemble/ucan/context"
+    "ensemble/ucan/security"
     "ensemble/ucan/ext"
 
     "ensemble/actor/types"
@@ -270,7 +271,6 @@
     "ensemble/broadcast/broadcast"
 
     "ensemble/host/types"
-    "ensemble/host/util"
     "ensemble/host/db"
     "ensemble/host/bus"
     "ensemble/host/actor-dispatch"
@@ -279,7 +279,6 @@
     "ensemble/host/actor-space"
     "ensemble/host/conn-monitor"
     "ensemble/host/resolver"
-    "ensemble/host/security-context"
     "ensemble/host/stream-monitor"
     "ensemble/host/stream-cache"
     "ensemble/host/basic"

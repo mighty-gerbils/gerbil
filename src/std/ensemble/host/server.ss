@@ -7,8 +7,7 @@
         ../config
         ../tls/context
         ./types
-        ./basic
-        ./util)
+        ./basic)
 (export #t)
 
 (defmethod {:init! server-host}
@@ -16,8 +15,7 @@
     (set! self.announce cfg.announce)
     (basic-host:::init! self cfg passphrase)
     (for (a cfg.listen :- Address)
-      (self.network.listen! a self.tls-context))
-    ))
+      (self.network.listen! a self.tls-context))))
 
 (defmethod {:init! inet-server-host}
   (lambda (self (cfg : InetServerHostConfig) (passphrase : :string))

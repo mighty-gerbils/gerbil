@@ -68,7 +68,7 @@
   (lambda (self (path : :string) (passphrase : :string))
     (let ((init-db? (not (file-exists? path)))
           (db (new-db (sqlite-open path)))
-          (now (CoarseTime-seconds (current-time-coarse))))
+          (now (current-time-seconds)))
       (when init-db?
         (DB-exec! db sql-schema [])
         (DB-exec! db sql-insert-salt [(random-bytes 32)]))
@@ -122,7 +122,7 @@
   (let loop ()
     (unless (thread-receive db-cleanup-interval #f)
       (do-with-lock self.mx
-        (let (now (CoarseTime-seconds (current-time-coarse)))
+        (let (now (current-time-seconds))
           (db-exec! self sql-cleanup-root-input-anchors [now])
           (set! self.root-input-anchors
             (filter-tokens now self.root-input-anchors))
@@ -231,7 +231,7 @@
 
 (def (db-get-root-input-anchors (self : capability-db))
   => :list
-  (let (now (CoarseTime-seconds (current-time-coarse)))
+  (let (now (current-time-seconds))
     (filter-tokens now (do-with-lock self.mx :- :list
                          self.root-input-anchors))))
 
@@ -259,7 +259,7 @@
 
 (def (db-get-root-output-anchors (self : capability-db))
   => :list
-  (let (now (CoarseTime-seconds (current-time-coarse)))
+  (let (now (current-time-seconds))
     (filter-tokens now (do-with-lock self.mx :- :list
                          self.root-output-anchors))))
 
@@ -288,7 +288,7 @@
 (def (db-get-subject-input-anchors (self : capability-db)
                                    (subject : :string))
   => :list
-  (let (now (CoarseTime-seconds (current-time-coarse)))
+  (let (now (current-time-seconds))
     (do-with-lock self.mx :- :list
       (cond
        ((self.subject-input-anchors.ref subject #f)
@@ -338,7 +338,7 @@
 (def (db-get-subject-output-anchors (self : capability-db)
                                    (subject : :string))
   => :list
-  (let (now (CoarseTime-seconds (current-time-coarse)))
+  (let (now (current-time-seconds))
     (do-with-lock self.mx :- :list
       (cond
        ((self.subject-output-anchors.ref subject #f)

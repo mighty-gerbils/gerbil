@@ -7,10 +7,10 @@
         :std/io
         :std/io/bio/buffer
         :std/serde/marshal
+        :std/time/precise
         ../interface
         ../ucan/ext
         ./types
-        ./util
         ./actor-dispatch
         ./stream-cache)
 (export new-actor-context)
@@ -28,7 +28,7 @@
 (def (actor-context-send! (self : actor-context)
                           (msg  : Message))
   => :void
-  (when (< msg.expire (coarse-time-now))
+  (when (< msg.expire (current-time-seconds))
     (raise-contract-violation actor-context-send! "message expired"
                               message: msg))
   (if (equal? msg.dest.host (self.host.id))
@@ -72,7 +72,7 @@
                                (msg  : BroadcastMessage)
                                (loopback : :boolean))
   => :void
-  (when (< msg.expire (coarse-time-now))
+  (when (< msg.expire (current-time-seconds))
     (raise-contract-violation actor-context-send! "message expired"
                               message: msg))
   (self.host.broadcast.broadcast! msg loopback))

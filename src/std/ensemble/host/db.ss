@@ -5,10 +5,10 @@
         :std/db/sqlite
         :std/serde/marshal
         :std/serde/unmarshal
+        :std/time/precise
         :std/iter
         ../interface
-        ./types
-        ./util)
+        ./types)
 (export #t)
 
 (defmethod {:init! host-db}
@@ -43,7 +43,7 @@
       (do-with-lock self.mx
         (using (stmt (statement-cache-get self.statements sql-delete-expired-addresses)
                      : Statement)
-          (let (now (coarse-time-now))
+          (let (now (current-time-seconds))
             (stmt.bind! [now])
             (stmt.exec!)
             (loop)))))))
@@ -60,7 +60,7 @@
                (let (a (unmarshal a))
                  (if (member a r) r (cons a r)))))
          (using (stmt (statement-cache-get self.statements sql-select-host-addresses-by-name-and-did) : Statement)
-           (stmt.bind! [host.name host.did (coarse-time-now)])
+           (stmt.bind! [host.name host.did (current-time-seconds)])
            (for/fold (r known) (a (stmt.query))
              (let (a (unmarshal a))
                (if (member a r) r (cons a r))))))))))
@@ -77,7 +77,7 @@
                (let (a (unmarshal a))
                  (if (member a r) r (cons a r)))))
          (using (stmt (statement-cache-get self.statements sql-select-host-addresses-by-name) : Statement)
-           (stmt.bind! [name (coarse-time-now)])
+           (stmt.bind! [name (current-time-seconds)])
            (for/fold (r known) (a (stmt.query))
              (let (a (unmarshal a))
                (if (member a r) r (cons a r))))))))))

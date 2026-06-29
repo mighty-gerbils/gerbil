@@ -115,11 +115,6 @@
    (thread   :? :thread))
   final: #t)
 
-(defstruct security-context
-  ((host : basic-host)
-   (cap  : CapabilityContext))
-  final: #t)
-
 (defstruct host-resolver
   ((host     : basic-host)
    (resolver :? HostID)

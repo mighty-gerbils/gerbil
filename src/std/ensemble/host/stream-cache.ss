@@ -3,9 +3,9 @@
 ;;; ensemble host stream cache
 (import :std/error
         :std/iter
+        :std/time/precise
         ../interface
-        ./types
-        ./util)
+        ./types)
 (export #t)
 
 (def stream-cache-ttl 300)
@@ -55,7 +55,7 @@
      (else
       (let (c (cached-stream stream
                              (make-mutex 'stream)
-                             (coarse-time-now)))
+                             (current-time-seconds)))
         (self.table.set! dest c)
         c)))))
 
@@ -79,7 +79,7 @@
 
 (def (refresh-stream-ttl! (c : cached-stream))
   => cached-stream
-  (let (now (coarse-time-now))
+  (let (now (current-time-seconds))
     (set! c.last-use now)
     c))
 
@@ -87,7 +87,7 @@
   (let loop ()
     (unless (thread-receive stream-cache-ttl #f)
       (do-with-lock self.mx
-        (let (now (coarse-time-now))
+        (let (now (current-time-seconds))
           (for ([dest . c] (hash->list self.table))
             (using (c : cached-stream)
               (when (< (+ c.last-use stream-cache-ttl)

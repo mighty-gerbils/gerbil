@@ -29,6 +29,10 @@
 (def (current-time-precise) => PreciseTime
   (PreciseTime (current-system-time-precise)))
 
+(def (current-time-seconds)
+  => :integer
+  (CoarseTime-seconds (current-time-coarse)))
+
 (definline (CoarseTime-seconds (t : CoarseTime))
   => :integer
   (timeval-tv_sec t.time))

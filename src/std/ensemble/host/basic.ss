@@ -11,7 +11,8 @@
         :std/log
         ../interface
         ../ucan/context
-        ../config
+        ../ucan/security
+         ../config
         ../network
         ../broadcast
         ./db
@@ -19,7 +20,6 @@
         ./stream-monitor
         ./conn-monitor
         ./actor-handler
-        ./security-context
         ./actor-context
         ./actor-space
         ./resolver
@@ -60,7 +60,7 @@
             (new-capability-context cap-db-path passphrase))
            (_ (set! self.capability-context capability-ctx))
            (security-ctx
-            (new-security-context self))
+            (new-security-context self.capability-context))
            (_ (set! self.security-context security-ctx))
            (network
             (new-network this cfg.limits))
