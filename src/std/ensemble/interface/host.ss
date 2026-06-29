@@ -20,6 +20,18 @@
 (defstruct Event
   ((ts : CoarseTime)))
 
+;; notification event bus
+(interface (EventBus Closer)
+  ;; receive notifications about changes in the host
+  ;; returns a channel to receive Events
+  (notify!)
+  => Channel
+
+  ;; emit a notification in the host notification bus
+  (emit! (evt : Event))
+  => :void
+  )
+
 ;; stream reaction interface
 (interface (StreamReactor StreamHandler)
   (on-expire)
@@ -80,6 +92,10 @@
   (actor-context)
   => ActorContext
 
+  ;; the event-bus
+  (event-bus)
+  => EventBus
+
   ;; register an actor
   (register-actor! (name : :string)
                    (handler : ActorHandler))
@@ -104,14 +120,5 @@
                        (handler   : StreamReactor)
                        (expire    : :integer := 0)
                        (one-shot? : :boolean := #f))
-  => :void
-
-  ;; receive notifications about changes in the host
-  ;; returns a channel to receive Events
-  (notify!)
-  => Channel
-
-  ;; emit a notification in the host notification bus
-  (emit! (evt : Event))
   => :void
   )

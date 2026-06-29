@@ -47,8 +47,8 @@
             (make-hash-table-string))
            (_ (set! self.reactors reactors))
            (bus
-            (event-bus))
-           (_ (set! self.bus bus))
+            (new-event-bus))
+           (_ (set! self.event-bus bus))
            (host-db-path
             (path-expand "host.db" cfg.dir))
            (host-db
@@ -63,10 +63,12 @@
             (new-security-context self.capability-context))
            (_ (set! self.security-context security-ctx))
            (network
-            (new-network this cfg.limits))
+            (new-network self.security-context
+                         self.event-bus
+                         cfg.limits))
            (_ (set! self.network network))
            (broadcast
-            (new-broadcast this cfg.limits))
+            (new-broadcast self.this cfg.limits))
            (_ (set! self.broadcast broadcast))
            (resolver
             (new-resolver self cfg.resolver))
@@ -101,7 +103,7 @@
               (report-errors (self.network.close))
               (report-errors (self.security-context.close))
               (report-errors (self.capability-context.close))
-              (report-errors (event-bus-close self.bus))
+              (report-errors (self.event-bus.close))
               (report-errors (host-db-close self.db))
               (values actors reactors)))))
     (for (actor actors :- ActorHandler)
@@ -196,15 +198,6 @@
   (when reactor.thread
     (thread-send reactor.thread 't)))
 
-(def (basic-host-notify! (self : basic-host))
-  => Channel
-  (event-bus-get-channel self.bus))
-
-(def (basic-host-emit! (self : basic-host)
-                       (evt  : Event))
-  => :void
-  (event-bus-emit! self.bus evt))
-
 (implement Closer basic-host
   (close __basic-host-close))
 
@@ -215,10 +208,9 @@
   (broadcast     &basic-host-broadcast)
   (actor-space   &basic-host-actor-space)
   (actor-context &basic-host-actor-context)
+  (event-bus     &basic-host-event-bus)
   (register-actor!     __basic-host-register-actor!)
   (unregister-actor!   __basic-host-unregister-actor!)
   (connect!            __basic-host-connect!)
   (open-stream!        __basic-host-open-stream!)
-  (set-stream-reactor! __basic-host-set-stream-reactor!)
-  (notify!             __basic-host-notify!)
-  (emit!               __basic-host-emit!))
+  (set-stream-reactor! __basic-host-set-stream-reactor!))

@@ -53,14 +53,14 @@
    (actor-space : ActorSpace)
    ;; the host actor context
    (actor-context : ActorContext)
+   ;; the event bus
+   (event-bus : EventBus)
    ;; the actor table
    ;; handle -> ActorHandler
    (actors : HashTable)
    ;; the stream reactor table
    ;; proto string -> steam-reactor
    (reactors : HashTable)
-   ;; bus for event notifications
-   (bus : event-bus)
    ;; tls context for inet hosts
    (tls-context :~ (? (or not SSL_CTX?)) :- :foreign)
    ;; active stats for limits

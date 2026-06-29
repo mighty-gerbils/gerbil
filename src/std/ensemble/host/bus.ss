@@ -2,6 +2,8 @@
 ;;; © vyzo
 ;;; ensemble host event bus
 (import :std/error
+        :std/interface
+        :std/io/interface
         :std/iter
         :std/sync/channel
         ../interface
@@ -12,6 +14,10 @@
   (lambda (self)
     (set! self.mx (make-mutex 'event-bus))
     (set! self.channels [])))
+
+(def (new-event-bus)
+  => EventBus
+  (EventBus (event-bus)))
 
 (def (event-bus-close (self : event-bus))
   => :void
@@ -40,3 +46,10 @@
     (do-with-lock self.mx
       (set! self.channels (cons ch self.channels)))
     ch))
+
+(implement Closer event-bus
+  (close event-bus-close))
+
+(implement EventBus event-bus
+  (notify! __event-bus-get-channel)
+  (emit!   __event-bus-emit!))

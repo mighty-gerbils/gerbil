@@ -6,5 +6,7 @@
         ../config)
 (export new-network)
 
-(def (new-network (host : Host) (limits : Limits))
+(def (new-network (sec-ctx : SecurityContext)
+                  (evt-bus : EventBus)
+                  (limits : Limits))
   (TODO new-network))
