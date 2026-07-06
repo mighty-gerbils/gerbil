@@ -154,25 +154,21 @@
   => :list
 
   ;; connect to a peer
-  (connect! (peer        : HostAddress)
-            (tls-context :~ (? (or not SSL_CTX?))))
+  (connect! (peer        : HostAddress))
   => Connection
 
   ;; connect to any one address (or reuse an existing connect)
   (connect-any! (addrs       :~ (list-of? HostAddress?)
-                             :- :list)
-                (tls-context :~ (? (or not SSL_CTX?))))
+                             :- :list))
   => Connection
 
   ;; listen to an address
-  (listen! (addr        :- HostAddress)
-           (tls-context :~ (? (or not SSL_CTX?))))
+  (listen! (addr        :- HostAddress))
   => :void
 
   ;; listen to all addresses in a list
   (listen-all! (addrs       :~ (list-of? HostAddress?)
-                            :- :list)
-               (tls-context :~ (? (or not SSL_CTX?))))
+                            :- :list))
   => :void
 
   ;; set the network's connection monitor

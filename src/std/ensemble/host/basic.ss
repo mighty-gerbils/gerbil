@@ -63,7 +63,8 @@
             (new-security-context self.capability-context))
            (_ (set! self.security-context security-ctx))
            (network
-            (new-network self.security-context
+            (new-network self.tls-context
+                         self.security-context
                          self.event-bus
                          cfg.limits))
            (_ (set! self.network network))
@@ -135,7 +136,7 @@
   => :void
   (unless (null? (self.network.peer-connections peer))
     (let (addrs (self.resolver.resolve peer))
-      (self.network.connect-any! addrs self.tls-context)
+      (self.network.connect-any! addrs)
       #!void)))
 
 (def (basic-host-open-stream! (self  : basic-host)
