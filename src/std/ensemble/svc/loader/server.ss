@@ -36,7 +36,7 @@
   constructor: :init!
   final: #t)
 
-(defstruct upload-stream-reactor
+(defstruct upload-stream-handler
   ((svc : loader-service)
    (req : Loader.upload))
   final: #t)
@@ -238,11 +238,11 @@
                                msg.source.host.did
                                stream-name ""
                                expire))
-                             (stream-reactor
-                              (StreamReactor
-                               (upload-stream-reactor self req))))
-                        (self.host.set-stream-reactor! stream-name
-                                                       stream-reactor
+                             (stream-handler
+                              (StreamHandler
+                               (upload-stream-handler self req))))
+                        (self.host.set-stream-handler! stream-name
+                                                       stream-handler
                                                        expire #t)
                         (self.uploads.set! req.sha256 (InProgress stream-name))
                         (Continue stream-name token)))
@@ -267,7 +267,7 @@
                          'hash: req.sha256)))))
        (actor.reply! msg req)))))
 
-(implement StreamReactor upload-stream-reactor
+(implement StreamHandler upload-stream-handler
   (handle-stream!
    (lambda (self stream)
      ;; first read the file, zlib compressed

@@ -33,7 +33,10 @@
   )
 
 ;; stream reaction interface
-(interface (StreamReactor StreamHandler)
+(interface StreamHandler
+  (handle-stream! (stream : Stream))
+  => :void
+
   (on-expire)
   => :void)
 
@@ -115,9 +118,9 @@
                 (auth  :? Token := #f))
   => Stream
 
-  ;; register a stream reactor for a protocol
-  (set-stream-reactor! (proto     : :string)
-                       (handler   : StreamReactor)
+  ;; register a stream handler for a protocol
+  (set-stream-handler! (proto     : :string)
+                       (handler   : StreamHandler)
                        (expire    : :integer := 0)
                        (one-shot? : :boolean := #f))
   => :void

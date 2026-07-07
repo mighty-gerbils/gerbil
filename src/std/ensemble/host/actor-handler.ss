@@ -10,17 +10,11 @@
         ../interface
         ./types
         ./actor-dispatch)
-(export new-host-actor-stream-reactor)
 
 (deflogger log name: "/ensemble/host/actor")
 
-(def (new-host-actor-stream-reactor (host : basic-host))
-  => StreamReactor
-  (StreamReactor
-   (host-actor-stream-reactor host)))
-
-(def (host-actor-handle-stream! (self   : host-actor-stream-reactor)
-                                (stream : Stream))
+(def (basic-host-actor-handle-stream! (self   : basic-host)
+                                      (stream : Stream))
   => :void
   (using ((conn (stream.connection)
                 : Connection)
@@ -29,7 +23,7 @@
     (try
      (while #t
        (let (size (reader.read-varuint))
-         (if (fx> size self.host.limits.network.message-size)
+         (if (fx> size self.limits.network.message-size)
            (begin
              (log.warn "skipping oversize message"
                        protocol: (stream.protocol)
@@ -40,13 +34,13 @@
              (try
               (let* ((msg (: (reader.deserialize (unmarshal-environment dag: #t))
                              Message))
-                     (result (self.host.security-context.verify-message msg)))
+                     (result (self.security-context.verify-message msg)))
                 (if (!VerificationOK? result)
                   (let (handler
-                        (do-with-lock self.host.mx
-                          (self.host.actors.ref (Message-dest msg) #f)))
+                        (do-with-lock self.mx
+                          (self.actors.ref (Message-dest msg) #f)))
                     (if handler
-                      (spawn-actor-dispatch self.host handler msg)
+                      (spawn-actor-dispatch self handler msg)
                       (log.warn "message for unknown actor; dropping message"
                                   peer:    (conn.peer)
                                   actor:   (Message-dest msg)
@@ -56,7 +50,7 @@
                               peer:    (conn.peer)
                               reason:  (VerificationError-reason result)
                               message: msg)
-                    (self.host.actor-context.send-error-reply!
+                    (self.actor-context.send-error-reply!
                      msg
                      (!Error/c "message verification failed"
                                'reason: (VerificationError-reason result))))))
@@ -75,8 +69,6 @@
      (finally
       (ignore-errors (stream.close))))))
 
-(implement
-  (StreamReactor
-   (host-actor-stream-reactor
-    (on-expire void)
-    (handle-stream! __host-actor-handle-stream!))))
+(implement StreamHandler basic-host
+  (on-expire void)
+  (handle-stream! __basic-host-actor-handle-stream!))

@@ -264,6 +264,9 @@
 
     "ensemble/config"
 
+    "ensemble/network/types"
+    "ensemble/network/connector"
+    "ensemble/network/listener"
     "ensemble/network/network"
     "ensemble/network"
 
@@ -277,9 +280,8 @@
     "ensemble/host/actor-context"
     "ensemble/host/actor-handler"
     "ensemble/host/actor-space"
-    "ensemble/host/conn-monitor"
+    "ensemble/host/monitor"
     "ensemble/host/resolver"
-    "ensemble/host/stream-monitor"
     "ensemble/host/stream-cache"
     "ensemble/host/basic"
     "ensemble/host/server"

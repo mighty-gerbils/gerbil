@@ -95,21 +95,8 @@
   ()
   final: #t)
 
-(defstruct host-connection-monitor
-  ((host : basic-host)
-   (stream-monitor : StreamMonitor))
-  final: #t)
-
-(defstruct host-stream-monitor
-  ((host : basic-host))
-  final: #t)
-
-(defstruct host-actor-stream-reactor
-  ((host   : basic-host))
-  final: #t)
-
 (defclass stream-reactor
-  ((reactor  : StreamReactor)
+  ((handler  : StreamHandler)
    (proto    : :string)
    (one-shot : :boolean)
    (thread   :? :thread))

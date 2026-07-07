@@ -23,25 +23,17 @@
 (deftype @Stream Stream)
 
 ;; incoming stream handlers
-(interface StreamHandler
-  (handle-stream! (stream : @Stream))
+(interface NetworkMonitor
+  (on-open-connection (conn : @Connection))
+  => :void
+  (on-close-connection (conn : @Connection))
+  => :void
+
+  (on-open-stream (stream : @Stream))
+  => :void
+  (on-close-stream (stream : @Stream))
   => :void
   )
-
-(interface (StreamMonitor StreamHandler)
-  (on-close (stream : @Stream))
-  => :void
-  )
-
-;; incoming connection handler
-(interface ConnectionHandler
-  (handle-connection! (conn : @Connection))
-  => :void)
-
-(interface (ConnectionMonitor ConnectionHandler)
-  (on-close (conn : @Connection))
-  => :void
-)
 
 ;; broadcast handlers
 (interface BroadcastHandler
@@ -68,11 +60,6 @@
   (open-stream! (proto : :string)
                 (auth  :? Token))
   => @Stream
-
-  ;; set the connection's incoming stream monitor
-  ;; the stream monitor is invoked every time a new
-  ;; stream is opened or closed in this connection
-  (set-stream-monitor! (monitor : StreamMonitor))
   )
 
 ;; low level data streams
@@ -154,25 +141,20 @@
   => :list
 
   ;; connect to a peer
-  (connect! (peer        : HostAddress))
+  (connect! (peer : HostAddress))
   => Connection
 
   ;; connect to any one address (or reuse an existing connect)
-  (connect-any! (addrs       :~ (list-of? HostAddress?)
-                             :- :list))
+  (connect-any! (addrs :~ (list-of? HostAddress?)
+                       :- :list))
   => Connection
 
   ;; listen to an address
-  (listen! (addr        :- HostAddress))
+  (listen! (addr : HostAddress))
   => :void
 
   ;; listen to all addresses in a list
-  (listen-all! (addrs       :~ (list-of? HostAddress?)
-                            :- :list))
+  (listen-all! (addrs :~ (list-of? HostAddress?)
+                      :- :list))
   => :void
-
-  ;; set the network's connection monitor
-  ;; the connection handler is invoked every time a new
-  ;; connection is established or closed
-  (set-connection-monitor! (monitor : ConnectionMonitor))
   )

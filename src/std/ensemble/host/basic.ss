@@ -17,8 +17,7 @@
         ../broadcast
         ./db
         ./types
-        ./stream-monitor
-        ./conn-monitor
+        ./monitor
         ./actor-handler
         ./actor-context
         ./actor-space
@@ -66,7 +65,8 @@
             (new-network self.tls-context
                          self.security-context
                          self.event-bus
-                         cfg.limits))
+                         cfg.limits
+                         (NetworkMonitor self)))
            (_ (set! self.network network))
            (broadcast
             (new-broadcast self.this cfg.limits))
@@ -80,11 +80,9 @@
            (actor-context
             (new-actor-context self))
            (_ (set! self.actor-context actor-context)))
-      (self.network.set-connection-monitor!
-       (new-host-connection-monitor self))
-      (basic-host-set-stream-reactor!
+      (basic-host-set-stream-handler!
        self proto:/host/actor
-       (new-host-actor-stream-reactor self)
+       (StreamHandler self)
        0 #f))))
 
 (def (basic-host-close (self : basic-host))
@@ -155,9 +153,9 @@
                        peer: peer
                        proto: proto)))))
 
-(def (basic-host-set-stream-reactor! (self     : basic-host)
+(def (basic-host-set-stream-handler! (self     : basic-host)
                                      (proto    : :string)
-                                     (reactor  : StreamReactor)
+                                     (handler  : StreamHandler)
                                      (expire   : :integer)
                                      (one-shot : :boolean))
   => :void
@@ -166,7 +164,7 @@
      ((self.reactors.ref proto #f)
       (raise-contract-violation set-stream-reactor! "stream reactor already exists" proto: proto))
      (else
-      (using (reactor (stream-reactor reactor:  reactor
+      (using (reactor (stream-reactor handler:  handler
                                       proto:    proto
                                       one-shot: one-shot
                                       thread:   #f)
@@ -186,7 +184,7 @@
   => :void
   (unless (thread-receive (seconds->time expire) #f)
     (try
-     (reactor.reactor.on-expire)
+     (reactor.handler.on-expire)
      (catch (e)
        (log.warn "unhandled exception in reactor on-expire"
                  protocol: proto
@@ -214,4 +212,4 @@
   (unregister-actor!   __basic-host-unregister-actor!)
   (connect!            __basic-host-connect!)
   (open-stream!        __basic-host-open-stream!)
-  (set-stream-reactor! __basic-host-set-stream-reactor!))
+  (set-stream-handler! __basic-host-set-stream-handler!))
