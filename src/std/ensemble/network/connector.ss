@@ -6,6 +6,7 @@
         :std/io
         :std/net/ssl
         :std/net/address
+        :std/sync/completion
         ../interface
         ./types)
 (export address-connect!)
@@ -16,21 +17,21 @@
 (def (inet-connect! (self : InetAddress)
                     (net  : network)
                     (addr : HostAddress))
-  => Connection
+  => Completion
   (TODO inet-connect!)
   )
 
 (def (local-connect! (self : LocalAddress)
                      (net  : network)
                      (addr : HostAddress))
-  => Connection
+  => Completion
   (TODO local-connect!)
   )
 
 (def (relay-connect! (self : RelayAddress)
                      (net  : network)
                      (addr : HostAddress))
-  => Connection
+  => Completion
   (TODO relay-connect!)
   )
 

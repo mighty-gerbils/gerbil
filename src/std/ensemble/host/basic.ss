@@ -132,7 +132,7 @@
 (def (basic-host-connect! (self : basic-host)
                           (peer : HostID))
   => :void
-  (unless (null? (self.network.peer-connections peer))
+  (unless (self.network.peer-connection peer)
     (let (addrs (self.resolver.resolve peer))
       (self.network.connect-any! addrs)
       #!void)))
@@ -142,16 +142,13 @@
                               (proto : :string)
                               (auth  :? Token))
   => Stream
-  (basic-host-connect! self peer)
-  (let (conns (self.network.peer-connections peer))
-    (match conns
-      ([conn . _]
-       (using (conn : Connection)
-         (conn.open-stream! proto auth)))
-      (else
-       (raise-io-error open-stream! "cannot open stream; no connection to host"
-                       peer: peer
-                       proto: proto)))))
+  (let again ()
+    (basic-host-connect! self peer)
+    (cond
+     ((self.network.peer-connection peer)
+      => (lambda ((conn :- Connection))
+           (conn.open-stream! proto auth)))
+     (else (again)))))
 
 (def (basic-host-set-stream-handler! (self     : basic-host)
                                      (proto    : :string)

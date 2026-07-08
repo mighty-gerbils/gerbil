@@ -5,6 +5,7 @@
         :std/interface
         :std/io/interface
         :std/net/ssl
+        :std/sync/completion
         ../interface
         ../config
         ./types
@@ -24,6 +25,10 @@
     (set! self.limits limits)
     (set! self.monitor monitor)
     (set! self.mx (make-mutex 'network))
+    (set! self.outgoing (make-hash-table))
+    (set! self.incoming (make-hash-table))
+    (set! self.pending (make-hash-table))
+    (set! self.listeners (make-hash-table))
     ))
 
 (def (new-network (tls-context :~ (? (or not SSL_CTX?)))
@@ -41,7 +46,23 @@
 (def (network-connect! (self : network)
                        (peer : HostAddress))
   => Connection
-  (TODO network-connect!))
+  (let (state
+        (do-with-lock self.mx
+          (cond
+           ((self.outgoing.ref peer.host #f))
+           ((self.incoming.ref peer.host #f))
+           ((self.pending.ref peer.host #f))
+           (else
+            (let (completion (address-connect! peer.address self peer))
+              (self.pending.set! peer.host completion)
+              completion)))))
+    (cond
+     ((Connection? state)
+      state)
+     ((Completion? state)
+      (: (completion-wait! state) Connection))
+     (else
+      (BUG "unexpected connection state" state)))))
 
 (def (network-connect-any! (self  : network)
                            (addrs : :list))
@@ -71,9 +92,9 @@
   (connections
    (lambda (self)
      (TODO connections)))
-  (peer-connections
+  (peer-connection
    (lambda (self host)
-     (TODO peer-connections)))
+     (TODO peer-connection)))
   (listening
    (lambda (self)
      (TODO listening)))

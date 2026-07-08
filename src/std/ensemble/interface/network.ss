@@ -122,7 +122,7 @@
 ;; the network abstraction
 (interface (Network Closer)
   ;; current network peers
-  ;; returns a list of HostAddress
+  ;; returns a list of HostID
   (peers)
   => :list
 
@@ -131,9 +131,9 @@
   (connections)
   => :list
 
-  ;; retrieve connections to a peer, if any
-  (peer-connections (peer : HostID))
-  => :list
+  ;; retrieve a connection to a peer, if any
+  (peer-connection (peer : HostID))
+  => :t
 
   ;; retrieve the network's listening addresses
   ;; return a list of HostAddress

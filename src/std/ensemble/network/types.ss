@@ -3,7 +3,7 @@
 ;;; ensemble network types
 (import :std/io
         :std/iter
-        :std/sync/channel
+        :std/sync/completion
         ../interface
         ../config)
 (export #t)
@@ -14,13 +14,26 @@
    (event-bus   :  EventBus)
    (limits      :  Limits)
    (monitor     :  NetworkMonitor)
-   (mx          :  :mutex))
+   (mx          :  :mutex)
+   ;; established outgoing peer connections
+   ;; HostID -> Connection
+   (outgoing    : HashTable)
+   ;; established incoming peer connections
+   ;; HostID -> Connection
+   (incoming    : HashTable)
+   ;; pending outgoing peer connections
+   ;; HostID -> Completion
+   (pending     : HashTable)
+   ;; peer connection listeners
+   ;; HostAddress -> ConnectionListener
+   (listeners   :  HashTable)
+   )
   constructor: :init!
   final: #t)
 
 (interface AddressConnector
   (connect! (net : network) (addr : HostAddress))
-  => Connection)
+  => Completion)
 
 (interface (ConnectionListener Iterator Closer))
 
