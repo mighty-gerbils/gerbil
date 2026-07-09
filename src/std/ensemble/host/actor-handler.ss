@@ -23,7 +23,7 @@
     (try
      (while #t
        (let (size (reader.read-varuint))
-         (if (fx> size self.limits.network.message-size)
+         (if (> size self.limits.network.message-size)
            (begin
              (log.warn "skipping oversize message"
                        protocol: (stream.protocol)

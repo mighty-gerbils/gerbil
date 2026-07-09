@@ -65,7 +65,6 @@
            (tls-context
             (make-tls-context
              self.id.name
-             self.id.did
              (self.capability-context.get-principal self.id.did)))
            (network
             (new-network self.id

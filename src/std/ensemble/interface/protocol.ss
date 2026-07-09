@@ -105,3 +105,6 @@
 
 (def actor:/host/space
   "/host/space/v0")
+
+(def method:/net/handshake
+  "/net/handshake/v0")

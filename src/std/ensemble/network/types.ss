@@ -38,6 +38,15 @@
   constructor: :init!
   final: #t)
 
+(defstruct connection
+  ((net       : network)
+   (peer      : HostID)
+   (sock      : StreamSocket)
+   (reader    : BufferedReader)
+   (writer    : BufferedWriter)
+   (direction : :fixnum))
+  final: #t)
+
 (defstruct connection-listener
   ((net  : network)
    (sock : ServerSocket))
