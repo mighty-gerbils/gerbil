@@ -38,6 +38,11 @@
   constructor: :init!
   final: #t)
 
+(defstruct connection-listener
+  ((net  : network)
+   (sock : ServerSocket))
+  final: #t)
+
 (interface AddressConnector
   (connect! (net : network) (addr : HostAddress))
   => Completion)
