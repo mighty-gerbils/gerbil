@@ -69,7 +69,7 @@
    (checkf eqf expr value)))
 
 (defrule (print-check-e expr eqv value)
-  (verbose "... check ~a is ~a to ~s~n" 'expr 'eqv value))
+  (verbose "... check ~s is ~a to ~s~n" 'expr 'eqv value))
 
 (defrule (checkf eqf expr value)
   (let (val value)

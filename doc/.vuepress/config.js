@@ -16,13 +16,13 @@ module.exports = {
           '/guide/': [
               {
                   title: 'Guide',
-                  children: ['', 'intro', 'getting-started', 'eval', 'ffi', 'emacs', 'shell', 'env-vars', 'package-manager', 'docker', 'macos', 'nix', 'r7rs', 'hacking-on-the-stdlib']
+                  children: ['', 'intro', 'getting-started', 'eval', 'ffi', 'monads', 'stateless-streams', 'emacs', 'shell', 'env-vars', 'package-manager', 'docker', 'macos', 'nix', 'r7rs', 'hacking-on-the-stdlib']
               }
           ],
           '/tutorials/': [
               {
                   title: 'Tutorials',
-                  children: ['', 'languages', 'kvstore', 'proxy', 'httpd', 'ensemble', 'advanced-ensemble']
+                  children: ['', 'crypto', 'languages', 'kvstore', 'proxy', 'httpd', 'ensemble', 'advanced-ensemble']
               }
           ], '/reference/gerbil/runtime/': [
 	          { title: "Gerbil Runtime",

@@ -1,5 +1,5 @@
 #+TITLE: Gerbil Homebrew Tap
-#+EXPORT_FILE_NAME: ../../doc/guide/homebrew/README.md
+#+EXPORT_FILE_NAME: ../../../doc/guide/homebrew/README.md
 #+OPTIONS: toc:nil
 
 * The Gerbil Homebrew Tap

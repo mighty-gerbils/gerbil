@@ -21,7 +21,7 @@
 ;; - rlo is the read cursor
 ;; - rhi is the write cursor
 (defstruct string-input-buffer (reader buf rlo rhi closed?)
-  final: #t )
+  final: #t print: #t)
 
 ;; delimited-string-input-buffer
 ;; - in is an string-input-buffer or another delimited-string-input-buffer

@@ -106,6 +106,7 @@ but may be removed as early as v0.19.
     (hash->list (string->json-object "{\"a\":1}")))
 ((a . 1))
 ```
+:::
 
 ## json-object-walist?
 ```scheme
@@ -134,6 +135,7 @@ NB: This parameter was introduced in Gerbil v0.18.2.
     (walist->alist (string->json-object "{\"a\":1,\"b\":2}")))
 ((a . 1) (b . 2))
 ```
+:::
 
 ## read-json-array-as-vector?
 ```scheme
@@ -157,6 +159,7 @@ That previous parameter isn’t used anymore, and may be removed as early as v0.
     (string->json-object "[\"a\",1]"))
 #("a" 1 ())
 ```
+:::
 
 ## write-json-sort-keys?
 ```scheme
@@ -184,6 +187,7 @@ but may be removed as early as v0.19.
     (json-object->string (hash (foo 1) (bar 2) (baz 3))))
 "{\"baz\":3,\"bar\":2,\"foo\":1}"
 ```
+:::
 
 ## trivial-class->json-object
 ```scheme
