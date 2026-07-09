@@ -20,7 +20,8 @@
     (ignore-errors (conn.close))
     (log.warn message
               address: (conn.address)
-              peer:    (conn.peer)))
+              peer:    (conn.peer))
+    (raise-io-closed on-open-connection message))
 
   (do-with-lock self.mx
     (if (fx= (conn.direction) DIRECTION-IN)
@@ -65,7 +66,7 @@
                 protocol: (stream.protocol)
                 address:  (conn.address)
                 peer:     (conn.peer))
-      #f)
+      (raise-io-closed on-open-stream message))
 
     (let (dispatch?
           (do-with-lock self.mx
@@ -95,7 +96,8 @@
           (log.warn "no reactor for stream"
                     protocol: (stream.protocol)
                     address:  (conn.address)
-                    peer:     (conn.peer))))))))
+                    peer:     (conn.peer))
+          (raise-io-closed on-open-stream "no reactor for steram")))))))
 
 (def (basic-host-get-reactor (self  : basic-host)
                              (proto : :string))

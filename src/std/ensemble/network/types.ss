@@ -14,6 +14,7 @@
    (event-bus   :  EventBus)
    (limits      :  Limits)
    (monitor     :  NetworkMonitor)
+   (tgroup      :  :thread-group)
    (mx          :  :mutex)
    ;; established outgoing peer connections
    ;; HostID -> Connection
