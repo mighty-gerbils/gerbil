@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; ensemble network types
 (import :std/io
+        :std/log
         :std/iter
         :std/net/ssl
         :std/sync/completion
@@ -9,8 +10,11 @@
         ../config)
 (export #t)
 
+(deflogger log name: "/ensemble/network")
+
 (defstruct network
-  ((tls-context :~ SSL_CTX? :- :foreign)
+  ((host        :  HostID)
+   (tls-context :~ SSL_CTX? :- :foreign)
    (security    :  SecurityContext)
    (event-bus   :  EventBus)
    (limits      :  Limits)

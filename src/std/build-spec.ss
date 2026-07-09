@@ -268,6 +268,7 @@
     "ensemble/network/types"
     "ensemble/network/connector"
     "ensemble/network/listener"
+    "ensemble/network/connection"
     "ensemble/network/network"
     "ensemble/network"
 

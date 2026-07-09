@@ -8,7 +8,6 @@
         :std/net/address
         :std/sync/completion
         :std/os/hostname
-        :std/log
         :std/iter
         ../interface
         ../config
@@ -17,14 +16,14 @@
         ./listener)
 (export new-network)
 
-(deflogger log name: "/ensemble/network")
-
 (defmethod {:init! network}
-  (lambda (self (tls-context :~ SSL_CTX?)
+  (lambda (self (host        : HostID)
+           (tls-context :~ SSL_CTX?)
            (security    : SecurityContext)
            (event-bus   : EventBus)
            (limits      : Limits)
            (monitor     : NetworkMonitor))
+    (set! self.host host)
     (set! self.tls-context tls-context)
     (set! self.security security)
     (set! self.event-bus event-bus)
@@ -38,13 +37,15 @@
     (set! self.listeners (make-hash-table))
     ))
 
-(def (new-network (tls-context :~ (? (or not SSL_CTX?)))
+(def (new-network (host        : HostID)
+                  (tls-context :~ SSL_CTX?)
                   (security    : SecurityContext)
                   (event-bus   : EventBus)
                   (limits      : Limits)
                   (monitor     : NetworkMonitor))
   (Network
-   (network tls-context
+   (network host
+            tls-context
             security
             event-bus
             limits
@@ -53,6 +54,8 @@
 (def (network-connect1 (self : network)
                        (peer : HostAddress))
   => Connection
+  (when (equal? peer.host self.host)
+    (raise-contract-violation network-connect! "cannot connect to self"))
   (let (state
         (do-with-lock self.mx
           (cond
@@ -62,6 +65,8 @@
            ((self.incoming.ref peer.host #f))
            ((self.pending.ref peer.host #f))
            (else
+            (log.debug "connecting to peer"
+                       peer: peer)
             (let (completion (address-connect! peer.address self peer))
               (self.pending.set! peer.host completion)
               completion)))))
@@ -69,19 +74,25 @@
      ((Connection? state)
       state)
      ((Completion? state)
-      (: (try
-       (using (conn (completion-wait! state) : Connection)
-         (do-with-lock self.mx
-           (cond
-            (self.closed?
-             (ignore-errors (conn.close))
-             (raise-io-closed network-connect! "network closed"))
-            (else
-             (self.outgoing.set! peer.host conn)
-             conn))))
-       (finally
-        (do-with-lock self.mx
-          (self.pending.delete! peer.host))))
+      (def (wait!)
+        (try (completion-wait! state)
+             (catch (e)
+               (do-with-lock self.mx
+                 (self.pending.delete! peer.host))
+               (raise e))))
+      (:- (using (conn (wait!) : Connection)
+            (do-with-lock self.mx
+              (self.pending.delete! peer.host)
+              (cond
+               (self.closed?
+                (ignore-errors (conn.close))
+                (self.monitor.on-close-connection conn)
+                (raise-io-closed network-connect! "network closed"))
+               (else
+                (log.debug "connected to peer"
+                           peer: peer)
+                (self.outgoing.set! peer.host conn)
+                conn))))
          Connection))
      (else
       (BUG "unexpected connection state" state)))))
@@ -139,7 +150,8 @@
       (do-with-lock self.mx
         (cond
          (self.closed?
-          (ignore-errors (conn.close)))
+          (ignore-errors (conn.close))
+          (self.monitor.on-close-connection conn))
          ((self.incoming.ref peer.host #f)
           (log.debug "closing duplicate incoming connection"
                      peer: peer)

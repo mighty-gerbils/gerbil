@@ -68,7 +68,8 @@
              self.id.did
              (self.capability-context.get-principal self.id.did)))
            (network
-            (new-network self.tls-context
+            (new-network self.id
+                         self.tls-context
                          self.security-context
                          self.event-bus
                          cfg.limits
