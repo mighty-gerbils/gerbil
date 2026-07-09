@@ -16,6 +16,7 @@
    (monitor     :  NetworkMonitor)
    (tgroup      :  :thread-group)
    (mx          :  :mutex)
+   (closed?     :  :boolean)
    ;; established outgoing peer connections
    ;; HostID -> Connection
    (outgoing    : HashTable)

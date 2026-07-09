@@ -56,6 +56,8 @@
   (let (state
         (do-with-lock self.mx
           (cond
+           (self.closed?
+            (raise-io-closed network-connect! "network closed"))
            ((self.outgoing.ref peer.host #f))
            ((self.incoming.ref peer.host #f))
            ((self.pending.ref peer.host #f))
@@ -67,7 +69,20 @@
      ((Connection? state)
       state)
      ((Completion? state)
-      (: (completion-wait! state) Connection))
+      (: (try
+       (using (conn (completion-wait! state) : Connection)
+         (do-with-lock self.mx
+           (cond
+            (self.closed?
+             (ignore-errors (conn.close))
+             (raise-io-closed network-connect! "network closed"))
+            (else
+             (self.outgoing.set! peer.host conn)
+             conn))))
+       (finally
+        (do-with-lock self.mx
+          (self.pending.delete! peer.host))))
+         Connection))
      (else
       (BUG "unexpected connection state" state)))))
 
@@ -110,6 +125,8 @@
   => :void
   (do-with-lock self.mx
     (cond
+     (self.closed?
+      (raise-io-closed network-connect! "network closed"))
      ((self.listeners.ref addr #f)
       #!void)
      (else
@@ -124,16 +141,18 @@
   (for (conn listener : Connection)
     (using (peer (conn.peer) : HostAddress)
       (do-with-lock self.mx
-        (if (self.incoming.ref peer.host #f)
-          (begin
-            (log.debug "closing duplicate incoming connection"
-                       peer: peer)
-            (ignore-errors (conn.close))
-            (self.monitor.on-close-connection conn))
-          (begin
-            (log.debug "incoming connection"
-                       peer: peer)
-            (self.incoming.set! peer.host conn)))))))
+        (cond
+         (self.closed?
+          (ignore-errors (conn.close)))
+         ((self.incoming.ref peer.host #f)
+          (log.debug "closing duplicate incoming connection"
+                     peer: peer)
+          (ignore-errors (conn.close))
+          (self.monitor.on-close-connection conn))
+         (else
+          (log.debug "incoming connection"
+                     peer: peer)
+          (self.incoming.set! peer.host conn)))))))
 
 (def (network-listen! (self  : network)
                       (addrs : :list))
@@ -146,7 +165,21 @@
                       exception: (exception->string e))))))
 
 (def (network-close (self : network))
-  (TODO network-close))
+  (do-with-lock self.mx
+    (unless self.closed?
+      (set! self.closed? #t)
+      (for (c (in-hash-values self.outgoing) : Connection)
+        (ignore-errors (c.close)))
+      (self.outgoing.clear!)
+      (for (c (in-hash-values self.incoming) : Connection)
+        (ignore-errors (c.close)))
+      (self.incoming.clear!)
+      (for (l (in-hash-values self.listeners) : ConnectionListener)
+        (ignore-errors (l.close)))
+      (self.listeners.clear!)
+      (for (c (in-hash-values self.pending) : Completion)
+        (ignore-errors (completion-error! c (Closed "network closed"))))
+      (self.pending.clear!))))
 
 (implement Closer network
   (close __network-close))
