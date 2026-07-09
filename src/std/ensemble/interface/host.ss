@@ -8,6 +8,7 @@
         ./message
         ./actor
         ./network
+        ./broadcast
         ./address)
 (export #t)
 

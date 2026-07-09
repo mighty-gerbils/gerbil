@@ -5,6 +5,7 @@
         ./interface/message
         ./interface/network
         ./interface/address
+        ./interface/broadcast
         ./interface/host
         ./interface/actor
         ./interface/protocol
@@ -15,6 +16,7 @@
                  ./interface/actor
                  ./interface/network
                  ./interface/address
+                 ./interface/broadcast
                  ./interface/host
                  ./interface/protocol
                  ./interface/event

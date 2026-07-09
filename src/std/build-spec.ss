@@ -244,6 +244,7 @@
     "ensemble/interface/actor"
     "ensemble/interface/network"
     "ensemble/interface/address"
+    "ensemble/interface/broadcast"
     "ensemble/interface/host"
     "ensemble/interface/protocol"
     "ensemble/interface/event"
