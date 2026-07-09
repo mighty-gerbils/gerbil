@@ -20,7 +20,7 @@
 (deflogger log name: "/ensemble/network")
 
 (defmethod {:init! network}
-  (lambda (self (tls-context :~ (? (or not SSL_CTX?)))
+  (lambda (self (tls-context :~ SSL_CTX?)
            (security    : SecurityContext)
            (event-bus   : EventBus)
            (limits      : Limits)
@@ -105,20 +105,16 @@
 (def (select-addresses addrs)
   (let ((localhost (hostid))
         (inet  [])
-        (local [])
-        (relay []))
+        (local []))
     (for (addr addrs : HostAddress)
       (cond
        ((InetAddress? addr.address)
         (set! inet (cons addr inet)))
        ((LocalAddress? addr.address)
         (when (equal? localhost (LocalAddress-hostid addr.address))
-          (set! local (cons addr local))))
-       ((RelayAddress? addr.address)
-        (set! relay (cons addr relay)))))
+          (set! local (cons addr local))))))
     (append (reverse! local)
-            (reverse! inet)
-            (reverse! relay))))
+            (reverse! inet))))
 
 (def (network-listen1 (self : network)
                       (addr : HostAddress))

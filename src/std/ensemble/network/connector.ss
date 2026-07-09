@@ -28,17 +28,8 @@
   (TODO local-connect!)
   )
 
-(def (relay-connect! (self : RelayAddress)
-                     (net  : network)
-                     (addr : HostAddress))
-  => Completion
-  (TODO relay-connect!)
-  )
-
 (implement AddressConnector
   (InetAddress
    (connect! __inet-connect!))
   (LocalAddress
-   (connect! __local-connect!))
-  (RelayAddress
-   (connect! __relay-connect!)))
+   (connect! __local-connect!)))

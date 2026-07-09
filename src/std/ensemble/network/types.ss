@@ -3,13 +3,14 @@
 ;;; ensemble network types
 (import :std/io
         :std/iter
+        :std/net/ssl
         :std/sync/completion
         ../interface
         ../config)
 (export #t)
 
 (defstruct network
-  ((tls-context :- :foreign)
+  ((tls-context :~ SSL_CTX? :- :foreign)
    (security    :  SecurityContext)
    (event-bus   :  EventBus)
    (limits      :  Limits)

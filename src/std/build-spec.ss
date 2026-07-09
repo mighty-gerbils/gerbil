@@ -287,7 +287,7 @@
     "ensemble/host/basic"
     "ensemble/host/server"
 
-    "ensemble/tls/context"
+    "ensemble/tls"
 
     "ensemble/svc/loader/protocol"
     "ensemble/svc/loader/server"

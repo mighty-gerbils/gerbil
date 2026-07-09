@@ -41,12 +41,6 @@
    (limits : Limits)
    ))
 
-;; inet hosts
-(defclass InetHostConfig
-  (;; the host's tls certificate and key base directory
-   (tls-path : :string)
-   ))
-
 ;; server hosts
 (defclass (ServerHostConfig BasicHostConfig)
   (;; the host's listen addresses
@@ -54,37 +48,3 @@
    ;; the host announce addresses
    (announce :~ (list-of? HostAddress?) :- :list)
    ))
-
-;; parent hosts
-(defstruct ParentHostConfig
-  ((parent :? HostAddress)))
-
-;;; the server configuration taxonomy
-
-;; an inet accessible server host
-(defclass (InetServerHostConfig
-           ServerHostConfig
-           InetHostConfig)
-  ()
-  final: #t)
-
-;; a local server, accessible locally through unix
-;; or optionally a parent host proxy
-(defclass (LocalServerHostConfig
-           ServerHostConfig)
-  ((parent :? ParentHostConfig))
-  final: #t)
-
-;; a client host that can access inet hosts
-(defclass (InetClientHostConfig
-           BasicHostConfig
-           InetHostConfig)
-  ()
-  final: #t)
-
-;; a local client that can only access hosts locally through
-;; unix
-(defclass (LocalClientHostConfig
-           BasicHostConfig)
-  ()
-  final: #t)

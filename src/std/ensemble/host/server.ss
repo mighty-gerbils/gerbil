@@ -5,7 +5,6 @@
         :std/net/address
         ../interface
         ../config
-        ../tls/context
         ./types
         ./basic)
 (export #t)
@@ -15,8 +14,3 @@
     (set! self.announce cfg.announce)
     (basic-host:::init! self cfg passphrase)
     (self.network.listen! cfg.listen)))
-
-(defmethod {:init! inet-server-host}
-  (lambda (self (cfg : InetServerHostConfig) (passphrase : :string))
-    (set! self.tls-context (make-tls-context cfg.tls-path cfg.id.name))
-    (server-host:::init! self cfg passphrase)))

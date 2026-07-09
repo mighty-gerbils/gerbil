@@ -15,6 +15,7 @@
          ../config
         ../network
         ../broadcast
+        ../tls
         ./db
         ./types
         ./monitor
@@ -61,6 +62,11 @@
            (security-ctx
             (new-security-context self.capability-context))
            (_ (set! self.security-context security-ctx))
+           (tls-context
+            (make-tls-context
+             self.id.name
+             self.id.did
+             (self.capability-context.get-principal self.id.did)))
            (network
             (new-network self.tls-context
                          self.security-context

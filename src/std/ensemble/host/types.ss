@@ -62,7 +62,7 @@
    ;; proto string -> steam-reactor
    (reactors : HashTable)
    ;; tls context for inet hosts
-   (tls-context :~ (? (or not SSL_CTX?)) :- :foreign)
+   (tls-context :~ SSL_CTX? :- :foreign)
    ;; active stats for limits
    (limits          : Limits)
    (connections-in  : :fixnum)
@@ -78,22 +78,6 @@
 (defstruct (server-host basic-host)
   (;; list of addresses to announce in response to resolver queries
    (announce :~ (list-of? HostAddress?) :- :list)))
-
-(defstruct (inet-server-host server-host)
-  ()
-  final: #t)
-
-(defstruct (local-server-host server-host)
-  ()
-  final: #t)
-
-(defstruct (inet-clent-host basic-host)
-  ()
-  final: #t)
-
-(defstruct (local-client-host basic-host)
-  ()
-  final: #t)
 
 (defclass stream-reactor
   ((handler  : StreamHandler)

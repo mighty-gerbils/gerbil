@@ -27,17 +27,8 @@
   (TODO local-listen!)
   )
 
-(def (relay-listen! (self : RelayAddress)
-                    (net  : network)
-                    (addr : HostAddress))
-  => ConnectionListener
-  (TODO relay-listen!)
-  )
-
 (implement AddressListener
   (InetAddress
    (listen! __inet-listen!))
   (LocalAddress
-   (listen! __local-listen!))
-  (RelayAddress
-   (listen! __relay-listen!)))
+   (listen! __local-listen!)))

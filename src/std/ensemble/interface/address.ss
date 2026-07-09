@@ -12,14 +12,12 @@
         :std/os/hostname
         ./message)
 (export (struct-out HostAddress
-                    LocalAddress
-                    RelayAddress)
+                    LocalAddress)
         ensemble-address?)
 
 (defrule (ensemble-address? o)
   (? (or InetAddress?
-         LocalAddress?
-         RelayAddress?)))
+         LocalAddress?)))
 
 (defstruct (HostAddress Address)
   ((host    : HostID)
@@ -34,15 +32,9 @@
   constructor: :init!
   final: #t)
 
-(defstruct (RelayAddress Address)
-  ((through : HostAddress))
-  constructor: :init!
-  final: #t)
-
 (defobject-untaint
   HostAddress
-  LocalAddress
-  RelayAddress)
+  LocalAddress)
 
 (defmethod {:init! HostAddress}
   (lambda (self (host : HostID)
@@ -60,18 +52,10 @@
       (or id (hostid)))
     (set! self.address addr)))
 
-(defmethod {:init! RelayAddress}
-  (lambda (self (through : HostAddress))
-    (set! self.domain 'relay)
-    (set! self.through through)))
 
 (implement EndpointAddressResolver
   (LocalAddress
    (resolve &LocalAddress-address))
-  (RelayAddress
-   (resolve
-    (lambda (self)
-      (resolve->endpoint self.through))))
   (HostAddress
    (resolve
     (lambda (self)
@@ -87,10 +71,6 @@
    (to-string
     (lambda (self)
       (string-append self.hostid "!" self.address.path))))
-  (RelayAddress
-   (to-string
-    (lambda (self)
-      (address->string self.through))))
   (HostAddress
    (to-string
     (lambda (self)
@@ -127,10 +107,6 @@
     (raise-bad-argument string->local-address "malformed local address"
                         str))))
 
-(def (string->relay-address (str : :string))
-  => RelayAddress
-  (RelayAddress (string->address str)))
-
 (def (string->host-address (str : :string))
   => HostAddress
   (cond
@@ -155,5 +131,4 @@
                         str))))
 
 (hash-put! domain-table "local" __string->local-address)
-(hash-put! domain-table "relay" __string->relay-address)
 (hash-put! domain-table "host"  __string->host-address)
