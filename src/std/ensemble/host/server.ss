@@ -14,8 +14,7 @@
   (lambda (self (cfg : ServerHostConfig) (passphrase : :string))
     (set! self.announce cfg.announce)
     (basic-host:::init! self cfg passphrase)
-    (for (a cfg.listen :- Address)
-      (self.network.listen! a))))
+    (self.network.listen! cfg.listen)))
 
 (defmethod {:init! inet-server-host}
   (lambda (self (cfg : InetServerHostConfig) (passphrase : :string))

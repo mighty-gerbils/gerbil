@@ -50,7 +50,7 @@
             limits
             monitor)))
 
-(def (network-connect! (self : network)
+(def (network-connect1 (self : network)
                        (peer : HostAddress))
   => Connection
   (let (state
@@ -71,14 +71,14 @@
      (else
       (BUG "unexpected connection state" state)))))
 
-(def (network-connect-any! (self  : network)
-                           (addrs : :list))
+(def (network-connect! (self  : network)
+                       (addrs : :list))
   => Connection
   (let (addrs (select-addresses addrs))
     (let loop ((rest addrs))
       (match rest
         ([addr . rest]
-         (try (network-connect! self addr)
+         (try (network-connect1 self addr)
               (catch (e)
                 (log.error "error connecting to peer"
                            address: addr
@@ -105,7 +105,7 @@
             (reverse! inet)
             (reverse! relay))))
 
-(def (network-listen! (self : network)
+(def (network-listen1 (self : network)
                       (addr : HostAddress))
   => :void
   (do-with-lock self.mx
@@ -135,11 +135,11 @@
                        peer: peer)
             (self.incoming.set! peer.host conn)))))))
 
-(def (network-listen-all! (self  : network)
-                          (addrs : :list))
+(def (network-listen! (self  : network)
+                      (addrs : :list))
   => :void
   (for (addr addrs : HostAddress)
-    (try (network-listen! self addr)
+    (try (network-listen1 self addr)
          (catch (e)
            (log.error "error listening to address"
                       address: addr
@@ -165,6 +165,4 @@
    (lambda (self)
      (TODO listening)))
   (connect!     __network-connect!)
-  (connect-any! __network-connect-any!)
-  (listen!      __network-listen!)
-  (listen-all!  __network-listen-all!))
+  (listen!      __network-listen!))

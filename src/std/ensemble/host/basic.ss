@@ -134,7 +134,7 @@
   => :void
   (unless (self.network.peer-connection peer)
     (let (addrs (self.resolver.resolve peer))
-      (self.network.connect-any! addrs)
+      (self.network.connect! addrs)
       #!void)))
 
 (def (basic-host-open-stream! (self  : basic-host)

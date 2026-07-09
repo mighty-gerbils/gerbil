@@ -97,21 +97,13 @@
   (listening)
   => :list
 
-  ;; connect to a peer
-  (connect! (peer : HostAddress))
-  => Connection
-
   ;; connect to any one address (or reuse an existing connect)
-  (connect-any! (addrs :~ (list-of? HostAddress?)
-                       :- :list))
+  (connect! (addrs :~ (list-of? HostAddress?)
+                   :- :list))
   => Connection
-
-  ;; listen to an address
-  (listen! (addr : HostAddress))
-  => :void
 
   ;; listen to all addresses in a list
-  (listen-all! (addrs :~ (list-of? HostAddress?)
-                      :- :list))
+  (listen! (addrs :~ (list-of? HostAddress?)
+                  :- :list))
   => :void
   )
