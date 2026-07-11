@@ -33,12 +33,7 @@
    (app : :t := #f)
    ))
 
-;; TODO actual validation, with generic macro
-(implement ObjectDeserializer
-  (Config
-   (validate! void))
-  (LogRotateOpt
-   (validate! void)))
+(defobject-untaint Config)
 
 (def (do-config opt)
   (let-hash opt
