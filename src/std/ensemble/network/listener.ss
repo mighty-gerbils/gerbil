@@ -9,7 +9,7 @@
         :std/net/address
         ../interface
         ./types
-        ./connection)
+        ./handshake)
 (export address-listen!)
 
 (defcall-interface-method AddressListener listen!

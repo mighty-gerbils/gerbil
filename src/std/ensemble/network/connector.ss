@@ -11,7 +11,7 @@
         :std/os/hostname
         ../interface
         ./types
-        ./connection)
+        ./handshake)
 (export address-connect!)
 
 (defcall-interface-method AddressConnector connect!

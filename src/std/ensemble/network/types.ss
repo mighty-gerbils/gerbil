@@ -39,12 +39,19 @@
   final: #t)
 
 (defstruct connection
-  ((net       : network)
-   (peer      : HostID)
-   (sock      : StreamSocket)
-   (reader    : BufferedReader)
-   (writer    : BufferedWriter)
-   (direction : :fixnum))
+  ((this        : Connection)
+   (net         : network)
+   (peer        : HostID)
+   (sock        : StreamSocket)
+   (reader      : BufferedReader)
+   (writer      : BufferedWriter)
+   (direction   : :fixnum)
+   (mx          : :mutex)
+   (next-stream : :fixnum)
+   (streams-in  : HashTable)
+   (streams-out : HashTable)
+   (pending-out : HashTable))
+  constructor: :init!
   final: #t)
 
 (defstruct connection-listener
