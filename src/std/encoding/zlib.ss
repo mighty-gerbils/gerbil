@@ -24,7 +24,8 @@
 
 (defstruct (zlib-writer zlib-stream)
   ((writer   :- Writer)
-   (buffered :- BufferedWriter)))
+   (buffered :- BufferedWriter)
+   (flush    :- :fixnum)))
 
 (defstruct (zlib-buffered-writer zlib-stream)
   ((writer :- BufferedWriter)))
@@ -47,13 +48,15 @@
 
 (def (__open-deflate (zstream :- :foreign)
                      (writer  :- Writer)
-                     (buffer-size :- :fixnum))
+                     (buffer-size :- :fixnum)
+                     (flush :- :fixnum))
   => Writer
   (let (buffer (buffer-cache.get buffer-size))
     (Writer
      (zlib-writer zstream buffer 0 (u8vector-length buffer) #f
                   writer
-                  (try-BufferedWriter writer)))))
+                  (try-BufferedWriter writer)
+                  flush))))
 
 (def (__open-inflate (zstream :- :foreign)
                      (reader  :- Reader)
@@ -67,13 +70,15 @@
 (def (open-deflate-writer (writer      : Writer)
                           (buffer-size : :fixnum := default-buffer-size)
                           gzip:        (gzip?       : :boolean := #f)
-                          compression: (compression : :fixnum := Z_DEFAULT_COMPRESSION))
+                          compression: (compression : :fixnum := Z_DEFAULT_COMPRESSION)
+                          flush:       (flush?      : :boolean := #f))
   => Writer
   (let (zstream (check-pointer open-deflate-writer (make_z_stream)))
     (if gzip?
       (with-zlib-error (deflateInit_gz zstream compression) Z_OK)
       (with-zlib-error (deflateInit zstream compression) Z_OK))
-    (__open-deflate zstream writer buffer-size)))
+    (__open-deflate zstream writer buffer-size
+                    (if flush? Z_SYNC_FLUSH Z_NO_FLUSH))))
 
 (def (open-deflate-gz-writer (writer      : Writer)
                              (buffer-size : :fixnum := default-buffer-size)
@@ -212,7 +217,7 @@
                          (deflate self.zstream
                            self.buffer 0 self.hi
                            input start want
-                           Z_NO_FLUSH)
+                           self.flush)
                          Z_OK))
                 (read   (fx- (z_stream_total_in self.zstream) icount))
                 (wrote  (fx- (z_stream_total_out self.zstream) ocount))
