@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; ensemble connections
+;;; ensemble connection handshake
 (import :std/error
         :std/interface
         :std/io
@@ -27,8 +27,9 @@
   (let ((reader (open-buffered-reader (sock.reader)))
         (writer (open-buffered-writer (sock.writer))))
     (client-handshake! net sock reader writer peer)
-    (new-connection net peer sock reader writer
-                    DIRECTION-OUT)))
+    (buffer-detach! reader)
+    (buffer-detach! writer)
+    (new-connection net peer sock DIRECTION-OUT)))
 
 (def (new-incoming-connection (net  : network)
                               (sock : StreamSocket))
@@ -36,8 +37,9 @@
   (let* ((reader (open-buffered-reader (sock.reader)))
          (writer (open-buffered-writer (sock.writer)))
          (peer   (server-handshake! net sock reader writer)))
-    (new-connection net peer sock reader writer
-                    DIRECTION-IN)))
+    (buffer-detach! reader)
+    (buffer-detach! writer)
+    (new-connection net peer sock DIRECTION-IN)))
 
 (def (client-handshake! (net  : network)
                         (sock   : StreamSocket)

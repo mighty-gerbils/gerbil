@@ -268,8 +268,9 @@
     "ensemble/network/types"
     "ensemble/network/connector"
     "ensemble/network/listener"
-    "ensemble/network/connection"
     "ensemble/network/handshake"
+    "ensemble/network/connection"
+    "ensemble/network/mux"
     "ensemble/network/network"
     "ensemble/network"
 

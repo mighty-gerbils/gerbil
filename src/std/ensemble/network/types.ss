@@ -49,10 +49,9 @@
    (direction   : :fixnum)
    (mx          : :mutex)
    (closed?     : :boolean)
-   (next-stream : :fixnum)
+   (next-stream : :integer)
    (streams-in  : HashTable)
    (streams-out : HashTable)
-   (pending-out : HashTable)
    (write-queue : Channel))
   constructor: :init!
   transparent: #f
@@ -73,3 +72,35 @@
 (interface AddressListener
   (listen! (net : network) (addr : HostAddress))
   => ConnectionListener)
+
+;; mux messages
+(defstruct MuxMessage ())
+
+(defstruct (OpenStream MuxMessage)
+  ((stream-id : :integer)
+   (protocol  : :string)
+   (auth      :~ (list-of? Token?)
+              :- :list))
+  final: #t)
+
+(defstruct (AckStream MuxMessage)
+  ((stream-id : :integer)
+   (window    : :fixnum)))
+
+(defstruct (CloseStream MuxMessage)
+  ((stream-id : :integer))
+  final: #t)
+
+(defstruct (ResetStream MuxMessage)
+  ((stream-id : :integer))
+  final: #t)
+
+(defstruct (Data MuxMessage)
+  ((stream-id : :integer)
+   (data      : :u8vector))
+  final: #t)
+
+(defstruct SyncMuxMessage
+  ((msg        : MuxMessage)
+   (completion : Completion))
+  final: #t)

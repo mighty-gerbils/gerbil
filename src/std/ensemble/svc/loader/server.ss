@@ -10,7 +10,6 @@
         :std/log
         :std/crypto/digest
         :std/time/precise
-        :std/encoding/zlib
         :std/encoding/hex
         ../../interface
         ../../ucan/ext
@@ -270,18 +269,17 @@
 (implement StreamHandler upload-stream-handler
   (handle-stream!
    (lambda (self stream)
-     ;; first read the file, zlib compressed
+     ;; first read the file
      (log.debug "begin upload"
                 hash: self.req.sha256)
      (let* ((upload-path
              (path-expand (string-append self.req.sha256
                                          "." (number->string (coarse-time-now))
                                          ".o1")
-                          (path-expand "upload" self.svc.path)))
-            (reader (open-inflate-reader (stream.reader))))
+                          (path-expand "upload" self.svc.path))))
        (call-with-file-writer
         upload-path
-        (cut io-copy! reader <>))
+        (cut io-copy! (stream.reader) <>))
        (log.debug "upload done"
                   hash: self.req.sha256)
        ;; check the uploaded file hash

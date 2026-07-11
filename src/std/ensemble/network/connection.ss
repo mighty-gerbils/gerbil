@@ -4,84 +4,58 @@
 (import :std/error
         :std/interface
         :std/io
-        :std/io/bio/buffer
-        :std/net/ssl
-        :std/time/precise
         :std/time/timeout
-        :std/serde/marshal
-        :std/serde/unmarshal
         :std/sync/channel
+        :std/encoding/zlib
         ../interface
-        ../tls
-        ../ucan/ext
-        ./types)
+        ./types
+        ./mux)
 (export new-connection)
 
 (defmethod {:init! connection}
   (lambda (self (net       : network)
            (peer      : HostID)
            (sock      : StreamSocket)
-           (reader    : BufferedReader)
-           (writer    : BufferedWriter)
            (direction : :fixnum))
     (set! self.this (Connection self))
     (set! self.net net)
     (set! self.peer peer)
     (set! self.sock sock)
-    (set! self.reader reader)
-    (set! self.writer writer)
+    (set! self.reader
+      (open-buffered-reader
+       (open-inflate-reader (sock.reader))))
+    (set! self.writer
+      (open-buffered-writer
+       (open-deflate-writer (sock.writer)
+                            flush: #t)))
     (set! self.direction direction)
     (set! self.mx (make-mutex 'connection))
     (set! self.next-stream direction)
     (set! self.streams-in (make-hash-table-eqv))
     (set! self.streams-out (make-hash-table-eqv))
-    (set! self.pending-out (make-hash-table-eqv))
     (set! self.write-queue (Channel))))
 
 (def (new-connection (net       : network)
                      (peer      : HostID)
                      (sock      : StreamSocket)
-                     (reader    : BufferedReader)
-                     (writer    : BufferedWriter)
                      (direction : :fixnum))
   => Connection
   (try
-   (using (conn (connection net peer sock reader writer direction)
+   (using (conn (connection net peer sock direction)
                 : connection)
      (net.monitor.on-open-connection conn.this)
-     (net.event-bus.emit!
-      (ConnectionEstablishedEvent
-       (current-time-seconds)
-       conn.this))
-     (spawn-actor (cut connection-reader conn)
+     (spawn-actor (cut connection-mux-reader conn)
                   [] ['connection/reader peer] net.tgroup)
-     (spawn-actor (cut connection-writer conn)
+     (spawn-actor (cut connection-mux-writer conn)
                   [] ['connection/writer peer] net.tgroup)
      conn.this)
    (catch (e)
      (ignore-errors (sock.close))
      (raise e))))
 
-(def (connection-error (self : connection)
-                       (e    : Error))
-  (unless self.closed?
-    (do-with-lock self.net.mx
-      (if (fx= self.direction DIRECTION-IN)
-        (self.net.incoming.delete! self.peer)
-        (self.net.outgoing.delete! self.peer))
-      (self.net.monitor.on-close-connection self.this))))
-
 (def (connection-close (self : connection))
   => :void
   (TODO connection-close))
-
-(def (connection-reader (self : connection))
-  => :void
-  (TODO connection-reader))
-
-(def (connection-writer (self : connection))
-  => :void
-  (TODO connection-reader))
 
 (def (connection-open-stream! (self  :  connection)
                               (proto :  :string)
