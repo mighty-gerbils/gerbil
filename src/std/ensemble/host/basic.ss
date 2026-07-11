@@ -70,7 +70,6 @@
             (new-network self.id
                          self.tls-context
                          self.security-context
-                         self.event-bus
                          cfg.limits
                          (NetworkMonitor self)))
            (_ (set! self.network network))

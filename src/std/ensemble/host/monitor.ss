@@ -4,6 +4,7 @@
 (import :std/error
         :std/interface
         :std/log
+        :std/time/precise
         ../interface
         ./types)
 
@@ -15,7 +16,9 @@
   (def (accept! message)
     (log.debug message
                address: (conn.address)
-               peer:    (conn.peer)))
+               peer:    (conn.peer))
+    (self.event-bus.emit!
+     (ConnectionEstablishedEvent (current-time-seconds) conn)))
   (def (reject! message)
     (ignore-errors (conn.close))
     (log.warn message
@@ -46,7 +49,9 @@
       (set! self.connections-in
         (fx- self.connections-in 1))
       (set! self.connections-out
-        (fx- self.connections-out 1)))))
+        (fx- self.connections-out 1)))
+    (self.event-bus.emit!
+     (ConnectionClosedEvent (current-time-seconds) conn))))
 
 (def (basic-host-on-open-stream (self   : basic-host)
                                 (stream : Stream))
@@ -83,13 +88,15 @@
                     (fx+ self.streams-out 1))
                   (accept! "new outgoing stream" #f))
                 (reject! "rejected outgoing stream; limit exceeded")))))
-      (when dispatch?
+      (if dispatch?
         (cond
          ((basic-host-get-reactor self (stream.protocol))
           => (lambda ((reactor :- stream-reactor))
                (spawn-actor
                 (cut reactor.handler.handle-stream! stream)
-                [] 'host/stream self.tgroup)))
+                [] 'host/stream self.tgroup)
+               (self.event-bus.emit!
+                (StreamEstablishedEvent (current-time-seconds) stream))))
          (else
           (ignore-errors (stream.close))
           (basic-host-on-close-stream self stream)
@@ -97,7 +104,9 @@
                     protocol: (stream.protocol)
                     address:  (conn.address)
                     peer:     (conn.peer))
-          (raise-io-closed on-open-stream "no reactor for steram")))))))
+          (raise-io-closed on-open-stream "no reactor for steram")))
+        (self.event-bus.emit!
+         (StreamEstablishedEvent (current-time-seconds) stream))))))
 
 (def (basic-host-get-reactor (self  : basic-host)
                              (proto : :string))
@@ -121,7 +130,9 @@
       (set! self.streams-in
         (fx- self.streams-in 1))
       (set! self.streams-out
-        (fx- self.streams-out 1)))))
+        (fx- self.streams-out 1)))
+    (self.event-bus.emit!
+     (StreamClosedEvent (current-time-seconds) stream))))
 
 (implement NetworkMonitor basic-host
   (on-open-connection  __basic-host-on-open-connection)

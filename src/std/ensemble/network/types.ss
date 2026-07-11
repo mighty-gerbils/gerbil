@@ -6,6 +6,7 @@
         :std/iter
         :std/net/ssl
         :std/sync/completion
+        :std/sync/channel
         ../interface
         ../config)
 (export #t)
@@ -47,11 +48,15 @@
    (writer      : BufferedWriter)
    (direction   : :fixnum)
    (mx          : :mutex)
+   (closed?     : :boolean)
    (next-stream : :fixnum)
    (streams-in  : HashTable)
    (streams-out : HashTable)
-   (pending-out : HashTable))
+   (pending-out : HashTable)
+   (write-queue : Channel))
   constructor: :init!
+  transparent: #f
+  print: (peer)
   final: #t)
 
 (defstruct connection-listener

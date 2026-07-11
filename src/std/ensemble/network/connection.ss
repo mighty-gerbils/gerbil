@@ -10,6 +10,7 @@
         :std/time/timeout
         :std/serde/marshal
         :std/serde/unmarshal
+        :std/sync/channel
         ../interface
         ../tls
         ../ucan/ext
@@ -34,7 +35,8 @@
     (set! self.next-stream direction)
     (set! self.streams-in (make-hash-table-eqv))
     (set! self.streams-out (make-hash-table-eqv))
-    (set! self.pending-out (make-hash-table-eqv))))
+    (set! self.pending-out (make-hash-table-eqv))
+    (set! self.write-queue (Channel))))
 
 (def (new-connection (net       : network)
                      (peer      : HostID)
@@ -52,17 +54,32 @@
        (current-time-seconds)
        conn.this))
      (spawn-actor (cut connection-reader conn)
-                  [] 'net/connection net.tgroup)
+                  [] ['connection/reader peer] net.tgroup)
+     (spawn-actor (cut connection-writer conn)
+                  [] ['connection/writer peer] net.tgroup)
      conn.this)
    (catch (e)
      (ignore-errors (sock.close))
      (raise e))))
+
+(def (connection-error (self : connection)
+                       (e    : Error))
+  (unless self.closed?
+    (do-with-lock self.net.mx
+      (if (fx= self.direction DIRECTION-IN)
+        (self.net.incoming.delete! self.peer)
+        (self.net.outgoing.delete! self.peer))
+      (self.net.monitor.on-close-connection self.this))))
 
 (def (connection-close (self : connection))
   => :void
   (TODO connection-close))
 
 (def (connection-reader (self : connection))
+  => :void
+  (TODO connection-reader))
+
+(def (connection-writer (self : connection))
   => :void
   (TODO connection-reader))
 

@@ -20,13 +20,11 @@
   (lambda (self (host        : HostID)
            (tls-context :~ SSL_CTX?)
            (security    : SecurityContext)
-           (event-bus   : EventBus)
            (limits      : Limits)
            (monitor     : NetworkMonitor))
     (set! self.host host)
     (set! self.tls-context tls-context)
     (set! self.security security)
-    (set! self.event-bus event-bus)
     (set! self.limits limits)
     (set! self.monitor monitor)
     (set! self.tgroup (make-thread-group 'network))
@@ -40,14 +38,12 @@
 (def (new-network (host        : HostID)
                   (tls-context :~ SSL_CTX?)
                   (security    : SecurityContext)
-                  (event-bus   : EventBus)
                   (limits      : Limits)
                   (monitor     : NetworkMonitor))
   (Network
    (network host
             tls-context
             security
-            event-bus
             limits
             monitor)))
 
@@ -86,11 +82,17 @@
               (cond
                (self.closed?
                 (ignore-errors (conn.close))
-                (self.monitor.on-close-connection conn)
                 (raise-io-closed network-connect! "network closed"))
                (else
                 (log.debug "connected to peer"
                            peer: peer)
+                (try
+                 (self.monitor.on-open-connection conn)
+                 (catch (e)
+                   (log.debug "connection rejected"
+                              exception: (exception->string e))
+                   (ignore-errors (conn.close))
+                   (raise e)))
                 (self.outgoing.set! peer.host conn)
                 conn))))
          Connection))
@@ -150,17 +152,23 @@
       (do-with-lock self.mx
         (cond
          (self.closed?
-          (ignore-errors (conn.close))
-          (self.monitor.on-close-connection conn))
+          (ignore-errors (conn.close)))
          ((self.incoming.ref peer.host #f)
           (log.debug "closing duplicate incoming connection"
                      peer: peer)
-          (ignore-errors (conn.close))
-          (self.monitor.on-close-connection conn))
+          (ignore-errors (conn.close)))
          (else
-          (log.debug "incoming connection"
-                     peer: peer)
-          (self.incoming.set! peer.host conn)))))))
+          (let/cc continue
+            (log.debug "incoming connection"
+                       peer: peer)
+            (try
+             (self.monitor.on-open-connection conn)
+             (catch (e)
+               (log.debug "connection rejected"
+                          exception: (exception->string e))
+               (ignore-errors (conn.close))
+               (continue)))
+            (self.incoming.set! peer.host conn))))))))
 
 (def (network-listen! (self  : network)
                       (addrs : :list))
@@ -177,10 +185,12 @@
     (unless self.closed?
       (set! self.closed? #t)
       (for (c (in-hash-values self.outgoing) : Connection)
-        (ignore-errors (c.close)))
+        (ignore-errors (c.close))
+        (self.monitor.on-close-connection c))
       (self.outgoing.clear!)
       (for (c (in-hash-values self.incoming) : Connection)
-        (ignore-errors (c.close)))
+        (ignore-errors (c.close))
+        (self.monitor.on-close-connection c))
       (self.incoming.clear!)
       (for (l (in-hash-values self.listeners) : ConnectionListener)
         (ignore-errors (l.close)))
