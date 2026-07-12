@@ -30,9 +30,11 @@
                             flush: #t)))
     (set! self.direction direction)
     (set! self.mx (make-mutex 'connection))
+    (set! self.next-seqno 0)
     (set! self.next-stream direction)
     (set! self.streams-in (make-hash-table-eqv))
     (set! self.streams-out (make-hash-table-eqv))
+    (set! self.pending-out (make-hash-table-eqv))
     (set! self.write-queue (Channel))))
 
 (def (new-connection (net       : network)

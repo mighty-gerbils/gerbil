@@ -7,6 +7,8 @@
         :std/net/ssl
         :std/sync/completion
         :std/sync/channel
+        :std/serde/interface
+        :std/serde/deserialize
         ../interface
         ../config)
 (export #t)
@@ -49,14 +51,20 @@
    (direction   : :fixnum)
    (mx          : :mutex)
    (closed?     : :boolean)
+   (next-seqno  : :integer)
    (next-stream : :integer)
    (streams-in  : HashTable)
    (streams-out : HashTable)
+   (pending-out : HashTable)
    (write-queue : Channel))
   constructor: :init!
   transparent: #f
   print: (peer)
   final: #t)
+
+(defstruct stream
+  ((conn : connection)
+   ))
 
 (defstruct connection-listener
   ((net  : network)
@@ -74,7 +82,8 @@
   => ConnectionListener)
 
 ;; mux messages
-(defstruct MuxMessage ())
+(defstruct MuxMessage
+  ((seqno : :integer)))
 
 (defstruct (OpenStream MuxMessage)
   ((stream-id : :integer)
@@ -84,8 +93,9 @@
   final: #t)
 
 (defstruct (AckStream MuxMessage)
-  ((stream-id : :integer)
-   (window    : :fixnum)))
+  ((stream-id     : :integer)
+   (stream-limit  : :fixnum)
+   (message-limit : :fixnum)))
 
 (defstruct (CloseStream MuxMessage)
   ((stream-id : :integer))
@@ -100,7 +110,26 @@
    (data      : :u8vector))
   final: #t)
 
+(defstruct (AckData MuxMessage)
+  ((stream-id     : :integer)
+   (window-update : :integer))
+  final: #t)
+
+(defobject-untaint
+  OpenStream
+  AckStream
+  CloseStream
+  ResetStream
+  Data
+  AckData)
+
 (defstruct SyncMuxMessage
   ((msg        : MuxMessage)
    (completion : Completion))
   final: #t)
+
+(interface MuxInputDispatch
+  (dispatch! (conn : connection)))
+
+(interface MuxOutputDispatch
+  (dispatch! (conn : connection)))
