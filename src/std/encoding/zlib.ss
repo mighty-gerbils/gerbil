@@ -82,11 +82,13 @@
 
 (def (open-deflate-gz-writer (writer      : Writer)
                              (buffer-size : :fixnum := default-buffer-size)
-                             compression: (compression : :fixnum := Z_DEFAULT_COMPRESSION))
+                             compression: (compression : :fixnum := Z_DEFAULT_COMPRESSION)
+                             flush:       (flush?      : :boolean := #f))
   => Writer
   (open-deflate-writer writer buffer-size
                        gzip: #t
-                       compression: compression))
+                       compression: compression
+                       flush: flush?))
 
 (def (open-inflate-reader (reader : Reader)
                           (buffer-size : :fixnum := default-buffer-size))

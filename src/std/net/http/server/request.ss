@@ -173,9 +173,9 @@
               (compressed
                (cond
                 ((equal? compress-method "gzip")
-                 (open-deflate-gz-writer chunked))
+                 (open-deflate-gz-writer chunked flush: #t))
                 ((equal? compress-method "deflate")
-                 (open-deflate-writer chunked))
+                 (open-deflate-writer chunked flush: #t))
                 (else #f))))
          (set! self.chunked chunked)
          (set! self.compressed compressed)
