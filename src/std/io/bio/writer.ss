@@ -198,7 +198,7 @@
               (begin
               (__bio-output-buffer-drain! bio buf whi)
               (again bio.whi)))))
-         ((##fx<= c #xffff)
+         ((fx<= c #xffff)
           (let ((whi+1 (fx+ whi 1))
                 (whi+2 (fx+ whi 2)))
             (if (fx< whi+2 buflen)

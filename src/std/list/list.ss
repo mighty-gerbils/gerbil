@@ -405,3 +405,21 @@
   (unless (and (pair? x) (null? (cdr x)))
     (raise-contract-violation first-and-only "single element list" x))
   (car x))
+
+
+;; The functions below are from SRFI-1
+
+;;; REDUCE and REDUCE-RIGHT only use RIDENTITY in the empty-list case.
+;;; These cannot meaningfully be n-ary.
+(def (reduce (f : :procedure) ridentity (lis : :list))
+  (if (null? lis) ridentity
+      (foldl f (car lis) (cdr lis))))
+
+(def (reduce-right (f : :procedure) ridentity (lis : :list))
+  (if (null? lis) ridentity
+      (let recur ((head (car lis)) (lis (cdr lis)))
+	(if (pair? lis)
+	    (f head (recur (car lis) (cdr lis)))
+	    head))))
+
+(def map-in-order map) ;; Gambit's map is left-to-right

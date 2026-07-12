@@ -1,13 +1,11 @@
 (export prime-test)
 
 (import
-  :std/srfi/1
   :std/iter
-  :std/misc/evector
-  :std/misc/func
-  :std/misc/number
-  :std/misc/prime
-  :std/sugar
+  :std/vector/evector
+  ;;:std/misc/func
+  :std/number/misc
+  :std/number/prime
   :std/test)
 
 (def prime-test
@@ -124,6 +122,7 @@
       (check (pi-function 100) => 25))
     (test-case "simple factor"
       ;; order or the Friendly Giant
+      (def (repeat x n) (iota n x 0))
       (check (factor 808017424794512875886459904961710757005754368000000000)
              => [(repeat 2 46)... (repeat 3 20)... (repeat 5 9)...
                  (repeat 7 6)... (repeat 11 2)... (repeat 13 3)...

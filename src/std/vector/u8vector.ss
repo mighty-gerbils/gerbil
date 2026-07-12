@@ -2,12 +2,11 @@
 ;;; © vyzo, belmarca
 ;;; miscellaneous bytes utilities
 
-(import (for-syntax :std/stxutil)
-        :gerbil/gambit
+(import ;;(for-syntax :std/stxutil)
         :std/error
-        :std/foreign
-        :std/misc/number
-        :std/text/hex)
+        :std/ffi
+        :std/number/misc
+        :std/encoding/hex)
 (export
   ;; Endianness
   endianness big little native native-endianness
@@ -352,20 +351,20 @@
 (defsyntax (defintprocs stx)
   (def (make-def int size &int-ref &int-set!)
     (with-syntax ((size size)
-                  (&int-ref/be      (format-id &int-ref "~a/be" &int-ref))
-                  (&int-ref/le      (format-id &int-ref "~a/le" &int-ref))
-                  (&int-ref/native  (format-id int "&u8vector-~a-ref/native" int))
-                  (&int-set!/be     (format-id &int-set! "~a/be" &int-set!))
-                  (&int-set!/le     (format-id &int-set! "~a/le" &int-set!))
-                  (&int-set!/native (format-id int "&u8vector-~a-set!/native" int))
-                  (int-ref          (format-id int "u8vector-~a-ref" int))
-                  (int-native-ref   (format-id int "u8vector-~a-native-ref" int))
-                  (int-set!         (format-id int "u8vector-~a-set!" int))
-                  (int-native-set!  (format-id int "u8vector-~a-native-set!" int))
-                  (bv-ref           (format-id int "bytevector-~a-ref" int))
-                  (bv-native-ref    (format-id int "bytevector-~a-native-ref" int))
-                  (bv-set!          (format-id int "bytevector-~a-set!" int))
-                  (bv-native-set!   (format-id int "bytevector-~a-native-set!" int)))
+                  (&int-ref/be      (stx-identifier &int-ref &int-ref "/be"))
+                  (&int-ref/le      (stx-identifier &int-ref &int-ref "/le"))
+                  (&int-ref/native  (stx-identifier int "&u8vector-" int "-ref/native"))
+                  (&int-set!/be     (stx-identifier &int-set! &int-set! "/be"))
+                  (&int-set!/le     (stx-identifier &int-set! &int-set! "/le"))
+                  (&int-set!/native (stx-identifier int "&u8vector-" int "-set!/native"))
+                  (int-ref          (stx-identifier int "u8vector-" int "-ref"))
+                  (int-native-ref   (stx-identifier int "u8vector-" int "-native-ref"))
+                  (int-set!         (stx-identifier int "u8vector-" int "-set!"))
+                  (int-native-set!  (stx-identifier int "u8vector-" int "-native-set!"))
+                  (bv-ref           (stx-identifier int "bytevector-" int "-ref"))
+                  (bv-native-ref    (stx-identifier int "bytevector-" int "-native-ref"))
+                  (bv-set!          (stx-identifier int "bytevector-" int "-set!"))
+                  (bv-native-set!   (stx-identifier int "bytevector-" int "-native-set!")))
       #'(begin
           (def (int-ref v k endianness)
             (check-int-ref v k size)
@@ -562,8 +561,9 @@
 (def (u8vector->uint v (endianness big) (size (u8vector-length v)))
   (u8vector-uint-ref v 0 endianness size))
 
-(def (uint->u8vector uint (endianness big) (size (uint-length-in-u8 uint)))
-  (check-argument-uint uint)
+(def (uint->u8vector (uint :~ uint? :- :integer)
+                     (endianness big)
+                     (size (uint-length-in-u8 uint)))
   (let ((res (make-u8vector size)))
     (u8vector-uint-set! res 0 uint endianness size)
     res))
@@ -571,8 +571,9 @@
 (def (u8vector->sint v (endianness big) (size (u8vector-length v)))
   (u8vector-sint-ref v 0 endianness size))
 
-(def (sint->u8vector sint (endianness big) (size (sint-length-in-u8 sint)))
-  (check-argument-sint sint)
+(def (sint->u8vector (sint :~ sint? :- :integer)
+                     (endianness big)
+                     (size (sint-length-in-u8 sint)))
   (let ((res (make-u8vector size)))
     (u8vector-sint-set! res 0 sint endianness size)
     res))
@@ -590,76 +591,48 @@
 
 
 ;;; FFI
-(begin-ffi (native-endianness
-            &u8vector-u16-ref/native
-            &u8vector-u16-set!/native
-            &u8vector-s16-ref/native
-            &u8vector-s16-set!/native
-            &u8vector-u32-ref/native
-            &u8vector-u32-set!/native
-            &u8vector-s32-ref/native
-            &u8vector-s32-set!/native
-            &u8vector-u64-ref/native
-            &u8vector-u64-set!/native
-            &u8vector-s64-ref/native
-            &u8vector-s64-set!/native
-            &u8vector-float-ref/native
-            &u8vector-float-set!/native
-            &u8vector-double-ref/native
-            &u8vector-double-set!/native)
+(C-ffi-macrology)
+(C-include "<stdint.h>")
 
-  (c-declare "#include <stdint.h>")
+(def-C-const __LITTLE_ENDIAN)
+(def native-endianness (if (zero? __LITTLE_ENDIAN) 'big 'little))
 
-  (define native-endianness
-    (if ((c-lambda () scheme-object
-              #<<END-C
-#ifdef ___LITTLE_ENDIAN
-___return(___TRU);
-#else
-___return(___FAL);
-#endif
-END-C
-))
-      'little
-      'big))
+(def-C-lambda &u8vector-u16-ref/native (scheme-object int) unsigned-int16
+  "uint16_t res = *(uint16_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
+(def-C-lambda &u8vector-u16-set!/native (scheme-object int unsigned-int16) void
+  "*(uint16_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
+(def-C-lambda &u8vector-s16-ref/native (scheme-object int) int16
+  "int16_t res = *(int16_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
+(def-C-lambda &u8vector-s16-set!/native (scheme-object int int16) void
+  "*(int16_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
 
-  (define-c-lambda &u8vector-u16-ref/native (scheme-object int) unsigned-int16
-    "uint16_t res = *(uint16_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
-  (define-c-lambda &u8vector-u16-set!/native (scheme-object int unsigned-int16) void
-    "*(uint16_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
-  (define-c-lambda &u8vector-s16-ref/native (scheme-object int) int16
-    "int16_t res = *(int16_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
-  (define-c-lambda &u8vector-s16-set!/native (scheme-object int int16) void
-    "*(int16_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
+(def-C-lambda &u8vector-u32-ref/native (scheme-object int) unsigned-int32
+  "uint32_t res = *(uint32_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
+(def-C-lambda &u8vector-u32-set!/native (scheme-object int unsigned-int32) void
+  "*(uint32_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
+(def-C-lambda &u8vector-s32-ref/native (scheme-object int) int32
+  "int32_t res = *(int32_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
+(def-C-lambda &u8vector-s32-set!/native (scheme-object int int32) void
+  "*(int32_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
 
-  (define-c-lambda &u8vector-u32-ref/native (scheme-object int) unsigned-int32
-    "uint32_t res = *(uint32_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
-  (define-c-lambda &u8vector-u32-set!/native (scheme-object int unsigned-int32) void
-    "*(uint32_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
-  (define-c-lambda &u8vector-s32-ref/native (scheme-object int) int32
-    "int32_t res = *(int32_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
-  (define-c-lambda &u8vector-s32-set!/native (scheme-object int int32) void
-    "*(int32_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
+(def-C-lambda &u8vector-u64-ref/native (scheme-object int) unsigned-int64
+  "uint64_t res = *(uint64_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
+(def-C-lambda &u8vector-u64-set!/native (scheme-object int unsigned-int64) void
+  "*(uint64_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
+(def-C-lambda &u8vector-s64-ref/native (scheme-object int) int64
+  "int64_t res = *(int64_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
+(def-C-lambda &u8vector-s64-set!/native (scheme-object int int64) void
+  "*(int64_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
 
-  (define-c-lambda &u8vector-u64-ref/native (scheme-object int) unsigned-int64
-    "uint64_t res = *(uint64_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
-  (define-c-lambda &u8vector-u64-set!/native (scheme-object int unsigned-int64) void
-    "*(uint64_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
-  (define-c-lambda &u8vector-s64-ref/native (scheme-object int) int64
-    "int64_t res = *(int64_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
-  (define-c-lambda &u8vector-s64-set!/native (scheme-object int int64) void
-    "*(int64_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
+(def-C-lambda &u8vector-float-ref/native (scheme-object int) float
+  "float res = *(float*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
+(def-C-lambda &u8vector-float-set!/native (scheme-object int float) void
+  "*(float*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
 
-  (define-c-lambda &u8vector-float-ref/native (scheme-object int) float
-    "float res = *(float*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
-  (define-c-lambda &u8vector-float-set!/native (scheme-object int float) void
-    "*(float*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
-
-  (define-c-lambda &u8vector-double-ref/native (scheme-object int) double
-    "double res = *(double*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
-  (define-c-lambda &u8vector-double-set!/native (scheme-object int double) void
-    "*(double*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
-  )
+(def-C-lambda &u8vector-double-ref/native (scheme-object int) double
+  "double res = *(double*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
+(def-C-lambda &u8vector-double-set!/native (scheme-object int double) void
+  "*(double*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
 
 (def (u8vector-every pred bytes)
   (declare (fixnum))

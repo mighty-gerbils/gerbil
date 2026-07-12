@@ -1,8 +1,7 @@
 (export pregexp-test)
 
 (import
-  :std/pregexp
-  :std/sugar
+  :std/text/pregexp
   :std/test)
 
 (defrules test ()

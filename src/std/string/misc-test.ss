@@ -3,88 +3,76 @@
 (import
   :std/error
   :std/format
-  ;;v0.19-TODO: :std/misc/repr
   :std/string/misc
-  :std/pregexp
-  :std/srfi/13
-  :std/sugar
+  :std/text/pregexp
   :std/test)
 
-;;v0.19-TODO: (defstruct point (x y))
-;;v0.19-TODO: (defmethod {:pr point}
-;;v0.19-TODO:   (lambda (self port options)
-;;v0.19-TODO:     (fprintf port "(point ~a ~a)" (point-x self) (point-y self))))
+(def (vowel? c)
+  (memv c '(#\a #\e #\i #\o #\u)))
 
 (def string-test
   (test-suite "test :std/misc/string"
     (test-case "string-split-suffix"
-      (check-equal? (values->list (string-split-suffix ".c" "foo.c")) ["foo" ".c"])
-      (check-equal? (values->list (string-split-suffix ".c" "foo")) ["foo" ""]))
+      (check-function string-split-suffix
+         ".c" "foo.c" => (values "foo" ".c")
+         ".c" "foo"   => (values "foo" "")))
     (test-case "string-trim-suffix"
-      (check-equal? (string-trim-suffix ".c" "foo.c") "foo")
-      (check-equal? (string-trim-suffix ".c" "foo") "foo"))
+      (check-function string-trim-suffix
+         ".c" "foo.c" => "foo"
+         ".c" "foo"   => "foo"))
     (test-case "string-split-eol"
-      (check-equal? (values->list (string-split-eol "foo\n")) ["foo" "\n"])
-      (check-equal? (values->list (string-split-eol "foo\r\n")) ["foo" "\r\n"])
-      (check-equal? (values->list (string-split-eol "foo\r")) ["foo" "\r"])
-      (check-equal? (values->list (string-split-eol "foo\n\n\n")) ["foo\n\n" "\n"])
-      (check-equal? (values->list (string-split-eol "foo")) ["foo" ""])
-      (check-equal? (string-trim-eol "foo\n") "foo")
-      (check-equal? (string-trim-eol "foo\r") "foo")
-      (check-equal? (string-trim-eol "foo\r\n") "foo")
-      (check-equal? (string-trim-eol "foo\n\n") "foo\n")
-      (check-equal? (string-trim-eol "foo\r\r") "foo\r")
-      (check-equal? (string-trim-eol "foo\r\n\r\n") "foo\r\n")
-      (check-equal? (string-trim-eol "foo") "foo"))
+      (check-function string-split-eol
+         "foo\n" => (values "foo" "\n")
+         "foo\r\n" => (values "foo" "\r\n")
+         "foo\r" => (values "foo" "\r")
+         "foo\n\n\n" => (values "foo\n\n" "\n")
+         "foo" => (values "foo" "")))
+    (test-case "string-trim-eol"
+      (check-function string-trim-eol
+        "foo\n" => "foo"
+        "foo\r" => "foo"
+        "foo\r\n" => "foo"
+        "foo\n\n" => "foo\n"
+        "foo\r\r" => "foo\r"
+        "foo\r\n\r\n" => "foo\r\n"
+        "foo" => "foo"))
     (test-case "string-subst"
-     (check-equal? (string-subst ""             ""   ""  count: 1)  "")
-     (check-equal? (string-subst "abc"          "b"  "_" count: 0)  "abc")
-     (check-equal? (string-subst "abc"          ""   ""  count: #f) "abc")
-     (check-equal? (string-subst ""             "b"  "c" count: #f) "")
-     (check-equal? (string-subst "hello, world" "l"  "_" count: 2)  "he__o, world")
-     (check-equal? (string-subst "abb"          "b*" "_" count: #f) "abb")
-     (check-exception
-      (string-subst "abc" "b" "_" count: #t)
-      contract-violation-error?)
-     ;; empty old
-     (check-equal? (string-subst ""     "" "_"  count: 1)  "_")
-     (check-equal? (string-subst "a"    "" "_"  count: 1)  "_a")
-     (check-equal? (string-subst "abba" "" "_"  count: 2)  "_a_bba")
-     (check-equal? (string-subst "abc"  "" "_"  count: #f) "_a_b_c_")
-     (check-equal? (string-subst "abc"  "" "_"  count: 3)  "_a_b_c")
-     (check-equal? (string-subst "abc"  "" "_"  count: 2)  "_a_bc")
-     (check-equal? (string-subst "abc"  "" "__" count: 2)  "__a__bc")
-     (check-equal? (string-subst "a"    "" "_"  count: 3)  "_a_")
-     ;; non-empty old
-     (check-equal? (string-subst "abc"   "b"  "_" count: #f) "a_c")
-     (check-equal? (string-subst "abc"   "b"  "_" count: 2)  "a_c")
-     (check-equal? (string-subst "abbcb" "b"  "_" count: 2)  "a__cb")
-     (check-equal? (string-subst "abbcb" "b"  "_" count: 3)  "a__c_")
-     (check-equal? (string-subst "abbcb" "bb" "_" count: #f) "a_cb"))
+      (check-function string-subst
+         ""             ""   ""  count: 1   =>  ""
+         "abc"          "b"  "_" count: 0   =>  "abc"
+         "abc"          ""   ""  count: #f  =>  "abc"
+         ""             "b"  "c" count: #f  =>  ""
+         "hello, world" "l"  "_" count: 2   =>  "he__o, world"
+         "abb"          "b*" "_" count: #f  =>  "abb"
+         "abc"          "b"  "_" count: #t  =>! contract-violation-error?
+         ;; empty old
+         ""     "" "_"  count: 1  => "_"
+         "a"    "" "_"  count: 1  => "_a"
+         "abba" "" "_"  count: 2  => "_a_bba"
+         "abc"  "" "_"  count: #f => "_a_b_c_"
+         "abc"  "" "_"  count: 3  => "_a_b_c"
+         "abc"  "" "_"  count: 2  => "_a_bc"
+         "abc"  "" "__" count: 2  => "__a__bc"
+         "a"    "" "_"  count: 3  => "_a_"
+         ;; non-empty old
+         "abc"   "b"  "_" count: #f => "a_c"
+         "abc"   "b"  "_" count: 2  => "a_c"
+         "abbcb" "b"  "_" count: 2  => "a__cb"
+         "abbcb" "b"  "_" count: 3  => "a__c_"
+         "abbcb" "bb" "_" count: #f => "a_cb"))
     (test-case "string-whitespace?"
-      (check-equal? (string-whitespace? "") #t)
-      (check-equal? (string-whitespace? " ") #t)
-      (check-equal? (string-whitespace? " \n") #t)
-      (check-equal? (string-whitespace? " \n\t\r\f\v") #t)
-      (check-equal? (string-whitespace? " a") #f))
+      (check-function string-whitespace?
+         "" => #t
+         " " => #t
+         " \n" => #t
+         " \n\t\r\f\v" => #t
+         " a" => #f))
     (test-case "random-string"
       (check-eq? (and (pregexp-match "^\\w+$" (random-string 100)) #t) #t)
-      (check-equal? (random-string 0) "")
-      (check-equal? (random-string -1) "")
+      (check-function random-string
+         0 => ""
+         -1 => "")
       (check-equal? (string-length (random-string 5)) 5))
-    ;;v0.19-TODO: (test-case "test str"
-    ;;v0.19-TODO:   (check (str)                    => "")
-    ;;v0.19-TODO:   (check (str "hi")               => "hi")
-    ;;v0.19-TODO:   (check (str "hello" ", world.") => "hello, world.")
-    ;;v0.19-TODO:   (check (str 0.1 "!")            => "0.1!")
-    ;;v0.19-TODO:   (check (str 2.0)                => "2.0")
-    ;;v0.19-TODO:   (check (str 1.2E+2)             => "120.0")
-    ;;v0.19-TODO:   (check (str 'abc)               => "abc")
-    ;;v0.19-TODO:   (check (str '(1 2))             => "[1 2]")
-    ;;v0.19-TODO:   #;(check (str (hash (a 10)))      => "(hash (a 10))")
-    ;;v0.19-TODO:   (check (str #(1 2))             => "(vector 1 2)")
-    ;;v0.19-TODO:   (check (str (values 1 2))       => "(values 1 2)")
-    ;;v0.19-TODO:   (check (str (make-point 1 2))   => "(point 1 2)"))
     (test-case "test string-substitute-char-if, string-substitute-char"
       (defrule (checks ((args ...) result) ...)
         (begin (begin (check (string-substitute-char "banana" #\o #\a args ...)
@@ -107,4 +95,35 @@
                ((#\A key: char-upcase) (lambda (x) (equal? (char-upcase x) #\A)) "bonono")))
     (test-case "test as-string<?"
       (check (as-string<? '(foo: 1 bar) #(f #\o "o1" baz)) => #t)
-      (check (as-string<? 'foo "foo") => #f))))
+      (check (as-string<? 'foo "foo") => #f))
+    (test-case "string-index-right"
+      (check-function string-index-right
+        "abcde" #\c => 2
+        "chronos" vowel? => 5
+        "chronos" vowel? 0 => 5
+        "chronos" vowel? 4 => 5
+        "chronos" vowel? 5 => 5
+        "chronos" vowel? 6 => #f
+        "chronos" vowel? 7 => #f
+        "chronos" vowel? 0 7 => 5
+        "chronos" vowel? 0 6 => 5
+        "chronos" vowel? 0 5 => 3
+        "chronos" vowel? 0 4 => 3
+        "chronos" vowel? 0 3 => #f
+        "chronos" vowel? 0 2 => #f
+        "chronos" vowel? 7 7 => #f
+        "chronos" vowel? 6 7 => #f
+        "chronos" vowel? 5 7 => 5
+        "chronos" vowel? 5 6 => 5
+        "chronos" vowel? 4 6 => 5
+        "chronos" vowel? 4 5 => #f
+        "chronos" vowel? 3 5 => 3
+        "chronos" vowel? 3 4 => 3
+        "chronos" vowel? 3 3 => #f
+        ;; border conditions
+        "chronos" vowel? 8 => #f
+        "chronos" vowel? 0 8 =>! true
+        "chronos" vowel? 4 8 =>! true
+        "chronos" vowel? -1 0 =>! true
+        "chronos" vowel? 8 0 => #f
+        "chronos" vowel? 0 -1 => #f))))

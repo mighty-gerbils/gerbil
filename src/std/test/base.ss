@@ -139,12 +139,11 @@
 (def current-test-case
   (make-parameter #f))
 
-(def (current-test-object) => TestObject
-  (: (or (current-test-case)
-         (current-test-suite)
-         (current-test-module)
-         (current-test-harness))
-     TestObject))
+(def (current-test-object) ;; => TestObject or #f
+  (or (current-test-case)
+      (current-test-suite)
+      (current-test-module)
+      (current-test-harness))) ;; : x TestObject
 
 (def (test-summarize-results (ctx : :t) (results : :list)) => TestResult
   (let (errors (filter test-result-error? results))
@@ -242,6 +241,7 @@
        (test-result-error ctx e)))))
 
 (defsyntax-case notice ()
+  ((_ #f ctx args ...) #'(void)) ;; ignore notice at the top-level
   ((_ type ctx args ...)
    (identifier? #'type)
    (let* ((base-type-str (symbol->string (stx-e #'type)))

@@ -10,6 +10,7 @@
         ./format-string
         ./env
         ./ioutil
+        ./writer
         ./io)
 (export #t)
 
@@ -73,7 +74,7 @@
                                     (precision: precision)
                                     (flonum-conversion: how))
                        : WriteContext)
-             (fx+ result (ctx.methods.write-flonum writer (: arg :flonum) ctx)))))
+             (fx+ result (write-flonum-c-style writer (: arg :flonum) ctx)))))
         (fold-object
          (lambda (arg how result)
            (fx+ result

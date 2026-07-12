@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; :std/misc/queue test
 
-(import :std/misc/queue
+(import :std/struct/queue
         :std/test)
 (export queue-test)
 

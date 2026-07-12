@@ -124,7 +124,7 @@
 ;; NB: Assumes the original table is injective and/or you only care to link back to
 ;; *one* possible key for each value.
 ;; : (Table K V) <- (Table V K) to: (Optional (Table K V))
-(def (invert-hash (from : HashTable) (to : HashTable := (HashTable-new from)))
+(def (invert-hash (from : HashTable) to: (to : HashTable := (HashTable-new from)))
   => HashTable
   (from.for-each (lambda (k v) (to.set! v k)))
   to)
@@ -271,18 +271,18 @@
 ;; This is unlike hash-merge
 ;; : Table <- Table (Optional-Keyword Bool) Table ...
 (def (hash-merge/override (base-table : HashTable) . rest)
-  (apply hash-merge/override! (hash-copy base-table) rest))
+  (apply hash-merge/override! (base-table.copy) rest))
 
 ;; Merge hash tables together and update the base table's bindings. If same key exists in both base
 ;; table and rest of other tables then the key/value binding of the other tables takes precedence.
 ;; If more than one other table is given after the base table and bindings for the same key exist
 ;; in multiple other tables then the rightmost table's binding takes precedence.
 ;; : Table <- Table (Optional-Keyword Bool) Table ...
-(def (hash-merge/override! (base-table : HashTable) . rest)
-  (foldl (lambda ((tab : HashTable) (r : HashTable))
-           (tab.for-each (cut r.set! <> <>))
-           r)
-         base-table rest))
+(def (hash-merge/override! (dest-table : HashTable) . rest)
+  (for-each (lambda ((tab : HashTable))
+              (tab.for-each (cut dest-table.set! <> <>)))
+            rest)
+  dest-table)
 
 ;; Extract from a hash-table an alist of its key-value pairs, with keys sorted the predicate.
 ;; : (List (Pair K V)) <- (Table V K) (Bool <- K K)

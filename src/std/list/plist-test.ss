@@ -1,7 +1,7 @@
 (export plist-test)
 
 (import
-  :std/error :std/misc/plist :std/test)
+  :std/error :std/list/plist :std/test)
 
 (def (copy-list lst) (foldr cons '() lst))
 

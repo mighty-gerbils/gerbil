@@ -13,18 +13,15 @@
 (export #t)
 
 (import
-  (only-in :gerbil/gambit random-integer integer-sqrt bit-set?)
-  (only-in :std/srfi/1 every reduce)
-  (only-in :std/srfi/141 floor/ ceiling-quotient)
-  (only-in :std/error raise-bad-argument)
-  (only-in :std/iter for in-range for/collect)
-  (only-in :std/misc/evector memoize-recursive-sequence
+  :std/iter
+  (only-in :std/error raise-bad-argument check-argument)
+  (only-in :std/vector/evector memoize-recursive-sequence
            evector-ref evector-ref-set! evector-push! extend-evector!
            evector-fill-pointer evector-fill-pointer-set! list->evector evector->list
-           make-ebits ebits-ref ebits-set-fill-pointer! ebits-set? ebits-set! ebits-fill-pointer)
-  (only-in :std/misc/list-builder with-list-builder)
-  (only-in :std/misc/number mult-mod expt-mod pre-increment! half ceiling-align
-           check-argument-positive-integer check-argument-uint
+           make-ebits ebits-ref ebits-fill-pointer-set! ebits-set? ebits-set! ebits-fill-pointer)
+  (only-in :std/list/list reduce)
+  (only-in :std/list/list-builder with-list-builder)
+  (only-in :std/number/misc uint? positive-integer? mult-mod expt-mod pre-increment! half ceiling-align
            factor-out-powers-of-2 least-integer))
 
 ;; An extensible vector containing the increasing sequence of all small enough primes
@@ -35,7 +32,7 @@
 ;; Given a list of primes, return a vector the size of which is the product M of those primes,
 ;; that at index I contains the smallest positive increment J such that I+J is a unit modulo M.
 ;; This makes it easier to skip over obvious composite numbers when looking for primes.
-(def (compute-prime-wheel prime-list)
+(def (compute-prime-wheel (prime-list : :list)) => :vector
   (def product (reduce * 1 prime-list))
   (unless (and (fixnum? product)
                (<= 2 product)
@@ -52,20 +49,23 @@
 (def wheel (compute-prime-wheel '(2 3 5 7)))
 
 ;; Compute the position of a `number` in the `wheel`. See `compute-prime-wheel`.
-(def (wheel-position wheel number)
+(def (wheel-position (wheel : :vector) (number : :integer)) => :fixnum
   (modulo number (vector-length wheel)))
 
 ;; Given a `number` at given `position` in the `wheel`, return the next `number`
 ;; that is not divisible by a factor of the wheel size, and its position in the wheel.
-(def (wheel-next wheel number (position (wheel-position wheel number)))
+(def (wheel-next (wheel : :vector)
+                 (number : :integer)
+                 (position : :fixnum := (wheel-position wheel number)))
   (let ((increment (vector-ref wheel position)))
-    (values (+ number increment) (modulo (+ position increment) (vector-length wheel)))))
+    (values (+ number increment)
+            (modulo (fx+ position increment) (vector-length wheel)))))
 
 ;; Given an integer `n`, return the `n`th prime number, starting with prime number 2 at index 1
 (def nth-prime
   (memoize-recursive-sequence
-   cache: primes
-   (lambda (n) (next-prime-above (nth-prime (1- n))))))
+   (lambda (n) (next-prime-above (nth-prime (1- n))))
+   cache: primes))
 
 ;; sieve: 1 if the number is prime, 0 if composite. Must be initialized to 1 beyond the fill-pointer.
 ;; To save half the space, we only store a bitmask for odd numbers.
@@ -73,14 +73,17 @@
 ;; from 50% to under 23% (48/210), but that would mean a much larger access factor constant.
 (def prime-sieve (make-ebits #u8(#x6E) 8))
 
+(definline (double (n : :integer)) => :integer
+  (+ n n))
+
 ;; Return how far we can use the sieve
-(def (sieve-end)
-  (* 2 (ebits-fill-pointer prime-sieve)))
+(def (sieve-end) => :integer
+  (double (ebits-fill-pointer prime-sieve)))
 
 ;; return true if the sieve found the number to be prime,
 ;; false if the number was found to be composite,
 ;; raise an error if the sieve wasn’t run far enough to tell
-(def (sieve-prime? n)
+(def (sieve-prime? (n :~ uint? :- :integer)) => :boolean
   (unless (< n (sieve-end))
     (error "sieve not run far enough to test prime"))
   (if (bit-set? 0 n)
@@ -88,7 +91,7 @@
     (= n 2))) ;; handle even numbers
 
 ;; Return the next prime number P such that P > N
-(def (next-prime-above n)
+(def (next-prime-above (n :~ positive-integer? :- :integer)) => :integer
   ;;(check-argument (and (exact-integer? n) (positive? n)) "not a positive integer")
   (let loop ((k n) (wp (wheel-position wheel n)))
     (defvalues (l p) (wheel-next wheel k wp))
@@ -97,7 +100,7 @@
 ;; Given a small integer N, is it a prime number?
 ;; Answer using Erathostenes' sieve.
 ;; Note: the sieve is not thread-safe.
-(def (prime?/sieve n)
+(def (prime?/sieve (n :~ positive-integer? :- :integer)) => :boolean
   (let/cc return
     (unless (bit-set? 0 n) (return (= n 2))) ;; handle even numbers
     (let (n/2 (half n))
@@ -114,23 +117,23 @@
     #t))
 
 ;; The largest small prime computed so far
-(def (largest-sieve-prime)
-  (evector-ref primes (1- (evector-fill-pointer primes))))
+(def (largest-sieve-prime) => :integer
+  (: (evector-ref primes (1- (evector-fill-pointer primes))) :integer))
 
 ;; Run the sieve of Erathostenes up to `n`
-(def (erathostenes-sieve n)
-  (def m (1+ (* 2 (ebits-fill-pointer prime-sieve)))) ; smallest odd number not sieved yet
+(def (erathostenes-sieve (n :~ positive-integer? :- :integer))
+  (def m (1+ (double (ebits-fill-pointer prime-sieve)))) ; smallest odd number not sieved yet
   (def u (1+ (half n)))
   (def (sieve! p) ;; sieve away multiples of an odd prime number
     (def p2 (* p p))
     (let loop ((q (half (if (>= p2 m) p2
-                            (- (ceiling-align (+ m p) (* 2 p)) p))))) ;; next *odd* multiple of p
+                            (- (ceiling-align (+ m p) (double p)) p))))) ;; next *odd* multiple of p
       (when (< q u)
         (ebits-set! prime-sieve q 0)
         (loop (+ q p)))))
   (when (>= n m)
     ;; Ensure there is enough space for the sieve
-    (ebits-set-fill-pointer! prime-sieve u initial-value: 1)
+    (ebits-fill-pointer-set! prime-sieve u 1)
     (let/cc return
       ;; Sieve off multiples of odd primes known so far
       (def r (integer-sqrt n))
@@ -162,14 +165,13 @@
 (def pi-cache (list->evector '(0 0 1 2 2 3 3 4 4 4 4)))
 (def pi-function
   (memoize-recursive-sequence
-   cache: pi-cache
    (lambda (n)
      (erathostenes-sieve (1+ n))
-     (+ (pi-function (1- n)) (if (sieve-prime? n) 1 0)))))
+     (+ (pi-function (1- n)) (if (sieve-prime? n) 1 0)))
+   cache: pi-cache))
 
 ;; Given an integer N, return a non-decreasing list of its prime factors, using the sieve
-(def (factor n)
-  (check-argument-positive-integer n)
+(def (factor (n :~ positive-integer? :- :integer)) => :list
   (with-list-builder (f)
     (let loop ((i 1) ;; index of the next prime to try
                (n n) ;; product of remaining factors
@@ -186,11 +188,15 @@
 
 ;; Given integers `a` and `n`, and ancillary data,
 ;; is `a` a witness of n's compositeness as per the Miller test?
-(def (witness-of-compositeness? a n n-1 r d)
-  ;; (check-argument (every nat? [a n n-1 r d]) "naturals" [a n n-1 r d])
-  ;; (check-argument (= (1- n) n-1) "n - 1 = n-1" [n n-1])
-  ;; (check-argument (= n-1 (* (expt 2 r) d)) "n-1 = d*2**r" [n-1 d r])
-  ;; (check-argument (odd? d) "odd" d)
+(def (witness-of-compositeness? (a : :integer)
+                                (n : :integer)
+                                (n-1 : :integer)
+                                (r : :integer)
+                                (d : :integer)) => :boolean
+  (check-argument (every uint? [a n n-1 r d]) "naturals" [a n n-1 r d])
+  (check-argument (= (1- n) n-1) "n - 1 = n-1" [n n-1])
+  (check-argument (= n-1 (* (expt 2 r) d)) "n-1 = d*2**r" [n-1 d r])
+  (check-argument (odd? d) "odd" d)
   (let/cc return
     (def aa (modulo a n))
     (when (zero? aa) (return #f))
@@ -207,7 +213,7 @@
 ;; with a list of candidate witnesses AS,
 ;; typically the list of the N first prime numbers for N large enough.
 ;; Actual Miller deterministic test says to try all (prime?) numbers below 2(ln n)
-(def (prime?/miller n as)
+(def (prime?/miller (n : :integer) (as : :list))
   (if (even? n)
     (= n 2)
     (let* ((n-1 (- n 1))
@@ -218,7 +224,7 @@
 ;; The number of extra checks determine how much heuristic assurance we have that the number is prime:
 ;; each extra-check decreases the probability of false positive by 1/4,
 ;; so 16 (the default) makes for 2**-64 chances of error.
-(def (prime?/miller-rabin n (extra-checks 16))
+(def (prime?/miller-rabin (n : :integer) (extra-checks : :fixnum := 16)) => :boolean
   (let* ((n-1 (- n 1))
          ((values d r) (factor-out-powers-of-2 n-1)))
     ;; Each independent test reduces the probability of primality by 1/4
@@ -246,10 +252,11 @@
      [3317044064679887385961981 :: (pm 2 3 5 7 11 13 17 19 23 29 31 37 41)]
      [+inf.0 :: prime?/miller-rabin])))
 
-(def (prime? n)
-  (check-argument-uint n)
-  (if (< n (sieve-end))
-    (sieve-prime? n)
+(def (prime? (n : :integer)) => :boolean
+  (cond
+   ((negative? n) (prime? (- n)))
+   ((< n (sieve-end)) (sieve-prime? n))
+   (else
     (let (i (least-integer (lambda (i) (< n (car (vector-ref prime-lookup i))))
                            0 (1- (vector-length prime-lookup))))
-      ((cdr (vector-ref prime-lookup i)) n))))
+      ((cdr (vector-ref prime-lookup i)) n)))))

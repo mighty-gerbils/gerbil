@@ -26,6 +26,8 @@
         open-memory-buffered-writer
         open-input-port-buffered-reader
         open-output-port-buffered-writer
+        open-string-port-buffered-reader
+        open-string-port-buffered-writer
         get-memory-output-u8vector
         get-memory-output-string-utf8
         ;;open-message-buffered-reader
@@ -36,7 +38,8 @@
         small-buffer-size
         default-buffer-size
         (import: ./reader
-                 ./writer))
+                 ./writer
+                 ./port))
 
 ;; constructors
 (def (open-source-buffered-reader (reader : Reader) (buffer : :u8vector) (cached? : :boolean))
@@ -59,35 +62,43 @@
   (BufferedWriter
    (make-memory-output-buffer buffer #f cached? 0)))
 
-(def (open-input-port-buffered-reader (port : :port))
+;; For textual ports, wraps lazily via string-port-input-buffer so that
+;; unread bytes can be restored to the port on detach.
+;; For binary ports, wraps directly via port-input-buffer (no intermediate buffer).
+(def (open-input-port-buffered-reader (port : :port) (buffer-or-size default-buffer-size))
   => BufferedReader
-  (def (make-buffer putback)
-    (if putback
-      (make-port-input-buffer port #f putback 0 (u8vector-length putback))
-      (make-port-input-buffer port #f #f 0 0)))
+  (if (binary-port? port)
+    (BufferedReader (make-port-input-buffer port #f #f 0 0))
+    (open-string-port-buffered-reader port buffer-or-size)))
 
-  (BufferedReader
-   (if (textual-port? port)
-     ;; we need to putback the character buffer
-     (using (port : :character-port)
-       (do-with-lock port.mutex
-         (if (fx< port.rlo port.rhi)
-           ;; has buffered characters
-           (let (putback (utf8->string port.rbuf port.rlo port.rhi))
-             (set! port.rlo 0)
-             (set! port.rhi 0)
-             (make-buffer putback))
-           ;; no buffered characters, just wrap it
-           (make-buffer #f))))
-     (make-buffer #f))))
-
-(def (open-output-port-buffered-writer (port : :port))
+;; For textual ports, wraps via string-port-output-buffer so that complete
+;; UTF-8 sequences are flushed as chars to the port.
+;; For binary ports, wraps directly via port-output-buffer.
+(def (open-output-port-buffered-writer (port : :port) (buffer-or-size default-buffer-size))
   => BufferedWriter
-  (when (textual-port? port)
-    ;; we need to flush the character buffer
-    (force-output port)
-  (BufferedWriter
-   (make-port-output-buffer port #f))))
+  (if (binary-port? port)
+    (BufferedWriter (make-port-output-buffer port #f))
+    (open-string-port-buffered-writer port buffer-or-size)))
+
+;; Wrap a textual port as a BufferedReader by lazily encoding chars to UTF-8.
+;; Unlike open-input-port-buffered-reader, the port is NOT consumed upfront;
+;; call string-port-input-buffer-detach! to restore unread bytes when done.
+(def (open-string-port-buffered-reader (port : :port) (buffer-or-size default-buffer-size))
+  => BufferedReader
+  (let* ((buf     (get-u8vector-buffer buffer-or-size))
+         (cached? (not (u8vector? buffer-or-size)))
+         (cbuf    (make-string (fxmax 1 (fxquotient (u8vector-length buf) 4)))))
+    (BufferedReader
+     (make-string-port-input-buffer buf #f cached? 0 0 port cbuf))))
+
+;; Wrap a textual port as a BufferedWriter by flushing complete UTF-8 sequences.
+;; Call string-port-output-buffer-detach! (or BufferedWriter-flush) when done.
+(def (open-string-port-buffered-writer (port : :port) (buffer-or-size default-buffer-size))
+  => BufferedWriter
+  (let* ((buf     (get-u8vector-buffer buffer-or-size))
+         (cached? (not (u8vector? buffer-or-size))))
+    (BufferedWriter
+     (make-string-port-output-buffer buf #f cached? 0 port))))
 
 (def (open-buffered-reader pre-reader (buffer-or-size default-buffer-size))
   => BufferedReader
@@ -105,6 +116,8 @@
    ((and (input-port? pre-reader)
          (binary-port? pre-reader))
     (open-input-port-buffered-reader pre-reader))
+   ((string? pre-reader)
+    (open-memory-buffered-reader (string->utf8 pre-reader) #f))
    (else
     (raise-bad-argument open-buffered-reader "readable object or u8vector" pre-reader))))
 
@@ -132,40 +145,27 @@
 
 (def (get-memory-output-u8vector (inst : interface-instance) (done? #t))
   => :u8vector
-  (using (mem inst.object : memory-output-buffer)
-    (cond
-     (mem.closed?
+  (using (mem inst.object :- memory-output-buffer)
+    (when mem.closed?
       (raise-io-closed get-memory-output-u8vector "no buffer"))
-     (done?
-      (let (buf mem.buf)
+    (if done?
+      ;; Take ownership of the buffer directly rather than copying + caching.
+      (let ((buf mem.buf) (whi mem.whi))
         (set! mem.buf #f)
         (set! mem.closed? #t)
         (set! mem.cached? #f)
-        (when (fx< mem.whi (u8vector-length buf))
-          (u8vector-shrink! buf mem.whi))
-        buf))
-     (else
-      (subu8vector mem.buf 0 mem.whi)))))
+        (when (fx< whi (u8vector-length buf))
+          (u8vector-shrink! buf whi))
+        buf)
+      (subu8vector mem.buf 0 mem.whi))))
 
 (def (get-memory-output-string-utf8 (inst : interface-instance) (done? #t))
   => :string
-  (using (mem inst.object : memory-output-buffer)
-    (def (get-string)
-      => :string
-      (let ((chars (box 0))
-            (str   (make-string mem.whi))
-            (input (make-memory-input-buffer mem.buf #f #f 0 mem.whi)))
-        (__bio-read-string-utf8 input str 0 mem.whi 0 chars)
-        (let (chars-read (unbox chars))
-          (when (fx< chars-read mem.whi)
-            (string-shrink! str chars-read))
-          str)))
-    (cond
-     (mem.closed?
-      (raise-io-closed get-memory-output-u8vector "no buffer"))
-     (done?
-      (let (str (get-string))
-        (__mem-close-input mem)
-        str))
-     (else
-      (get-string)))))
+  (using (mem inst.object :- memory-output-buffer)
+    (when mem.closed?
+      (raise-io-closed get-memory-output-string-utf8 "no buffer"))
+    ;; utf8->string is non-destructive; done?=#f leaves the buffer intact.
+    (let (str (utf8->string mem.buf 0 mem.whi))
+      (when done?
+        (mem-close-output mem))
+      str)))

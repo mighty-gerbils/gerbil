@@ -60,8 +60,8 @@ XXX
 (defwriter-ext (write-delimited-u8vector writer bytes)
   (writer.write-delimited (cut &BufferedWriter-write <> bytes)))
 
-(defwriter-ext (write-delimited-string writer str)
-  (writer.write-delimited (cut &BufferedWriter-write-string <> str)
+(defwriter-ext (write-delimited-string-utf8 writer str)
+  (writer.write-delimited (cut &BufferedWriter-write-string-utf8 <> str)
                           (fx* 4 (string-length str))))
 
 

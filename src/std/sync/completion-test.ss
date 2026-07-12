@@ -2,8 +2,7 @@
 ;;; © vyzo
 ;;; :std/misc/completion test
 
-(import :gerbil/gambit
-        :std/test
+(import :std/test
         ./completion)
 (export completion-test)
 

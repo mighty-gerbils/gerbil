@@ -72,3 +72,13 @@
 
 (defstruct (port-output-buffer basic-port-buffer) ()
   final: #t)
+
+;; string port buffers — lazy UTF-8 bridge between a textual port and the bio machinery
+(defstruct (string-port-input-buffer basic-input-buffer)
+  ((port :- :port)    ; the underlying textual port
+   (cbuf :- :string)) ; char staging buffer (length ≈ byte-buf-size / 4)
+  final: #t)
+
+(defstruct (string-port-output-buffer basic-output-buffer)
+  ((port :- :port))   ; the underlying textual port
+  final: #t)

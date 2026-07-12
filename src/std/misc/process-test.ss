@@ -1,14 +1,11 @@
 (export process-test)
 
 (import
-  :gerbil/gambit
   :std/error
   :std/format
   :std/misc/ports
   :std/misc/process
-  :std/os/temporaries
   :std/source
-  :std/sugar
   :std/test
   "./ports-test.ss")
 

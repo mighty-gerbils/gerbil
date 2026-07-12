@@ -4,9 +4,7 @@
 
 (import ./channel
         :std/test
-        :std/sugar
-        :std/error
-        :gerbil/gambit)
+        :std/error)
 (export channel-test)
 
 (def (channel-reader ch count)

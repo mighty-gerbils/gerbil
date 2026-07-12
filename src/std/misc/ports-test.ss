@@ -4,9 +4,8 @@
   :std/error
   :std/format
   :std/misc/ports
-  :std/os/temporaries
+  :std/io/tempfile
   :std/source
-  :std/sugar
   :std/test)
 
 (def data-file (this-source-path "ports-test.data"))
@@ -23,8 +22,6 @@
 
 (def ports-test
   (test-suite "test :std/misc/ports"
-    (test-case "copy-port"
-      (check-equal? (with-input (i "foo") (with-output (o #f) (copy-port i o))) "foo"))
     (test-case "read-all-as-string, read-file-string"
       (defrule (checks s ...)
         (begin (check (call-with-input-string s read-all-as-string) => s) ...))
@@ -74,10 +71,10 @@
        (lambda (name)
          (check (file-exists? name) => #f)
          (let/cc return
-           (with-output-to-file name (lambda () (printf "aa") (return))))
+           (with-output-to-file name (lambda () (display "aa") (return))))
          (check (read-file-string name) => "")
          (let/cc return
-           (with-output-to-file name (lambda () (printf "aa") (force-current-outputs) (return))))
+           (with-output-to-file name (lambda () (display "aa") (force-current-outputs) (return))))
          (check (read-file-string name) => "aa")
          (let/cc return
            (with-output-to-file name (lambda () (writeln 'bb) (return))))
@@ -102,3 +99,4 @@
              (check (char-port-eof? port) => #f)
              (check (read-char port) => #\a)
              (check (char-port-eof? port) => #t))))))
+

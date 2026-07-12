@@ -7,7 +7,7 @@
 (export WG? make-wg wg-add! wg-wait!)
 
 (defstruct WG (workch workers)
-  final: #t )
+  final: #t)
 
 (def (make-wg cores)
   (let* ((ch (make-channel))

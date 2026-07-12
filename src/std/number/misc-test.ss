@@ -1,13 +1,12 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;;     fare
-;;; :std/misc/number test
+;;; :std/number/misc test
 
 (import :std/test
         (only-in :std/format printf)
-        (only-in :std/sugar try catch defrule)
-        (only-in :std/misc/list-builder with-list-builder)
-        :std/misc/number)
+        (only-in :std/list/list-builder with-list-builder)
+        :std/number/misc)
 (export number-test)
 
 (defrule (check-rep parse unparse rep obj)
@@ -16,37 +15,43 @@
     (check-equal? (unparse obj) rep)))
 
 (def number-test
-  (test-suite "test :std/misc/number"
+  (test-suite "test :std/number/misc"
     (test-case "test xmin"
-      (check (xmin) => +inf.0)
-      (check (xmin 42) => 42)
-      (check (xmin 10 42) => 10)
-      (check (xmin 10 10) => 10)
-      (check (xmin 42 10) => 10)
-      (check (xmin 10 +inf.0) => 10)
-      (check (xmin 10 -inf.0) => -inf.0)
-      (check (xmin -inf.0 -5) => -inf.0)
-      (check (xmin +inf.0 -5) => -5)
-      (check (xmin -inf.0 +inf.0) => -inf.0)
-      (check (xmin +inf.0 -inf.0) => -inf.0)
-      (check (xmin 1 42 10 3.0 -5 4) => -5)
-      (check (xmin 1 2 2 3) => 1))
+      (check-function xmin
+         +inf.0
+         42 => 42
+         10 42 => 10
+         10 10 => 10
+         10.0 10 => 10.0
+         10 10.0 => 10
+         42 10 => 10
+         10 +inf.0 => 10
+         10 -inf.0 => -inf.0
+         -inf.0 -5 => -inf.0
+         +inf.0 -5 => -5
+         -inf.0 +inf.0 => -inf.0
+         +inf.0 -inf.0 => -inf.0
+         1 42 10 3.0 -5 4 => -5
+         1 2 2 3 => 1))
 
     (test-case "test xmax"
-      (check (xmax) => -inf.0)
-      (check (xmax 42) => 42)
-      (check (xmax 10 42) => 42)
-      (check (xmax 10 10) => 10)
-      (check (xmax 42 10) => 42)
-      (check (xmax 10 +inf.0) => +inf.0)
-      (check (xmax 10 -inf.0) => 10)
-      (check (xmax -inf.0 -5) => -5)
-      (check (xmax +inf.0 -5) => +inf.0)
-      (check (xmax -inf.0 +inf.0) => +inf.0)
-      (check (xmax +inf.0 -inf.0) => +inf.0)
-      (check (xmax 1 42 10 3.0 -5 4) => 42)
-      (check (xmax 1 2 2 3) => 3)
-      (check (xmax 1 2 -2 3) => 3))
+      (check-function xmax
+         => -inf.0
+         42 => 42
+         10 42 => 42
+         10 10 => 10
+         10.0 10 => 10.0
+         10 10.0 => 10
+         42 10 => 42
+         10 +inf.0 => +inf.0
+         10 -inf.0 => 10
+         -inf.0 -5 => -5
+         +inf.0 -5 => +inf.0
+         -inf.0 +inf.0 => +inf.0
+         +inf.0 -inf.0 => +inf.0
+         1 42 10 3.0 -5 4 => 42
+         1 2 2 3 => 3
+         1 2 -2 3 => 3))
 
     (test-case "test increment! and its variants"
       (def n 0)
@@ -117,18 +122,14 @@
        (-1.5 -1 -0.5)))
 
     (test-case "floor-align, ceiling-align"
-      (check (floor-align 20 10) => 20)
-      (check (floor-align 25 10) => 20)
-      (check (floor-align 25 -10) => 30)
-      (check (ceiling-align 20 10) => 20)
-      (check (ceiling-align 25 10) => 30)
-      (check (ceiling-align 25 -10) => 20))
-
-    (test-case "real->sign"
-      (defrule (checks res num ...) (begin (check (real->sign num) => res) ...))
-      (checks 1 1 42 1e-100 1e100 +inf.0)
-      (checks 0 0.0 0 -0.0)
-      (checks -1 -1 -42 -1e-100 -1e100 -inf.0))
+      (check-function floor-align
+         20 10 => 20
+         25 10 => 20
+         25 -10 => 30)
+      (check-function ceiling-align
+         20 10 => 20
+         25 10 => 30
+         25 -10 => 20))
 
     (test-case "real->sign"
       (defrule (checks res num ...) (begin (check (real->sign num) => res) ...))
@@ -141,6 +142,12 @@
       (checks #t 0 1 42 (expt 10 100))
       (checks #f "foo" 'not-a-number [] #(1)
               0.0 -0.0 -1 -42 1e100 1e-100 -1e-100 -1e100 -inf.0 +inf.0))
+
+    (test-case "sint?"
+      (defrule (checks res num ...) (begin (check (sint? num) => res) ...))
+      (checks #t 0 1 42 -1 -42 (expt 10 100))
+      (checks #f "foo" 'not-a-number [] #(1)
+              0.0 -0.0 1e100 1e-100 -1e-100 -1e100 -inf.0 +inf.0))
 
     (test-case "fx>=0?"
       (defrule (checks res num ...) (begin (check (fx>=0? num) => res) ...))
@@ -235,11 +242,26 @@
       (check (mult-mod 645500962309081550 649663092802033536 849105756568661461) => 1))
 
     (test-case "integer-log"
-      (check (integer-log 1 324) => 0)
-      (check (integer-log 64 2) => 6)
-      (check (integer-log 65 2) => 6)
-      (check (integer-log 63 2) => 5)
-      (check (integer-log (expt 5 881) 5) => 881))
+      (check-function integer-log
+         1 324 => 0
+         64 2 => 6
+         65 2 => 6
+         63 2 => 5
+         (expt 5 881) 5 => 881))
+
+    (test-case "integer-digit-count"
+      (check-function integer-digit-count
+         511 2 => 9
+         512 2 => 10
+         513 2 => 10
+         0 42 => 1
+         1 42 => 1
+         41 42 => 1
+         42 42 => 2
+         1729 10 => 4
+         -1729 10 => 4
+         (expt 10 666) 10 => 667
+         (- (expt 10 666) 1) 10 => 666))
 
     (test-case "factor-out-powers-of-2"
       (defrule (checks (n m k) ...)

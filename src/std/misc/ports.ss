@@ -7,6 +7,7 @@
 (export read-all-as-string
         read-all-as-lines
         read-all-as-u8vector
+        read-file-lines
         read-password
         force-current-outputs
         writeln
@@ -15,7 +16,8 @@
         with-output
         call-with-input
         with-input
-        char-port-eof?)
+        char-port-eof?
+        write-file-lines)
 
 ;; Read all the contents of a port as a string
 (def (read-all-as-string port)
@@ -150,3 +152,7 @@
   ((_ (i) body ...) (call-with-input i (lambda (i) body ...))))
 
 (def (char-port-eof? in) (eof-object? (peek-char in)))
+
+(def read-file-lines read-file-string-list)
+
+(def write-file-lines write-file-string-list)

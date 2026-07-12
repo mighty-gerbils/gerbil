@@ -40,6 +40,7 @@
       (when mem.cached?
         (buffer-cache.put! mem.buf))
       (set! mem.buf new-buf)
+      (set! mem.whi input-size)
       (set! mem.cached? #t)
       input-size)))
 

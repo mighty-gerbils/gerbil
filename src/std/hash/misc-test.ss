@@ -112,7 +112,7 @@
       (check (hash-get h "a") => 1)
       (set! (hash-ref h "b") 2)
       (check (hash-get h "b") => 2)
-      (defrules post-increment! () ((_ x) (_ x 1)) ((_ x y ...) (begin0 x (set! x (+ x y ...)))))
+      (defrules post-increment! () ((p x) (p x 1)) ((_ x y ...) (begin0 x (set! x (+ x y ...)))))
       (check (post-increment! (hash-ref h "a") 10) => 1)
       (check (post-increment! (hash-ref h "a" 0)) => 11)
       (check (post-increment! (hash-ref h "c" 0)) => 0)

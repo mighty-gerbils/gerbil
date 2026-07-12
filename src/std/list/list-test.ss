@@ -2,9 +2,7 @@
 
 (import
   :std/error
-  :std/misc/list
-  :std/sort
-  :std/sugar
+  :std/list/list
   :std/test)
 
 (def (copy-list lst) (foldr cons '() lst))
@@ -167,7 +165,7 @@
       (check-equal? (split [1 2 0 3 4 0 5 6] zero? 10) [[1 2] [3 4] [5 6]]))
     (test-case "test group-consecutive"
       (check-equal? (group-consecutive [1 2 2 3 1]) [[1] [2 2] [3] [1]])
-      (check-equal? (group-consecutive (sort [1 2 2 3 1 1] <) eqv?) [[1 1 1] [2 2] [3]])
+      (check-equal? (group-consecutive (list-sort < [1 2 2 3 1 1]) eqv?) [[1 1 1] [2 2] [3]])
       (check-equal? (group-consecutive [1 2 3 2 2 3 4 0 3 5] <) [[1 2 3] [2] [2 3 4] [0 3 5]])
       (check-equal? (group-consecutive []) [])
       (check-equal? (group-consecutive [1]) [[1]])

@@ -1,3 +1,4 @@
+;; NB: moved here in v0.19 from std/misc/decimal
 (export
   decimal?
   ll1-decimal
@@ -14,19 +15,15 @@
   digits-exponent->decimal)
 
 (import
-  (only-in :std/srfi/141 round/ truncate/ floor/)
+  :std/io
+  :std/iter
   (only-in :std/error check-argument raise-bad-argument
            deferror-class raise/context exception-context)
-  (only-in :std/io PeekableStringReader open-buffered-string-reader
-           PeekableStringReader-read-char PeekableStringReader-peek-char)
-  (only-in :std/misc/number decrement! check-argument-uint integer-part
+  (only-in :std/number/misc decrement! integer-part uint?
            integer-log factor-out-powers factor-out-powers-of-2)
-  (only-in :std/misc/ports with-output)
-  (only-in :std/parser/base raise-parse-error)
-  (only-in :std/parser/ll1 ll1-skip-char* ll1-eof)
-  (only-in :std/sugar syntax-eval)
-  (only-in :std/text/basic-printers write-n-chars)
-  (only-in :std/text/char-set digit-char char-ascii-digit char-strict-whitespace?)
+  (only-in :std/text/parser/base raise-parse-error)
+  (only-in :std/text/parser/char-set digit-char char-ascii-digit char-strict-whitespace?)
+  (only-in :std/text/parser/ll1 ll1-skip-char* ll1-eof)
   (only-in :std/values first-value))
 
 ;; : Any -> Bool
@@ -43,14 +40,14 @@
        (if (< (integer-length n) 1024) ;; number small enough to be converted to double float
          (let (l (integer-part (round (log n 5)))) ;; no loss of precision below 440
            (and (= n (expt 5 l)) l))
-         (let*-values (((p) (syntax-eval (expt 5 440))) ;; largest power of five under 2**1023
+         (let*-values (((p) (@eval (expt 5 440))) ;; largest power of five under 2**1023
                        ((q k) (factor-out-powers n p)))
            (and (< q p)
                 (let (l (power-of-5 q))
                   (and l (+ l (* 440 k)))))))))
 
 ;; LL(1) parser for a decimal number, in a style compatible with std/parser/ll1.
-;; `ll1-decimal` parses a decimal number from a PeekableStringReader.
+;; `ll1-decimal` parses a decimal number from a BufferedReader.
 ;; The character parameters `decimal-mark` and `group-separator` provide
 ;; support for different (typically cultural) numerical conventions.
 ;; For convenience, a `group-separator` of #t will be treated as the comma character.
@@ -60,17 +57,16 @@
 ;; with exception that the exponent marker must be 'e' or 'E' when `exponent-allowed` is #t,
 ;; or the exponent marker must be `char=` to some element of `exponent-allowed`
 ;; when `exponent-allowed` is a string.
-;; Side-effects the PeekableStringReader, and returns the decimal number, or raises an exception.
+;; Side-effects the BufferedReader, and returns the decimal number, or raises an exception.
 ;; It is up to the caller to ignore and leading or trailing whitespace and check for eof
 ;; before and/or after calling `ll1-decimal`.
-;; : PeekableStringReader sign-allowed?:Bool decimal-mark:Char group-separator:(Or Char Bool) exponent-allowed:(or Bool String) -> Decimal
+;; : BufferedReader sign-allowed?:Bool decimal-mark:Char group-separator:(Or Char Bool) exponent-allowed:(or Bool String) -> Decimal
 (def (ll1-decimal
-      reader
-      sign-allowed?: (sign-allowed? #t)
+      (reader : BufferedReader)
+      sign-allowed?: (sign-allowed? : :boolean := #t)
       decimal-mark: (decimal-mark #\.)
       group-separator: (group-separator_ #f)
       exponent-allowed: (exponent-allowed_ #f))
-  (check-argument (boolean? sign-allowed?) "boolean" sign-allowed?)
   (check-argument (or (char? decimal-mark) (boolean? decimal-mark)) "char or boolean" decimal-mark)
   (check-argument (or (boolean? group-separator_) (char? group-separator_))
                   "boolean or char" group-separator_)
@@ -86,107 +82,106 @@
   (check-argument (not (and (char? group-separator) exponent-allowed
                             (string-index exponent-allowed group-separator)))
                   "group-separator not in exponent-allowed" [group-separator exponent-allowed])
-  (using (reader : PeekableStringReader)
-    (def numerator 0)
-    (def denominator 1)
-    (def sign 1)
-    (def exponent 0)
-    (def exponent-sign 1)
-    (def valid? #f) ;; have we seen at least one digit
-    (def (peek) (reader.peek-char))
-    (def c (peek))
-    (def (bad) (raise-parse-error ll1-decimal "Unexpected character" #f reader))
-    (def (next) (reader.read-char) (set! c (peek)))
-    (def (ll1-sign) (case c ((#\+) (next) 1) ((#\-) (next) -1) (else 1)))
+  (def numerator 0)
+  (def denominator 1)
+  (def sign 1)
+  (def exponent 0)
+  (def exponent-sign 1)
+  (def valid? #f) ;; have we seen at least one digit
+  (def (peek) (reader.peek-char-utf8))
+  (def c (peek))
+  (def (bad) (raise-parse-error ll1-decimal "Unexpected character" #f reader))
+  (def (next) (reader.read-char-utf8) (set! c (peek)))
+  (def (ll1-sign) (case c ((#\+) (next) 1) ((#\-) (next) -1) (else 1)))
 
-    (let/cc return
-      (when (eof-object? c) (raise-parse-error ll1-decimal "Unexpected EOF" #!eof reader))
-      (when sign-allowed? (set! sign (ll1-sign)))
-      (def (done) (return (* sign (/ numerator denominator) (expt 10 (* exponent-sign exponent)))))
-      (def (ll1-left-digit-or-group-separator)
-        (cond
-         ((char-ascii-digit c) =>
-          (lambda (d)
-            (set! numerator (+ (* numerator 10) d))
-            (set! valid? #t)
-            (next)
-            (ll1-left-digit-or-group-separator)))
-         ((and group-separator (eqv? group-separator c))
+  (let/cc return
+    (when (eof-object? c) (raise-parse-error ll1-decimal "Unexpected EOF" #!eof reader))
+    (when sign-allowed? (set! sign (ll1-sign)))
+    (def (done) (return (* sign (/ numerator denominator) (expt 10 (* exponent-sign exponent)))))
+    (def (ll1-left-digit-or-group-separator)
+      (cond
+       ((char-ascii-digit c) =>
+        (lambda (d)
+          (set! numerator (+ (* numerator 10) d))
+          (set! valid? #t)
           (next)
-          (ll1-left-digit-or-group-separator))
-         (else (maybe-decimal-mark))))
-      (def (maybe-decimal-mark)
-        (cond
-         ((eqv? c decimal-mark)
+          (ll1-left-digit-or-group-separator)))
+       ((and group-separator (eqv? group-separator c))
+        (next)
+        (ll1-left-digit-or-group-separator))
+       (else (maybe-decimal-mark))))
+    (def (maybe-decimal-mark)
+      (cond
+       ((eqv? c decimal-mark)
+        (next)
+        (if valid? ;; if we have seen a left digit
+          (maybe-right-digit)
+          (ll1-right-digit)))
+       (valid?
+        (maybe-exponent-marker))
+       (else
+        (bad))))
+    (def (ll1-right-digit)
+      (cond
+       ((char-ascii-digit c) =>
+        (lambda (d)
+          (set! numerator (+ (* numerator 10) d))
+          (set! denominator (* denominator 10))
+          (set! valid? #t)
           (next)
-          (if valid? ;; if we have seen a left digit
-            (maybe-right-digit)
-            (ll1-right-digit)))
-         (valid?
-          (maybe-exponent-marker))
-         (else
-          (bad))))
-      (def (ll1-right-digit)
-        (cond
-         ((char-ascii-digit c) =>
-          (lambda (d)
-            (set! numerator (+ (* numerator 10) d))
-            (set! denominator (* denominator 10))
-            (set! valid? #t)
-            (next)
-            (maybe-right-digit)))
-         (else (bad))))
-      (def (maybe-right-digit)
-        (cond
-         ((char-ascii-digit c) =>
-          (lambda (d)
-            (set! numerator (+ (* numerator 10) d))
-            (set! denominator (* denominator 10))
-            (set! valid? #t)
-            (next)
-            (maybe-right-digit)))
-         (else (maybe-exponent-marker))))
-      (def (maybe-exponent-marker)
-        (cond
-         ((and exponent-allowed (string-index exponent-allowed c))
-          (set! valid? #f) ;; invalid until we finish parsing the exponent
+          (maybe-right-digit)))
+       (else (bad))))
+    (def (maybe-right-digit)
+      (cond
+       ((char-ascii-digit c) =>
+        (lambda (d)
+          (set! numerator (+ (* numerator 10) d))
+          (set! denominator (* denominator 10))
+          (set! valid? #t)
           (next)
-          (maybe-exponent-sign))
-         (else (done))))
-      (def (maybe-exponent-sign)
-        (set! exponent-sign (ll1-sign))
-        (ll1-exponent-digit))
-      (def (ll1-exponent-digit)
-        (cond
-         ((char-ascii-digit c) =>
-          (lambda (d)
-            (set! exponent (+ (* exponent 10) d))
-            (set! valid? #t)
-            (next)
-            (maybe-exponent-digit)))
-         (else (bad))))
-      (def (maybe-exponent-digit)
-        (cond
-         ((char-ascii-digit c) =>
-          (lambda (d)
-            (set! exponent (+ (* exponent 10) d))
-            (set! valid? #t)
-            (next)
-            (maybe-exponent-digit)))
-         (else
-          (done))))
-      (ll1-left-digit-or-group-separator))))
+          (maybe-right-digit)))
+       (else (maybe-exponent-marker))))
+    (def (maybe-exponent-marker)
+      (cond
+       ((and exponent-allowed (string-index exponent-allowed c))
+        (set! valid? #f) ;; invalid until we finish parsing the exponent
+        (next)
+        (maybe-exponent-sign))
+       (else (done))))
+    (def (maybe-exponent-sign)
+      (set! exponent-sign (ll1-sign))
+      (ll1-exponent-digit))
+    (def (ll1-exponent-digit)
+      (cond
+       ((char-ascii-digit c) =>
+        (lambda (d)
+          (set! exponent (+ (* exponent 10) d))
+          (set! valid? #t)
+          (next)
+          (maybe-exponent-digit)))
+       (else (bad))))
+    (def (maybe-exponent-digit)
+      (cond
+       ((char-ascii-digit c) =>
+        (lambda (d)
+          (set! exponent (+ (* exponent 10) d))
+          (set! valid? #t)
+          (next)
+          (maybe-exponent-digit)))
+       (else
+        (done))))
+    (ll1-left-digit-or-group-separator)))
 
-;; Cast some input to a buffered-string-reader and parse it as a decimal
-;; The input can be a string, input port, BufferedStringReader, StringReader, or Reader.
-(def (parse-decimal input
+;; Cast some designator to a BufferedReader as per with-buffered-reader, and parse it as a decimal
+(def (parse-decimal reader
                     sign-allowed?: (sign-allowed? #t)
                     decimal-mark: (decimal-mark #\.)
                     group-separator: (group-separator #f)
                     exponent-allowed: (exponent-allowed #f))
-  (ll1-decimal (PeekableStringReader (open-buffered-string-reader input))
-               sign-allowed?: sign-allowed? decimal-mark: decimal-mark
-               group-separator: group-separator exponent-allowed: exponent-allowed))
+  (with-buffered-reader (reader)
+    (ll1-decimal reader
+                 sign-allowed?: sign-allowed? decimal-mark: decimal-mark
+                 group-separator: group-separator exponent-allowed: exponent-allowed)))
 
 ;; String sign-allowed?:Bool decimal-mark:Char group-separator:(Or Char Bool) exponent-allowed:(or Bool String) allow-leading-whitespace?:Bool allow-trailing-whitespace?:Bool start:Nat end:(OrFalse Nat) -> Decimal
 (def (string->decimal s
@@ -206,21 +201,18 @@
      ((procedure? allow-whitespace?) allow-whitespace?)
      (else (raise-bad-argument string->decimal "allow-*-whitespace? to be #t or a character predicate"
                                allow-whitespace?))))
-  (call-with-input-string
-   (if (and (zero? start) (= end l)) s (substring s start end))
-   (lambda (port)
-     (def reader (PeekableStringReader (open-buffered-string-reader port)))
-     (when allow-leading-whitespace?
-       ((ll1-skip-char* (make-space? allow-leading-whitespace?)) reader))
-     (begin0
-         (ll1-decimal reader
-                      sign-allowed?: sign-allowed?
-                      decimal-mark: decimal-mark
-                      group-separator: group-separator
-                      exponent-allowed: exponent-allowed)
-       (when allow-trailing-whitespace?
-         ((ll1-skip-char* (make-space? allow-trailing-whitespace?)) reader))
-       (ll1-eof reader)))))
+  (with-buffered-reader (reader (if (and (zero? start) (= end l)) s (substring s start end)))
+    (when allow-leading-whitespace?
+      ((ll1-skip-char* (make-space? allow-leading-whitespace?)) reader))
+    (begin0
+        (ll1-decimal reader
+                     sign-allowed?: sign-allowed?
+                     decimal-mark: decimal-mark
+                     group-separator: group-separator
+                     exponent-allowed: exponent-allowed)
+      (when allow-trailing-whitespace?
+        ((ll1-skip-char* (make-space? allow-trailing-whitespace?)) reader))
+      (ll1-eof reader))))
 
 ;; Given a positive integer d of the form 2^m*5^n (reduced denominator of a decimal number),
 ;; compute c such that c*d = c*(2^m*5^n) = 10^max(m,n).
@@ -238,8 +230,7 @@
 ;; Count the number of significant digits to represent this natural integer.
 ;; For 0, return 0.
 ;; : Nat -> Nat
-(def (count-significant-digits n)
-  (check-argument-uint n)
+(def (count-significant-digits (n :~ uint? :- :integer))
   (cond
    ((zero? n) 1) ;; special case: 0 requires 1 digit to display
    ;; We'd like to use the below formula for small enough numbers, except that
@@ -386,8 +377,8 @@
         (else (error "Invalid precision-loss-behavior")))))))
 
 ;; Given
+;; - a designator for a BufferedWriter as per with-buffered-writer
 ;; - a decimal number,
-;; - a port on which to write the number (default (current-output-port)),
 ;; - a scale (or #f meaning 0), the number being notionally multiplied by ten to that scale (default #f),
 ;; - a width within which to fit the number or #f for no limitation (default #f),
 ;; - a minimum number of integral digits to display or false (default #f),
@@ -400,7 +391,7 @@
 ;; - a character to use as the decimal mark,
 ;; - a symbol for the behavior on precision loss, one of error, truncate or round,
 ;; Return (void), or raise an exception if the number won't fit in the width
-;; : Decimal Port \
+;; : BufferedWriterDesignator Decimal \
 ;;   scale:(OrFalse Integer) \
 ;;   width:(OrFalse Nat) \
 ;;   integral-digits:(OrFalse Nat) \
@@ -410,7 +401,8 @@
 ;;   always-sign?:Bool \
 ;;   decimal-mark:Char \
 ;;   precision-loss-behavior:(Enum error truncate round) -> Bool
-(def (write-decimal number (port (current-output-port))
+(def (write-decimal writer
+                    number
                     scale: (scale #f)
                     width: (width #f)
                     integral-digits: (integral-digits #f)
@@ -420,7 +412,7 @@
                     always-sign?: (always-sign? #f)
                     decimal-mark: (decimal-mark #\.)
                     precision-loss-behavior: (precision-loss-behavior 'error))
-  (with-output (port)
+  (with-buffered-writer (writer)
     (def pad (or pad_ #\space))
     (def spaceleft width)
     (when (and width (or (negative? number) (and always-sign? (not (zero? number)))))
@@ -433,12 +425,13 @@
                                   precision-loss-behavior: precision-loss-behavior))
     (when width
       (decrement! spaceleft (string-length digits))
-      (write-n-chars spaceleft pad port))
+      (when (positive? spaceleft)
+        (for ((i (in-range spaceleft))) (writer.write-char-utf8 pad))))
     (cond
-     ((negative? number) (write-char #\- port))
+     ((negative? number) (writer.write-char-utf8 #\-))
      ((zero? number) (void))
-     (always-sign? (write-char #\+ port)))
-    (display digits port)))
+     (always-sign? (writer.write-char-utf8 #\+)))
+    (writer.write-string-utf8 digits)))
 
 ;; Given
 ;; - a decimal number,
@@ -470,8 +463,8 @@
                       pad: (pad #f) always-decimal?: (always-decimal? #f) always-sign?: (always-sign? #f)
                       decimal-mark: (decimal-mark #\.)
                       precision-loss-behavior: (precision-loss-behavior 'error))
-  (call-with-output-string
-   (cut write-decimal number <> scale: scale width: width
-        integral-digits: integral-digits fractional-digits: fractional-digits
-        pad: pad always-decimal?: always-decimal? always-sign?: always-sign?
-        decimal-mark: decimal-mark precision-loss-behavior: precision-loss-behavior)))
+  (write-decimal #f number
+                 scale: scale width: width
+                 integral-digits: integral-digits fractional-digits: fractional-digits
+                 pad: pad always-decimal?: always-decimal? always-sign?: always-sign?
+                 decimal-mark: decimal-mark precision-loss-behavior: precision-loss-behavior))

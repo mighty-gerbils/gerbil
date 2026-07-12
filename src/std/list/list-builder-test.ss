@@ -1,7 +1,7 @@
 (export list-builder-test)
 
 (import
-  :std/misc/list-builder :std/test)
+  :std/list/list-builder :std/test)
 
 (def (copy-list lst) (foldr cons '() lst))
 

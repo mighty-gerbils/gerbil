@@ -6,6 +6,7 @@
         :std/serde/serialize
         :std/serde/interned
         :std/iter
+        :std/number/misc
         ./ascii
 	./env)
 (export #t)
@@ -99,21 +100,28 @@
     (and (fx> len 0)
          (eq? (string-ref str (fx- len 1)) char))))
 
+;; Escape a string according to some string-escaping rules,
+;; wherein special characters needing escape are assumed to be ASCII:
+;; all post-ASCII characters (codepoint > 127) will be written as UTF-8.
+;; The escape procedure, given an ASCII codepoint, must either return #f
+;; (meaning that write-string/escape will write the character without escape),
+;; or must directly write the suitable escape sequence to the buffer,
+;; and return as a fixnum the number of bytes written.
 (defwriter-ext (write-string/escape writer (str : :string) (escape : :procedure))
   (let (len (string-length str))
     (let loop ((i 0 :- :fixnum) (wr 0 :- :fixnum))
       => :fixnum
       (if (fx< i len)
         (let* ((char (##string-ref str i))
-               (u8   (char->integer char)))
+               (codepoint (char->integer char)))
           (defrule (write-char)
             (do-write (wr wr)
               (writer.write-char-utf8 char)
               (loop (fx+ i 1) wr)))
           (cond
-           ((fx> u8 127)
+           ((fx> codepoint 127)
             (write-char))
-           ((escape writer u8)
+           ((escape writer codepoint)
             => (lambda ((wr-esc :- :fixnum))
                  => :fixnum
                  (loop (fx+ i 1) (fx+ wr wr-esc))))
@@ -270,7 +278,7 @@
      #'(let (base (u8vector-length alphabet))
          (do-write (wr 0)
            (if (fx> gits 1)
-             (let* ((width (exact (ceiling (log int base))))
+             (let* ((width (integer-digit-count int base))
                     (lead  (fx% width gits)))
                (if (fx> lead 0)
                  (writer.write-zeros (fx- gits lead))
@@ -401,7 +409,10 @@
                        (do-format-int int (write-int-negative-pad int pad))
                        (do-format-int int (write-int-pad int pad))))
                     (left-align
-                     (format-int int))
+                     (do-write (wr 0)
+                       (format-int int)
+                       (writer.write-spaces pad)
+                       wr))
                     (else
                      (do-write (wr 0)
                        (writer.write-spaces pad)
@@ -413,16 +424,14 @@
 (def (format-integer-length (int : :integer) (alphabet : :u8vector) (gits : :fixnum) (sign? : :boolean))
   => :fixnum
   (let* ((base  (u8vector-length alphabet))
-         (width (exact (ceiling (log int base))))
-         (width
-          (if (fx> gits 1)
-            (let (lead  (fx% width gits))
-              (if (fx> lead 0)
-                (fx+ width 1)
-                width))
-            width))
-         (width
-          (if (or sign? (negative? int))
-            (fx+ width 1)
-            width)))
+         (width (integer-digit-count (abs int) base))
+         (width (if (fx> gits 1)
+                  (let (lead (fx% width gits))
+                    (if (fx> lead 0)
+                      (fx+ width (fx- gits lead))
+                      width))
+                  width))
+         (width (if (or sign? (negative? int))
+                  (fx+ width 1)
+                  width)))
     width))

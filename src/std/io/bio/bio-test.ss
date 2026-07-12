@@ -4,10 +4,14 @@
 (import :std/test
         :std/error
         :std/iter
+        :std/misc/ports
         ../interface
+        ../util
+        ./port
         ./api)
 (export bio-input-test
         bio-output-test
+        bio-with-buffered-test
         ;;bio-varint-delimited-test
         )
 
@@ -133,6 +137,14 @@
           (check (BufferedReader-read-char-utf8 brd) => char))
         (check (BufferedReader-read-char-utf8 brd) ? eof-object?)))
 
+    (test-case "4-byte char input (fast path)"
+      ;; bio-read-char-utf8 fast path via basic-input-buffer (memory-input-buffer).
+      (let* ((input "café 中文 \U0001F600 résumé")
+             (brd (open-string-buffered-reader input)))
+        (for (char (string->list input))
+          (check (BufferedReader-read-char-utf8 brd) => char))
+        (check (BufferedReader-read-char-utf8 brd) ? eof-object?)))
+
     (test-case "string input"
       (let* ((input "the quick brown fox jumped over the lazy dog")
              (brd (open-string-buffered-reader input))
@@ -160,7 +172,17 @@
         (let (brd (open-string-buffered-reader input3))
           (check (BufferedReader-read-line-utf8 brd '(#\return #\newline)) => input1))
         (let (brd (open-string-buffered-reader input3))
-          (check (BufferedReader-read-line-utf8 brd '(#\return #\newline) #t) => input3))))
+          (check (BufferedReader-read-line-utf8 brd '(#\return #\newline) #t) => input3))
+        ;; separator is consumed but the character after it is not over-read
+        (let (brd (open-string-buffered-reader "line1\nline2"))
+          (check (BufferedReader-read-line-utf8 brd) => "line1")
+          (check (BufferedReader-read-line-utf8 brd) => "line2"))
+        ;; sep=#f: read to EOF including embedded newlines
+        (let (brd (open-string-buffered-reader "hello\nworld"))
+          (check (BufferedReader-read-line-utf8 brd #f) => "hello\nworld"))
+        ;; sep=#f on empty input returns eof
+        (let (brd (open-string-buffered-reader ""))
+          (check (BufferedReader-read-line-utf8 brd #f) ? eof-object?))))
     ))
 
 (def bio-output-test
@@ -246,18 +268,163 @@
           (check (get-memory-output-string-utf8 bwr) => output2))))
     ))
 
+(def bio-with-buffered-test
+  (test-suite "with-buffered-reader/writer"
+    (test-case "with-buffered-reader from string"
+      (check
+        (with-buffered-reader (rd "hello")
+          (BufferedReader-read-line-utf8 rd))
+        => "hello"))
+
+    (test-case "with-buffered-reader from u8vector"
+      (with-buffered-reader (rd #u8(65 66 67))
+        (check (BufferedReader-read-u8 rd) => 65)
+        (check (BufferedReader-read-u8 rd) => 66)))
+
+    (test-case "with-buffered-reader port passthrough"
+      (let (port (open-input-u8vector #u8(1 2 3 4 5)))
+        (with-buffered-reader (rd port)
+          (check (BufferedReader-read-u8 rd) => 1)
+          (check (BufferedReader-read-u8 rd) => 2))
+        ;; port must still yield 3 4 5 after reader exits
+        (check (read-u8 port) => 3)
+        (check (read-u8 port) => 4)))
+
+    (test-case "port-available counts putback plus port buffer"
+      ;; open-input-u8vector pre-loads all bytes into the port's internal buffer.
+      ;; After reading 2 and putting 1 back: putback=1 + port-buffer=3 = 4.
+      (let (port (open-input-u8vector #u8(10 20 30 40 50)))
+        (with-buffered-reader (rd port)
+          (check (BufferedReader-read-u8 rd) => 10)
+          (check (BufferedReader-read-u8 rd) => 20)
+          (BufferedReader-put-back rd 20)
+          (check (BufferedReader-available rd) => 4))))
+
+    (test-case "with-buffered-writer 'string"
+      (check
+        (with-buffered-writer (wr 'string)
+          (BufferedWriter-write-string-utf8 wr "hello"))
+        => "hello"))
+
+    (test-case "with-buffered-writer #f (string)"
+      (check
+        (with-buffered-writer (wr #f)
+          (BufferedWriter-write-string-utf8 wr "world"))
+        => "world"))
+
+    (test-case "with-buffered-writer 'u8vector"
+      (check
+        (with-buffered-writer (wr 'u8vector)
+          (BufferedWriter-write-u8 wr 42)
+          (BufferedWriter-write-u8 wr 99))
+        => #u8(42 99)))
+
+    (test-case "with-buffered-writer binary port flush"
+      (let (port (open-output-u8vector))
+        (with-buffered-writer (wr port)
+          (BufferedWriter-write-u8 wr 10)
+          (BufferedWriter-write-u8 wr 20))
+        (check (get-output-u8vector port) => #u8(10 20))))
+
+    (test-case "binary port: 4-byte char via generic path"
+      ;; port-input-buffer is not a basic-input-buffer, so read-char-utf8 uses
+      ;; bio-read-char-utf8-generic.  This exercises the 4-byte (emoji) branch.
+      (let* ((input "café 中文 \U0001F600 résumé")
+             (port (open-input-u8vector (string->utf8 input))))
+        (with-buffered-reader (rd port)
+          (check (BufferedReader-read-line-utf8 rd) => input))))
+
+    (test-case "string-port-input-buffer: multibyte UTF-8"
+      ;; Reads 1/2/3/4-byte chars from a textual port via string-port-input-buffer.
+      (let* ((input "café 中文 \U0001F600")
+             (port (open-input-string input)))
+        (with-buffered-reader (rd port)
+          (check (BufferedReader-read-line-utf8 rd) => input))))
+
+    (test-case "string-port-input-buffer: multiple fills"
+      ;; A 16-byte buffer forces many fill! calls for a 200+ byte string.
+      (let* ((input (string-append (make-string 80 #\a) "\U0001F600" (make-string 80 #\b)))
+             (port (open-input-string input))
+             (rd (open-string-port-buffered-reader port 16)))
+        (check (BufferedReader-read-line-utf8 rd) => input)))
+
+    (test-case "string-port-output-buffer: partial drain at boundary"
+      ;; Write bytes one at a time through an 8-byte buffer.
+      ;; "aaaaaaa中xyz": after 7 ASCII bytes and the first byte of '中' (0xe4),
+      ;; the buffer is full.  The next write-u8 triggers drain; utf8-complete-prefix-end
+      ;; detects the incomplete 3-byte sequence at position 7 and only flushes 7 bytes,
+      ;; keeping 0xe4 in the buffer.
+      (let* ((input "aaaaaaa中xyz")
+             (bytes (string->utf8 input))
+             (port  (open-output-string))
+             (wr    (open-string-port-buffered-writer port 8)))
+        (for (i (in-range (u8vector-length bytes)))
+          (BufferedWriter-write-u8 wr (u8vector-ref bytes i)))
+        (BufferedWriter-flush wr)
+        (check (get-output-string port) => input)))
+
+    (test-case "string-port-available after put-back"
+      ;; put-back bytes land in buf[rlo..rhi] (or grow the buffer); rhi-rlo always
+      ;; reflects the complete count, so available must include them.
+      (let* ((input "hello")
+             (rd (open-string-buffered-reader input)))
+        ;; consume 3 bytes ("hel"), then put two back
+        (check (BufferedReader-read-u8 rd) => (char->integer #\h))
+        (check (BufferedReader-read-u8 rd) => (char->integer #\e))
+        (check (BufferedReader-read-u8 rd) => (char->integer #\l))
+        (BufferedReader-put-back rd (list (char->integer #\h)
+                                          (char->integer #\e)))
+        ;; available should be 2 (put-back) + 2 remaining ("lo") = 4
+        (check (BufferedReader-available rd) => 4)
+        ;; and the bytes come back in the right order
+        (check (BufferedReader-read-u8 rd) => (char->integer #\h))
+        (check (BufferedReader-read-u8 rd) => (char->integer #\e))
+        (check (BufferedReader-read-u8 rd) => (char->integer #\l))
+        (check (BufferedReader-read-u8 rd) => (char->integer #\o))))
+
+    (test-case "string-port-output-buffer: malformed UTF-8 drain (orphaned continuation bytes)"
+      ;; Without the utf8-complete-prefix-end fix, a buffer full of orphaned
+      ;; continuation bytes (no leading byte) causes drain to return 0 every time
+      ;; and stall forever.  With the fix, utf8-complete-prefix-end returns whi,
+      ;; so drain calls utf8->string on the orphaned bytes; Gambit raises a decode
+      ;; error rather than hanging.
+      (let* ((str-port (open-output-string))
+             (wr       (open-string-port-buffered-writer str-port 8)))
+        (for (i (in-range 4))
+          (BufferedWriter-write-u8 wr #x80))
+        (check (BufferedWriter-flush wr) =>! true)))
+
+    (test-case "with-buffered-reader textual port"
+      ;; A textual (non-binary) port is wrapped lazily via string-port-input-buffer.
+      ;; Reading "hello\n" consumes the separator; "world" is restored to the port
+      ;; char buffer on detach, so the port is still usable after the reader exits.
+      (let (port (open-input-string "hello\nworld"))
+        (with-buffered-reader (rd port)
+          (check (BufferedReader-read-line-utf8 rd) => "hello"))
+        (check (read-all-as-string port) => "world")))
+
+    (test-case "with-buffered-writer textual port"
+      ;; Writing to a string output port via a buffered writer flushes as chars.
+      (let (port (open-output-string))
+        (with-buffered-writer (wr port)
+          (BufferedWriter-write-string-utf8 wr "hello")
+          (BufferedWriter-write-u8 wr (char->integer #\newline))
+          (BufferedWriter-write-string-utf8 wr "world"))
+        (check (get-output-string port) => "hello\nworld")))
+    ))
+
 ;; (def bio-varint-delimited-test
 ;;   (test-suite "varint delimited i/o"
 ;;     (test-case "generic output and input"
 ;;       (let* ((input "the quick brown fox jumped over the lazy dog")
 ;;              (writer (open-buffered-writer #f))
-;;              (_ (BufferedWriter-write-delimited writer (cut BufferedWriter-write-string <> input)))
+;;              (_ (BufferedWriter-write-delimited writer (cut BufferedWriter-write-string-utf8 <> input)))
 ;;              (output (get-buffer-output-u8vector writer))
 ;;              (reader (open-buffered-reader output))
 ;;              (reinput (make-string (string-length input)))
 ;;              (_ (BufferedReader-read-delimited reader (cut BufferedReader-read-string <> reinput))))
 ;;         (check reinput => input)
-;;         (check (BufferedReader-peek-char reader) ? eof-object?)))
+;;         (check (BufferedReader-peek-char-utf8 reader) ? eof-object?)))
 ;;     (test-case "u8vector output and input"
 ;;       (let* ((input "the quick brown fox jumped over the lazy dog")
 ;;              (input-bytes (string->utf8 input))
@@ -268,13 +435,13 @@
 ;;              (reinput-bytes (BufferedReader-read-delimited-u8vector reader))
 ;;              (reinput (utf8->string reinput-bytes)))
 ;;         (check reinput => input)
-;;         (check (BufferedReader-peek-char reader) ? eof-object?)))
+;;         (check (BufferedReader-peek-char-utf8 reader) ? eof-object?)))
 ;;     (test-case "string output and input"
 ;;       (let* ((input "the quick brown fox jumped over the lazy dog")
 ;;              (writer (open-buffered-writer #f))
-;;              (_ (BufferedWriter-write-delimited-string writer input))
+;;              (_ (BufferedWriter-write-delimited-string-utf8 writer input))
 ;;              (output (get-buffer-output-u8vector writer))
 ;;              (reader (open-buffered-reader output))
-;;              (reinput (BufferedReader-read-delimited-string reader)))
+;;              (reinput (BufferedReader-read-delimited-string-utf8 reader)))
 ;;         (check reinput => input)
-;;         (check (BufferedReader-peek-char reader) ? eof-object?)))))
+;;         (check (BufferedReader-peek-char-utf8 reader) ? eof-object?)))))

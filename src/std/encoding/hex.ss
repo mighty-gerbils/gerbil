@@ -1,11 +1,16 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; hex encoding
-
+(import :std/error)
 (export hex-encode hexlify
-        hex-decode unhexlify)
+        hex-decode unhexlify
+        hex-decode-byte hex-decode-nibble
+        hex unhex unhex*)
 
-(def hexes "0123456789abcdef")
+(module <hex>
+  (export #t)
+  (def hexes "0123456789abcdef"))
+(import <hex> (for-syntax <hex>))
 
 (def (hex-encode (bytes  : :u8vector)
                  (start  :~ (in-range? 0 (fxmax (u8vector-length bytes) 1))
@@ -26,32 +31,43 @@
           (loop (fx+ i 1)))
         str))))
 
-(def (hex u4)
+(begin-syntax
+  (def unhexes%
+    (let (unhexes (make-u8vector 103 255)) ;; (char->integer #\f) == 102
+      (let loop ((i 0))
+        (if (fx<= i 15)
+          (let ((c (string-ref hexes i)))
+            (u8vector-set! unhexes (char->integer c) i)
+            (u8vector-set! unhexes (char->integer (char-upcase c)) i)
+            (loop (fx1+ i)))
+          unhexes))))
+  (def length-unhexes% (u8vector-length unhexes%))) ;; 103
+(defsyntax unhexes (lambda (stx) unhexes%))
+(defsyntax length-unhexes (lambda (stx) length-unhexes%))
+
+
+(def (hex (u4 :~ (in-range? 0 16) :- :fixnum))
+  => :char
   (##string-ref hexes u4))
 
-(def unhexes
-  (let (unhexes (make-u8vector 256 255))
-    (let loop ((i 0))
-      (if (fx<= i 15)
-        (let ((c (hex i)))
-          (##u8vector-set! unhexes (char->integer c) i)
-          (##u8vector-set! unhexes (char->integer (char-upcase c)) i)
-          (loop (fx1+ i)))
-        unhexes))))
-
-(def (unhex* char)
+(def (unhex* (char : :char))
+  ;; returns nibble (0..15) or #f if char is not a hex digit
   (let (i (char->integer char))
-    (and (fx< i (u8vector-length unhexes))
-       (let (d (##u8vector-ref unhexes i))
+    (and (fx< i (length-unhexes))
+       (let (d (##u8vector-ref (unhexes) i))
          (and (##fx< d 16) d)))))
 
-(def (unhex char)
-  (or (unhex* char) (error "invalid hex char" char)))
+(def (unhex (char : :char))
+  => :fixnum
+  (or (unhex* char) (raise-bad-argument unhex "hex digit (0-9, a-f, A-F)" char)))
 
-(def (hex-decode-nibble string pos)
+(def (hex-decode-nibble
+      (string : :string)
+      (pos :~ (in-range? 0 (string-length string)) :- :fixnum)) => :fixnum
   (unhex (##string-ref string pos)))
 
-(def (hex-decode-byte string pos)
+(def (hex-decode-byte (string : :string)
+                      (pos :~ (in-range? 0 (fx- (string-length string) 1)) :- :fixnum)) => :fixnum
   (##fx+ (##fxarithmetic-shift (hex-decode-nibble string pos) 4)
          (hex-decode-nibble string (##fx+ pos 1))))
 
@@ -71,8 +87,8 @@
         (let (off (fx+ hexes-start (fxarithmetic-shift i 1)))
           (##u8vector-set! bytes i
                            (if (fx< off start)
-                             (hex-decode-nibble str (fx+ off 1))
-                             (hex-decode-byte str off)))
+                             (__hex-decode-nibble str (fx+ off 1))
+                             (__hex-decode-byte str off)))
           (loop (fx+ i 1)))
         bytes))))
 

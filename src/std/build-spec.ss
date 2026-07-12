@@ -21,6 +21,8 @@
     "string/utf8"
     "string/stringer"
 
+    "source"
+
     "iter/interface"
     "iter/iterators"
     "iter/macros"
@@ -56,6 +58,9 @@
 
     "text/pregexp"
     "text/parser/char-set"
+    "text/parser/base"
+    "text/parser/ll1"
+    "text/template"
 
     "cache"
     "sync/rwlock"
@@ -172,6 +177,22 @@
 
     "encoding/base64"
     "encoding/hex"
+    "encoding/json/env"
+    "encoding/json/writer"
+    "encoding/json/reader"
+    "encoding/json/io"
+    "encoding/json/util"
+    "encoding/json/api"
+    "encoding/json"
+
+    "vector/u8vector"
+    "vector/evector"
+    "vector/vector"
+
+    "number/misc"
+    "number/prime"
+    "number/decimal"
+    "number/writer"
 
     "misc/process"
     "misc/ports"
@@ -535,17 +556,8 @@
     ;; :std/misc
     "misc/atom"
     "misc/dag"
-    "misc/decimal"
-    "misc/vector"
-    "misc/evector"
-    "misc/prime"
     "misc/concurrent-plan"
     "misc/timeout"
-    "misc/list-builder"
-    "misc/list"
-    "misc/alist"
-    "misc/plist"
-    "misc/walist"
     "misc/shuffle"
     "misc/uuid"
     "misc/repr"

@@ -13,9 +13,17 @@
   string-substitute-char
   string-substitute-char-if
   string-whitespace?
+  string-index-right
   random-string
   +cr+ +lf+ +crlf+
-  as-string<?)
+  as-string<?
+  ;; Imports from srfi-13:
+  string-compare string-compare-ci
+  string=    string<    string>    string<=    string>=    string<>
+  string-ci= string-ci< string-ci> string-ci<= string-ci>= string-ci<>
+  string-prefix-length string-prefix-length-ci string-suffix-length string-suffix-length-ci
+  string-null? string-reverse string-reverse!
+  )
 
 (import :std/error
         :std/iter)
@@ -185,16 +193,13 @@
 ;;  (string-subst "abc" "b" "_") => "a_c"
 ;;  (string-subst "abc" "" "_")  => "_a_b_c_"
 (def (string-subst (str : :string) (old : :string) (new : :string) count: (count :? :fixnum := #f)) => :string
-  (declare (fixnum))
-  (unless (or (not count) (fixnum? count))
-    (raise-bad-argument string-subst "fixnum or #f: count" count))
   (def old-empty? (string-empty? old))
   (def new-empty? (string-empty? new))
   (def str-empty? (string-empty? str))
   (if (or (and old-empty? new-empty?)
 	  (and count (<= count 0)))
     str
-    (let (count (if (number? count) count -1)) ; convert #f to -1
+    (let (count (or count -1)) ; convert #f to -1
       (cond
        (old-empty? (subst-helper-empty-old str new count))
        (str-empty? str)
@@ -338,3 +343,279 @@
 
 (def (as-string<? x y) => :boolean
   (string<? (as-string x) (as-string y)))
+
+
+(def (string-index-right (str : :string) criterion (start 0 : :fixnum) (end :? :fixnum := #f))
+  (string-rindex str criterion (fx- (or end (string-length str)) 1) start))
+
+;;;; Comparison functions taken from srfi-13, until we get them from Gambit.
+
+;;; string-compare    s1 s2 proc< proc= proc> [start1 end1 start2 end2]
+;;; string-compare-ci s1 s2 proc< proc= proc> [start1 end1 start2 end2]
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Primitive string-comparison functions.
+;;; Continuation order is different from MIT Scheme.
+;;; Continuations are applied to s1's mismatch index;
+;;; in the case of equality, this is END1.
+
+(def (%string-compare s1 start1 end1 s2 start2 end2
+                      proc< proc= proc>)
+  (let ((size1 (- end1 start1))
+        (size2 (- end2 start2)))
+    (let ((match (%string-prefix-length s1 start1 end1 s2 start2 end2)))
+      (if (= match size1)
+        ((if (= match size2) proc= proc<) end1)
+        ((if (= match size2)
+	       proc>
+	       (if (char<? (string-ref s1 (+ start1 match))
+                       (string-ref s2 (+ start2 match)))
+             proc< proc>))
+         (+ match start1))))))
+
+(def (%string-compare-ci s1 start1 end1 s2 start2 end2
+                         proc< proc= proc>)
+  (let ((size1 (- end1 start1))
+        (size2 (- end2 start2)))
+    (let ((match (%string-prefix-length-ci s1 start1 end1 s2 start2 end2)))
+      (if (= match size1)
+        ((if (= match size2) proc= proc<) end1)
+        ((if (= match size2) proc>
+             (if (char-ci<? (string-ref s1 (+ start1 match))
+                            (string-ref s2 (+ start2 match)))
+               proc< proc>))
+         (+ start1 match))))))
+
+(def (string-compare s1 s2 proc< proc= proc>
+                     (start1 0) (end1 (string-length s1))
+                     (start2 0) (end2 (string-length s2)))
+  (%string-compare s1 start1 end1 s2 start2 end2 proc< proc= proc>))
+
+(def (string-compare-ci s1 s2 proc< proc= proc>
+                        (start1 0) (end1 (string-length s1))
+                        (start2 0) (end2 (string-length s2)))
+  (%string-compare-ci s1 start1 end1 s2 start2 end2 proc< proc= proc>))
+
+;;; string=          string<>		string-ci=          string-ci<>
+;;; string<          string>		string-ci<          string-ci>
+;;; string<=         string>=		string-ci<=         string-ci>=
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Simple definitions in terms of the previous comparison funs.
+;;; I sure hope the %STRING-COMPARE calls get integrated.
+
+(def (string= s1 s2
+              (start1 0) (end1 (string-length s1))
+              (start2 0) (end2 (string-length s2)))
+  (and (= (- end1 start1) (- end2 start2))     ; Quick filter
+       (or (and (eq? s1 s2) (= start1 start2)) ; Fast path
+           (%string-compare s1 start1 end1 s2 start2 end2 ; Real test
+                            (lambda (i) #f)
+                            values
+                            (lambda (i) #f)))))
+
+(def (string<> s1 s2
+               (start1 0) (end1 (string-length s1))
+               (start2 0) (end2 (string-length s2)))
+  (or (not (= (- end1 start1) (- end2 start2)))      ; Fast path
+      (and (not (and (eq? s1 s2) (= start1 start2))) ; Quick filter
+           (%string-compare s1 start1 end1 s2 start2 end2 ; Real test
+                            values
+                            (lambda (i) #f)
+                            values))))
+
+(def (string< s1 s2
+              (start1 0) (end1 (string-length s1))
+              (start2 0) (end2 (string-length s2)))
+  (if (and (eq? s1 s2) (= start1 start2)) ; Fast path
+	(< end1 end2)
+	(%string-compare s1 start1 end1 s2 start2 end2 ; Real test
+                     values
+                     (lambda (i) #f)
+                     (lambda (i) #f))))
+
+(def (string> s1 s2
+              (start1 0) (end1 (string-length s1))
+              (start2 0) (end2 (string-length s2)))
+  (if (and (eq? s1 s2) (= start1 start2)) ; Fast path
+	(> end1 end2)
+	(%string-compare s1 start1 end1 s2 start2 end2 ; Real test
+                     (lambda (i) #f)
+                     (lambda (i) #f)
+                     values)))
+
+(def (string<= s1 s2
+               (start1 0) (end1 (string-length s1))
+               (start2 0) (end2 (string-length s2)))
+  (if (and (eq? s1 s2) (= start1 start2)) ; Fast path
+	(<= end1 end2)
+	(%string-compare s1 start1 end1 s2 start2 end2 ; Real test
+                     values
+                     values
+                     (lambda (i) #f))))
+
+(def (string>= s1 s2
+               (start1 0) (end1 (string-length s1))
+               (start2 0) (end2 (string-length s2)))
+  (if (and (eq? s1 s2) (= start1 start2)) ; Fast path
+	(>= end1 end2)
+	(%string-compare s1 start1 end1 s2 start2 end2 ; Real test
+                     (lambda (i) #f)
+                     values
+                     values)))
+
+(def (string-ci= s1 s2
+                 (start1 0) (end1 (string-length s1))
+                 (start2 0) (end2 (string-length s2)))
+  (and (= (- end1 start1) (- end2 start2))     ; Quick filter
+       (or (and (eq? s1 s2) (= start1 start2)) ; Fast path
+           (%string-compare-ci s1 start1 end1 s2 start2 end2 ; Real test
+                               (lambda (i) #f)
+                               values
+                               (lambda (i) #f)))))
+
+(def (string-ci<> s1 s2
+                  (start1 0) (end1 (string-length s1))
+                  (start2 0) (end2 (string-length s2)))
+  (or (not (= (- end1 start1) (- end2 start2)))      ; Fast path
+      (and (not (and (eq? s1 s2) (= start1 start2))) ; Quick filter
+           (%string-compare-ci s1 start1 end1 s2 start2 end2 ; Real test
+                               values
+                               (lambda (i) #f)
+                               values))))
+
+(def (string-ci< s1 s2
+                 (start1 0) (end1 (string-length s1))
+                 (start2 0) (end2 (string-length s2)))
+  (if (and (eq? s1 s2) (= start1 start2)) ; Fast path
+	(< end1 end2)
+	(%string-compare-ci s1 start1 end1 s2 start2 end2 ; Real test
+                        values
+                        (lambda (i) #f)
+                        (lambda (i) #f))))
+
+(def (string-ci> s1 s2
+                 (start1 0) (end1 (string-length s1))
+                 (start2 0) (end2 (string-length s2)))
+  (if (and (eq? s1 s2) (= start1 start2)) ; Fast path
+	(> end1 end2)
+	(%string-compare-ci s1 start1 end1 s2 start2 end2 ; Real test
+                        (lambda (i) #f)
+                        (lambda (i) #f)
+                        values)))
+
+(def (string-ci<= s1 s2
+                  (start1 0) (end1 (string-length s1))
+                  (start2 0) (end2 (string-length s2)))
+  (if (and (eq? s1 s2) (= start1 start2)) ; Fast path
+	(<= end1 end2)
+	(%string-compare-ci s1 start1 end1 s2 start2 end2 ; Real test
+                        values
+                        values
+                        (lambda (i) #f))))
+
+(def (string-ci>= s1 s2
+                  (start1 0) (end1 (string-length s1))
+                  (start2 0) (end2 (string-length s2)))
+  (if (and (eq? s1 s2) (= start1 start2)) ; Fast path
+	(>= end1 end2)
+	(%string-compare-ci s1 start1 end1 s2 start2 end2 ; Real test
+                        (lambda (i) #f)
+                        values
+                        values)))
+
+;;; string-prefix-length[-ci] s1 s2 [start1 end1 start2 end2]
+;;; string-suffix-length[-ci] s1 s2 [start1 end1 start2 end2]
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Find the length of the common prefix/suffix.
+;;; It is not required that the two substrings passed be of equal length.
+;;; This was microcode in MIT Scheme -- a very tightly bummed primitive.
+;;; %STRING-PREFIX-LENGTH is the core routine of all string-comparisons,
+;;; so should be as tense as possible.
+
+(def (%string-prefix-length s1 start1 end1 s2 start2 end2)
+  (let* ((delta (min (- end1 start1) (- end2 start2)))
+         (end1 (+ start1 delta)))
+    (if (and (eq? s1 s2) (= start1 start2))	; EQ fast path
+      delta
+      (let lp ((i start1) (j start2))   ; Regular path
+        (if (or (>= i end1)
+                (not (char=? (string-ref s1 i)
+                             (string-ref s2 j))))
+	      (- i start1)
+	      (lp (+ i 1) (+ j 1)))))))
+
+(def (%string-suffix-length s1 start1 end1 s2 start2 end2)
+  (let* ((delta (min (- end1 start1) (- end2 start2)))
+         (start1 (- end1 delta)))
+    (if (and (eq? s1 s2) (= end1 end2)) ; EQ fast path
+      delta
+      (let lp ((i (- end1 1)) (j (- end2 1))) ; Regular path
+        (if (or (< i start1)
+                (not (char=? (string-ref s1 i)
+                             (string-ref s2 j))))
+	      (- (- end1 i) 1)
+	      (lp (- i 1) (- j 1)))))))
+
+(def (%string-prefix-length-ci s1 start1 end1 s2 start2 end2)
+  (let* ((delta (min (- end1 start1) (- end2 start2)))
+         (end1 (+ start1 delta)))
+    (if (and (eq? s1 s2) (= start1 start2))	; EQ fast path
+      delta
+      (let lp ((i start1) (j start2))   ; Regular path
+        (if (or (>= i end1)
+                (not (char-ci=? (string-ref s1 i)
+                                (string-ref s2 j))))
+	      (- i start1)
+	      (lp (+ i 1) (+ j 1)))))))
+
+(def (%string-suffix-length-ci s1 start1 end1 s2 start2 end2)
+  (let* ((delta (min (- end1 start1) (- end2 start2)))
+         (start1 (- end1 delta)))
+    (if (and (eq? s1 s2) (= end1 end2)) ; EQ fast path
+      delta
+      (let lp ((i (- end1 1)) (j (- end2 1))) ; Regular path
+        (if (or (< i start1)
+                (not (char-ci=? (string-ref s1 i)
+                                (string-ref s2 j))))
+	      (- (- end1 i) 1)
+	      (lp (- i 1) (- j 1)))))))
+
+(def (string-prefix-length s1 s2
+                           (start1 0) (end1 (string-length s1))
+                           (start2 0) (end2 (string-length s2)))
+  (%string-prefix-length s1 start1 end1 s2 start2 end2))
+
+(def (string-suffix-length s1 s2
+                           (start1 0) (end1 (string-length s1))
+                           (start2 0) (end2 (string-length s2)))
+  (%string-suffix-length s1 start1 end1 s2 start2 end2))
+
+(def (string-prefix-length-ci s1 s2
+                              (start1 0) (end1 (string-length s1))
+                              (start2 0) (end2 (string-length s2)))
+  (%string-prefix-length-ci s1 start1 end1 s2 start2 end2))
+
+(def (string-suffix-length-ci s1 s2
+                              (start1 0) (end1 (string-length s1))
+                              (start2 0) (end2 (string-length s2)))
+  (%string-suffix-length-ci s1 start1 end1 s2 start2 end2))
+
+(def (string-null? s) (zero? (string-length s)))
+
+(def (string-reverse s (start 0) (end (string-length s)))
+  (let* ((len (- end start))
+         (ans (make-string len)))
+    (do ((i start (+ i 1))
+         (j (- len 1) (- j 1)))
+        ((< j 0))
+      (string-set! ans j (string-ref s i)))
+    ans))
+
+(def (string-reverse! s (start 0) (end (string-length s)))
+  (do ((i (- end 1) (- i 1))
+       (j start (+ j 1)))
+      ((<= i j))
+    (let ((ci (string-ref s i)))
+      (string-set! s i (string-ref s j))
+      (string-set! s j ci))))
+
+;;;; End of extract from srfi-13

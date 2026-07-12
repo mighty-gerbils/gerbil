@@ -1,23 +1,24 @@
 (export decimal-test)
 
 (import
-  :std/misc/decimal
+  :std/number/decimal
   (only-in :std/iter for in-range)
-  (only-in :std/parser/base parse-error?)
+  (only-in :std/text/parser/base ParseError?)
   (only-in :std/error ContractViolation?)
-  (only-in :std/sugar defrule)
-  (only-in :std/text/char-set char-ascii-alphabetic?)
-  (only-in :std/test test-suite test-case check check-exception))
+  (only-in :std/text/parser/char-set char-ascii-alphabetic?)
+  (only-in :std/test test-suite test-case check check-exception check-function))
 
 (def decimal-test
   (test-suite "test suite for std/misc/decimal"
     (test-case "power-of-5"
       (for (i (in-range 1000))
-        (check (power-of-5 (expt 5 i)) => i)
-        (check (power-of-5 (1- (expt 5 i))) => #f)
-        (check (power-of-5 (1+ (expt 5 i))) => #f))
-      (check (power-of-5 (* (expt 2 2000) (expt 5 880))) => #f)
-      (check (power-of-5 (* 256 (expt 5 4400))) => #f))
+        (check-function power-of-5
+          (expt 5 i) => i
+          (1- (expt 5 i)) => #f
+          (1+ (expt 5 i)) => #f))
+      (check-function power-of-5
+        (* (expt 2 2000) (expt 5 880)) => #f
+        (* 256 (expt 5 4400)) => #f))
     (test-case "decimal?"
       (defrule (checks res val ...)
         (begin (check (decimal? val) => res) ...))
@@ -54,20 +55,20 @@
       (defrule (checks (err str . opts) ...)
         (begin (check-exception (string->decimal str . opts) err) ...))
       (checks
-       (parse-error? ".")
-       (parse-error? "+3.17" sign-allowed?: #f)
-       (parse-error? "-3.17" sign-allowed?: #f)
-       (parse-error? " 1.0")
-       (parse-error? "1.0 ")
-       (parse-error? "1.234.567")
-       (parse-error? "1,234,567,890")
+       (ParseError? ".")
+       (ParseError? "+3.17" sign-allowed?: #f)
+       (ParseError? "-3.17" sign-allowed?: #f)
+       (ParseError? " 1.0")
+       (ParseError? "1.0 ")
+       (ParseError? "1.234.567")
+       (ParseError? "1,234,567,890")
        (ContractViolation? "1" group-separator: #\.)
-       (parse-error? "1,234,567,890" decimal-mark: #\,)
-       (parse-error? "1,234,567,890" group-separator: #f)
-       (parse-error? "3.17e6") ;; exponent not allowed by default
-       (parse-error? "3.17e" exponent-allowed: #t)
-       (parse-error? "-3.17e-6" exponent-allowed: #t sign-allowed?: #f)
-       (parse-error? "-")))
+       (ParseError? "1,234,567,890" decimal-mark: #\,)
+       (ParseError? "1,234,567,890" group-separator: #f)
+       (ParseError? "3.17e6") ;; exponent not allowed by default
+       (ParseError? "3.17e" exponent-allowed: #t)
+       (ParseError? "-3.17e-6" exponent-allowed: #t sign-allowed?: #f)
+       (ParseError? "-")))
     (test-case "count-significant-digits"
       (defrule (checks res val ...) (begin (check (count-significant-digits val) => res) ...))
       (checks 1 0 1 2 3 4 5 6 7 8 9)

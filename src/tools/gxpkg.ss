@@ -23,18 +23,15 @@
 ;;;   all                        -- action applies to all packages where sensible to do so
 ;;; TODO: add private repos support
 
-(import :gerbil/gambit
-        :std/cli/getopt
+(import :std/cli/getopt
         :std/format
+        :std/hash/misc
         :std/iter
         :std/misc/process
-        :std/misc/template
         :std/net/request
-        :std/pregexp
-        :std/sort
-        (only-in :std/srfi/1 reverse!)
-        (only-in :std/srfi/13 string-trim)
-        :std/sugar
+        :std/string/misc
+        :std/text/pregexp
+        :std/text/template
         ./env)
 (export main
         ;; script api
@@ -371,22 +368,18 @@
                    (error "Package prefix not specified with -p or --package, and USER not defined")))
    (def name (or package-name
                  (path-strip-directory (path-normalize* (current-directory)))))
-   (def (create-template file template . args)
-     (call-with-output-file file
-       (lambda (output)
-         (apply write-template template output args))))
 
-   (create-template "gerbil.pkg" gerbil.pkg-template
-                    package: prefix)
+   (write-template "gerbil.pkg" gerbil.pkg-template
+                   package: prefix)
    (create-directory name)
-   (create-template (path-expand "main.ss" name) main.ss-template
-                    name: name)
-   (create-template (path-expand "lib.ss" name) lib.ss-template)
-   (create-template [path: "build.ss" permissions: #o755] build.ss-template
-                    name: name)
-   (create-template ".gitignore" gitignore-template)
+   (write-template (path-expand "main.ss" name) main.ss-template
+                   name: name)
+   (write-template (path-expand "lib.ss" name) lib.ss-template)
+   (write-template [path: "build.ss" permissions: #o755] build.ss-template
+                   name: name)
+   (write-template ".gitignore" gitignore-template)
 
-   (create-template "Makefile" Makefile-template name: name)
+   (write-template "Makefile" Makefile-template name: name)
 
    ;; TODO: mark the pkg unbuilt... except that we don't know the name for it yet,
    ;; just the package name(!)
@@ -623,7 +616,7 @@
      (let* ((pkgs (pkg-list))
             (deps (map (cut pkg-dependents* <> pkgs) pkgs))
             (pkgs+deps (map cons pkgs deps))
-            (sorted (sort pkgs+deps (lambda (pa pb) (member (car pb) (cdr pa))))))
+            (sorted (list-sort (lambda (pa pb) (member (car pb) (cdr pa))) pkgs+deps)))
        (for-each (cut pkg-build <> #f) (map car sorted))))
     ((equal? pkg ".")
      (displayln "... build in current directory")
@@ -738,7 +731,7 @@
     (let* ((pkgs (pkg-list))
            (deps (map (cut pkg-dependents* <> pkgs) pkgs))
            (pkgs+deps (map cons pkgs deps))
-           (sorted (sort pkgs+deps (lambda (pa pb) (member (car pb) (cdr pa))))))
+           (sorted (list-sort (lambda (pa pb) (member (car pb) (cdr pa))) pkgs+deps)))
       (for-each (cut pkg-clean <>) (map car sorted))))
    ((equal? pkg ".")
     (displayln "... clean current package")
@@ -760,7 +753,7 @@
 (def (pkg-list)
   (def root (pkg-root-dir))
 
-  (def (walk dir pkgpath)
+  (def (walk yield dir pkgpath)
     (for-each
       (lambda (file)
         (let* ((path (path-expand file dir))
@@ -773,10 +766,10 @@
            ((file-exists? gerbil.pkg)
             (yield pkgpath))
            ((file-directory? path)
-            (walk path pkgpath)))))
+            (walk yield path pkgpath)))))
     (directory-files dir)))
 
-  (for/collect (pkg (cut walk root "")) pkg))
+  (for/collect (pkg (cut walk <> root "")) pkg))
 
 (def (pkg-retag)
   (let* ((root (pkg-root-dir))
@@ -925,7 +918,7 @@
                   (displayln/err "*** WARNING error retrieving packages from " url
                                  ": " (or (error-message exn) "(unknown error)"))
                   #f)
-                (cut http-get url redirect: #t)))
+                (cut http-get url)))
        (if (and req (fx= (request-status req) 200))
          (let (pkgs (with-catch
                      (lambda (exn)
@@ -942,7 +935,7 @@
 
 (def (pkg-directory-list dir)
   (let* ((url (pkg-directory-url dir))
-         (req (http-get url redirect: #t)))
+         (req (http-get url)))
     (if (fx= (request-status req) 200)
       (call-with-input-string (request-text req) read)
       (error "error retrieving packages" url (request-status-text req)))))

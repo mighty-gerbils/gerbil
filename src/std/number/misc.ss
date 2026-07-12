@@ -11,10 +11,9 @@
         floor-align ceiling-align
         real->sign
         uint? sint? positive-integer?
+        uint1? uint8? uint16? uint32? uint64?
+        sint8? sint16? sint32? sint64?
         n-bits->n-u8 uint-length-in-u8 sint-length-in-u8
-        check-argument-uint check-argument-sint
-        check-argument-exact-integer
-        check-argument-positive-integer
         uint-below?
         uint-of-length?
         sint-of-length?
@@ -22,16 +21,14 @@
         normalize-sint
         for-each-integer
         half least-integer
+        not-zero?
         divides? bezout invert-mod div-mod mult-mod mult-expt-mod expt-mod
-        integer-log
+        integer-log integer-digit-count
         factor-out-powers-of-2 factor-out-powers)
 
 (import
-  (only-in :gerbil/gambit first-set-bit bit-set? replace-bit-field extract-bit-field)
-  (only-in :std/srfi/1 reduce)
-  (only-in :std/srfi/141 floor/)
-  (only-in :std/error check-argument)
-  (only-in :std/sugar defrule defcheck-argument-type))
+  ;;(only-in :gerbil/gambit first-set-bit bit-set? replace-bit-field extract-bit-field)
+  (only-in :std/list/list reduce))
 
 ;;; xmin and xmax on the (affine) extended real number line.
 ;;; An element is either a real number or a positive infinite +inf.0 (+∞)
@@ -41,17 +38,16 @@
 ;;; (including error or continuation escape) from evaluating anything
 ;;; after the bottom value -inf.0 (resp. top value +inf.0) was detected.
 
-(def xmin
-  (case-lambda
-    ((x y) (if (<= x y) x y))
-    ((x) x)
-    (() +inf.0)
-    (l (xmin/list l))))
-(def (xmin/list l)
+(def* xmin
+  (((x : :real) (y : :real)) => :real (if (<= x y) x y))
+  (((x : :real)) => :real x)
+  (() +inf.0)
+  (l => :real (xmin/list l)))
+(def (xmin/list (l : :list)) => :real
   (reduce xmin +inf.0 l))
 (defrule (xmin! x y ...)
   (set! x (xmin x y ...)))
-(def (xmin/map f l (base +inf.0))
+(def (xmin/map (f : :procedure) (l : :list) (base : :real := +inf.0))
   (let/cc return
     (when (eqv? base -inf.0) (return -inf.0))
     (for-each (lambda (i)
@@ -61,17 +57,16 @@
               l)
     base))
 
-(def xmax
-  (case-lambda
-    ((x y) (if (>= x y) x y))
-    ((x) x)
-    (() -inf.0)
-    (l (xmax/list l))))
-(def (xmax/list l)
+(def* xmax
+  (((x : :real) (y : :real)) => :real (if (>= x y) x y))
+  (((x : :real)) => :real x)
+  (() -inf.0)
+  (l => :real (xmax/list l)))
+(def (xmax/list (l : :list)) => :real
   (reduce xmax -inf.0 l))
 (defrule (xmax! x y ...)
   (set! x (xmax x y ...)))
-(def (xmax/map f l (base -inf.0))
+(def (xmax/map (f : :procedure) (l : :list) (base : :real := -inf.0))
   (let/cc return
     (when (eqv? base +inf.0) (return +inf.0))
     (for-each (lambda (i)
@@ -107,66 +102,82 @@
     ((x) (post-increment! n x))
     (l (post-increment! n (apply + l)))))
 
-(def (integer-part real)
-  (cond
-   ((exact-integer? real) real)
-   ((real? real) (inexact->exact (truncate real)))
-   (else (error "Bad real" real))))
+(def (integer-part (real : :real)) => :integer
+  (if (exact-integer? real) real (inexact->exact (truncate real))))
 
-(def (fractional-part real)
-  (cond
-   ((exact-integer? real) 0)
-   ((real? real) (- real (integer-part real)))
-   (else (error "Bad real" real))))
+(def (fractional-part (real : :real)) => :real
+  (if (exact-integer? real) 0 (- real (integer-part real))))
 
-(def (floor-align n alignment)
+(def (floor-align (n : :integer) (alignment : :integer)) => :integer
   (- n (modulo n alignment)))
 
-(def (ceiling-align n alignment)
+(def (ceiling-align (n : :integer) (alignment : :integer)) => :integer
   (let ((mod (modulo n alignment)))
-    (if (zero? mod) n (- (+ n alignment) mod))))
+    (if (zero? mod) n (+ n (- alignment mod)))))
 
-(def (real->sign x)
+(def (real->sign (x : :real)) => :fixnum
   (cond ((< 0 x) +1) ((> 0 x) -1) (else 0)))
 
-(def (uint? n)
+(definline (uint? (n : :t)) => :boolean
   (and (exact-integer? n) (not (negative? n))))
 
-(def (sint? n)
+(definline (uint1? (n : :t)) => :boolean
+  (or (eq? n 0) (eq? n 1)))
+
+(definline (uint8? (n : :t)) => :boolean
+  (and (nonnegative-fixnum? n) (fx<= n 255)))
+
+(definline (uint16? (n : :t)) => :boolean
+  (and (nonnegative-fixnum? n) (fx<= n 65535)))
+
+(definline (uint32? (n : :t)) => :boolean
+  (and (exact-integer? n) (<= 0 n (@eval (1- (expt 2 32))))))
+
+(definline (uint64? (n : :t)) => :boolean
+  (and (exact-integer? n) (<= 0 n (@eval (1- (expt 2 64))))))
+
+(definline (sint? (n : :t)) => :boolean
   (exact-integer? n))
 
-(def (positive-integer? n)
+(definline (sint8? (n : :t)) => :boolean
+  (and (fixnum? n) (<= -128 n 127)))
+
+(definline (sint16? (n : :t)) => :boolean
+  (and (fixnum? n) (<= -32768 n 32767)))
+
+(definline (sint32? (n : :t)) => :boolean
+  (and (exact-integer? n) (<= (- (expt 2 31)) n (@eval (1- (expt 2 31))))))
+
+(definline (sint64? (n : :t)) => :boolean
+  (and (exact-integer? n) (<= (- (expt 2 63)) n (@eval (1- (expt 2 63))))))
+
+(definline (positive-integer? (n : :t)) => :boolean
   (and (exact-integer? n) (positive? n)))
 
-(def (n-bits->n-u8 n-bits)
+(def (n-bits->n-u8 (n-bits : :integer)) => :integer
   (arithmetic-shift (+ n-bits 7) -3))
 
-(def (uint-length-in-u8 n)
+(def (uint-length-in-u8 (n : :integer)) => :integer
   (n-bits->n-u8 (integer-length n)))
 
-(def (sint-length-in-u8 n)
+(def (sint-length-in-u8 (n : :integer)) => :integer
   (if (zero? n) 0 (n-bits->n-u8 (1+ (integer-length n)))))
 
-(defcheck-argument-type uint)
-(defcheck-argument-type sint)
-(defcheck-argument-type exact-integer)
-(defcheck-argument-type positive-integer)
-
-(def (uint-below? n end)
+(def (uint-below? n (end : :real)) => :boolean
   (and (uint? n) (< n end)))
 
-(def (uint-of-length? x length-in-bits)
+(def (uint-of-length? x (length-in-bits : :fixnum)) => :boolean
   (and (uint? x) (<= (integer-length x) length-in-bits)))
 
-(def (sint-of-length? x length-in-bits)
-  (and (exact-integer? x) (< (integer-length x) length-in-bits)))
+(def (sint-of-length? x (length-in-bits : :fixnum)) => :boolean
+  (and (sint? x) (< (integer-length x) length-in-bits)))
 
 ;; Normalize an integer into an unsigned integer of given length in bits
-(def (normalize-uint x length-in-bits)
+(def (normalize-uint (x : :integer) (length-in-bits : :fixnum)) => :integer
   (extract-bit-field length-in-bits 0 x))
 
 ;; Normalize an integer into a signed integer of given length in bits
-(def (normalize-sint x length-in-bits)
+(def (normalize-sint (x : :integer) (length-in-bits : :fixnum)) => :integer
   (cond
    ((< (integer-length x) length-in-bits) x)
    ((bit-set? (1- length-in-bits) x) (replace-bit-field length-in-bits 0 x -1))
@@ -174,25 +185,19 @@
 
 ;; Iterate a function with an integer argument ranging from one value
 ;; increasing by one until it reaches another value (excluded)
-;; : (Integer ->) -> Integer Integer
-(def (for-each-integer fun from below)
+(def (for-each-integer (fun : :procedure) (from : :integer) (below : :integer))
   (let loop ((i from))
     (when (< i below)
       (fun i)
       (loop (+ i 1)))))
 
-(def (half_ n)
+(definline (half (n : :integer)) => :integer
   (arithmetic-shift n -1))
-
-(defrules half ()
-  ((_ n) (arithmetic-shift n -1))
-  ((_ . args) (error "half takes only one argument"))
-  (_ half_))
 
 ;;; Binary search in interval [start, end) to find the least integer for which pred? holds,
 ;;; assuming pred? is "increasing", i.e. if true for some integer, true for all larger integers.
 ;;; If no integer in the interval satisfies pred?, return end. If all do, return start.
-(def (least-integer pred? start end)
+(def (least-integer (pred? : :procedure) (start : :integer) (end : :integer)) => :integer
   (if (<= end start) end ; empty interval, return end.
       (let (mid (half (+ end start))) ;; NB: happily we have bignums, so no overflow
         (if (pred? mid)
@@ -204,16 +209,14 @@
 ;; TODO: offer an alternate module that offers cryptographic-ready arithmetic primitives via FFI
 
 ;; Does `f` divide `n`?
-(def (divides? f n)
-  (check-argument-uint f n)
+(def (divides? (f : :integer) (n :~ uint? :- :integer)) => :boolean
   (if (zero? f)
       (zero? n)
       (zero? (modulo n f))))
 
 ;; Given integers a and b, return values x y d such that
 ;; d is (non-negative) gcd of a and b, and a*x+b+y=d
-(def (bezout a b)
-  (check-argument-exact-integer a b)
+(def (bezout (a : :integer) (b : :integer)) => :values
   (def (eea a b) ;; Extended Euclid's Algorithm, where b is non-negative
     (if (zero? b)
       (values 1 0 a)
@@ -225,15 +228,22 @@
       (values x (- y) d))
     (eea a b)))
 
-(def (mult-mod a b n) ;; TODO: optimize that
-  (modulo (* a b) n))
+(definline (not-zero? (x : :t)) => :boolean
+  (not (zero? x)))
 
-(def (invert-mod a n) ;; 1/a modulo n
+(def (mult-mod (a : :integer) (b : :integer) (n :~ not-zero? : :integer)) => :integer
+  (modulo (* a b) n)) ;; TODO: optimize that
+
+;; 1/a modulo n
+(def (invert-mod (a : :integer) (n :~ not-zero? : :integer)) => :integer
   (let-values (((x _ d) (bezout a n))) ;; a*x+n*y=d
     (unless (= d 1) (error "integer not invertible modulo" a n))
     x))
 
-(def (div-mod a b n) ;; a/b modulo n/(gcd b n)
+;; a/b modulo n/(gcd b n)
+(def (div-mod (a : :integer)
+              (b : :integer)
+              (n :~ not-zero? : :integer)) => :integer
   (let-values (((x _ d) (bezout b n))) ;; b*x+n*y=d
     (when (= d 0) (error "divisor is zero modulo" b n))
     (let-values (((q r) (floor/ a d))) ;; a = d*q+r = b*x*q + q*y*n +r ;; 0<=r<d
@@ -241,8 +251,10 @@
       (* x q))))
 
 ;; same as (modulo (* a (expt x e)) n)
-(def (mult-expt-mod a x e n)
-  (check-argument-exact-integer a x e n)
+(def (mult-expt-mod (a : :integer)
+                    (x : :integer)
+                    (e : :integer)
+                    (n : :integer)) => :integer
   (if (zero? n) (* a (expt x e))
       (letrec (f (lambda (a x e)
                    (if (zero? e)
@@ -256,12 +268,17 @@
           (f a x e)))))
 
 ;; same as (modulo (expt x e) n)
-(def (expt-mod x e n)
+(def (expt-mod (x : :integer)
+               (e : :integer)
+               (n : :integer)) => :integer
   (mult-expt-mod 1 x e n))
 
-(def (integer-log a b) ;; largest natural integer n such that b**n <= a
-  (check-argument-positive-integer a)
-  (check-argument (and (exact-integer? b) (< 1 b)) "valid base" b)
+(def (valid-base? b) => :boolean
+  (and (exact-integer? b) (< 1 b)))
+
+;; largest natural integer n such that b**n <= a
+(def (integer-log (a :~ positive-integer? :- :integer)
+                  (b :~ valid-base? :- :integer)) => :integer
   (def (downward q n p bs)
     ;; q is a divided n times by b already, b**p is too large to divide q,
     ;; and the earlier powers of b are in bs
@@ -276,20 +293,24 @@
     (if (zero? q)
       (downward a (1- p) p bps)
       (upward q (* bp bp) (+ p p) (cons bp bps))))
-  (upward a b 1 []))
+  (cond
+   ((= b 2) (- (integer-length a) 1))
+   (else (upward a b 1 []))))
+
+;; number of digits of a in base b
+(def (integer-digit-count (a : :integer) (b :~ valid-base? :- :integer)) => :integer
+  (if (zero? a) 1 (+ 1 (integer-log (abs a) b))))
 
 ;; return (values q p) such a=q*2**p and q is odd
 ;; : Integer* -> Integer* Nat
-(def (factor-out-powers-of-2 n)
-  (check-argument (and (exact-integer? n) (not (zero? n))) "non-zero integer" n)
+(def (factor-out-powers-of-2 (n :~ not-zero? : :integer)) => :values
   (let (p (first-set-bit n))
     (values (arithmetic-shift n (- p)) p)))
 
 ;; return (values q p) such a=q*b**p and b does not divide q
 ;; : Integer* Nat -> Integer* Nat
-(def (factor-out-powers a b)
-  (check-argument (and (exact-integer? a) (not (zero? a))) "non-zero integer" a)
-  (check-argument-positive-integer b)
+(def (factor-out-powers (a :~ not-zero? : :integer)
+                        (b :~ valid-base? :- :integer)) => :values
   (def (downward a bp p n bps) ;; we know (what remains of) a is not divisible by bp*bp
     (define-values (q r) (floor/ a bp))
     (define-values (aa nn) (if (zero? r) (values q (+ n p)) (values a n)))
@@ -301,4 +322,6 @@
     (if (zero? r)
       (upward q (* bp bp) (+ p p) (+ n p) (cons bp bps))
       (downward a bp p n bps)))
-  (upward a b 1 0 []))
+  (cond
+   ((= b 2) (factor-out-powers-of-2 a))
+   (else (upward a b 1 0 []))))

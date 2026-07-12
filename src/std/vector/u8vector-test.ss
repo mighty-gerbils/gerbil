@@ -1,14 +1,12 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;;     belmarca
-;;; :std/misc/bytes test
+;;; :std/vector/u8vector test
 
 (import :std/error
-        :std/misc/bytes
-        :std/srfi/13
-        (only-in :std/sugar try catch defrule)
+        :std/vector/u8vector
         :std/test)
-(export bytes-test)
+(export u8vector-test)
 
 (def u0 (u8vector 1 2 3))
 (def u0-swapped (u8vector 2 1 3))
@@ -30,8 +28,8 @@
     (check-equal? (parse rep) obj)
     (check-equal? (unparse obj) rep)))
 
-(def bytes-test
-  (test-suite "test :std/misc/bytes"
+(def u8vector-test
+  (test-suite "test :std/vector/u8vector"
     (test-case "test primitive operations"
       (let (u (make-u8vector 1))
         (u8vector-s8-set! u 0 100)

@@ -238,9 +238,10 @@
                     (begin
                       (__bio-input-advance! bio (fx+ rlo 4) rhi)
                       (integer->char
-                       (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
-                              (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
-                              (fxand byte3 #x3f))))
+                       (fxior (fxarithmetic-shift-left (fxand byte1 #x07) 18)
+                              (fxarithmetic-shift-left (fxand byte2 #x3f) 12)
+                              (fxarithmetic-shift-left (fxand byte3 #x3f) 6)
+                              (fxand byte4 #x3f))))
                     ;; bad continuation; replacement character
                     (begin
                       (__bio-input-advance! bio rlo+1 rhi)
@@ -301,9 +302,10 @@
               (let (byte4 (reader.read-u8!))
                 (if (fx= (fxand byte4 #xc0) #x80)
                   (integer->char
-                   (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
-                          (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
-                          (fxand byte3 #x3f)))
+                   (fxior (fxarithmetic-shift-left (fxand byte1 #x07) 18)
+                          (fxarithmetic-shift-left (fxand byte2 #x3f) 12)
+                          (fxarithmetic-shift-left (fxand byte3 #x3f) 6)
+                          (fxand byte4 #x3f)))
                   (begin
                     ;; bad continuation; put back and return replacement char
                     (reader.put-back [byte2 byte3 byte4])
@@ -548,18 +550,23 @@
     (if (eof-object? next)
       '#!eof
       (let loop ((chars []) (chars-read 0) (separators-rest separators) (separators-count 0))
-        (if (read-more? chars-read)
+        ;; Terminate when max-chars reached, or when the complete separator sequence
+        ;; has been consumed (separators is non-empty and separators-rest is now empty).
+        ;; Check before reading so we never consume a character past the line ending.
+        (if (or (not (read-more? chars-read))
+                (and (pair? separators) (null? separators-rest)))
+          (finish chars separators-count)
           (let (next (__read-char input))
             (if (eof-object? next)
               (finish chars separators-count)
-              (match separators-rest
-                ([sep . separators-rest]
-                 (if (eq? sep next)
-                   (loop (cons next chars) (fx+ chars-read 1) separators-rest (fx+ separators-count 1))
-                   (loop (cons next chars) (fx+ chars-read 1) separators 0)))
-                ([]
-                 (finish (cons next chars) separators-count)))))
-          (finish chars separators-count))))))
+              (if (null? separators-rest)
+                ;; No-separator mode (sep=#f): accumulate without matching
+                (loop (cons next chars) (fx+ chars-read 1) separators-rest 0)
+                (match separators-rest
+                  ([sep . separators-rest]
+                   (if (eq? sep next)
+                     (loop (cons next chars) (fx+ chars-read 1) separators-rest (fx+ separators-count 1))
+                     (loop (cons next chars) (fx+ chars-read 1) separators 0))))))))))))
 
 (def (bio-read-line-utf8 (bio        : basic-input-buffer)
                          (separators : :list)

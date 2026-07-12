@@ -3,7 +3,8 @@
 ;; TODO: support Windows?
 ;; TODO: something inspired by UIOP:TRUENAMIZE, etc.
 
-(import (only-in :std/list/list when/list))
+(import (only-in :std/list/list when/list)
+        (only-in :std/string/misc string=))
 (export #t)
 
 ;; : String (OrFalse String) -> String
@@ -29,20 +30,76 @@
 ;; If `maybe-subpath` is a pathname that is under `base-path`, return a pathname object that
 ;; when used with `path-expand` with defaults `base-path`, yields `maybe-subpath`.
 ;; Otherwise, return #f.
+;; Strip any trailing / at the end of base-path or the beginning of the subpath.
 ;; : (OrFalse String) (OrFalse String) -> (OrFalse String)
-(def (subpath? maybe-subpath base-path)
-  (and (string? maybe-subpath) (string? base-path)
-       (eq? (path-absolute? maybe-subpath) (path-absolute? base-path))
-       (let ((ls (string-length maybe-subpath))
-             (lb (string-length base-path))
-             (sep? (lambda (s pos) (eqv? (string-ref s pos) #\/))))
-         (cond
-          ((< ls lb) #f) ;; NB: this in particular concludes that /foo is not subpath of /foo/ ?
-          ((> ls lb) (and (or (sep? base-path (- lb 1)) (sep? maybe-subpath lb))
-                          (string-prefix? base-path maybe-subpath)
-                          (let ((pos (string-index maybe-subpath #\/ lb)))
-                            (if pos (substring maybe-subpath pos ls) ""))))
-          (else (and (equal? base-path maybe-subpath) ""))))))
+;;
+;; If `maybe-subpath` is lexically under `base-path`, return the relative
+;; suffix. This function does not canonicalize "." or ".."; callers that want
+;; that should canonicalize first.
+;;
+;; A run of multiple separators in either base-path or maybe-subpath
+;; is treated as a single path boundary while matching the base prefix.
+;; The returned suffix preserves the spelling from `maybe-subpath`, except that
+;; the boundary separator run is consumed so the result is relative.
+;;
+;; "" is treated as the empty relative base-path, at which point the string maybe-subpath
+;; is returned unchanged (which might cause issues if someone later modifies it).
+;;
+;; : (OrFalse String) (OrFalse String) -> (OrFalse String)
+(def (subpath? (maybe-subpath :? :string) (base-path :? :string))
+  (and (string? maybe-subpath)
+       (string? base-path)
+       (let ((maybe-absolute? (path-absolute? maybe-subpath))
+             (base-absolute? (path-absolute? base-path)))
+         (and (eq? maybe-absolute? base-absolute?)
+              (let ((ls (string-length maybe-subpath))
+                    (lb (string-length base-path)))
+                (let ()
+                  (def (slash? c)
+                    (eqv? c #\/))
+
+                  (def (slash-at? s i)
+                    (slash? (string-ref s i)))
+
+                  (def (skip-slashes s i n)
+                    (or (string-index s (lambda (c) (not (slash? c))) i) n))
+
+                  (if (= lb 0)
+                    maybe-subpath
+                    (let match ((ib 0) (is 0))
+                      (let ((ib (skip-slashes base-path ib lb)))
+                        (if (= ib lb)
+                          ;; The base has been fully matched. The candidate
+                          ;; must be done too, or sitting at a boundary slash
+                          ;; run. Consume that run before returning the suffix.
+                          (cond
+                           ((= is ls)
+                            "")
+
+                           ((slash-at? maybe-subpath is)
+                            (let ((start (skip-slashes maybe-subpath is ls)))
+                              (if (= start ls)
+                                ""
+                                (substring maybe-subpath start ls))))
+
+                           (else
+                            #f))
+
+                          ;; Match the next base component against the next
+                          ;; same-length candidate slice. The candidate slice
+                          ;; must end at end-of-string or at a slash boundary.
+                          (let* ((is (skip-slashes maybe-subpath is ls))
+                                 (jb (or (string-index base-path #\/ ib)
+                                         lb))
+                                 (len (- jb ib))
+                                 (js (+ is len)))
+                            (and (<= js ls)
+                                 (string= base-path maybe-subpath
+                                          ib jb
+                                          is js)
+                                 (or (= js ls)
+                                     (slash-at? maybe-subpath js))
+                                 (match jb js)))))))))))))
 
 ;; : String -> Bool
 (def (path-absolute? path)

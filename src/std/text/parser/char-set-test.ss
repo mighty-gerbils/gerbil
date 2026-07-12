@@ -8,7 +8,7 @@
   (test-suite "test :std/text/parser/char-set"
     (test-case "codepoint-scheme-whitespace?, char-scheme-whitespace?"
       (for (i (in-range #x4000)) ;; we could go to (1+ max-char-code), but why bother?
-        (when-let ((c (with-catch false (cut integer->char i))))
+        (alet (c (with-catch false (cut integer->char i)))
           (let (w? (char-whitespace? c))
             (check (and (member i [#x09 #x0A #x0B #x0C #x0D #x20 #xA0
                                    #x1680 (iota 11 #x2000)... #x202f #x205f #x3000

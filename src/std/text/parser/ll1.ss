@@ -1,7 +1,7 @@
 ;; -*- Gerbil -*-
 ;;;; Basic LL(1) parser combinators
 ;; With this module, you can use parser combinators to create LL(1) parsers
-;; working over a PeekableStringReader input. Build your parser then use one of
+;; working over a BufferedReader input. Build your parser then use one of
 ;; ll1/reader ll1/string ll1/port ll1/file or ll1/file-lines to consume input.
 ;;
 ;; Beware that these parsers use only one character of look-ahead, and that
@@ -14,17 +14,15 @@
 (export #t)
 
 (import
-  (for-syntax :std/misc/number)
+  (for-syntax :std/number/misc)
   :std/error
-  :std/io
-  (only-in :std/parser/base parse-error? raise-parse-error)
+  :std/io/api
+  (only-in :std/text/parser/base ParseError? raise-parse-error)
   :std/iter
-  :std/misc/bytes
-  :std/misc/list-builder
-  :std/srfi/1
-  :std/srfi/13
-  :std/sugar
-  :std/text/char-set)
+  :std/vector/u8vector
+  :std/list/list
+  :std/list/list-builder
+  :std/text/parser/char-set)
 
 ;;; empty string parser
 (def (ll1-empty reader)
@@ -46,7 +44,7 @@
   (let loop ((as alternatives))
     (match as
       ([] (raise-parse-error ll1-or "out of alternatives" alternatives reader))
-      ([a . r] (with-catch (lambda (e) (if (parse-error? e) (loop r) (raise e)))
+      ([a . r] (with-catch (lambda (e) (if (ParseError? e) (loop r) (raise e)))
                            (cut a reader))))))
 (def (ll1-repeated element terminator (rhead '()))
   (let loop ((r rhead))
@@ -82,7 +80,7 @@
                          (syntax->list #'(spec ...)))))
        #'(let ((p (peeker spec)) ...)
            (lambda (reader)
-             (let (c (PeekableStringReader-peek-char reader))
+             (let (c (BufferedReader-peek-char-utf8 reader))
                ((cond
                  ((p c) body ...) ...
                  (else e ...)) reader))))))
@@ -90,13 +88,13 @@
      #'(ll1-case (spec body ...) ...
                  (else (lambda (reader)
                          (raise-parse-error 'll1-case "unexpected input"
-                                            (PeekableStringReader-peek-char reader) reader)))))))
+                                            (BufferedReader-peek-char-utf8 reader) reader)))))))
 
 (def (ll1-peek spec)
-  (ll1-case (spec PeekableStringReader-peek-char)))
+  (ll1-case (spec BufferedReader-peek-char-utf8)))
 
 (def (ll1-char spec)
-  (ll1-case (spec PeekableStringReader-read-char)))
+  (ll1-case (spec BufferedReader-read-char-utf8)))
 
 (def (ll1-string string)
   (lambda (reader)
@@ -106,35 +104,35 @@
 (def (ll1-char? spec)
   (let (p (peeker spec))
     (lambda (reader)
-      (using (reader : PeekableStringReader)
-        (and (p (reader.peek-char)) (reader.read-char))))))
+      (using (reader : BufferedReader)
+        (and (p (reader.peek-char-utf8)) (reader.read-char-utf8))))))
 
 (def (ll1-char* spec)
   (let (p (peeker spec))
     (lambda (reader)
-      (using (reader : PeekableStringReader)
-        (and (p (reader.peek-char))
+      (using (reader : BufferedReader)
+        (and (p (reader.peek-char-utf8))
              (call-with-output-string
-              (lambda (o) (while (begin (write-char (reader.read-char) o)
-                                   (p (reader.peek-char)))))))))))
+              (lambda (o) (while (begin (write-char (reader.read-char-utf8) o)
+                                   (p (reader.peek-char-utf8)))))))))))
 
 (def (ll1-char+ spec)
   (let (p (peeker spec))
     (lambda (reader)
-      (using (reader : PeekableStringReader)
-        (if (p (reader.peek-char))
+      (using (reader : BufferedReader)
+        (if (p (reader.peek-char-utf8))
           (call-with-output-string
-           (lambda (o) (while (begin (write-char (reader.read-char) o)
-                                (p (reader.peek-char))))))
+           (lambda (o) (while (begin (write-char (reader.read-char-utf8) o)
+                                (p (reader.peek-char-utf8))))))
           (raise-parse-error ll1-char+ "Unexpected character"
-                             (reader.peek-char) reader))))))
+                             (reader.peek-char-utf8) reader))))))
 
 (def (ll1-skip-char* spec)
   (let (p (peeker spec))
     (lambda (reader)
-      (using (reader : PeekableStringReader)
-        (while (p (reader.peek-char))
-          (reader.read-char))))))
+      (using (reader : BufferedReader)
+        (while (p (reader.peek-char-utf8))
+          (reader.read-char-utf8))))))
 
 (def ll1-skip-space* (ll1-skip-char* char-strict-whitespace?))
 
@@ -142,14 +140,14 @@
   (or (eqv? c #\newline) (eof-object? c) (eqv? c #\return)))
 
 (def (peekable-eof? reader)
-  (eof-object? (PeekableStringReader-peek-char reader)))
+  (eof-object? (BufferedReader-peek-char-utf8 reader)))
 
 (def ll1-eof (ll1-peek eof-object?))
 
 (def ll1-eolf? (ll1-peek eolf?))
 
 (def ll1-eol
-  (let ((rp PeekableStringReader-peek-char) (rc PeekableStringReader-read-char))
+  (let ((rp BufferedReader-peek-char-utf8) (rc BufferedReader-read-char-utf8))
     (ll1-case (#\newline (lambda (r) (rc r) "\n"))
               (#\return (lambda (r) (rc r) (if (eqv? (rp r) #\newline) (begin (rc r) "\r\n") "\r"))))))
 
@@ -159,25 +157,30 @@
 
 ;;; Parse a natural number in decimal on the current reader, return it.
 (def (ll1-uint reader (base 10))
-  (using (reader : PeekableStringReader)
-    (if-let (digit (char-ascii-digit (reader.peek-char) base))
-      (let loop ((n digit))
-        (reader.read-char)
-        (if-let (next-digit (char-ascii-digit (reader.peek-char) base))
-          (loop (+ next-digit (* base n)))
-          n))
+  (using (reader : BufferedReader)
+    (cond
+     ((char-ascii-digit (reader.peek-char-utf8) base) =>
+      (lambda (digit)
+        (let loop ((n digit))
+          (reader.read-char-utf8)
+          (cond
+           ((char-ascii-digit (reader.peek-char-utf8) base) =>
+            (lambda (next-digit)
+              (loop (+ next-digit (* base n)))))
+           (else n)))))
+     (else
       (raise-parse-error ll1-uint "Not a digit in requested base"
-                         (reader.peek-char) base reader))))
+                         (reader.peek-char-utf8) base reader)))))
 
 (def (ll1-sint reader (base 10))
-  (using (reader : PeekableStringReader)
-    (let ((char (reader.peek-char)))
+  (using (reader : BufferedReader)
+    (let ((char (reader.peek-char-utf8)))
       (cond
        ((eqv? char #\+)
-        (reader.read-char)
+        (reader.read-char-utf8)
         (ll1-uint reader base))
        ((eqv? char #\-)
-        (reader.read-char)
+        (reader.read-char-utf8)
         (- (ll1-uint reader base)))
        ((char-ascii-digit char base)
         (ll1-uint reader base))
@@ -188,36 +191,36 @@
 (def (ll1-n-chars n spec)
   (let (p (peeker spec))
     (lambda (reader)
-      (using (reader : PeekableStringReader)
+      (using (reader : BufferedReader)
         (def s (make-string n))
         (for (i (in-range n))
-          (def c (reader.peek-char))
+          (def c (reader.peek-char-utf8))
           (unless (p c)
             (raise-parse-error parse-n-chars "invalid character" c n spec i))
-          (string-set! s i (reader.read-char)))
+          (string-set! s i (reader.read-char-utf8)))
         s))))
 
 (def (ll1-n-digits n (base 10))
   (lambda (reader)
-    (using (reader : PeekableStringReader)
+    (using (reader : BufferedReader)
       (let loop ((i n) (r 0))
         (if (zero? i) r
-            (let* ((char (reader.peek-char))
+            (let* ((char (reader.peek-char-utf8))
                    (digit (char-ascii-digit char base)))
               (if digit
-                (begin (reader.read-char) (loop (1- i) (+ digit (* base r))))
+                (begin (reader.read-char-utf8) (loop (1- i) (+ digit (* base r))))
                 (raise-parse-error ll1-n-digits "not a digit" char reader n base i r))))))))
 
 ;; Parse a line, stop before any EOF or newline or return (but don't consume it)
 (def (ll1-line reader)
-  (using (reader : PeekableStringReader)
+  (using (reader : BufferedReader)
     (call-with-output-string
      [] (lambda (o)
           (let loop ()
-            (let ((char (reader.peek-char)))
+            (let ((char (reader.peek-char-utf8)))
               (cond
                ((eolf? char) (void))
-               (else (display char o) (reader.read-char) (loop)))))))))
+               (else (display char o) (reader.read-char-utf8) (loop)))))))))
 
 (def (ll1-lines reader (parse-line ll1-line))
   (with-list-builder (c)
@@ -229,24 +232,12 @@
 
 (def ll1-skip-space-to-eof (ll1-to-eof ll1-skip-space*))
 
-;; Parse an entire PeekableReader
-(def (ll1/reader parser reader (description reader) (where 'll1/reader))
-  (using (reader : PeekableStringReader)
+;; Parse an entire reader
+(def (ll1 parser reader (description reader) (where 'll1))
+  (with-buffered-reader (reader)
     (with-catch (lambda (e) (raise-parse-error where "failure parsing" description (error-message e)))
                 (cut (ll1-to-eof parser) reader))))
 
-;; Parse an entire port
-(def (ll1/port parser port (description port) (where 'll1/port))
-  (ll1/reader parser (make-raw-textual-input-port port) description where))
-
-;; Parse an entire file
-(def (ll1/file parser file (description file) (where 'll1/file))
-  (call-with-input-file file (lambda (port) (ll1/port parser port description where))))
-
-;; Parse an entire string
-(def (ll1/string parser string (description string) (where 'll1/string))
-  (ll1/reader parser (open-buffered-string-reader string) description where))
-
-;; Parse an entire file line-by-line
-(def (ll1/file-lines parse-line file (description file) (where 'll1/file-lines))
-  (ll1/file (cut ll1-lines <> parse-line) file description where))
+;; Parse an entire reader line-by-line
+(def (ll1/lines parse-line file (description file) (where 'll1/lines))
+  (ll1 (cut ll1-lines <> parse-line) file description where))

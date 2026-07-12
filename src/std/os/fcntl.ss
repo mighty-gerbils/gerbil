@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; OS File Control(import :std/ffi
+;;; OS File Control
 (import :std/ffi
         ./error
         ./device)
