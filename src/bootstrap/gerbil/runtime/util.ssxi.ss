@@ -2979,7 +2979,7 @@ package: gerbil/runtime
              gerbil/runtime/util)))
   (declare-type
    __string-index__%
-   (@lambda 3
+   (@lambda 4
             #f
             signature:
             (return:
@@ -2995,6 +2995,21 @@ package: gerbil/runtime
   (declare-type
    __string-index__0
    (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   __string-index__1
+   (@lambda 3
             #f
             signature:
             (return:
@@ -3024,6 +3039,19 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))
     (3
+     __string-index__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))
+    (4
      __string-index__%
      signature:
      (return:
@@ -3038,7 +3066,7 @@ package: gerbil/runtime
       gerbil/runtime/util))))
   (declare-type
    string-index__%
-   (@lambda 3
+   (@lambda 4
             #f
             signature:
             (return:
@@ -3046,7 +3074,7 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (string::t char::t t::t)
+             (string::t t::t t::t #f)
              unchecked:
              __string-index
              origin:
@@ -3054,6 +3082,21 @@ package: gerbil/runtime
   (declare-type
    string-index__0
    (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   string-index__1
+   (@lambda 3
             #f
             signature:
             (return:
@@ -3083,6 +3126,19 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))
     (3
+     string-index__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))
+    (4
      string-index__%
      signature:
      (return:
@@ -3096,8 +3152,68 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))))
   (declare-type
+   ____string-index/char
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   __string-index/char
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             ____string-index/char
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   ____string-index/pred
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   __string-index/pred
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             ____string-index/pred
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
    __string-rindex__%
-   (@lambda 3
+   (@lambda 4
             #f
             signature:
             (return:
@@ -3113,6 +3229,21 @@ package: gerbil/runtime
   (declare-type
    __string-rindex__0
    (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   __string-rindex__1
+   (@lambda 3
             #f
             signature:
             (return:
@@ -3142,6 +3273,19 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))
     (3
+     __string-rindex__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))
+    (4
      __string-rindex__%
      signature:
      (return:
@@ -3156,7 +3300,7 @@ package: gerbil/runtime
       gerbil/runtime/util))))
   (declare-type
    string-rindex__%
-   (@lambda 3
+   (@lambda 4
             #f
             signature:
             (return:
@@ -3164,7 +3308,7 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (string::t char::t t::t)
+             (string::t t::t fixnum::t fixnum::t)
              unchecked:
              __string-rindex
              origin:
@@ -3172,6 +3316,21 @@ package: gerbil/runtime
   (declare-type
    string-rindex__0
    (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   string-rindex__1
+   (@lambda 3
             #f
             signature:
             (return:
@@ -3201,6 +3360,19 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))
     (3
+     string-rindex__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))
+    (4
      string-rindex__%
      signature:
      (return:
@@ -3213,6 +3385,66 @@ package: gerbil/runtime
       #f
       origin:
       gerbil/runtime/util))))
+  (declare-type
+   ____string-rindex/char
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   __string-rindex/char
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             ____string-rindex/char
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   ____string-rindex/pred
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   __string-rindex/pred
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             ____string-rindex/pred
+             origin:
+             gerbil/runtime/util)))
   (declare-type
    __string-split
    (@lambda 2

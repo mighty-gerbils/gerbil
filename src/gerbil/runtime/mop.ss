@@ -213,25 +213,37 @@ namespace: #f
   ;; compute a table of slots with print: or equal: or transparent: flag
   ;; ht: table to which to add according slots
   ;; key: either print: or equal: (both implied by transparent:)
-  (def (make-props! key)
+  (def (make-props! key transparent?)
     (def ht (make-symbolic-table #f 0))
     (def (put-slots! ht slots)
       (for-each (cut symbolic-table-set! ht <> #t) slots))
+    ;; #t means "all new slots of the current type" (i.e. equal: #t or print: #t)
+    (def (put-all-new-slots! ht)
+      (let (first (if (class-type? type-super)
+                    (##vector-length (class-type-slot-vector type-super))
+                    1))
+        (let lp ((i first))
+          (when (##fx< i (##vector-length slot-vector))
+            (symbolic-table-set! ht (##vector-ref slot-vector i) #t)
+            (lp (##fx+ i 1))))))
     (def (put-alist! ht key alist)
-      (cond ((agetq key alist) => (cut put-slots! ht <>))))
+      (cond ((agetq key alist transparent?) =>
+             (lambda (v)
+               (if (eq? v #t)
+                 (put-all-new-slots! ht)
+                 (put-slots! ht v))))))
     (put-alist! ht key properties)
     (for-each (lambda (mixin)
                 (let (alist (class-type-properties mixin))
-                  (if (or (agetq transparent: alist) (eq? #t (agetq key alist)))
+                  (if (eq? #t (agetq key alist transparent?))
                     (put-slots! ht (class-type-slot-list mixin))
                     (put-alist! ht key alist))))
               precedence-list)
     ht)
 
-  (def (has-no-alist-override? key alist)
-    (cond
-     ((agetq key alist) => (cut eq? <> #t))
-     (else #t)))
+  (def (all-slots-property? key transparent?)
+    (let (entry (assq key properties))
+      (if entry (eq? (cdr entry) #t) transparent?)))
 
   (let* ((transparent?
 	  (agetq transparent: properties
@@ -239,13 +251,13 @@ namespace: #f
                    (not (type-opaque? type-super))
                    #t)))
          (all-slots-printable?
-          (and transparent? (has-no-alist-override? print: properties)))
+          (all-slots-property? print: transparent?))
          (printable
-          (and (not all-slots-printable?) (make-props! print:)))
+          (and (not all-slots-printable?) (make-props! print: transparent?)))
          (all-slots-equalable?
-          (and transparent? (has-no-alist-override? equal: properties)))
+          (all-slots-property? equal: transparent?))
          (equalable
-	  (and (not all-slots-equalable?) (make-props! equal:)))
+	  (and (not all-slots-equalable?) (make-props! equal: transparent?)))
          (first-new-field
           (if (class-type? type-super)
             (##vector-length (class-type-slot-vector type-super))
@@ -265,7 +277,7 @@ namespace: #f
          (type-flags
           (##fxior type-flag-id type-flag-concrete
                    (if final? 0 type-flag-extensible)
-                   (if opaque? type-flag-opaque 0)
+                   (if (and opaque? (not (agetq equal: properties))) type-flag-opaque 0)
                    (if struct? class-type-flag-struct 0)
                    (if metaclass class-type-flag-metaclass 0)
                    (if system? class-type-flag-system 0)
@@ -294,7 +306,9 @@ namespace: #f
                         ;; gambit type fields
                         type-id type-name type-flags type-super field-info
                         ;; gerbil class fields
-                        precedence-list slot-vector slot-table properties constructor methods)
+                        precedence-list slot-vector slot-table properties constructor methods
+                        ;; specializer/interface tables
+                        #f #f)
 	 runtime: :class)
       ;; this we know is a class
       (let (klass

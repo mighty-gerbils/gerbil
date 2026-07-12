@@ -26,7 +26,7 @@ package: gerbil/core
     stx-for-each stx-map stx-foldl stx-foldr stx-reverse
     stx-last stx-last-pair stx-list-tail stx-list-ref
     stx-andmap stx-ormap
-    stx-plist? stx-getq
+    stx-plist? stx-getq stx-plist-assq
     macro-expand-syntax
     macro-expand-syntax-case
     syntax-pattern? syntax-local-pattern?

@@ -62,7 +62,7 @@ namespace: #f
 
 (def (gambit-table-update! table key update default)
   (let (result (table-ref table key default))
-    (table-set! table key (update default))))
+    (table-set! table key (update result))))
 
 (def (gambit-table-for-each table proc)
   (table-for-each proc table))
@@ -85,12 +85,12 @@ namespace: #f
   (begin-annotation
       (@mop.class hash-table::t                     ; type-id
                   (object::t)                       ; super
-                  (table count free hash test seed) ; slots
+                  (table count free hash test seed lock) ; slots
                   #f                                ; constructor
                   #t                                ; struct?
                   #f                                ; final?
                   #f)                               ; metaclass
-    (let* ((slots '(table count free hash test seed))
+    (let* ((slots '(table count free hash test seed lock))
            (slot-vector
             (list->vector (cons #f slots)))
            (slot-table
@@ -135,7 +135,7 @@ namespace: #f
                   #f                      ; constructor
                   #t                      ; struct?
                   #f                      ; final?
-                  #f)                               ; metaclass
+                  #f)                     ; metaclass
     (let* ((slots '(gcht immediate))
            (slot-vector
             (list->vector (cons #f slots)))
@@ -167,9 +167,9 @@ namespace: #f
        slot-table                       ; class-type-slot-table
        properties                       ; class-type-properties
        #f                               ; class-type-constructor
-       #f                              ; class-type-methods
-       #f                              ; class-type-specializer
-       #f                              ; class-type-interface
+       #f                               ; class-type-methods
+       #f                               ; class-type-specializer
+       #f                               ; class-type-interface
        ))))
 
 ;; locked hash table; wraps a HashTable instance to lock on primitive operations
@@ -371,8 +371,8 @@ namespace: #f
   void
   &HashTable-clear!)
 
-(def (make-generic-hash-table table count free hash test seed)
-  (##structure hash-table::t table count free hash test seed))
+(def (make-generic-hash-table table count free hash test seed (lock #f))
+  (##structure hash-table::t table count free hash test seed (ensure-lock lock)))
 
 (def (make-hash-table size: (size-hint #f)
                       seed: (seed #f)
@@ -409,7 +409,7 @@ namespace: #f
     (let* ((size (raw-table-size-hint->size size-hint))
            (table (make-vector size (macro-unused-obj)))
            (ht (HashTable
-                (kons table 0 (fxquotient size 2) hash test (table-seed)))))
+                (kons table 0 (fxquotient size 2) hash test (table-seed) #f))))
       (wrap-checked
        (wrap-lock ht)
        key?)))

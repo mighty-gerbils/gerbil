@@ -85,6 +85,8 @@
       (check (equal? (e 2 2) (e 1 2)) => #f)
       (defstruct f (x y) equal: ()) ;; not opaque, but no slots to compare: all objects are equal!
       (check (equal? (f 5 6) (f 7 8)) => #t)
+      (defstruct f2 (x y) equal: #f)
+      (check (equal? (f2 5 6) (f2 7 8)) => #t)
       (defstruct g (x y) equal: #t) ;; equality comparison with two slots
       (check (equal? (g 1 2) (g 1 2)) => #t)
       (check (equal? (g 1 2) (g 1 3)) => #f)

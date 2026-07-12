@@ -3,7 +3,7 @@
 ;;; compiler regression tests
 (import :std/test
         :std/source
-        :std/os/temporaries
+        :std/io/tempfile
         :gerbil/compiler
         :gerbil/expander
         :gerbil/runtime/syntax

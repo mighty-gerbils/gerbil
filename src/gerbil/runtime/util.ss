@@ -11,7 +11,7 @@ namespace: #f
 ;; predefine this so that we can raise it before it is defined (bootstrap)
 ;; it also needs to be a runtime binding, so we don't defmutable
 (def raise-contract-violation-error error)
-(set! raise-contract-violation-error raise-contract-violation-error )
+(set! raise-contract-violation-error raise-contract-violation-error)
 
 (defrules declare-inline ()
   ((_ proc inline-rules)
@@ -89,7 +89,8 @@ namespace: #f
     (cond
      ((file-exists? path)
       (unless (eq? (file-type path) 'directory)
-        (error "Path component is not a directory" path)))
+        (abort! (raise-contract-violation-error "Path component is not a directory"
+                                                value: path))))
      (perms
       (create-directory [path: path permissions: perms]))
      (else
@@ -625,7 +626,8 @@ namespace: #f
    ((or (null? x) (void? x) (eof-object? x) (boolean? x))
     (void))
    (else
-    (abort! (error "cannot convert as string" x)))))
+    (abort! (raise-contract-violation-error "cannot convert as string"
+                                            value: x)))))
 
 (def* as-string
   ((x)
@@ -701,28 +703,93 @@ namespace: #f
   => :boolean
   (fxzero? (string-length str)))
 
+;; start is inclusive, end is exclusive, start < end, as per SRFI-13
+;; Like in SRFI-13, criterion can be a character or predicate,
+;; but it cannot be a "char-set" (no such notion here yet).
 (def (string-index (str : :string)
-                   (char : :char)
-                   (start :~ nonnegative-fixnum? :- :fixnum :=  0))
-  (let ((len (string-length str)))
-    (let lp ((k start))
-      (using (k :- :fixnum)
-        (and (fx< k len)
-             (if (eq? char (##string-ref str k))
-               k
-               (lp (fx+ k 1))))))))
+                   criterion
+                   (start :~ nonnegative-fixnum? :- :fixnum :=  0)
+                   (end :? :fixnum := #f))
+  (let (end (or end (string-length str)))
+    (cond
+     ((< start 0)
+      (abort! (raise-contract-violation-error "invalid start for string-index"
+                                              value: [str start])))
+     ((> end (string-length str))
+      (abort! (raise-contract-violation-error "invalid end for string-index"
+                                              value: [str end])))
+     ((char? criterion)
+      (__string-index/char str criterion start end))
+     ((procedure? criterion)
+      (__string-index/pred str criterion start end))
+     (else
+      (abort! (raise-contract-violation-error "string-index criterion must be char or procedure"
+                                              value: criterion))))))
 
+(def (__string-index/char (str :- :string)
+                          (char :- :char)
+                          (start :- :fixnum)
+                          (end :- :fixnum))
+  (let lp ((k start))
+    (using (k :- :fixnum)
+      (and (fx< k end)
+           (if (eq? char (##string-ref str k))
+             k
+             (lp (fx+ k 1)))))))
+
+(def (__string-index/pred (str :- :string)
+                          (pred? :- :procedure)
+                          (start :- :fixnum)
+                          (end :- :fixnum))
+  (let lp ((k start))
+    (using (k :- :fixnum)
+      (and (fx< k end)
+           (if (pred? (##string-ref str k))
+             k
+             (lp (fx+ k 1)))))))
+
+;; NB: API different from string-index or SRFI-13's string-index-right
+;; start and end are both inclusive, start >= end, and #f not accepted for the start or end
 (def (string-rindex (str : :string)
-                       (char : :char)
-                       (start #f))
-  (let* ((len (string-length str))
-         (start (if (fixnum? start) start (fx- len 1))))
-    (let lp ((k start))
-      (using (k :- :fixnum)
-        (and (fx>= k 0)
-             (if (eq? char (##string-ref str k))
-               k
-               (lp (fx- k 1))))))))
+                    criterion
+                    (start : :fixnum := (fx- (string-length str) 1))
+                    (end : :fixnum := 0))
+  (cond
+   ((>= start (string-length str))
+    (abort! (raise-contract-violation-error "invalid start for string-rindex"
+                                            value: [str start])))
+   ((< end 0)
+    (abort! (raise-contract-violation-error "invalid end for string-rindex"
+                                            value: [str end])))
+   ((char? criterion)
+    (__string-rindex/char str criterion start end))
+   ((procedure? criterion)
+    (__string-rindex/pred str criterion start end))
+   (else
+    (abort! (raise-contract-violation-error "string-rindex criterion must be char or procedure"
+                                            value: criterion)))))
+
+(def (__string-rindex/char (str :- :string)
+                           (char :- :char)
+                           (start :- :fixnum)
+                           (end :- :fixnum))
+  (let lp ((k start))
+    (using (k :- :fixnum)
+      (and (fx>= k end)
+           (if (eq? char (##string-ref str k))
+             k
+             (lp (fx- k 1)))))))
+
+(def (__string-rindex/pred (str :- :string)
+                           (pred? :- :procedure)
+                           (start :- :fixnum)
+                           (end :- :fixnum))
+  (let lp ((k start))
+    (using (k :- :fixnum)
+      (and (fx>= k end)
+           (if (pred? (##string-ref str k))
+             k
+             (lp (fx- k 1)))))))
 
 (def (string-split (str : :string) (char : :char))
   => :list
@@ -755,7 +822,8 @@ namespace: #f
                           jlen len))
                  (fx+ (string-length hd)
                       len)))
-             (error "expected string" hd)))
+             (abort! (raise-contract-violation-error "expected string"
+                                                     value: hd))))
           (else 0)))))
 
   (let* ((join
@@ -765,7 +833,8 @@ namespace: #f
                ((string? join)
                 join)
                (else
-                (error "expected string or char" join)))
+                (abort! (raise-contract-violation-error "expected string or char"
+                                                        value: join))))
               :string))
           (jlen (string-length join))
           (olen (:- (join-length strs jlen) :fixnum))

@@ -155,5 +155,12 @@ namespace: gx
                            (%#define-runtime stx-plist? gx#stx-plist?)))
          (%#begin (%#define-runtime stx-getq__% gx#stx-getq__%)
                   (%#begin (%#define-runtime stx-getq__0 gx#stx-getq__0)
-                           (%#define-runtime stx-getq gx#stx-getq))))
+                           (%#define-runtime stx-getq gx#stx-getq)))
+         (%#begin (%#define-runtime stx-plist-assq__% gx#stx-plist-assq__%)
+                  (%#begin (%#define-runtime
+                            stx-plist-assq__0
+                            gx#stx-plist-assq__0)
+                           (%#define-runtime
+                            stx-plist-assq
+                            gx#stx-plist-assq))))
 (%#call (%#ref load-module) (%#quote "gerbil/expander/stx~0"))

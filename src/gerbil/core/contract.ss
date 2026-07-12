@@ -285,7 +285,7 @@ package: gerbil/core
                        (else
                         (expander-context-id (core-context-top))))))
          #'(begin-annotation (@contract-violation src-ctx contract-expr value)
-	     (abort!
+             (abort!
               (raise-contract-violation-error
                "contract violation"
                context: 'src-ctx contract: 'contract-expr value: value)))))))
@@ -300,7 +300,7 @@ package: gerbil/core
                             (stx-source #'macro))
                         => (lambda (locat)
                              (call-with-output-string ""
-			       (cut ##display-locat locat #t <>))))
+                               (cut ##display-locat locat #t <>))))
                        (else
                         (expander-context-id (core-context-top))))))
          #'(abort!
@@ -1824,10 +1824,10 @@ package: gerbil/core
                                                'name          ; name
                                                [interface-instance::t] ; super
                                                '(method-name ...) ; direct slots
-					       '((final: . #t) (struct: . #t)) ; plist
+                                               '((final: . #t) (struct: . #t)) ; plist
                                                #f))))
-		      (putdesc
-		       #'(class-type-properties-put! klass interface-descriptor: descriptor))
+                      (putdesc
+                       #'(class-type-properties-put! klass interface-descriptor: descriptor))
                       (defmake
                         #'(def (make obj)
                             (begin-annotation (@type.signature return: klass-quoted
@@ -2634,7 +2634,7 @@ package: gerbil/core
               (or (free-identifier=? #'form #'lambda/c)
                   (free-identifier=? #'form #'lambda))
               (method-receiver? #'self))
-	     (with-syntax* (((receiver . head)
+             (with-syntax* (((receiver . head)
                          (generate-interface-lambda-head #'self #'args type-id method-id (car method-sig)))
                         (return-type
                          (syntax-local-introduce (cadr method-sig)))
@@ -3389,28 +3389,25 @@ package: gerbil/core
                             []))
                        ((values properties)
                         (let* ((properties
-				(cond
-				 ((stx-getq transparent: body)
-				  => (lambda (ts) [[transparent: ::  (stx-e ts)]]))
-				 (else [])))
+                                (cond
+                                 ((stx-plist-assq transparent: body)
+                                  => (lambda (a) [a]))
+                                 (else [])))
                                (properties
                                 (cond
-                                 ((stx-e (stx-getq print: body))
-                                  => (lambda (print)
-                                       (let (print (if (eq? print #t) #'(slot ...) print))
-                                         (cons [print: . print] properties))))
+                                 ((stx-plist-assq print: body)
+                                  => (lambda (a) [a . properties]))
                                  (else properties)))
                                (properties
                                 (cond
-                                 ((stx-e (stx-getq equal: body))
-                                  => (lambda (equal)
-                                       (let (equal (if (eq? equal #t) #'(slot ...) equal))
-                                         (cons [equal: . equal] properties))))
+                                 ((stx-plist-assq equal: body)
+                                  => (lambda (a) [a . properties]))
                                  (else properties)))
                                (properties
-                                (if (stx-e (stx-getq acyclic: body))
-                                  (cons [acyclic: . #t] properties)
-                                  properties)))
+                                (cond
+                                 ((stx-plist-assq acyclic: body)
+                                  => (lambda (a) [a . properties]))
+                                 (else properties))))
                           properties))
                        ((values type-properties)
                         (if (null? properties)

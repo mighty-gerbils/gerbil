@@ -246,6 +246,21 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
+   ensure-lock
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    make-raw-table__%
    (@lambda 5
             #f

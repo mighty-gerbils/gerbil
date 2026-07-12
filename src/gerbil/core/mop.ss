@@ -571,28 +571,25 @@ package: gerbil/core
                           []))
                      ((values properties)
                       (let* ((properties
-				(cond
-				 ((stx-getq transparent: body)
-				  => (lambda (ts) [[transparent: ::  (stx-e ts)]]))
-				 (else [])))
+                              (cond
+                               ((stx-plist-assq transparent: body)
+                                => (lambda (a) [a]))
+                               (else [])))
                              (properties
                               (cond
-                               ((stx-e (stx-getq print: body))
-                                => (lambda (print)
-                                     (let (print (if (eq? print #t) slots print))
-                                       (cons [print: . print] properties))))
+                               ((stx-plist-assq print: body)
+                                => (lambda (a) [a . properties]))
                                (else properties)))
                              (properties
                               (cond
-                               ((stx-e (stx-getq equal: body))
-                                => (lambda (equal)
-                                     (let (equal (if (eq? equal #t) slots equal))
-                                       (cons [equal: . equal] properties))))
+                               ((stx-plist-assq equal: body)
+                                => (lambda (a) [a . properties]))
                                (else properties)))
                              (properties
-                              (if (stx-e (stx-getq acyclic: body))
-                                (cons [acyclic: . #t] properties)
-                                properties)))
+                              (cond
+                               ((stx-plist-assq acyclic: body)
+                                => (lambda (a) [a . properties]))
+                               (else properties))))
                         properties))
                      ((values type-properties)
                       (if (null? properties)

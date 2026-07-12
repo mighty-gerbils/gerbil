@@ -19,12 +19,12 @@ namespace: #f
                26 ; flags: extensible | concrete | nongenerative
                #f ; super
                '#(table 1 #f
-                        count 0 #f
-                        free 0 #f
-                        hash 0 #f
-                        test 0 #f
-                        seed 0 #f
-                        lock 0 #f)))
+                  count 0 #f
+                  free 0 #f
+                  hash 0 #f
+                  test 0 #f
+                  seed 0 #f
+                  lock 0 #f)))
 
 (def (raw-table? obj)
   (and (##structure? obj)
@@ -68,13 +68,20 @@ namespace: #f
     (fx* (fxmax 2 (expt 2 (integer-length size-hint))) 4)
     16))
 
+;; Coerce a lock argument to an actual lock object:
+;;   #f → no lock, #t → fresh inline lock, existing lock → pass through.
+(def (ensure-lock lock)
+  (cond
+   ((eq? lock #t) (__make-inline-lock))
+   (else lock)))
+
 (def (make-raw-table size-hint hash test (seed 0) (lock #f))
   (let* ((size (raw-table-size-hint->size size-hint))
          (table (make-vector size (macro-unused-obj))))
-    (##structure __table::t table 0 (fxquotient size 2) hash test seed lock)))
+    (##structure __table::t table 0 (fxquotient size 2) hash test seed (ensure-lock lock))))
 
 (def (make-raw-table/lock size-hint hash test (seed 0))
-  (make-raw-table size-hint hash test seed (__make-inline-lock)))
+  (make-raw-table size-hint hash test seed #t))
 
 (defrule (do-raw-table-lock tab expr)
   (let (lock (&raw-table-lock tab))
@@ -152,7 +159,7 @@ namespace: #f
     (set! (&raw-table-table new-tab)
       (vector-copy (&raw-table-table tab)))
     (set! (&raw-table-lock new-tab)
-      (and (&raw-table-lock tab) (__make-inline-lock)))
+      (ensure-lock (and (&raw-table-lock tab) #t)))
     new-tab))
 
 (def (raw-table-copy/lock tab)
@@ -160,11 +167,13 @@ namespace: #f
     (raw-table-copy tab)))
 
 (def (raw-table-new tab (size-hint #f))
-  (make-raw-table size-hint
+  (make-raw-table (if (eq? size-hint #t)
+                    (vector-length (&raw-table-table tab))
+                    size-hint)
                   (&raw-table-hash tab)
                   (&raw-table-test tab)
                   (&raw-table-seed tab)
-                  (and (&raw-table-lock tab) (__make-inline-lock))))
+                  (and (&raw-table-lock tab) #t)))
 
 (def (raw-table-clear! tab)
   (vector-fill! (&raw-table-table tab) (macro-unused-obj))
@@ -635,10 +644,15 @@ namespace: #f
    max-load: (##f64vector-ref loads 2)))
 
 (def (gc-table-new tab (size-hint #f))
-  (##structure (##structure-type tab) (table-new (&gc-table-gcht tab) size-hint) #f))
+  (make-gc-table (if (eq? size-hint #t)
+                   (macro-gc-hash-table-count (__gc-table-e tab))
+                   size-hint)
+                 (##structure-type tab)
+                 (macro-gc-hash-table-flags (&gc-table-gcht tab))
+                 (and (&gc-table-lock tab) #t)))
 
 (def (gc-table-copy tab)
-  (let ((result (gc-table-new tab (macro-gc-hash-table-count (__gc-table-e tab)))))
+  (let ((result (gc-table-new tab #t)))
     (gc-table-for-each tab (lambda (k v) (gc-table-set! result k v)))
     result))
 

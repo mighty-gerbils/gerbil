@@ -1630,6 +1630,7 @@ namespace: gerbil/core/runtime
                     (gerbil-runtime-smp? gerbil-runtime-smp?)
                     (__DEBUG __DEBUG)
                     (c4-linearize c4-linearize)
+                    (c4-linearize* c4-linearize*)
                     (class-type class-type)
                     (class-type? class-type?)
                     (class-type=? class-type=?)

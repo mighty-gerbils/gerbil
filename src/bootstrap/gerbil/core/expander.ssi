@@ -61,6 +61,7 @@ namespace: gerbil/core/expander
                     (stx-ormap gx#stx-ormap)
                     (stx-plist? gx#stx-plist?)
                     (stx-getq gx#stx-getq)
+                    (stx-plist-assq gx#stx-plist-assq)
                     (macro-expand-syntax gx#macro-expand-syntax)
                     (macro-expand-syntax-case gx#macro-expand-syntax-case)
                     (syntax-pattern? gx#syntax-pattern?)

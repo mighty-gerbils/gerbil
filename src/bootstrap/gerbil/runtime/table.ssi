@@ -22,6 +22,7 @@ namespace: #f
          (%#define-runtime &raw-table-seed-set! &raw-table-seed-set!)
          (%#define-runtime &raw-table-lock-set! &raw-table-lock-set!)
          (%#define-runtime raw-table-size-hint->size raw-table-size-hint->size)
+         (%#define-runtime ensure-lock ensure-lock)
          (%#begin (%#define-runtime make-raw-table__% make-raw-table__%)
                   (%#begin (%#define-runtime
                             make-raw-table__0

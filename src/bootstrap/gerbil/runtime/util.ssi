@@ -279,27 +279,63 @@ namespace: #f
                   (%#begin (%#define-runtime
                             __string-index__0
                             __string-index__0)
+                           (%#define-runtime
+                            __string-index__1
+                            __string-index__1)
                            (%#define-runtime __string-index __string-index)))
          (%#begin (%#define-runtime string-index__% string-index__%)
                   (%#begin (%#define-runtime string-index__0 string-index__0)
+                           (%#define-runtime string-index__1 string-index__1)
                            (%#define-runtime
                             string-index
                             string-index
                             macro:
                             @string-index)))
+         (%#define-syntax @__string-index/char |[:0:]#@__string-index/char|)
+         (%#define-runtime ____string-index/char ____string-index/char)
+         (%#define-runtime
+          __string-index/char
+          __string-index/char
+          macro:
+          @__string-index/char)
+         (%#define-syntax @__string-index/pred |[:0:]#@__string-index/pred|)
+         (%#define-runtime ____string-index/pred ____string-index/pred)
+         (%#define-runtime
+          __string-index/pred
+          __string-index/pred
+          macro:
+          @__string-index/pred)
          (%#define-syntax @string-rindex |[:0:]#@string-rindex|)
          (%#begin (%#define-runtime __string-rindex__% __string-rindex__%)
                   (%#begin (%#define-runtime
                             __string-rindex__0
                             __string-rindex__0)
+                           (%#define-runtime
+                            __string-rindex__1
+                            __string-rindex__1)
                            (%#define-runtime __string-rindex __string-rindex)))
          (%#begin (%#define-runtime string-rindex__% string-rindex__%)
                   (%#begin (%#define-runtime string-rindex__0 string-rindex__0)
+                           (%#define-runtime string-rindex__1 string-rindex__1)
                            (%#define-runtime
                             string-rindex
                             string-rindex
                             macro:
                             @string-rindex)))
+         (%#define-syntax @__string-rindex/char |[:0:]#@__string-rindex/char|)
+         (%#define-runtime ____string-rindex/char ____string-rindex/char)
+         (%#define-runtime
+          __string-rindex/char
+          __string-rindex/char
+          macro:
+          @__string-rindex/char)
+         (%#define-syntax @__string-rindex/pred |[:0:]#@__string-rindex/pred|)
+         (%#define-runtime ____string-rindex/pred ____string-rindex/pred)
+         (%#define-runtime
+          __string-rindex/pred
+          __string-rindex/pred
+          macro:
+          @__string-rindex/pred)
          (%#define-syntax @string-split |[:0:]#@string-split|)
          (%#define-runtime __string-split __string-split)
          (%#define-runtime string-split string-split macro: @string-split)

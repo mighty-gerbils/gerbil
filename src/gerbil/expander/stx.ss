@@ -472,3 +472,14 @@ namespace: gx
           (if (key=? hd key) val
               (lp rest)))))
       (else #f))))
+
+(def (stx-plist-assq key stx (key=? stx-eq?))
+  (check-procedure key=?)
+  (let lp ((rest stx))
+    (match (syntax-e rest)
+      ([hd . rest]
+       (match (syntax-e rest)
+         ([val . rest]
+          (if (key=? hd key) [hd . val]
+              (lp rest)))))
+      (else #f))))
