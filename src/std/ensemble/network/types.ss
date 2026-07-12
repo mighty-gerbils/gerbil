@@ -130,6 +130,3 @@
 
 (interface MuxInputDispatch
   (dispatch! (conn : connection)))
-
-(interface MuxOutputDispatch
-  (dispatch! (conn : connection)))

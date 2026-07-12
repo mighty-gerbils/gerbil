@@ -46,13 +46,12 @@
 
 (def (connection-write-message (self : connection)
                                (msg  : MuxMessage))
-  (unless self.closed?
-   (let (blob (marshal msg))
+  (let (blob (marshal msg))
     (when (fx> (u8vector-length blob) self.net.limits.network.message-size)
       (raise-io-error connection-write-message "message too large"))
     (self.writer.write-varuint (u8vector-length blob))
     (self.writer.write blob)
-    (self.writer.flush)) ))
+    (self.writer.flush)))
 
 (def (close-connection! (self : connection)
                           (e    : :t))
@@ -85,11 +84,19 @@
           (self.net.outgoing.delete! self.peer))
         (self.net.monitor.on-close-connection self.this)))))
 
+(def (mux-output-dispatch! msg (conn : connection))
+  (if (SyncMuxMessage? msg)
+    (using (sm msg : SyncMuxMessage)
+      (if conn.closed?
+        (completion-error! sm.completion (Closed "connection closed"))
+        (begin
+          (conn.pending.set! sm.msg.seqno sm.completion)
+          (connection-write-message conn sm.msg))))
+    (unless conn.closed?
+      (connection-write-message conn msg))))
+
 (defcall-interface-method MuxInputDispatch dispatch!
   (mux-input-dispatch! msg conn))
-
-(defcall-interface-method MuxOutputDispatch dispatch!
-  (mux-output-dispatch! msg conn))
 
 (implement MuxInputDispatch
   (OpenStream
@@ -116,37 +123,3 @@
    (dispatch!
     (lambda (self conn)
       (TODO dispatch!)))))
-
-(implement MuxOutputDispatch
-  (OpenStream
-   (dispatch!
-    (lambda (self conn)
-      (connection-write-message conn self))))
-  (AckStream
-   (dispatch!
-    (lambda (self conn)
-      (connection-write-message conn self))))
-  (CloseStream
-   (dispatch!
-    (lambda (self conn)
-      (connection-write-message conn self))))
-  (ResetStream
-   (dispatch!
-    (lambda (self conn)
-      (connection-write-message conn self))))
-  (Data
-   (dispatch!
-    (lambda (self conn)
-      (connection-write-message conn self))))
-  (AckData
-   (dispatch!
-    (lambda (self conn)
-      (connection-write-message conn self))))
-  (SyncMuxMessage
-   (dispatch!
-    (lambda (self conn)
-      (if conn.closed?
-        (completion-error! self.completion (Closed "connection closed"))
-        (begin
-          (conn.pending.set! self.msg.seqno self.completion)
-          (mux-output-dispatch! self.msg conn)))))))

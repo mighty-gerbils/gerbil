@@ -19,6 +19,7 @@
         new-incoming-connection)
 
 (def handshake-timeout 3)
+(def connection-write-timeout 30)
 
 (def (new-outgoing-connection (net  : network)
                               (sock : StreamSocket)
@@ -96,7 +97,7 @@
                          (equal? msg.method method:/net/handshake))
               (raise-io-error network-connect! "bogus handshake message")))
           (buffer-detach! delim)))))
-  (sock.set-output-timeout! !NoTimeout)
+  (sock.set-output-timeout! (IOTimeout connection-write-timeout))
   (sock.set-input-timeout! !NoTimeout)
   #!void
   (catch (e)
