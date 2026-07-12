@@ -53,9 +53,8 @@
    (closed?     : :boolean)
    (next-seqno  : :integer)
    (next-stream : :integer)
-   (streams-in  : HashTable)
-   (streams-out : HashTable)
-   (pending-out : HashTable)
+   (streams     : HashTable)
+   (pending     : HashTable)
    (write-queue : Channel))
   constructor: :init!
   transparent: #f
@@ -102,7 +101,8 @@
   final: #t)
 
 (defstruct (ResetStream MuxMessage)
-  ((stream-id : :integer))
+  ((stream-id : :integer)
+   (reason    : :string))
   final: #t)
 
 (defstruct (Data MuxMessage)

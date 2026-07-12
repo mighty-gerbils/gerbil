@@ -32,9 +32,8 @@
     (set! self.mx (make-mutex 'connection))
     (set! self.next-seqno 0)
     (set! self.next-stream direction)
-    (set! self.streams-in (make-hash-table-eqv))
-    (set! self.streams-out (make-hash-table-eqv))
-    (set! self.pending-out (make-hash-table-eqv))
+    (set! self.streams (make-hash-table-eqv))
+    (set! self.pending (make-hash-table-eqv))
     (set! self.write-queue (Channel))))
 
 (def (new-connection (net       : network)
@@ -57,7 +56,7 @@
 
 (def (connection-close (self : connection))
   => :void
-  (TODO connection-close))
+  (close-connection! self (Closed "connection closed")))
 
 (def (connection-open-stream! (self  :  connection)
                               (proto :  :string)

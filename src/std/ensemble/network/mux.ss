@@ -6,13 +6,16 @@
         :std/io
         :std/io/bio/buffer
         :std/sync/channel
+        :std/sync/completion
         :std/iter
         :std/serde/marshal
         :std/serde/unmarshal
         ../interface
-        ./types)
+        ./types
+        ./stream)
 (export connection-mux-reader
-        connection-mux-writer)
+        connection-mux-writer
+        close-connection!)
 
 (def (connection-mux-reader (self : connection))
   => :void
@@ -30,7 +33,7 @@
          (do-with-lock self.mx
            (mux-input-dispatch! msg self)))))
    (catch (e)
-     (on-connection-error self e))))
+     (close-connection! self e))))
 
 (def (connection-mux-writer (self : connection))
   => :void
@@ -39,29 +42,43 @@
      (do-with-lock self.mx
        (mux-output-dispatch! msg self)))
    (catch (e)
-     (on-connection-error self e))))
+     (close-connection! self e))))
 
 (def (connection-write-message (self : connection)
                                (msg  : MuxMessage))
-  (let (blob (marshal msg))
+  (unless self.closed?
+   (let (blob (marshal msg))
     (when (fx> (u8vector-length blob) self.net.limits.network.message-size)
       (raise-io-error connection-write-message "message too large"))
     (self.writer.write-varuint (u8vector-length blob))
     (self.writer.write blob)
-    (self.writer.flush)))
+    (self.writer.flush)) ))
 
-(def (on-connection-error (self : connection)
+(def (close-connection! (self : connection)
                           (e    : :t))
-  (ignore-errors (self.sock.close))
-  (ignore-errors (channel-close (self.write-queue)))
-  (let (notify
+  (let (just-closed?
         (do-with-lock self.mx
           (if self.closed?
             #f
             (begin
               (set! self.closed? #t)
               #t))))
-    (when notify
+    (when just-closed?
+      (log.debug "closing connection"
+                 peer: self.peer
+                 exception: (exception->string e))
+      (ignore-errors (self.sock.close))
+      (ignore-errors (channel-close (self.write-queue)))
+      (for (m self.write-queue)
+        (when (SyncMuxMessage? m)
+          (completion-error! (SyncMuxMessage-completion m) e)))
+      (do-with-lock self.mx
+        (for (c (in-hash-values self.pending))
+          (completion-error! c e))
+        (self.pending.clear!)
+        (for (s (in-hash-values self.streams))
+          (abandon-stream! s e))
+        (self.streams.clear!))
       (do-with-lock self.net.mx
         (if (fx= self.direction DIRECTION-IN)
           (self.net.incoming.delete! self.peer)
@@ -128,5 +145,8 @@
   (SyncMuxMessage
    (dispatch!
     (lambda (self conn)
-      (conn.pending-out.set! self.msg.seqno self.completion)
-      (mux-output-dispatch! self.msg conn)))))
+      (if conn.closed?
+        (completion-error! self.completion (Closed "connection closed"))
+        (begin
+          (conn.pending.set! self.msg.seqno self.completion)
+          (mux-output-dispatch! self.msg conn)))))))
