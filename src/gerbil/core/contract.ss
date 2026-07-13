@@ -192,7 +192,7 @@ package: gerbil/core
                        '(t void))
                #'(begin-annotation (@type klass) expr)
                #'(begin-annotation (@type klass)
-                 (let (val expr)
+                 (let (val (begin-annotation (@type t::t) expr))
                    (if (predicate val)
                      val
                      (runtime-contract-violation! expr (predicate val) val)))))))
