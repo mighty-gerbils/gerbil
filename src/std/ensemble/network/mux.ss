@@ -15,7 +15,7 @@
         ./stream)
 (export connection-mux-reader
         connection-mux-writer
-        close-connection!)
+        connection-close!)
 
 (def (connection-mux-reader (self : connection))
   => :void
@@ -33,7 +33,7 @@
          (do-with-lock self.mx
            (mux-input-dispatch! msg self)))))
    (catch (e)
-     (close-connection! self e))))
+     (connection-close! self e))))
 
 (def (connection-mux-writer (self : connection))
   => :void
@@ -42,7 +42,7 @@
      (do-with-lock self.mx
        (mux-output-dispatch! msg self)))
    (catch (e)
-     (close-connection! self e))))
+     (connection-close! self e))))
 
 (def (connection-write-message (self : connection)
                                (msg  : MuxMessage))
@@ -53,8 +53,8 @@
     (self.writer.write blob)
     (self.writer.flush)))
 
-(def (close-connection! (self : connection)
-                          (e    : :t))
+(def (connection-close! (self : connection)
+                        (e    : :t))
   (let (just-closed?
         (do-with-lock self.mx
           (if self.closed?
@@ -76,7 +76,7 @@
           (completion-error! c e))
         (self.pending.clear!)
         (for (s (in-hash-values self.streams))
-          (abandon-stream! s e))
+          (stream-abandon! s e))
         (self.streams.clear!))
       (do-with-lock self.net.mx
         (if (fx= self.direction DIRECTION-IN)

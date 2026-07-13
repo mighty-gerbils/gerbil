@@ -56,7 +56,7 @@
 
 (def (connection-close (self : connection))
   => :void
-  (close-connection! self (Closed "connection closed")))
+  (connection-close! self (Closed "connection closed")))
 
 (def (connection-open-stream! (self  :  connection)
                               (proto :  :string)

@@ -6,8 +6,8 @@
         :std/io
         ../interface
         ./types)
-(export abandon-stream!)
+(export stream-abandon!)
 
-(def (abandon-stream! (s : stream)
+(def (stream-abandon! (s : stream)
                       (e : :t))
-  (TODO abandon-stream!))
+  (TODO stream-abandon!))
