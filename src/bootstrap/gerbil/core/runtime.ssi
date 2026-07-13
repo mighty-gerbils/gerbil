@@ -1675,7 +1675,6 @@ namespace: gerbil/core/runtime
                      make-class-slot-unchecked-accessor)
                     (make-class-slot-unchecked-mutator
                      make-class-slot-unchecked-mutator)
-                    (immediate-instance-of? immediate-instance-of?)
                     (direct-instance? direct-instance?)
                     (struct-instance? struct-instance?)
                     (class-instance? class-instance?)

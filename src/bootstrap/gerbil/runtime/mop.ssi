@@ -408,7 +408,6 @@ namespace: #f
           direct-instance?
           macro:
           @direct-instance?)
-         (%#define-runtime immediate-instance-of? immediate-instance-of?)
          (%#define-syntax @struct-instance? |[:0:]#@struct-instance?|)
          (%#define-runtime __struct-instance? __struct-instance?)
          (%#define-runtime

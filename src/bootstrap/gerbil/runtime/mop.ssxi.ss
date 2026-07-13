@@ -1759,39 +1759,6 @@ package: gerbil/runtime
              obj
              (%#call (%#ref ##type-id) klass)))))
   (declare-type
-   immediate-instance-of?
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/mop)))
-  (declare-inline-rule!
-   immediate-instance-of?
-   (lambda (ast)
-     (ast-case
-      ast
-      (%#call %#ref)
-      ((%#call _ klass (%#ref obj))
-       #'(%#if (%#call (%#ref ##structure?) (%#ref obj))
-               (%#if (%#call (%#ref eq?)
-                             klass
-                             (%#call (%#ref ##structure-type) (%#ref obj)))
-                     (%#quote #t)
-                     (%#quote #f))
-               (%#quote #f)))
-      ((%#call recur klass obj)
-       (with-syntax
-        (($obj (make-symbol (gensym '__obj))))
-        #'(%#let-values ((($obj) obj)) (%#call recur klass (%#ref $obj))))))))
-  (declare-type
    __struct-instance?
    (@lambda 2
             #f
@@ -1821,6 +1788,14 @@ package: gerbil/runtime
              __struct-instance?
              origin:
              gerbil/runtime/mop)))
+  (declare-inline-rule!
+   struct-instance?
+   (ast-rules
+    (%#call)
+    ((%#call _ klass obj)
+     (%#call (%#ref ##structure-instance-of?)
+             obj
+             (%#call (%#ref ##type-id) klass)))))
   (declare-type
    __class-instance?
    (@lambda 2

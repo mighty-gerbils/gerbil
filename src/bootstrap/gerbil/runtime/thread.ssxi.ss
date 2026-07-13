@@ -203,7 +203,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/thread)))
   (declare-type
-   spawn-actor
+   __spawn-actor
    (@lambda 4
             #f
             signature:
@@ -215,6 +215,21 @@ package: gerbil/runtime
              #f
              unchecked:
              #f
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   spawn-actor
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             thread::t
+             effect:
+             #f
+             arguments:
+             (procedure::t list::t t::t #f)
+             unchecked:
+             __spawn-actor
              origin:
              gerbil/runtime/thread)))
   (declare-type

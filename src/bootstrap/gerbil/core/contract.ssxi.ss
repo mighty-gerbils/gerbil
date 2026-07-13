@@ -419,7 +419,7 @@ package: gerbil/core
    (optimizer-resolve-class
     '(typedecl
       gerbil/core/contract~InterfaceInfo#interface-info::apply-macro-expander)
-    't::t))
+    'procedure::t))
   (declare-method
    gerbil/core/contract~InterfaceInfo#interface-info::t
    apply-macro-expander

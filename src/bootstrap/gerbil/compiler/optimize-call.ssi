@@ -34,6 +34,10 @@ namespace: gxc
           gxc#::check-return-type-bind-methods!)
          (%#define-runtime apply-check-return-type gxc#apply-check-return-type)
          (%#define-runtime optimize-call% gxc#optimize-call%)
+         (%#define-runtime optimize-special-cast gxc#optimize-special-cast)
+         (%#define-runtime
+          special-procedure-optimizers
+          gxc#special-procedure-optimizers)
          (%#begin (%#define-runtime
                    !procedure::optimize-call
                    gxc#!procedure::optimize-call)

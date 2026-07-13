@@ -108,6 +108,26 @@ package: gerbil/compiler
              origin:
              gerbil/compiler/optimize-call)))
   (declare-type
+   gxc#optimize-special-cast
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-call)))
+  (declare-type
+   gxc#special-procedure-optimizers
+   (optimizer-resolve-class
+    '(typedecl gxc#special-procedure-optimizers)
+    'HashTable::t))
+  (declare-type
    gxc#!procedure::optimize-call
    (@lambda 4
             #f
