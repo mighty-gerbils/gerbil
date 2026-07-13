@@ -98,7 +98,7 @@
     (unless conn.closed?
       (connection-write-message conn msg))))
 
-(def (mux-dispatch-open-stream! (msg : OpenStream) (conn : connection))
+(def (mux-dispatch-open-stream (msg : OpenStream) (conn : connection))
   (def (valid-stream-id?)
     (if (fx= conn.direction DIRECTION-IN)
       (even? msg.stream-id)
@@ -161,29 +161,43 @@
          (stream-abandon! s e)
          (reset! (error-message e))))))))
 
+(def (mux-dispatch-close-stream (msg : CloseStream) (conn : connection))
+  (TODO mux-dispatch-close-stream))
+
+(def (mux-dispatch-reset-stream (msg : ResetStream) (conn : connection))
+  (TODO mux-dispatch-reset-stream))
+
+(def (mux-dispatch-data (msg : Data) (conn : connection))
+  (TODO mux-dispatch-data))
+
+(def (mux-dispatch-completion (msg  : MuxMessage)
+                              (conn : connection))
+  (let (dispatch
+        (do-with-lock conn.mx
+          (alet (c (conn.pending.ref msg.seqno #f))
+            (conn.pending.delete! msg.seqno)
+            c)))
+    (if dispatch
+      (using (c dispatch : Completion)
+        (completion-post! c msg))
+      (log.warn "missing completion"
+                peer: conn.peer
+                seqno: msg.seqno
+                message: msg))))
+
 (defcall-interface-method MuxInputDispatch dispatch!
   (mux-input-dispatch! msg conn))
 
 (implement MuxInputDispatch
   (OpenStream
-   (dispatch! __mux-dispatch-open-stream!))
+   (dispatch! __mux-dispatch-open-stream))
   (AckStream
-   (dispatch!
-    (lambda (self conn)
-      (TODO dispatch!))))
+   (dispatch! __mux-dispatch-completion))
   (CloseStream
-   (dispatch!
-    (lambda (self conn)
-      (TODO dispatch!))))
+   (dispatch! __mux-dispatch-close-stream))
   (ResetStream
-   (dispatch!
-    (lambda (self conn)
-      (TODO dispatch!))))
+   (dispatch! __mux-dispatch-reset-stream))
   (Data
-   (dispatch!
-    (lambda (self conn)
-      (TODO dispatch!))))
+   (dispatch! __mux-dispatch-data))
   (AckData
-   (dispatch!
-    (lambda (self conn)
-      (TODO dispatch!)))))
+   (dispatch! __mux-dispatch-completion)))
