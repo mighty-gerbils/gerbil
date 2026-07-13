@@ -6,16 +6,21 @@
         :std/io
         ../interface
         ./types)
-(export new-stream
+(export stream-close-input
         stream-abandon!)
 
-(def (new-stream (conn         : connection)
-                 (direction    : :fixnum)
-                 (id           : :integer)
-                 (window-size  : :fixnum)
-                 (message-size : :fixnum))
-  (TODO new-stream))
+(defmethod {:init! stream}
+  (lambda (self (conn         : connection)
+           (direction    : :fixnum)
+           (id           : :integer)
+           (window-size  : :fixnum)
+           (message-size : :fixnum))
+    (TODO new-stream)))
+
+(def (stream-close-input (s : stream))
+  (TODO stream-close-input))
 
 (def (stream-abandon! (s : stream)
                       (e : :t))
+  => :void
   (TODO stream-abandon!))

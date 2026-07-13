@@ -62,8 +62,13 @@
   final: #t)
 
 (defstruct stream
-  ((conn : connection)
-   ))
+  ((this      : Stream)
+   (conn      : connection)
+   (id        : :integer)
+   (direction : :fixnum)
+   (open      : :fixnum)
+   )
+  constructor: :init!)
 
 (defstruct connection-listener
   ((net  : network)

@@ -139,16 +139,17 @@
    ((not (stream-authorized?))
     (reset! "not authorized"))
    (else
-    (let (s (new-stream conn DIRECTION-IN
-                        msg.stream-id
-                        msg.stream-window
-                        msg.message-size))
+    (using (s (stream conn DIRECTION-IN
+                      msg.stream-id
+                      msg.stream-window
+                      msg.message-size)
+              : stream)
       (try
        (do-with-lock conn.mx
          (if conn.closed?
            (stream-abandon! s (Closed "connection closed"))
            (begin
-             (conn.net.monitor.on-open-stream s)
+             (conn.net.monitor.on-open-stream s.this)
              (conn.streams.set! msg.stream-id s)
              (channel-put conn.write-queue
                     (AckStream msg.seqno
@@ -162,7 +163,20 @@
          (reset! (error-message e))))))))
 
 (def (mux-dispatch-close-stream (msg : CloseStream) (conn : connection))
-  (TODO mux-dispatch-close-stream))
+  (do-with-lock conn.mx
+    (cond
+     ((conn.streams.ref msg.stream-id #f)
+      => (lambda ((s :- stream))
+           (if (fx= s.open DIRECTION-IN)
+             (begin
+               (stream-abandon! s (Closed "stream closed"))
+               (conn.streams.delete! s.id)
+               (conn.net.monitor.on-close-stream s))
+             (stream-close-input s))))
+     (else
+      (log.debug "close for unknown stream"
+                 peer: conn.peer
+                 stream-id: msg.stream-id)))))
 
 (def (mux-dispatch-reset-stream (msg : ResetStream) (conn : connection))
   (TODO mux-dispatch-reset-stream))
