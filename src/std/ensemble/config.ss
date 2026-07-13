@@ -20,7 +20,8 @@
   final: #t)
 
 (defclass NetworkLimits
-  ((message-size    : :fixnum))
+  ((message-size    : :fixnum)
+   (stream-window   : :fixnum))
   final: #t)
 
 (defclass Limits

@@ -6,7 +6,15 @@
         :std/io
         ../interface
         ./types)
-(export stream-abandon!)
+(export new-stream
+        stream-abandon!)
+
+(def (new-stream (conn         : connection)
+                 (direction    : :fixnum)
+                 (id           : :integer)
+                 (window-size  : :fixnum)
+                 (message-size : :fixnum))
+  (TODO new-stream))
 
 (def (stream-abandon! (s : stream)
                       (e : :t))

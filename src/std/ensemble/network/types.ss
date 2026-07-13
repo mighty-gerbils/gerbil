@@ -88,13 +88,15 @@
   ((stream-id : :integer)
    (protocol  : :string)
    (auth      :~ (list-of? Token?)
-              :- :list))
+              :- :list)
+   (stream-window : :fixnum)
+   (message-size  : :fixnum))
   final: #t)
 
 (defstruct (AckStream MuxMessage)
   ((stream-id     : :integer)
-   (stream-limit  : :fixnum)
-   (message-limit : :fixnum)))
+   (stream-window : :fixnum)
+   (message-size  : :fixnum)))
 
 (defstruct (CloseStream MuxMessage)
   ((stream-id : :integer))

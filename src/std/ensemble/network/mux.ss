@@ -11,6 +11,7 @@
         :std/serde/marshal
         :std/serde/unmarshal
         ../interface
+        ../ucan/cap
         ./types
         ./stream)
 (export connection-mux-reader
@@ -30,8 +31,9 @@
                (msg (delim.deserialize (unmarshal-environment dag: #t))
                     : MuxMessage))
          (buffer-detach! delim)
-         (do-with-lock self.mx
-           (mux-input-dispatch! msg self)))))
+         (when self.closed?
+           (raise-io-closed connection-mux-reader "connection closed"))
+         (mux-input-dispatch! msg self))))
    (catch (e)
      (connection-close! self e))))
 
@@ -39,8 +41,7 @@
   => :void
   (try
    (for (msg self.write-queue)
-     (do-with-lock self.mx
-       (mux-output-dispatch! msg self)))
+     (mux-output-dispatch! msg self))
    (catch (e)
      (connection-close! self e))))
 
@@ -76,7 +77,8 @@
           (completion-error! c e))
         (self.pending.clear!)
         (for (s (in-hash-values self.streams))
-          (stream-abandon! s e))
+          (stream-abandon! s e)
+          (self.net.monitor.on-close-stream s))
         (self.streams.clear!))
       (do-with-lock self.net.mx
         (if (fx= self.direction DIRECTION-IN)
@@ -90,19 +92,81 @@
       (if conn.closed?
         (completion-error! sm.completion (Closed "connection closed"))
         (begin
-          (conn.pending.set! sm.msg.seqno sm.completion)
+          (do-with-lock conn.mx
+            (conn.pending.set! sm.msg.seqno sm.completion))
           (connection-write-message conn sm.msg))))
     (unless conn.closed?
       (connection-write-message conn msg))))
+
+(def (mux-dispatch-open-stream! (msg : OpenStream) (conn : connection))
+  (def (valid-stream-id?)
+    (if (fx= conn.direction DIRECTION-IN)
+      (even? msg.stream-id)
+      (odd?  msg.stream-id)))
+
+  (def (existing-stream-id?)
+    (do-with-lock conn.mx
+      (conn.streams.ref msg.stream-id #f)))
+
+  (def (stream-authorized?)
+    (using (cap (conn.net.security.capability-context) : CapabilityContext)
+      (let loop ((rest msg.auth))
+        (match rest
+          ([token . rest]
+           (using (token : Token)
+             (or (and (!VerificationOK? (cap.verify token conn.net.host.did))
+                    (equal? token.type INVOKE)
+                    (equal? token.issuer conn.peer.did)
+                    (equal? token.audience conn.net.host.did)
+                    (capability-includes? token.method msg.protocol))
+               (loop rest))))
+          (else #f)))))
+
+  (def (reset! reason)
+    (log.debug "rejecting stream"
+               message: msg
+               reason: reason
+               peer: conn.peer)
+    (channel-put conn.write-queue
+                 (ResetStream msg.seqno
+                              msg.stream-id
+                              reason)))
+  (cond
+   ((not (valid-stream-id?))
+    (reset! "invalid stream id"))
+   ((existing-stream-id?)
+    (reset! "duplicate stream id"))
+   ((not (stream-authorized?))
+    (reset! "not authorized"))
+   (else
+    (let (s (new-stream conn DIRECTION-IN
+                        msg.stream-id
+                        msg.stream-window
+                        msg.message-size))
+      (try
+       (do-with-lock conn.mx
+         (if conn.closed?
+           (stream-abandon! s (Closed "connection closed"))
+           (begin
+             (conn.net.monitor.on-open-stream s)
+             (conn.streams.set! msg.stream-id s)
+             (channel-put conn.write-queue
+                    (AckStream msg.seqno
+                               msg.stream-id
+                               conn.net.limits.network.stream-window
+                               conn.net.limits.network.message-size)))))
+       (catch (e)
+         (log.error "error accepting stream"
+                    exception: (exception->string e))
+         (stream-abandon! s e)
+         (reset! (error-message e))))))))
 
 (defcall-interface-method MuxInputDispatch dispatch!
   (mux-input-dispatch! msg conn))
 
 (implement MuxInputDispatch
   (OpenStream
-   (dispatch!
-    (lambda (self conn)
-      (TODO dispatch!))))
+   (dispatch! __mux-dispatch-open-stream!))
   (AckStream
    (dispatch!
     (lambda (self conn)
