@@ -264,6 +264,17 @@ namespace: #f
             1))
          (field-info-length (##fx* 3 (##fx- (##vector-length slot-vector) first-new-field)))
          (field-info (make-vector field-info-length #f))
+         (__field-info-init
+          (let loop ((i first-new-field)
+                     (j 0))
+            (when (##fx< j field-info-length)
+              (let* ((slot (##vector-ref slot-vector i))
+                     (flags
+                      (##fxior (if (or all-slots-printable? (symbolic-table-ref printable slot #f)) 0 1)
+                               (if (or all-slots-equalable? (symbolic-table-ref equalable slot #f)) 0 4))))
+                (vector-set! field-info j slot)
+                (vector-set! field-info (##fx+ j 1) flags)
+                (loop (##fx+ i 1) (##fx+ j 3))))))
          (struct? (agetq struct: properties))
          (final? (agetq final: properties))
          (metaclass
@@ -289,29 +300,16 @@ namespace: #f
                  (if (null? (cdr tail))
                    precedence-list
                    (error "BUG: t::t is not last in the precedence list" precedence-list: precedence-list))))
-           (else (append precedence-list [t::t])))))
-    (let loop ((i first-new-field)
-               (j 0))
-      (when (##fx< j field-info-length)
-        (let* ((slot (##vector-ref slot-vector i))
-               (flags
-                (##fxior (if (or all-slots-printable? (symbolic-table-ref printable slot #f)) 0 1)
-                         (if (or all-slots-equalable? (symbolic-table-ref equalable slot #f)) 0 4))))
-          (vector-set! field-info j slot)
-          (vector-set! field-info (##fx+ j 1) flags)
-          (loop (##fx+ i 1) (##fx+ j 3)))))
-    (if metaclass
-      ;; check this
-      (: (make-instance metaclass
-                        ;; gambit type fields
-                        type-id type-name type-flags type-super field-info
-                        ;; gerbil class fields
-                        precedence-list slot-vector slot-table properties constructor methods
-                        ;; specializer/interface tables
-                        #f #f)
-	 runtime: :class)
-      ;; this we know is a class
-      (let (klass
+           (else (append precedence-list [t::t]))))
+         (klass
+          (if metaclass
+            ;; check this
+            (: (make-instance metaclass
+                              type-id type-name type-flags type-super field-info
+                              precedence-list slot-vector slot-table properties constructor methods
+                              #f #f)
+	       runtime: :class)
+            ;; this we know is a class
 	    (:- (##structure class::t
 			     ;; gambit type fields
 			     type-id type-name type-flags type-super field-info
@@ -319,22 +317,23 @@ namespace: #f
 			     precedence-list slot-vector slot-table properties constructor methods
 			     ;; specializer/interface tables
 			     #f #f)
-		:class))
-	;; track the subclass in super properties
-	(for-each
-	  (lambda (super)
-	    (__do-inline-lock! __class-type-properties-lock
-			       (let (props (&class-type-properties super))
-				 (cond
-				  ((assq subclasses: props)
-				   => (lambda (subclasses)
-					(set-cdr! subclasses
-						  (cons klass (cdr subclasses)))))
-				  (else
-				   (set! (&class-type-properties super)
-				     (cons [subclasses: klass] props)))))))
-	  (agetq direct-supers: properties []))
-	klass))))
+	        :class))))
+    ;; track the subclass in super properties
+    (for-each
+      (lambda (super)
+        (__do-inline-lock! __class-type-properties-lock
+			   (let (props (&class-type-properties super))
+			     (cond
+			      ((assq subclasses: props)
+			       => (lambda (subclasses)
+				    (set-cdr! subclasses
+					      (cons klass (cdr subclasses)))))
+			      (else
+			       (set! (&class-type-properties super)
+			         (cons [subclasses: klass] props)))))))
+      (agetq direct-supers: properties []))
+    klass))
+
 
 ;;; class type utilities
 (defsyntax (defrefset stx)
