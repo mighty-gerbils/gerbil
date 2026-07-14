@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; ensemble network types
-(import :std/io
+(import :std/error
+        :std/io
         :std/log
         :std/iter
         :std/net/ssl
@@ -19,11 +20,10 @@
   ((host        :  HostID)
    (tls-context :~ SSL_CTX? :- :foreign)
    (security    :  SecurityContext)
-   (event-bus   :  EventBus)
    (limits      :  Limits)
    (monitor     :  NetworkMonitor)
    (tgroup      :  :thread-group)
-   (mx          :  :mutex)
+   (thread      :  :thread)
    (closed?     :  :boolean)
    ;; established outgoing peer connections
    ;; HostID -> Connection
@@ -32,7 +32,7 @@
    ;; HostID -> Connection
    (incoming    : HashTable)
    ;; pending outgoing peer connections
-   ;; HostID -> Completion
+   ;; HostAddress -> [Completion]
    (pending     : HashTable)
    ;; peer connection listeners
    ;; HostAddress -> ConnectionListener
@@ -40,6 +40,18 @@
    )
   constructor: :init!
   final: #t)
+
+(def (spawn/net (thunk : :procedure)
+                (name  : :t)
+                (net   : network))
+  (spawn-actor
+   (lambda ()
+     (try (thunk)
+          (catch (e)
+            (log.error "unhandled exception in network thread"
+                       thread: name
+                       exception: (exception->string e)))))
+   [] name net.tgroup))
 
 (defstruct connection
   ((this        : Connection)
@@ -84,6 +96,38 @@
 (interface AddressListener
   (listen! (net : network) (addr : HostAddress))
   => ConnectionListener)
+
+;; network actor messages
+(defstruct NetworkOp ())
+
+(defstruct (NetworkSync NetworkOp)
+  ((completion : Completion)))
+
+(defstruct (NetworkConnect NetworkSync)
+  ((peer : HostAddress)))
+
+(defstruct (NetworkConnectComplete NetworkOp)
+  ((peer : HostAddress)
+   (conn : Connection)))
+
+(defstruct (NetworkConnectError NetworkOp)
+  ((peer  : HostAddress)
+   (error : :t)))
+
+(defstruct (NetworkListen NetworkSync)
+  ((addr : HostAddress)))
+
+(defstruct (NetworkAccept NetworkOp)
+  ((conn : Connection)))
+
+(defstruct (NetworkConnectionClose NetworkOp)
+  ((conn : Connection)))
+
+(defstruct (NetworkClose NetworkOp)
+  ())
+
+(interface NetworkDispatch
+  (dispatch! (net : network)))
 
 ;; mux messages
 (defstruct MuxMessage

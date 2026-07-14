@@ -22,13 +22,14 @@
                     (addr : HostAddress))
   => Completion
   (let (completion (Completion 'connect))
-    (spawn-actor (cut connect!
-                      net addr
-                      completion
-                      (cut ssl-connect self
-                           context: net.tls-context
-                           host:    addr.host.name))
-                 [] 'net/connect net.tgroup)
+    (spawn/net (cut connect!
+                    net addr
+                    completion
+                    (cut ssl-connect self
+                         context: net.tls-context
+                         host:    addr.host.name))
+                 ['net/connect addr]
+                 net)
     completion))
 
 (def (local-connect! (self : LocalAddress)
@@ -36,11 +37,12 @@
                      (addr : HostAddress))
   => Completion
   (let (completion (Completion 'connect))
-    (spawn-actor (cut connect!
-                      net addr
-                      completion
-                      (cut unix-connect self.address))
-                 [] 'net/connect net.tgroup)
+    (spawn/net (cut connect!
+                    net addr
+                    completion
+                    (cut unix-connect self.address))
+               ['net/connect addr]
+               net)
     completion))
 
 (def (connect! (net        : network)

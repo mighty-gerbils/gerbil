@@ -45,10 +45,12 @@
    (using (conn (connection net peer sock direction)
                 : connection)
      (net.monitor.on-open-connection conn.this)
-     (spawn-actor (cut connection-mux-reader conn)
-                  [] ['connection/reader peer] net.tgroup)
-     (spawn-actor (cut connection-mux-writer conn)
-                  [] ['connection/writer peer] net.tgroup)
+     (spawn/net (cut connection-mux-reader conn)
+                ['connection/reader peer]
+                net)
+     (spawn/net (cut connection-mux-writer conn)
+                ['connection/writer peer]
+                net)
      conn.this)
    (catch (e)
      (ignore-errors (sock.close))

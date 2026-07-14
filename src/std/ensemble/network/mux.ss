@@ -80,11 +80,7 @@
           (stream-abandon! s e)
           (self.net.monitor.on-close-stream s))
         (self.streams.clear!))
-      (do-with-lock self.net.mx
-        (if (fx= self.direction DIRECTION-IN)
-          (self.net.incoming.delete! self.peer)
-          (self.net.outgoing.delete! self.peer))
-        (self.net.monitor.on-close-connection self.this)))))
+      (thread-send self.net.thread (NetworkConnectionClose self.this)))))
 
 (def (mux-output-dispatch! msg (conn : connection))
   (if (SyncMuxMessage? msg)
