@@ -164,11 +164,16 @@
 
 (def (network-dispatch-connection-close (op  : NetworkConnectionClose)
                                         (net : network))
+  (defrule (delete! from peer)
+    (when (eq? (HashTable-ref from peer #f)
+               op.conn)
+      (HashTable-delete! from peer)))
+
   (unless net.closed?
     (let (peer (HostAddress-host (op.conn.peer)))
       (if (fx= (op.conn.direction) DIRECTION-IN)
-        (net.incoming.delete! peer)
-        (net.outgoing.delete! peer)))
+        (delete! net.incoming peer)
+        (delete! net.outgoing peer)))
     (net.monitor.on-close-connection op.conn)))
 
 (def (network-dispatch-close (op  : NetworkClose)
