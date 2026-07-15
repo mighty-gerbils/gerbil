@@ -8,6 +8,8 @@
         :std/net/ssl
         :std/sync/completion
         :std/sync/channel
+        :std/sync/spinlock
+        :std/struct/queue
         :std/serde/interface
         :std/serde/deserialize
         ../interface
@@ -15,6 +17,12 @@
 (export #t)
 
 (deflogger log name: "/ensemble/network")
+
+(def async-linger-time 1)
+
+(def (async-linger-deadline)
+  => :time
+  (seconds->time (+ (##current-time-point) async-linger-time)))
 
 (defstruct network
   ((host        :  HostID)
@@ -38,6 +46,8 @@
    ;; HostAddress -> ConnectionListener
    (listeners   :  HashTable)
    )
+  transparent: #f
+  print: (host)
   constructor: :init!
   final: #t)
 
@@ -54,33 +64,100 @@
    [] name net.tgroup))
 
 (defstruct connection
-  ((this        : Connection)
-   (net         : network)
-   (peer        : HostID)
-   (sock        : StreamSocket)
-   (reader      : BufferedReader)
-   (writer      : BufferedWriter)
-   (direction   : :fixnum)
-   (mx          : :mutex)
-   (closed?     : :boolean)
-   (next-seqno  : :integer)
-   (next-stream : :integer)
-   (streams     : HashTable)
-   (pending     : HashTable)
-   (write-queue : Channel))
+  ((this           : Connection)
+   (net            : network)
+   (peer           : HostID)
+   (sock           : StreamSocket)
+   (reader         : BufferedReader)
+   (writer         : BufferedWriter)
+   (direction      : :fixnum)
+   (closed?        : :boolean)
+   (control-thread : :thread)
+   (input-thread   : :thread)
+   (output-thread  : :thread)
+   ;; stream-id -> stream
+   (streams        : HashTable)
+   ;; pending streams
+   ;; seqno -> [Completion . thread]
+   (pending        : HashTable)
+   ;; lock protecting indexes
+   (next-lock      : SpinLock)
+   ;; next stream id
+   (next-stream    : :integer)
+   ;; next mux message seqno
+   (next-seqno     : :integer))
   constructor: :init!
   transparent: #f
   print: (peer)
   final: #t)
 
+(def (connection-next-seqno! (self : connection))
+  => :integer
+  (do-with-spin-lock self.next-lock :- :integer
+    (let (next self.next-seqno)
+      (set! self.next-seqno (+ next 2))
+      next)))
+
+(def (connection-next-stream-id! (self : connection))
+  => :integer
+  (do-with-spin-lock self.next-lock :- :integer
+    (let (next self.next-stream)
+      (set! self.next-stream (+ next 2))
+      next)))
+
+(deftype @PendingInput PendingInput)
+(deftype @PendingOutput PendingOutput)
+
 (defstruct stream
-  ((this      : Stream)
-   (conn      : connection)
-   (id        : :integer)
-   (direction : :fixnum)
-   (open      : :fixnum)
-   )
+  ((this                  : Stream)
+   (conn                  : connection)
+   (protocol              : :string)
+   (id                    : :integer)
+   (direction             : :fixnum)
+   (open                  : :fixnum)
+   (control-thread        : :thread)
+   (input-timeout-thread  : :thread)
+   (output-timeout-thread : :thread)
+   (output-max-slice      : :fixnum)
+   (output-window         : :fixnum)
+   (input-window          : :fixnum)
+   (available-input       : Queue)
+   (pending-input         :? @PendingInput)
+   (pending-output        :? @PendingOutput))
+  transparent: #f
+  print: (conn protocol id)
   constructor: :init!)
+
+(defstruct stream-reader
+  ((s : stream)))
+
+(defstruct stream-writer
+  ((s : stream)))
+
+(defstruct Slice
+  ((data  : :u8vector)
+   (start : :fixnum)
+   (end   : :fixnum)))
+
+(defstruct PendingInput
+  ((completion : Completion)
+   (slice      : Slice)
+   (need       : :fixnum)
+   (read       : :fixnum)))
+
+(defstruct PendingOutput
+  ((completion : Completion)
+   (slice      : Slice)
+   (written    : :fixnum)))
+
+(interface StreamControl
+  (receive-data  (data : :u8vector))
+  => :void
+  (close-input)
+  => :void
+  (window-update (update : :fixnum))
+  => :void
+  )
 
 (defstruct connection-listener
   ((net  : network)
@@ -120,7 +197,7 @@
 (defstruct (NetworkAccept NetworkOp)
   ((conn : Connection)))
 
-(defstruct (NetworkConnectionClose NetworkOp)
+(defstruct (NetworkConnectionClosed NetworkOp)
   ((conn : Connection)))
 
 (defstruct (NetworkClose NetworkOp)
@@ -129,13 +206,13 @@
 (interface NetworkDispatch
   (dispatch! (net : network)))
 
-;; mux messages
+;; mux protocol messages
 (defstruct MuxMessage
-  ((seqno : :integer)))
+  ((seqno : :integer)
+   (stream-id : :integer)))
 
 (defstruct (OpenStream MuxMessage)
-  ((stream-id : :integer)
-   (protocol  : :string)
+  ((protocol  : :string)
    (auth      :~ (list-of? Token?)
               :- :list)
    (stream-window : :fixnum)
@@ -143,27 +220,23 @@
   final: #t)
 
 (defstruct (AckStream MuxMessage)
-  ((stream-id     : :integer)
-   (stream-window : :fixnum)
+  ((stream-window : :fixnum)
    (message-size  : :fixnum)))
 
 (defstruct (CloseStream MuxMessage)
-  ((stream-id : :integer))
+  ()
   final: #t)
 
 (defstruct (ResetStream MuxMessage)
-  ((stream-id : :integer)
-   (reason    : :string))
+  ((reason    : :string))
   final: #t)
 
 (defstruct (Data MuxMessage)
-  ((stream-id : :integer)
-   (data      : :u8vector))
+  ((data      : :u8vector))
   final: #t)
 
-(defstruct (AckData MuxMessage)
-  ((stream-id     : :integer)
-   (window-update : :integer))
+(defstruct (WindowUpdate MuxMessage)
+  ((window-update : :integer))
   final: #t)
 
 (defobject-untaint
@@ -172,12 +245,80 @@
   CloseStream
   ResetStream
   Data
-  AckData)
+  WindowUpdate)
 
-(defstruct SyncMuxMessage
-  ((msg        : MuxMessage)
-   (completion : Completion))
+;; connection actor control messages
+(defstruct ConnectionOp ())
+
+(defstruct (ConnectionSync ConnectionOp)
+  ((completion : Completion)))
+
+(defstruct (ConnectionClose ConnectionOp)
+  ())
+
+(defstruct (ConnectionIOError ConnectionOp)
+  ((error : :t))
+ final: #t)
+
+(defstruct (ConnectionOpenStream ConnectionSync)
+  ((protocol :  :string)
+   (token    :? Token))
   final: #t)
 
-(interface MuxInputDispatch
+(defstruct (ConnectionOpenStreamTimeout ConnectionOp)
+  ((seqno : :integer))
+  final: #t)
+
+(defstruct (ConnectionStreamClosed ConnectionOp)
+  ((stream : Stream)
+   (error  : :t))
+  final: #t)
+
+(interface ConnectionControlDispatch
   (dispatch! (conn : connection)))
+
+;; stream cator control messages
+(defstruct StreamOp ())
+
+(defstruct (StreamSync StreamOp)
+  ((completion : Completion)))
+
+(defstruct (StreamClose StreamOp)
+  ()
+  final: #t)
+
+(defstruct (StreamCloseInput StreamOp)
+  ()
+  final: #t)
+
+(defstruct (StreamCloseOutput StreamOp)
+  ()
+  final: #t)
+
+(defstruct (StreamInputData StreamOp)
+  ((data : :u8vector))
+  final: #t)
+
+(defstruct (StreamOutputWindowUpdate StreamOp)
+  ((update : :fixnum))
+  final: #t)
+
+(defstruct (StreamWrite StreamSync)
+  ((slice : Slice))
+  final: #t)
+
+(defstruct (StreamRead StreamSync)
+  ((slice : Slice)
+   (need  : :fixnum))
+  final: #t)
+
+(defstruct (StreamInputTimeout StreamOp)
+  ()
+  final: #t)
+
+(defstruct (StreamOutputTimeout StreamOp)
+  ()
+  final: #t)
+
+(interface StreamControlDispatch
+  (dispatch! (s : stream)))

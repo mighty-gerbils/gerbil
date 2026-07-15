@@ -54,9 +54,16 @@
     (let (op (thread-receive))
       (network-dispatch! op self)))
   ;; closed: linger while there are pending completions
+  (thread-yield!)
   (while (fx> (self.pending.length) 0)
     (let (op (thread-receive))
-      (network-dispatch! op self))))
+      (network-dispatch! op self)))
+  ;; linger until all external ops see the network closed
+  (let (deadline (async-linger-deadline))
+    (let loop ()
+      (alet (op (thread-receive deadline #f))
+        (network-dispatch! op self)
+        (loop)))))
 
 (def (network-dispatch-connect (op : NetworkConnect) (net : network))
   (cond
@@ -162,8 +169,8 @@
    (else
     (net.incoming.set! (HostAddress-host (op.conn.peer)) op.conn))))
 
-(def (network-dispatch-connection-close (op  : NetworkConnectionClose)
-                                        (net : network))
+(def (network-dispatch-connection-closed (op  : NetworkConnectionClosed)
+                                         (net : network))
   (defrule (delete! from peer)
     (when (eq? (HashTable-ref from peer #f)
                op.conn)
@@ -266,8 +273,9 @@
                         exception: (exception->string e))))))
 
 (def (network-close (self : network))
-  (unless self.closed?
-    (thread-send self.thread (NetworkClose))))
+  => :void
+  (thread-send self.thread (NetworkClose))
+  (thread-join! self.thread))
 
 (defcall-interface-method NetworkDispatch dispatch!
   (network-dispatch! op net))
@@ -283,8 +291,8 @@
    (dispatch! __network-dispatch-listen))
   (NetworkAccept
    (dispatch! __network-dispatch-accept))
-  (NetworkConnectionClose
-   (dispatch! __network-dispatch-connection-close))
+  (NetworkConnectionClosed
+   (dispatch! __network-dispatch-connection-closed))
   (NetworkClose
    (dispatch! __network-dispatch-close)))
 

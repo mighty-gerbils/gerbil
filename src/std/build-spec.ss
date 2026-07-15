@@ -270,7 +270,6 @@
     "ensemble/network/listener"
     "ensemble/network/handshake"
     "ensemble/network/connection"
-    "ensemble/network/mux"
     "ensemble/network/stream"
     "ensemble/network/network"
     "ensemble/network"

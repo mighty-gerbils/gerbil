@@ -19,7 +19,7 @@
         new-incoming-connection)
 
 (def handshake-timeout 3)
-(def connection-write-timeout 30)
+(def connection-write-timeout 10)
 
 (def (new-outgoing-connection (net  : network)
                               (sock : StreamSocket)

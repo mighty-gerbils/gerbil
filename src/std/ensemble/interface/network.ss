@@ -54,6 +54,10 @@
 
 ;; low level data streams
 (interface (Stream NetworkTimeout Closer)
+  ;; the stream identifier within a connect
+  (id)
+  => :integer
+
   ;; the stream iniator direction
   ;; DIRECTION-IN or DIRECTION-OUT
   (direction)
