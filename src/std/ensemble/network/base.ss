@@ -12,6 +12,7 @@
         :std/struct/queue
         :std/serde/interface
         :std/serde/deserialize
+        :std/time/timeout
         ../interface
         ../config)
 (export #t)
@@ -119,10 +120,10 @@
    (direction             : :fixnum)
    (open                  : :fixnum)
    (control-thread        : :thread)
+   (input-timeout         : IOTimeout)
    (input-timeout-thread  : :thread)
-   (input-timestamp       : :flonum)
+   (output-timeout        : IOTimeout)
    (output-timeout-thread : :thread)
-   (output-timestamp      : :flonum)
    (output-max-slice      : :fixnum)
    (output-window         : :fixnum)
    (input-window          : :fixnum)
@@ -133,15 +134,33 @@
   print: (conn protocol id)
   constructor: :init!)
 
-(defstruct stream-reader
-  ((s  : stream)
-   (c  : Completion)
-   (mx : :mutex)))
+(defstruct stream-io
+  ((s       : stream)
+   (mx      : :mutex)
+   (next-id : :integer)
+   (c       : Completion))
+  constructor: :init!)
 
-(defstruct stream-writer
-  ((s  : stream)
-   (c  : Completion)
-   (mx : :mutex)))
+(defmethod {:init! stream-io}
+  (lambda (self (s : stream))
+    (set! self.s s)
+    (set! self.mx (make-mutex 'io))
+    (set! self.next-id 0)
+    (set! self.c (Completion 'io))))
+
+(defstruct (stream-reader stream-io)
+  ()
+  final: #t)
+
+(defmethod {:init! stream-reader}
+  stream-io:::init!)
+
+(defstruct (stream-writer stream-io)
+  ()
+  final: #t)
+
+(defmethod {:init! stream-writer}
+  stream-io:::init!)
 
 ;; data async i/o management for streams
 (defstruct Slice
@@ -150,13 +169,15 @@
    (end   : :fixnum)))
 
 (defstruct PendingInput
-  ((completion : Completion)
+  ((id         : :integer)
+   (completion : Completion)
    (slice      : Slice)
    (need       : :fixnum)
    (read       : :fixnum)))
 
 (defstruct PendingOutput
-  ((completion : Completion)
+  ((id         : :integer)
+   (completion : Completion)
    (slice      : Slice)
    (written    : :fixnum)))
 
@@ -312,7 +333,8 @@
 (defstruct StreamOp ())
 
 (defstruct (StreamSync StreamOp)
-  ((completion : Completion)))
+  ((id         : :integer)
+   (completion : Completion)))
 
 (defstruct (StreamClose StreamOp)
   ()
@@ -344,11 +366,11 @@
   final: #t)
 
 (defstruct (StreamInputTimeout StreamOp)
-  ((timestamp : :flonum))
+  ((id : :integer))
   final: #t)
 
 (defstruct (StreamOutputTimeout StreamOp)
-  ((timestamp : :flonum))
+  ((id : :integer))
   final: #t)
 
 (interface StreamControlDispatch

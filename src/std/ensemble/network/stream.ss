@@ -75,8 +75,8 @@
         (stream-control-dispatch! op s)
         (loop))))
 
-  (thread-send s.input-timeout-thread 'closed)
-  (thread-send s.output-timeout-thread 'closed))
+  (thread-send s.input-timeout-thread '(closed))
+  (thread-send s.output-timeout-thread '(closed)))
 
 (def (stream-input-timeout (s : stream))
   (TODO stream-input-timeout))
@@ -104,7 +104,7 @@
         (completion-error! s.pending-input.completion (Closed "stream input closed"))
         (completion-post! s.pending-input.completion s.pending-input.read))
       (set! s.pending-input #f))
-    (thread-send s.input-timeout-thread 'close)))
+    (thread-send s.input-timeout-thread '(closed))))
 
 (def (stream-dispatch-close-output (op : StreamCloseOutput) (s : stream))
   (when (stream-open? s DIRECTION-OUT)
@@ -114,15 +114,13 @@
       (set! s.pending-output #f))
     (thread-send s.conn.output-thread
                (CloseStream s.id))
-    (thread-send s.output-timeout-thread 'close)))
+    (thread-send s.output-timeout-thread '(closed))))
 
 (def (stream-close-direction! (s : stream) (dir : :fixnum))
   (set! s.open (fxand s.open (fxnot dir))))
 
 (def (stream-dispatch-input-data (op : StreamInputData) (s : stream))
   (when (stream-open? s DIRECTION-IN)
-    (thread-send s.input-timeout-thread 'reset)
-    (set! s.input-timestamp (##current-time-point))
     (if s.pending-input
       (let* ((want (fx- s.pending-input.slice.end s.pending-input.slice.start))
              (have (u8vector-length op.data)))
@@ -169,8 +167,7 @@
                 (completion-post! s.pending-input.completion
                                   s.pending-input.read)
                 (set! s.pending-input #f)))
-            (stream-send-window-update! s have)
-            (thread-send s.input-timeout-thread 'reset))))
+            (stream-send-window-update! s have))))
       (let (data-len (u8vector-length op.data))
         (set! s.input-window
           (fx- s.input-window data-len))
@@ -190,8 +187,6 @@
 
 (def (stream-dispatch-output-window-update (op : StreamOutputWindowUpdate) (s : stream))
   (when (stream-open? s DIRECTION-OUT)
-    (thread-send s.output-timeout-thread 'reset)
-    (set! s.output-timestamp (##current-time-point))
     (set! s.output-window (fx+ s.output-window op.update))
     (when s.pending-output
       (let (have (fxmin (fx- s.pending-output.slice.end
@@ -249,13 +244,15 @@
                                             end)))
             (set! op.slice.start end)
             (set! s.pending-output
-              (PendingOutput op.completion
+              (PendingOutput op.id
+                             op.completion
                              op.slice
                              s.output-window))
             (set! s.output-window 0)))))
      (else
       (set! s.pending-output
-        (PendingOutput op.completion
+        (PendingOutput op.id
+                       op.completion
                        op.slice
                        0))))
     (completion-error! op.completion (Closed "stream output closed"))))
@@ -327,12 +324,10 @@
 (implement NetworkTimeout stream
   (set-input-timeout!
    (lambda (self timeo)
-     (when (stream-open? self DIRECTION-IN)
-       (thread-send self.input-timeout-thread timeo))))
+     (set! self.input-timeout timeo)))
   (set-output-timeout!
    (lambda (self timeo)
-     (when (stream-open? self DIRECTION-OUT)
-       (thread-send self.output-timeout-thread timeo)))))
+     (set! self.output-timeout timeo))))
 
 (implement Stream stream
   (id        &stream-id)
@@ -343,12 +338,10 @@
   (protocol &stream-protocol)
   (reader
    (lambda (self)
-     (Reader
-      (stream-reader self (Completion 'reader) (make-mutex 'reader)))))
+     (Reader (stream-reader self))))
   (writer
    (lambda (self)
-     (Writer
-      (stream-writer self (Completion 'writer) (make-mutex 'writer))))))
+     (Writer (stream-writer self)))))
 
 (implement Closer stream-reader
   (close
@@ -363,12 +356,18 @@
      (cond
       ((stream-open? self.s DIRECTION-IN)
        (do-with-lock self.mx :- :fixnum
-         (completion-reset! self.c)
-         (thread-send self.s.control-thread
-                      (StreamRead self.c
-                                  (Slice buffer start end)
-                                  need))
-         (completion-wait! self.c)))
+         (let (id self.next-id)
+           (set! self.next-id (+ id 1))
+           (completion-reset! self.c)
+           (thread-send self.s.input-timeout-thread `(start ,id))
+           (thread-send self.s.control-thread
+                        (StreamRead id
+                                    self.c
+                                    (Slice buffer start end)
+                                    need))
+           (unwind-protect
+             (completion-wait! self.c)
+             (thread-send self.s.input-timeout-thread `(end ,id))))))
       ((fx> need 0)
        (raise-premature-end-of-input stream-read))
       (else 0)))))
@@ -386,10 +385,16 @@
      (cond
       ((stream-open? self.s DIRECTION-OUT)
        (do-with-lock self.mx :- :fixnum
-         (completion-reset! self.c)
-         (thread-send self.s.control-thread
-                      (StreamWrite self.c
-                                   (Slice buffer start end)))
-         (completion-wait! self.c)))
+         (let (id self.next-id)
+           (set! self.next-id (+ id 1))
+           (completion-reset! self.c)
+           (thread-send self.s.output-timeout-thread `(start ,id))
+           (thread-send self.s.control-thread
+                        (StreamWrite id
+                                     self.c
+                                     (Slice buffer start end)))
+           (unwind-protect
+             (completion-wait! self.c)
+             (thread-send self.s.output-timeout-thread `(end ,id))))))
       (else
        (raise-io-closed stream-write "stream output closed"))))))

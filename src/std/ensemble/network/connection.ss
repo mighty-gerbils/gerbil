@@ -147,8 +147,7 @@
       (with ([c . thread] next)
         (completion-error! c (Closed "connection closed"))
         (thread-send thread 'closed)))
-    (conn.pending.clear!)
-    ))
+    (conn.pending.clear!)))
 
 (def (connection-dispatch-io-error (op   : ConnectionIOError)
                                    (conn : connection))
