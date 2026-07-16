@@ -19,8 +19,7 @@
 
 (deflogger log name: "/ensemble/network")
 
-(def async-linger-time .01)
-
+(def async-linger-time .1)
 (def (async-linger-deadline)
   => :time
   (seconds->time (+ (##current-time-point) async-linger-time)))

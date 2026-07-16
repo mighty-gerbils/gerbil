@@ -33,6 +33,8 @@
     (set! self.output-window window-size)
     (set! self.input-window conn.net.limits.network.stream-window)
     (set! self.available-input (Queue))
+    (set! self.input-timeout !NoTimeout)
+    (set! self.output-timeout !NoTimeout)
     (set! self.control-thread
       (spawn/net (cut stream-control self)
                  ['stream/control id]
@@ -121,7 +123,17 @@
 
 (def (stream-dispatch-input-data (op : StreamInputData) (s : stream))
   (when (stream-open? s DIRECTION-IN)
-    (if s.pending-input
+    (set! s.input-window
+      (fx- s.input-window (u8vector-length op.data)))
+    (cond
+     ((fx< s.input-window 0)
+      ;; contract violation from sender, did not respect our window
+      (log.warn "sender violated input window; closing stream"
+                stream: s.id
+                protocol: s.protocol
+                peer: s.conn.peer)
+      (stream-dispatch-close (StreamClose) s))
+     (s.pending-input
       (let* ((want (fx- s.pending-input.slice.end s.pending-input.slice.start))
              (have (u8vector-length op.data)))
         (if (fx> have want)
@@ -131,27 +143,11 @@
                                s.pending-input.slice.start)
             (set! s.pending-input.read
               (fx+ s.pending-input.read want))
-            (set! s.pending-input.need
-              (fx- s.pending-input.need want))
-            (if (fx> s.pending-input.need 0)
-              ;; this can only happen from user error
-              (completion-error! s.pending-input.completion
-                                 (IOError "insufficient buffer size for needed input"))
-              (completion-post! s.pending-input.completion
-                                s.pending-input.read))
+            (completion-post! s.pending-input.completion
+                              s.pending-input.read)
             (set! s.pending-input #f)
-
-            (set! s.input-window
-              (fx- s.input-window (fx- have want)))
-            (if (fx< s.input-window 0)
-              ;; contract violation from sender, did not respect
-              ;; our window
-              (begin
-                (log.warn "sender violated input window; closing stream")
-                (stream-close-direction! s DIRECTION-INOUT))
-              (begin
-                (enqueue! s.available-input (Slice op.data want have))
-                (stream-send-window-update! s want))))
+            (enqueue! s.available-input (Slice op.data want have))
+            (stream-send-window-update! s want))
           (begin
             (subu8vector-move! op.data 0 have
                                s.pending-input.slice.data
@@ -160,30 +156,23 @@
               (fx+ s.pending-input.read have))
             (set! s.pending-input.need
               (fx- s.pending-input.need have))
-            (if (fx> s.pending-input.need 0)
+            (cond
+             ((fx> s.pending-input.need 0)
               (set! s.pending-input.slice.start
-                (fx+ s.pending-input.slice.start have))
-              (begin
-                (completion-post! s.pending-input.completion
-                                  s.pending-input.read)
-                (set! s.pending-input #f)))
-            (stream-send-window-update! s have))))
-      (let (data-len (u8vector-length op.data))
-        (set! s.input-window
-          (fx- s.input-window data-len))
-        (if (fx< s.input-window 0)
-          ;; contract violation from sender, did not respect
-          ;; our window
-          (begin
-            (log.warn "sender violated input window; closing stream")
-            (stream-close-direction! s DIRECTION-INOUT))
-          (enqueue! s.available-input
-                    (Slice op.data 0 data-len)))))))
+                (fx+ s.pending-input.slice.start have)))
+              ((fx> s.pending-input.read 0)
+               (completion-post! s.pending-input.completion
+                                 s.pending-input.read)
+               (set! s.pending-input #f)))
+            (stream-send-window-update! s have)))))
+     (else
+      (enqueue! s.available-input
+                (Slice op.data 0 (u8vector-length op.data)))))))
 
 (def (stream-send-window-update! (s : stream) (update : :fixnum))
+  (set! s.input-window (fx+ s.input-window update))
   (thread-send s.conn.output-thread
-               (WindowUpdate s.id
-                             update)))
+               (WindowUpdate s.id update)))
 
 (def (stream-dispatch-output-window-update (op : StreamOutputWindowUpdate) (s : stream))
   (when (stream-open? s DIRECTION-OUT)
@@ -258,13 +247,79 @@
     (completion-error! op.completion (Closed "stream output closed"))))
 
 (def (stream-dispatch-read (op : StreamRead) (s : stream))
-  (TODO stream-dispatch-read))
+  (if (stream-open? s DIRECTION-IN)
+    (if s.pending-input
+      (completion-error! op.completion (IOError "pending input"))
+      (let loop ((read 0       :- :fixnum)
+                 (need op.need :- :fixnum))
+        (if (queue-empty? s.available-input)
+          (begin
+            (if (or (fx> need 0)
+                    (fx= read 0))
+              (set! s.pending-input
+                (PendingInput op.id
+                              op.completion
+                              op.slice
+                              need read))
+              (completion-post! op.completion read))
+            (when (fx> read 0)
+              (stream-send-window-update! s read)))
+          (using (input (queue-peek s.available-input) :- Slice)
+            (let ((have (fx- input.end input.start))
+                  (want (fx- op.slice.end op.slice.start)))
+              (if (fx< have want)
+                (let ((read (fx+ read have))
+                      (need (fx- need have)))
+                  (dequeue! s.available-input)
+                  (subu8vector-move! input.data input.start input.end
+                                     op.slice.data op.slice.start)
+                  (set! op.slice.start (fx+ op.slice.start have))
+                  (if (or (fx> need 0)
+                          (fx= read 0))
+                    (loop read need)
+                    (begin
+                      (completion-post! op.completion read)
+                      (stream-send-window-update! s read))))
+                (let ((read (fx+ read want))
+                      (end  (fx+ input.start want)))
+                  (subu8vector-move! input.data input.start end
+                                     op.slice.data op.slice.start)
+                  (set! input.start end)
+                  (when (fx= input.start input.end)
+                    (dequeue! s.available-input))
+                  (completion-post! op.completion read)
+                  (stream-send-window-update! s read))))))))
+    (if (fx> op.need 0)
+      (completion-error! op.completion (Closed "stream input closed"))
+      (completion-post! op.completion 0))))
 
 (def (stream-dispatch-input-timeout (op : StreamInputTimeout) (s : stream))
-  (TODO stream-dispatch-input-timeout))
+  (when (stream-open? s DIRECTION-IN)
+    (when (and s.pending-input (= s.pending-input.id op.id))
+      (completion-error! s.pending-input.completion (Timeout "input timeout"))
+      (let (partial-read s.pending-input.read)
+        (set! s.pending-input #f)
+        ;; if there was a partial read, the stream is now unusable
+        (when (fx> partial-read 0)
+          (log.warn "input timeout with partial read; stream is unusable"
+                    stream: s.id
+                    protocol: s.protocol
+                    peer: s.conn.peer)
+          (stream-dispatch-close (StreamClose) s))))))
 
 (def (stream-dispatch-output-timeout (op : StreamOutputTimeout) (s : stream))
-  (TODO stream-dispatch-output-timeout))
+  (when (stream-open? s DIRECTION-OUT)
+    (when (and s.pending-output (eq? s.pending-output.id op.id))
+      (completion-error! s.pending-output.completion (Timeout "output timeout"))
+      (let (partial-write s.pending-output.written)
+        (set! s.pending-output #f)
+        ;; if there was a partial read, the stream is now unusable
+        (when (fx> partial-write 0)
+          (log.warn "output timeout with partial write; stream is unusable"
+                    stream: s.id
+                    protocol: s.protocol
+                    peer: s.conn.peer)
+          (stream-dispatch-close (StreamClose) s))))))
 
 (defcall-interface-method StreamControlDispatch dispatch!
   (stream-control-dispatch! op s))
