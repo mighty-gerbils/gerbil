@@ -18,12 +18,13 @@
 
 (deflogger log name: "/ensemble/network")
 
-(def async-linger-time 1)
+(def async-linger-time .01)
 
 (def (async-linger-deadline)
   => :time
   (seconds->time (+ (##current-time-point) async-linger-time)))
 
+;; the network abstraction
 (defstruct network
   ((host        :  HostID)
    (tls-context :~ SSL_CTX? :- :foreign)
@@ -63,6 +64,7 @@
                        exception: (exception->string e)))))
    [] name net.tgroup))
 
+;; a logical multiplexed connection over a stream socket
 (defstruct connection
   ((this           : Connection)
    (net            : network)
@@ -108,6 +110,7 @@
 (deftype @PendingInput PendingInput)
 (deftype @PendingOutput PendingOutput)
 
+;; a multiplexed stream inside a connection
 (defstruct stream
   ((this                  : Stream)
    (conn                  : connection)
@@ -117,7 +120,9 @@
    (open                  : :fixnum)
    (control-thread        : :thread)
    (input-timeout-thread  : :thread)
+   (input-timestamp       : :flonum)
    (output-timeout-thread : :thread)
+   (output-timestamp      : :flonum)
    (output-max-slice      : :fixnum)
    (output-window         : :fixnum)
    (input-window          : :fixnum)
@@ -134,6 +139,7 @@
 (defstruct stream-writer
   ((s : stream)))
 
+;; data async i/o management for streams
 (defstruct Slice
   ((data  : :u8vector)
    (start : :fixnum)
@@ -150,6 +156,7 @@
    (slice      : Slice)
    (written    : :fixnum)))
 
+;; control interface for streams; connection -> stream
 (interface StreamControl
   (receive-data  (data : :u8vector))
   => :void
@@ -159,15 +166,18 @@
   => :void
   )
 
+;; connection listeners (network)
 (defstruct connection-listener
   ((net  : network)
    (sock : ServerSocket))
   final: #t)
 
+;; connection logic for an address
 (interface AddressConnector
   (connect! (net : network) (addr : HostAddress))
   => Completion)
 
+;; listening logic for an address
 (interface (ConnectionListener Iterator Closer))
 
 (interface AddressListener
@@ -211,6 +221,8 @@
   ((seqno : :integer)
    (stream-id : :integer)))
 
+;; open a new outgoing stream
+;; response is AckStream or ResetStream
 (defstruct (OpenStream MuxMessage)
   ((protocol  : :string)
    (auth      :~ (list-of? Token?)
@@ -219,22 +231,28 @@
    (message-size  : :fixnum))
   final: #t)
 
+;; acknowledge open stream and provide limits
 (defstruct (AckStream MuxMessage)
   ((stream-window : :fixnum)
    (message-size  : :fixnum)))
 
+;; unidirectional stream close; the sender will not send
+;; any more data
 (defstruct (CloseStream MuxMessage)
   ()
   final: #t)
 
+;; unconditional stream close; the stream is aborted.
 (defstruct (ResetStream MuxMessage)
   ((reason    : :string))
   final: #t)
 
+;; stream data; outstanding data cannot exceed the receiver window
 (defstruct (Data MuxMessage)
   ((data      : :u8vector))
   final: #t)
 
+;; receiver window update
 (defstruct (WindowUpdate MuxMessage)
   ((window-update : :integer))
   final: #t)
@@ -313,11 +331,11 @@
   final: #t)
 
 (defstruct (StreamInputTimeout StreamOp)
-  ()
+  ((timestamp : :flonum))
   final: #t)
 
 (defstruct (StreamOutputTimeout StreamOp)
-  ()
+  ((timestamp : :flonum))
   final: #t)
 
 (interface StreamControlDispatch

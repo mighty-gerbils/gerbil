@@ -116,16 +116,20 @@
    (catch (e)
      (thread-send self.control-thread (ConnectionIOError e)))))
 
-(def (connection-control (self : connection))
-  (until self.closed?
+(def (connection-control (conn : connection))
+  (until conn.closed?
     (let (op (thread-receive))
-      (connection-control-dispatch! op self)))
+      (connection-control-dispatch! op conn)))
+
+  (thread-send conn.net.thread
+               (NetworkConnectionClosed conn.this))
   (thread-yield!)
-  ;; linger until all external ops see the stream closed
+
+  ;; linger until all external ops see the connection closed
   (let (deadline (async-linger-deadline))
     (let loop ()
       (alet (op (thread-receive deadline #f))
-        (connection-control-dispatch! op self)
+        (connection-control-dispatch! op conn)
         (loop)))))
 
 (def (connection-dispatch-close (op   : ConnectionClose)
@@ -144,7 +148,7 @@
         (completion-error! c (Closed "connection closed"))
         (thread-send thread 'closed)))
     (conn.pending.clear!)
-    (thread-send conn.net.thread (NetworkConnectionClosed conn.this))))
+    ))
 
 (def (connection-dispatch-io-error (op   : ConnectionIOError)
                                    (conn : connection))
