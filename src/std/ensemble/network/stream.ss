@@ -98,9 +98,6 @@
                 (when (eq? opid id)
                   (set! deadline absent-obj)
                   (set! opid -1)))
-               (['reset id]
-                (when (eq? opid id)
-                  (set! deadline absent-obj)))
                ('(closed)
                 (break 'closed))
                (#f
@@ -162,7 +159,6 @@
                 peer: s.conn.peer)
       (stream-dispatch-close (StreamClose) s))
      (s.pending-input
-      (thread-send s.input-timeout-thread `(reset ,s.pending-input.id))
       (let* ((want (fx- s.pending-input.slice.end s.pending-input.slice.start))
              (have (u8vector-length op.data)))
         (if (fx> have want)
@@ -207,7 +203,6 @@
   (when (stream-open? s DIRECTION-OUT)
     (set! s.output-window (fx+ s.output-window op.update))
     (when s.pending-output
-      (thread-send s.output-timeout-thread `(reset ,s.pending-output.id))
       (let (have (fxmin (fx- s.pending-output.slice.end
                              s.pending-output.slice.start)
                         s.output-max-slice))
