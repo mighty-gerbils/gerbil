@@ -80,11 +80,39 @@
   (thread-send s.input-timeout-thread '(closed))
   (thread-send s.output-timeout-thread '(closed)))
 
+(defsyntax-case stream-timeout-thread ()
+  ((_ s timeout make-timeout direction)
+   (with-identifiers ((s.timeout
+                       #'s #'s "." #'timeout)
+                      (s.control-thread
+                       #'s #'s ".control-thread"))
+     #'(let ((deadline absent-obj)
+             (opid -1))
+         (let/cc break
+           (while (stream-open? s direction)
+             (match (thread-receive deadline #f)
+               (['start id]
+                (set! deadline (timeout->abs-timeout s.timeout))
+                (set! opid id))
+               (['end id]
+                (when (eq? opid id)
+                  (set! deadline absent-obj)
+                  (set! opid -1)))
+               (['reset id]
+                (when (eq? opid id)
+                  (set! deadline absent-obj)))
+               ('(closed)
+                (break 'closed))
+               (#f
+                (thread-send s.control-thread (make-timeout opid))
+                (set! deadline absent-obj)
+                (set! opid -1)))))))))
+
 (def (stream-input-timeout (s : stream))
-  (TODO stream-input-timeout))
+  (stream-timeout-thread s input-timeout StreamInputTimeout DIRECTION-IN))
 
 (def (stream-output-timeout (s : stream))
-  (TODO stream-output-timeout))
+  (stream-timeout-thread s output-timeout StreamOutputTimeout DIRECTION-OUT))
 
 (def (stream-dispatch-close (op : StreamClose) (s : stream))
   (unless (fx= s.open 0)
@@ -134,6 +162,7 @@
                 peer: s.conn.peer)
       (stream-dispatch-close (StreamClose) s))
      (s.pending-input
+      (thread-send s.input-timeout-thread `(reset ,s.pending-input.id))
       (let* ((want (fx- s.pending-input.slice.end s.pending-input.slice.start))
              (have (u8vector-length op.data)))
         (if (fx> have want)
@@ -160,10 +189,10 @@
              ((fx> s.pending-input.need 0)
               (set! s.pending-input.slice.start
                 (fx+ s.pending-input.slice.start have)))
-              ((fx> s.pending-input.read 0)
-               (completion-post! s.pending-input.completion
-                                 s.pending-input.read)
-               (set! s.pending-input #f)))
+             ((fx> s.pending-input.read 0)
+              (completion-post! s.pending-input.completion
+                                s.pending-input.read)
+              (set! s.pending-input #f)))
             (stream-send-window-update! s have)))))
      (else
       (enqueue! s.available-input
@@ -178,6 +207,7 @@
   (when (stream-open? s DIRECTION-OUT)
     (set! s.output-window (fx+ s.output-window op.update))
     (when s.pending-output
+      (thread-send s.output-timeout-thread `(reset ,s.pending-output.id))
       (let (have (fxmin (fx- s.pending-output.slice.end
                              s.pending-output.slice.start)
                         s.output-max-slice))
