@@ -277,7 +277,7 @@
                 chain
                 identifier-rules
                 letrec*
-                while
+                while until
                 let-hash
                 for for* for/collect
                 begin-ffi
@@ -312,6 +312,7 @@
                 do-with-lock
                 do-with-read-lock
                 do-with-write-lock
+                do-with-spin-lock
                 )
               'scheme-indent-function 'defun)
   )
