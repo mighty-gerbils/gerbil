@@ -8,6 +8,7 @@
         (rename: Completion-ready? completion-ready?)
         completion-wait!
         completion-post!
+        completion-reset!
         completion-error!
         with-completion-error)
 
@@ -22,6 +23,11 @@
   (lambda (self (name 'completion)) ;; name is for debugging
     (set! self.mx (make-mutex name))
     (set! self.cv (make-condition-variable name))))
+
+(def (completion-reset! (c : Completion))
+  (set! c.ready? #f)
+  (set! c.val #f)
+  (set! c.exn #f))
 
 (def (completion-wait! (c : Completion))
   (let lp ()

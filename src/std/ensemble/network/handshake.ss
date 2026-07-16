@@ -13,7 +13,7 @@
         ../interface
         ../tls
         ../ucan/ext
-        ./types
+        ./base
         ./connection)
 (export new-outgoing-connection
         new-incoming-connection)

@@ -10,7 +10,7 @@
         (only-in :std/os/device
                  DIRECTION-INOUT)
         ../interface
-        ./types)
+        ./base)
 (export new-stream
         stream-control-receive-data
         stream-control-window-update
@@ -113,8 +113,7 @@
       (completion-error! s.pending-output.completion (Closed "stream closed"))
       (set! s.pending-output #f))
     (thread-send s.conn.output-thread
-               (CloseStream (connection-next-seqno! s.conn)
-                            s.id))
+               (CloseStream s.id))
     (thread-send s.output-timeout-thread 'close)))
 
 (def (stream-close-direction! (s : stream) (dir : :fixnum))
@@ -186,8 +185,7 @@
 
 (def (stream-send-window-update! (s : stream) (update : :fixnum))
   (thread-send s.conn.output-thread
-               (WindowUpdate (connection-next-seqno! s.conn)
-                             s.id
+               (WindowUpdate s.id
                              update)))
 
 (def (stream-dispatch-output-window-update (op : StreamOutputWindowUpdate) (s : stream))
@@ -202,8 +200,7 @@
         (if (fx<= have s.output-window)
           (let (end (fx+ s.pending-output.slice.start have))
             (thread-send s.conn.output-thread
-                         (Data (connection-next-seqno! s.conn)
-                               s.id
+                         (Data s.id
                                (subu8vector s.pending-output.slice.data
                                             s.pending-output.slice.start
                                             end)))
@@ -218,8 +215,7 @@
             (set! s.output-window (fx- s.output-window have)))
           (let (end (fx+ s.pending-output.slice.start s.output-window))
             (thread-send s.conn.output-thread
-                         (Data (connection-next-seqno! s.conn)
-                               s.id
+                         (Data s.id
                                (subu8vector s.pending-output.slice.data
                                             s.pending-output.slice.start
                                             end)))
@@ -239,8 +235,7 @@
         (if (fx<= have s.output-window)
           (begin
             (thread-send s.conn.output-thread
-                         (Data (connection-next-seqno! s.conn)
-                               s.id
+                         (Data s.id
                                (subu8vector op.slice.data
                                             op.slice.start
                                             op.slice.end)))
@@ -248,8 +243,7 @@
             (set! s.output-window (fx- s.output-window have)))
           (let (end (fx+ op.slice.start s.output-window))
             (thread-send s.conn.output-thread
-                         (Data (connection-next-seqno! s.conn)
-                               s.id
+                         (Data s.id
                                (subu8vector op.slice.data
                                             op.slice.start
                                             end)))
@@ -349,10 +343,12 @@
   (protocol &stream-protocol)
   (reader
    (lambda (self)
-     (Reader (stream-reader self))))
+     (Reader
+      (stream-reader self (Completion 'reader) (make-mutex 'reader)))))
   (writer
    (lambda (self)
-     (Writer (stream-writer self)))))
+     (Writer
+      (stream-writer self (Completion 'writer) (make-mutex 'writer))))))
 
 (implement Closer stream-reader
   (close
@@ -366,12 +362,13 @@
    (lambda (self buffer start end need)
      (cond
       ((stream-open? self.s DIRECTION-IN)
-       (let (completion (Completion 'read))
+       (do-with-lock self.mx :- :fixnum
+         (completion-reset! self.c)
          (thread-send self.s.control-thread
-                      (StreamRead completion
+                      (StreamRead self.c
                                   (Slice buffer start end)
                                   need))
-         (: (completion-wait! completion) :fixnum)))
+         (completion-wait! self.c)))
       ((fx> need 0)
        (raise-premature-end-of-input stream-read))
       (else 0)))))
@@ -388,10 +385,11 @@
    (lambda (self buffer start end)
      (cond
       ((stream-open? self.s DIRECTION-OUT)
-       (let (completion (Completion 'write))
+       (do-with-lock self.mx :- :fixnum
+         (completion-reset! self.c)
          (thread-send self.s.control-thread
-                      (StreamWrite completion
-                                  (Slice buffer start end)))
-         (: (completion-wait! completion) :fixnum)))
+                      (StreamWrite self.c
+                                   (Slice buffer start end)))
+         (completion-wait! self.c)))
       (else
        (raise-io-closed stream-write "stream output closed"))))))

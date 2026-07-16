@@ -265,7 +265,7 @@
 
     "ensemble/config"
 
-    "ensemble/network/types"
+    "ensemble/network/base"
     "ensemble/network/connector"
     "ensemble/network/listener"
     "ensemble/network/handshake"

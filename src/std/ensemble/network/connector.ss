@@ -10,7 +10,7 @@
         :std/sync/completion
         :std/os/hostname
         ../interface
-        ./types
+        ./base
         ./handshake)
 (export address-connect!)
 

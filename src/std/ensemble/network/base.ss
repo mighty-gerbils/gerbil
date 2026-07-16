@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; ensemble network types
+;;; ensemble network base
 (import :std/error
         :std/io
         :std/log
@@ -134,10 +134,14 @@
   constructor: :init!)
 
 (defstruct stream-reader
-  ((s : stream)))
+  ((s  : stream)
+   (c  : Completion)
+   (mx : :mutex)))
 
 (defstruct stream-writer
-  ((s : stream)))
+  ((s  : stream)
+   (c  : Completion)
+   (mx : :mutex)))
 
 ;; data async i/o management for streams
 (defstruct Slice
@@ -218,23 +222,31 @@
 
 ;; mux protocol messages
 (defstruct MuxMessage
-  ((seqno : :integer)
-   (stream-id : :integer)))
+  ((stream-id : :integer)))
 
 ;; open a new outgoing stream
 ;; response is AckStream or ResetStream
 (defstruct (OpenStream MuxMessage)
-  ((protocol  : :string)
+  ((seqno     : :integer)
+   (protocol  : :string)
    (auth      :~ (list-of? Token?)
               :- :list)
    (stream-window : :fixnum)
    (message-size  : :fixnum))
   final: #t)
 
-;; acknowledge open stream and provide limits
-(defstruct (AckStream MuxMessage)
-  ((stream-window : :fixnum)
+;; accept new stream and provide limits
+(defstruct (AcceptStream MuxMessage)
+  ((seqno     : :integer)
+   (stream-window : :fixnum)
    (message-size  : :fixnum)))
+
+;; reject new stream and provide reason
+(defstruct (RejectStream MuxMessage)
+  ((seqno     : :integer)
+   (reason    : :string))
+  final: #t)
+
 
 ;; unidirectional stream close; the sender will not send
 ;; any more data
@@ -259,7 +271,8 @@
 
 (defobject-untaint
   OpenStream
-  AckStream
+  AcceptStream
+  RejectStream
   CloseStream
   ResetStream
   Data

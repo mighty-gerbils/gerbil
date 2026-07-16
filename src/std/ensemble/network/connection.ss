@@ -15,7 +15,7 @@
         :std/serde/unmarshal
         ../interface
         ../ucan/ext
-        ./types
+        ./base
         ./stream)
 (export new-connection)
 
@@ -215,7 +215,6 @@
         (conn.net.monitor.on-close-stream op.stream)
         (thread-send conn.output-thread
                      (ResetStream
-                      (connection-next-seqno! conn)
                       (op.stream.id)
                       (error-message op.error)))))))
 
@@ -223,8 +222,12 @@
                                             (conn : connection))
   (TODO connection-dispatch-input-open-stream))
 
-(def (connection-dispatch-input-ack-stream (msg  : AckStream)
-                                           (conn : connection))
+(def (connection-dispatch-input-accept-stream (msg  : AcceptStream)
+                                              (conn : connection))
+  (TODO connection-dispatch-input-ack-stream))
+
+(def (connection-dispatch-input-reject-stream (msg  : RejectStream)
+                                              (conn : connection))
   (TODO connection-dispatch-input-ack-stream))
 
 (def (connection-dispatch-input-close-stream (msg  : CloseStream)
@@ -259,8 +262,10 @@
    (dispatch! __connection-dispatch-stream-closed))
   (OpenStream
    (dispatch! __connection-dispatch-input-open-stream))
-  (AckStream
-   (dispatch! __connection-dispatch-input-ack-stream))
+  (AcceptStream
+   (dispatch! __connection-dispatch-input-accept-stream))
+  (RejectStream
+   (dispatch! __connection-dispatch-input-reject-stream))
   (CloseStream
    (dispatch! __connection-dispatch-input-close-stream))
   (ResetStream

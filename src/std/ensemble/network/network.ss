@@ -11,7 +11,7 @@
         :std/iter
         ../interface
         ../config
-        ./types
+        ./base
         ./connector
         ./listener)
 (export new-network)

@@ -8,7 +8,7 @@
         :std/net/ssl
         :std/net/address
         ../interface
-        ./types
+        ./base
         ./handshake)
 (export address-listen!)
 
