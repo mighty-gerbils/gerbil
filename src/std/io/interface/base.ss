@@ -29,7 +29,7 @@
   (read (u8v    : :u8vector)
         (start  :~ (in-range? 0 (u8vector-length u8v))               :- :fixnum :=  0)
         (end    :~ (in-range-inclusive? start (u8vector-length u8v)) :- :fixnum := (u8vector-length u8v))
-        (need   :~  nonnegative-fixnum?                              :- :fixnum :=  0))
+        (need   :~ (in-range-inclusive? 0 (fx- end start))           :- :fixnum :=  0))
   => :fixnum)
 
 
