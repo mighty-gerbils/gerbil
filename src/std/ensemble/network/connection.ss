@@ -15,6 +15,7 @@
         :std/serde/unmarshal
         ../interface
         ../ucan/ext
+        ../ucan/cap
         ./base
         ./stream)
 (export new-connection)
@@ -239,8 +240,8 @@
                            protocol: protocol
                            id: msg.stream-id)
                 (conn.net.monitor.on-open-stream s)
-                (completion-post! c s)
                 (conn.streams.set! msg.stream-id s)
+                (completion-post! c s)
                 (catch (e)
                   (log.debug "new stream rejected"
                              peer: conn.peer
@@ -281,7 +282,78 @@
 
 (def (connection-dispatch-input-open-stream (msg  : OpenStream)
                                             (conn : connection))
-  (TODO connection-dispatch-input-open-stream))
+  (def (valid-stream-id?)
+    (if (fx= conn.direction DIRECTION-IN)
+      (even? msg.stream-id)
+      (odd?  msg.stream-id)))
+
+  (def (existing-stream-id?)
+    (conn.streams.ref msg.stream-id #f))
+
+  (def (stream-authorized?)
+    (using (cap (conn.net.security.capability-context) : CapabilityContext)
+      (let loop ((rest msg.auth))
+        (match rest
+          ([token . rest]
+           (using (token : Token)
+             (or (and (!VerificationOK? (cap.verify token conn.net.host.did))
+                    (equal? token.type INVOKE)
+                    (equal? token.issuer conn.peer.did)
+                    (equal? token.audience conn.net.host.did)
+                    (capability-includes? token.method msg.protocol))
+               (loop rest))))
+          (else #f)))))
+
+  (def (reject! reason)
+    (log.debug "rejecting stream"
+               peer: conn.peer
+               protocol: msg.protocol
+               reason: reason)
+    (thread-send conn.output-thread
+                 (RejectStream msg.stream-id
+                               msg.seqno
+                               reason)))
+  (def (accept!)
+    (log.debug "accepting stream"
+               peer: conn.peer
+               protocol: msg.protocol)
+    (thread-send conn.output-thread
+                 (AcceptStream msg.stream-id
+                               msg.seqno
+                               conn.net.limits.network.stream-window
+                               conn.net.limits.network.message-size)))
+
+  (unless conn.closed?
+    (log.debug "incoming open steam"
+             peer: conn.peer
+             protocol: msg.protocol)
+    (cond
+     ((not (valid-stream-id?))
+      (reject! "invalid stream id"))
+     ((existing-stream-id?)
+      (reject! "duplicate stream id"))
+     ((not (stream-authorized?))
+      (reject! "not authorized"))
+     (else
+      (let (s (new-stream conn msg.protocol DIRECTION-OUT
+                          msg.stream-id
+                          msg.window-size
+                          msg.message-size))
+        (try
+         (log.debug "new stream"
+                    peer: conn.peer
+                    protocol: msg.protocol
+                    id: msg.stream-id)
+         (conn.net.monitor.on-open-stream s)
+         (conn.streams.set! msg.stream-id s)
+         (accept!)
+         (catch (e)
+           (log.debug "new stream rejected"
+                      peer: conn.peer
+                      protocol: msg.protocol
+                      id: msg.stream-id
+                      exception: (exception->string e))
+           (reject! (error-message e)))))))))
 
 (def (connection-dispatch-input-reset-stream (msg  : ResetStream)
                                              (conn : connection))
