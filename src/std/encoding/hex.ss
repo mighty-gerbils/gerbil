@@ -7,10 +7,10 @@
         hex-decode-byte hex-decode-nibble
         hex unhex unhex*)
 
-(module <hex>
+(module static-hex
   (export #t)
   (def hexes "0123456789abcdef"))
-(import <hex> (for-syntax <hex>))
+(import static-hex (for-syntax static-hex))
 
 (def (hex-encode (bytes  : :u8vector)
                  (start  :~ (in-range? 0 (fxmax (u8vector-length bytes) 1))
