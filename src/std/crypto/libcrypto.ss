@@ -466,7 +466,7 @@ END-C
 (def-C-lambda EVP_PKEY_new_raw_public_key (int ENGINE* scheme-object) EVP_PKEY* "ffi_EVP_PKEY_new_raw_public_key")
 (def-C-lambda EVP_PKEY_get_raw_private_key (EVP_PKEY* scheme-object) int "ffi_EVP_PKEY_get_raw_private_key")
 (def-C-lambda EVP_PKEY_get_raw_public_key (EVP_PKEY* scheme-object) int "ffi_EVP_PKEY_get_raw_public_key")
-(def-C-lambda EVP_PKEY_type (EVP_PKEY*) integer "EVP_PKEY_get_base_id")
+(def-C-lambda EVP_PKEY_type (EVP_PKEY*) int "EVP_PKEY_get_base_id")
 
 (def-C-lambda EVP_DigestSignInit (EVP_MD_CTX* EVP_PKEY*) int "ffi_EVP_DigestSignInit")
 (def-C-lambda EVP_DigestSign (EVP_MD_CTX* scheme-object scheme-object) int "ffi_EVP_DigestSign")

@@ -437,6 +437,11 @@ static SSL_CTX *ffi_self_signed_tls_ctx(EVP_PKEY *pkey, char *hostname)
   goto error;
  }
 
+ r = SSL_CTX_set_min_proto_version(ctx, TLS1_3_VERSION);
+  if (r <= 0) {
+   goto error;
+ }
+
  x509 = X509_new();
  if (!x509) {
   goto error;
