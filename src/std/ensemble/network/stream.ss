@@ -373,10 +373,10 @@
   (stream-control-receive-data s data))
 
 (defcall-interface-method StreamControl close-input
-  (stream-control-close-input s data))
+  (stream-control-close-input s))
 
 (defcall-interface-method StreamControl window-update
-  (stream-control-window-update s data))
+  (stream-control-window-update s update))
 
 (implement StreamControl stream
   (receive-data

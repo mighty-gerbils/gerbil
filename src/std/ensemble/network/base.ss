@@ -247,19 +247,19 @@
 ;; open a new outgoing stream
 ;; response is AckStream or ResetStream
 (defstruct (OpenStream MuxMessage)
-  ((seqno     : :integer)
-   (protocol  : :string)
-   (auth      :~ (list-of? Token?)
-              :- :list)
-   (stream-window : :fixnum)
-   (message-size  : :fixnum))
+  ((seqno        : :integer)
+   (protocol     : :string)
+   (auth         :~ (list-of? Token?)
+                 :- :list)
+   (window-size  : :fixnum)
+   (message-size : :fixnum))
   final: #t)
 
 ;; accept new stream and provide limits
 (defstruct (AcceptStream MuxMessage)
-  ((seqno     : :integer)
-   (stream-window : :fixnum)
-   (message-size  : :fixnum)))
+  ((seqno        : :integer)
+   (window-size  : :fixnum)
+   (message-size : :fixnum)))
 
 ;; reject new stream and provide reason
 (defstruct (RejectStream MuxMessage)
@@ -286,7 +286,7 @@
 
 ;; receiver window update
 (defstruct (WindowUpdate MuxMessage)
-  ((window-update : :integer))
+  ((update : :integer))
   final: #t)
 
 (defobject-untaint

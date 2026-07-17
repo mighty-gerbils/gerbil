@@ -132,6 +132,15 @@
         (connection-control-dispatch! op conn)
         (loop)))))
 
+(def (connection-dispatch-io-error (op   : ConnectionIOError)
+                                   (conn : connection))
+  (unless conn.closed?
+    (unless (Closed? op.error)
+      (log.debug "connection error"
+                 peer: conn.peer
+                 exception: (exception->string op.error)))
+    (connection-dispatch-close (ConnectionClose) conn)))
+
 (def (connection-dispatch-close (op   : ConnectionClose)
                                 (conn : connection))
   (unless conn.closed?
@@ -149,14 +158,21 @@
         (thread-send thread 'closed)))
     (conn.pending.clear!)))
 
-(def (connection-dispatch-io-error (op   : ConnectionIOError)
-                                   (conn : connection))
+(def (connection-dispatch-stream-closed (op   : ConnectionStreamClosed)
+                                        (conn : connection))
   (unless conn.closed?
-    (unless (Closed? op.error)
-      (log.debug "connection error"
-                 peer: conn.peer
-                 exception: (exception->string op.error)))
-    (connection-dispatch-close (ConnectionClose) conn)))
+    (alet (s (conn.streams.ref (op.stream.id) #f))
+      (when (eq? s op.stream)
+        (log.debug "stream closed"
+                   peer: conn.peer
+                   id: (op.stream.id)
+                   exception: (exception->string op.error))
+        (conn.streams.delete! (op.stream.id))
+        (conn.net.monitor.on-close-stream op.stream)
+        (thread-send conn.output-thread
+                     (ResetStream
+                      (op.stream.id)
+                      (error-message op.error)))))))
 
 (def (connection-dispatch-open-stream (op   : ConnectionOpenStream)
                                       (conn : connection))
@@ -185,7 +201,7 @@
            (thread
             (spawn/net (cut connection-open-stream-timeout conn seqno expire)
                        'timeout conn.net)))
-      (conn.pending.set! seqno (cons op.completion thread))
+      (conn.pending.set! seqno [op.completion op.protocol thread])
       (thread-send conn.output-thread msg))))
 
 (def (connection-open-stream-timeout (conn   : connection)
@@ -198,52 +214,130 @@
                                               (conn : connection))
   (unless conn.closed?
     (alet (entry (conn.pending.ref op.seqno #f))
-      (with ([c . _] entry)
+      (conn.pending.delete! op.seqno)
+      (with ([c protocol . _] entry)
+        (log.debug "open stream time out"
+                   peer: conn.peer
+                   protocol: protocol)
         (completion-error! c (Timeout "open stream timeout"))))))
 
-(def (connection-dispatch-stream-closed (op   : ConnectionStreamClosed)
-                                        (conn : connection))
+(def (connection-dispatch-input-accept-stream (msg  : AcceptStream)
+                                              (conn : connection))
   (unless conn.closed?
-    (alet (s (conn.streams.ref (op.stream.id) #f))
-      (when (eq? s op.stream)
-        (log.debug "stream closed"
-                   peer: conn.peer
-                   id: (op.stream.id)
-                   exception: (exception->string op.error))
-        (conn.streams.delete! (op.stream.id))
-        (conn.net.monitor.on-close-stream op.stream)
-        (thread-send conn.output-thread
-                     (ResetStream
-                      (op.stream.id)
-                      (error-message op.error)))))))
+    (cond
+     ((conn.pending.ref msg.seqno #f)
+      => (lambda (entry)
+           (conn.pending.delete! msg.seqno)
+           (with ([c protocol thread] entry)
+             (let (s (new-stream conn protocol DIRECTION-OUT
+                                 msg.stream-id
+                                 msg.window-size
+                                 msg.message-size))
+               (try
+                (log.debug "new stream"
+                           peer: conn.peer
+                           protocol: protocol
+                           id: msg.stream-id)
+                (conn.net.monitor.on-open-stream s)
+                (completion-post! c s)
+                (conn.streams.set! msg.stream-id s)
+                (catch (e)
+                  (log.debug "new stream rejected"
+                             peer: conn.peer
+                             protocol: protocol
+                             id: msg.stream-id
+                             exception: (exception->string e))
+                  (thread-send conn.output-thread
+                               (ResetStream
+                                (msg.stream-id)
+                                (error-message e))))
+                (finally
+                 (thread-send thread 'done)))))))
+     (else
+      (log.debug "accept for uknown stream"
+                 peer: conn.peer
+                 stream: msg.stream-id
+                 seqno: msg.seqno)))))
+
+(def (connection-dispatch-input-reject-stream (msg  : RejectStream)
+                                              (conn : connection))
+  (unless conn.closed?
+    (cond
+     ((conn.pending.ref msg.seqno #f)
+      => (lambda (entry)
+           (conn.pending.delete! msg.seqno)
+           (with ([c protocol thread] entry)
+             (log.debug "stream rejected"
+                        peer: conn.peer
+                        protocol: protocol
+                        reason: msg.reason)
+             (completion-error! c (IOError "stream rejected" reason: msg.reason))
+             (thread-send thread 'done))))
+     (else
+      (log.debug "reject for uknown stream"
+                 peer: conn.peer
+                 stream: msg.stream-id
+                 seqno: msg.seqno)))))
 
 (def (connection-dispatch-input-open-stream (msg  : OpenStream)
                                             (conn : connection))
   (TODO connection-dispatch-input-open-stream))
 
-(def (connection-dispatch-input-accept-stream (msg  : AcceptStream)
-                                              (conn : connection))
-  (TODO connection-dispatch-input-ack-stream))
-
-(def (connection-dispatch-input-reject-stream (msg  : RejectStream)
-                                              (conn : connection))
-  (TODO connection-dispatch-input-ack-stream))
+(def (connection-dispatch-input-reset-stream (msg  : ResetStream)
+                                             (conn : connection))
+  (unless conn.closed?
+    (cond
+     ((conn.streams.ref msg.stream-id #f)
+      => (lambda ((s :- Stream))
+           (log.debug "stream reset"
+                      peer: conn.peer
+                      stream: msg.stream-id)
+           (conn.streams.delete! msg.stream-id)
+           (ignore-errors (s.close))
+           (conn.net.monitor.on-close-stream s)))
+     (else
+      (log.debug "reset for uknown stream"
+                 peer: conn.peer
+                 stream: msg.stream-id)))))
 
 (def (connection-dispatch-input-close-stream (msg  : CloseStream)
                                              (conn : connection))
-  (TODO connection-dispatch-input-close-stream))
-
-(def (connection-dispatch-input-reset-stream (msg  : ResetStream)
-                                             (conn : connection))
-  (TODO connection-dispatch-input-reset-stream))
+  (unless conn.closed?
+    (cond
+     ((conn.streams.ref msg.stream-id #f)
+      => (lambda (s)
+           (log.debug "stream input closed"
+                      peer: conn.peer
+                      stream: msg.stream-id)
+           (stream-control-close-input s)))
+     (else
+      (log.debug "close for uknown stream"
+                 peer: conn.peer
+                 stream: msg.stream-id)))))
 
 (def (connection-dispatch-input-data (msg  : Data)
                                      (conn : connection))
-  (TODO connection-dispatch-input-data))
+  (unless conn.closed?
+    (cond
+     ((conn.streams.ref msg.stream-id #f)
+      => (lambda (s)
+           (stream-control-receive-data s msg.data)))
+     (else
+      (log.debug "data for uknown stream"
+                 peer: conn.peer
+                 stream: msg.stream-id)))))
 
 (def (connection-dispatch-input-window-update (msg  : WindowUpdate)
                                               (conn : connection))
-  (TODO connection-dispatch-input-window-update))
+  (unless conn.closed?
+    (cond
+     ((conn.streams.ref msg.stream-id #f)
+      => (lambda (s)
+           (stream-control-window-update s msg.update)))
+     (else
+      (log.debug "window update for uknown stream"
+                 peer: conn.peer
+                 stream: msg.stream-id)))))
 
 (defcall-interface-method ConnectionControlDispatch dispatch!
   (connection-control-dispatch! op conn))
