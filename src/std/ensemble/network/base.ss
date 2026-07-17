@@ -217,6 +217,12 @@
 (defstruct (NetworkConnect NetworkSync)
   ((peer : HostAddress)))
 
+(defstruct (NetworkListPeers NetworkSync) ())
+(defstruct (NetworkListConnections NetworkSync) ())
+(defstruct (NetworkPeerConnection NetworkSync)
+  ((host : HostID)))
+(defstruct (NetworkListListeners NetworkSync) ())
+
 (defstruct (NetworkConnectComplete NetworkOp)
   ((peer : HostAddress)
    (conn : Connection)))

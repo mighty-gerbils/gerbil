@@ -199,6 +199,36 @@
       (ignore-errors (l.close)))
     (net.listeners.clear!)))
 
+(def (network-dispatch-list-peers (op : NetworkListPeers) (net : network))
+  (if net.closed?
+    (completion-error! op.completion (Closed "network closed"))
+    (completion-post! op.completion
+                      (foldl
+                        (lambda (h r)
+                          (if (member h r) r (cons h r)))
+                        (hash-keys net.outgoing)
+                        (hash-keys net.incoming)))))
+
+(def (network-dispatch-list-connections (op : NetworkListConnections) (net : network))
+  (if net.closed?
+    (completion-error! op.completion (Closed "network closed"))
+    (completion-post! op.completion
+                      (append (hash-values net.outgoing)
+                              (hash-values net.incoming)))))
+
+(def (network-dispatch-peer-connection (op : NetworkPeerConnection) (net : network))
+  (if net.closed?
+    (completion-error! op.completion (Closed "network closed"))
+    (completion-post! op.completion
+                      (or (net.outgoing.ref op.host #f)
+                          (net.incoming.ref op.host #f)))))
+
+(def (network-dispatch-list-listeners (op : NetworkListListeners) (net : network))
+  (if net.closed?
+    (completion-error! op.completion (Closed "network closed"))
+    (completion-post! op.completion
+                      (hash-keys net.listeners))))
+
 (def (network-connect1 (self : network)
                        (peer : HostAddress))
   => Connection
@@ -294,23 +324,36 @@
   (NetworkConnectionClosed
    (dispatch! __network-dispatch-connection-closed))
   (NetworkClose
-   (dispatch! __network-dispatch-close)))
+   (dispatch! __network-dispatch-close))
+  (NetworkListPeers
+   (dispatch! __network-dispatch-list-peers))
+  (NetworkListConnections
+   (dispatch! __network-dispatch-list-connections))
+  (NetworkPeerConnection
+   (dispatch! __network-dispatch-peer-connection))
+  (NetworkListListeners
+   (dispatch! __network-dispatch-list-listeners)))
 
 (implement Closer network
   (close __network-close))
 
+(defrule (with-network-sync net (op arg ...) result)
+  (let (c (Completion 'network-sync))
+    (thread-send (network-thread net) (op c arg ...))
+    (: (completion-wait! c) result)))
+
 (implement Network network
   (peers
    (lambda (self)
-     (TODO peers)))
+     (with-network-sync self (NetworkListPeers) :list)))
   (connections
    (lambda (self)
-     (TODO connections)))
+     (with-network-sync self (NetworkListConnections) :list)))
   (peer-connection
    (lambda (self host)
-     (TODO peer-connection)))
+     (with-network-sync self (NetworkPeerConnection host) Connection)))
   (listening
    (lambda (self)
-     (TODO listening)))
+     (with-network-sync self (NetworkListListeners) :list)))
   (connect!     __network-connect!)
   (listen!      __network-listen!))
