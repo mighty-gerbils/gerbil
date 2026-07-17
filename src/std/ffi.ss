@@ -291,7 +291,8 @@ END-C
         (or (stx-string? #'c-release)
             (not (stx-e #'c-release))))
    (with-identifiers ((name* #'name #'name "*")
-                      (name? #'name #'name "?"))
+                      (name? #'name #'name "?")
+                      (provide-name #'name "provide-" #'name))
      (with-syntax (((release ...)
                     (if (stx-e #'c-release)
                       #'(c-release)
@@ -301,8 +302,12 @@ END-C
              (and (foreign? o)
                   (memq 'name* (foreign-tags o))))
            (begin-foreign
-             (c-define-type name c-type)
-             (c-define-type name* (pointer name (name*) release ...)))))))
+             (cond-expand
+               (provide-name)
+               (else
+                (define-cond-expand-feature provide-name)
+                (c-define-type name c-type)
+                (c-define-type name* (pointer name (name*) release ...)))))))))
   ((_ name c-type)
    (and (identifier? #'name)
         (stx-string? #'c-type))

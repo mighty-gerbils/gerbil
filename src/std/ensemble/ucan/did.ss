@@ -22,6 +22,18 @@
          (bytes (private-key->public-bytes privk)))
     (public-key-bytes->did code bytes)))
 
+(def (public-key->did (pubk : PubKey))
+  => :string
+  (let* ((type pubk.type)
+         (code
+          (cond
+           ((fx= type EVP_PKEY_ED25519)
+            DID-KEY-ED25519)
+           (else
+            (raise-bad-argument private-key->did "unknown key type" type))))
+         (bytes (public-key->bytes pubk)))
+    (public-key-bytes->did code bytes)))
+
 (def (public-key-bytes->did (code  : :fixnum)
                             (bytes : :u8vector))
   => :string

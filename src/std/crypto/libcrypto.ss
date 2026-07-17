@@ -177,17 +177,22 @@ static int ffi_BN_bn2bin (BIGNUM *bn, ___SCMOBJ data)
 }
 
 /* pkey */
+#ifndef ___GERBIL_FFI_RELEASE_PKEY
 static ___SCMOBJ ffi_release_EVP_PKEY (void *ptr)
 {
   EVP_PKEY_free ((EVP_PKEY*)ptr);
   return ___FIX (___NO_ERR);
 }
+#endif
+
 static ___SCMOBJ ffi_release_EVP_PKEY_CTX (void *ptr)
 {
   EVP_PKEY_CTX_free ((EVP_PKEY_CTX*)ptr);
   return ___FIX (___NO_ERR);
 }
-static EVP_PKEY* ffi_EVP_PKEY_keygen (EVP_PKEY_CTX* ctx) {
+
+static EVP_PKEY* ffi_EVP_PKEY_keygen (EVP_PKEY_CTX* ctx)
+{
   EVP_PKEY* pkey = NULL;
   if (EVP_PKEY_keygen(ctx, &pkey) == 1) {
     return pkey;
@@ -195,6 +200,7 @@ static EVP_PKEY* ffi_EVP_PKEY_keygen (EVP_PKEY_CTX* ctx) {
     return NULL;
   }
 }
+
 static EVP_PKEY *ffi_EVP_PKEY_new_raw_private_key (int type, ENGINE* e, ___SCMOBJ o)
 {
   return EVP_PKEY_new_raw_private_key(type, e, U8_DATA(o), (size_t)U8_LEN(o));
@@ -460,6 +466,7 @@ END-C
 (def-C-lambda EVP_PKEY_new_raw_public_key (int ENGINE* scheme-object) EVP_PKEY* "ffi_EVP_PKEY_new_raw_public_key")
 (def-C-lambda EVP_PKEY_get_raw_private_key (EVP_PKEY* scheme-object) int "ffi_EVP_PKEY_get_raw_private_key")
 (def-C-lambda EVP_PKEY_get_raw_public_key (EVP_PKEY* scheme-object) int "ffi_EVP_PKEY_get_raw_public_key")
+(def-C-lambda EVP_PKEY_type (EVP_PKEY*) integer "EVP_PKEY_get_base_id")
 
 (def-C-lambda EVP_DigestSignInit (EVP_MD_CTX* EVP_PKEY*) int "ffi_EVP_DigestSignInit")
 (def-C-lambda EVP_DigestSign (EVP_MD_CTX* scheme-object scheme-object) int "ffi_EVP_DigestSign")

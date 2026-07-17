@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; libssl FFI
-(export #t)
+(export (except-out #t EVP_PKEY?))
 (import :std/ffi
         (runtime: :std/crypto/libcrypto))
 
@@ -255,7 +255,7 @@ static int ffi_ssl_verify_actor(int preverify, X509_STORE_CTX *ctx)
 
 
 __thread char openssl_x509_name_buf[16384];
-static char *ffi_X509_get_subject_name(X509 *cert)
+static char *ffi_X509_get_common_name(X509 *cert)
 {
  X509_NAME *name = X509_get_subject_name(cert);
  if (!name) {
@@ -401,6 +401,92 @@ static SSL_CTX *ffi_actor_tls_ctx(const char *caroot, const char *ca_file, const
  return ctx;
 }
 
+static int ffi_ssl_verify_self_signed(int preverify, X509_STORE_CTX *ctx)
+{
+ if (preverify) {
+  return 1;
+ }
+
+ X509 *cert = X509_STORE_CTX_get_current_cert(ctx);
+
+ int err = X509_STORE_CTX_get_error(ctx);
+ int depth = X509_STORE_CTX_get_error_depth(ctx);
+ if (err == X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT && depth == 0) {
+  if (X509_self_signed(cert, 0) == 1) {
+   X509_STORE_CTX_set_error(ctx, X509_V_OK);
+   return 1;
+  }
+ }
+
+ return 0;
+}
+
+static SSL_CTX *ffi_self_signed_tls_ctx(EVP_PKEY *pkey, char *hostname)
+{
+ int r;
+ X509 *x509 = NULL;
+ X509_NAME * name;
+
+ SSL_CTX *ctx = SSL_CTX_new(TLS_method());
+ if (!ctx) {
+  return NULL;
+ }
+
+ r = SSL_CTX_use_PrivateKey(ctx, pkey);
+ if (r <= 0) {
+  goto error;
+ }
+
+ x509 = X509_new();
+ if (!x509) {
+  goto error;
+ }
+
+ X509_set_pubkey(x509, pkey);
+ X509_gmtime_adj(X509_get_notBefore(x509), 0);
+ X509_gmtime_adj(X509_get_notAfter(x509), 3153600000L);
+
+ name = X509_get_subject_name(x509);
+ X509_NAME_add_entry_by_txt(name, "CN", MBSTRING_ASC,
+                           (unsigned char *)hostname,
+                           -1, -1, 0);
+ X509_NAME_add_entry_by_txt(name, "C",  MBSTRING_ASC,
+                           (unsigned char *)"UN", -1, -1, 0);
+ X509_NAME_add_entry_by_txt(name, "O",  MBSTRING_ASC,
+                           (unsigned char *)"Mighty Gerbils", -1, -1, 0);
+ X509_NAME_add_entry_by_txt(name, "L",  MBSTRING_ASC,
+                           (unsigned char *)"Internet", -1, -1, 0);
+ X509_set_issuer_name(x509, name);
+
+ X509_sign(x509, pkey, EVP_sha256());
+
+ r = SSL_CTX_use_certificate(ctx, x509);
+ if (r <= 0) {
+  goto error;
+ }
+
+ SSL_CTX_set_verify(ctx, SSL_VERIFY_PEER|SSL_VERIFY_FAIL_IF_NO_PEER_CERT|0, ffi_ssl_verify_self_signed);
+
+ return ctx;
+
+error:
+ ERR_print_errors_fp(stderr);
+ SSL_CTX_free(ctx);
+ if (x509) {
+  X509_free(x509);
+ }
+ return NULL;
+}
+
+
+#ifndef ___GERBIL_FFI_RELEASE_PKEY
+static ___SCMOBJ ffi_release_EVP_PKEY (void *ptr)
+{
+  EVP_PKEY_free ((EVP_PKEY*)ptr);
+  return ___FIX (___NO_ERR);
+}
+#endif
+
 END-C
 )
 
@@ -436,6 +522,12 @@ END-C
 (def-C-lambda make-server-ssl-context/v (char-string char-string int) SSL_CTX* "ffi_server_ssl_ctx")
 (def-C-lambda make-actor-tls-context (char-string char-string char-string char-string char-string) SSL_CTX* "ffi_actor_tls_ctx")
 
-(def-C-lambda X509_get_subject_name (X509*) char-string "ffi_X509_get_subject_name")
+;; aliased from libcrypto
+(def-C-type/pointer EVP_PKEY release: "ffi_release_EVP_PKEY")
+
+(def-C-lambda make-self-signed-tls-context (EVP_PKEY* char-string) SSL_CTX* "ffi_self_signed_tls_ctx")
+
+(def-C-lambda X509_get_pubkey (X509*) EVP_PKEY*)
+(def-C-lambda X509_get_common_name (X509*) char-string "ffi_X509_get_common_name")
 (def-C-lambda X509_get_san_uris (X509*) char-string "ffi_X509_get_san_uris")
 (def-C-lambda X509_read (char-string) X509* "ffi_X509_read")
