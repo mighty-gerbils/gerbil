@@ -9,7 +9,10 @@ namespace: gerbil/core/sugar
          (%#export
           (import: (in: #f Sugar-1))
           (import: (in: #f Sugar-2))
-          (import: (in: #f Sugar-3)))
+          (import: (in: #f Sugar-3))
+          (import: (in: #f QuasiquoteRuntime))
+          (import: (in: #f Quasiquote)))
+         (%#export #t)
          (%#module
           Sugar-1
           (%#begin (%#export #t)
@@ -99,9 +102,6 @@ namespace: gerbil/core/sugar
                     @list
                     |gerbil/core/sugar~Sugar-2[:0:]#@list|)
                    (%#define-syntax
-                    quasiquote
-                    |gerbil/core/sugar~Sugar-2[:0:]#quasiquote|)
-                   (%#define-syntax
                     delay
                     |gerbil/core/sugar~Sugar-2[:0:]#delay|)
                    (%#define-syntax
@@ -132,4 +132,63 @@ namespace: gerbil/core/sugar
                    (%#define-syntax
                     defconst
                     |gerbil/core/sugar~Sugar-3[:0:]#defconst|)))
-         (%#import (in: #f Sugar-1) (in: #f Sugar-2) (in: #f Sugar-3)))
+         (%#module
+          QuasiquoteRuntime
+          (%#begin (%#export #t)
+                   (%#import (in: #f Sugar-1))
+                   (%#begin (%#begin-syntax
+                             (%#call (%#ref load-module)
+                                     (%#quote "gerbil/core/sugar~4")))
+                            (%#define-syntax
+                             qq-quote
+                             |gerbil/core/sugar~QuasiquoteRuntime[:0:]#qq-quote|))
+                   (%#define-syntax
+                    qq-list
+                    |gerbil/core/sugar~QuasiquoteRuntime[:0:]#qq-list|)
+                   (%#define-syntax
+                    qq-list*
+                    |gerbil/core/sugar~QuasiquoteRuntime[:0:]#qq-list*|)
+                   (%#define-syntax
+                    qq-append
+                    |gerbil/core/sugar~QuasiquoteRuntime[:0:]#qq-append|)))
+         (%#module
+          QuasiquoteExpander
+          (%#begin (%#export (spec: 0 quasiquote-expand quasiquote-expand))
+                   (%#import
+                    (phi: -1 (in: #f QuasiquoteRuntime))
+                    (in: #f Sugar-1)
+                    (in: #f Sugar-2)
+                    :gerbil/core/expander)
+                   (%#define-runtime
+                    quasiquote-expand-0
+                    gerbil/core/sugar~QuasiquoteExpander#quasiquote-expand-0)
+                   (%#define-runtime
+                    unquote-expand
+                    gerbil/core/sugar~QuasiquoteExpander#unquote-expand)
+                   (%#define-runtime
+                    quasiquote-expand-1
+                    gerbil/core/sugar~QuasiquoteExpander#quasiquote-expand-1)
+                   (%#define-runtime
+                    quasiquote-expand
+                    gerbil/core/sugar~QuasiquoteExpander#quasiquote-expand))
+          (%#call (%#ref load-module)
+                  (%#quote "gerbil/core/sugar~QuasiquoteExpander~0")))
+         (%#module
+          Quasiquote
+          (%#begin (%#export (spec: 0 quasiquote quasiquote))
+                   (%#import
+                    (phi: 1 (in: #f Sugar-1))
+                    (phi: 1 (in: #f Sugar-2))
+                    (phi: 1 (in: #f QuasiquoteExpander)))
+                   (%#begin (%#begin-syntax
+                             (%#call (%#ref load-module)
+                                     (%#quote "gerbil/core/sugar~5")))
+                            (%#define-syntax
+                             quasiquote
+                             |gerbil/core/sugar~Quasiquote[:0:]#quasiquote|))))
+         (%#import
+          (in: #f Sugar-1)
+          (in: #f Sugar-2)
+          (in: #f Sugar-3)
+          (in: #f QuasiquoteRuntime)
+          (in: #f Quasiquote)))

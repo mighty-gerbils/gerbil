@@ -1,22 +1,22 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/common::timestamp 1783878476)
+  (define gerbil/expander/common::timestamp 1784279015)
   (begin
     (define gx#AST::t
-      (let ((__tmp178188 (list))
-            (__tmp178187 (cons (cons 'struct: '#t) '((print: e)))))
+      (let ((__tmp180980 (list))
+            (__tmp180979 (cons (cons 'struct: '#t) '((print: e)))))
         (declare (not safe))
         (__make-class-type
          'gerbil#AST::t
          'syntax
-         __tmp178188
+         __tmp180980
          '(e source)
-         __tmp178187
+         __tmp180979
          '#f)))
     (define gx#AST?
       (let () (declare (not safe)) (__make-class-predicate gx#AST::t)))
     (define gx#make-AST
-      (lambda _%$args178086%_ (apply make-instance gx#AST::t _%$args178086%_)))
+      (lambda _%$args180878%_ (apply make-instance gx#AST::t _%$args180878%_)))
     (define gx#AST-e
       (let () (declare (not safe)) (__make-class-slot-accessor gx#AST::t 'e)))
     (define gx#AST-source

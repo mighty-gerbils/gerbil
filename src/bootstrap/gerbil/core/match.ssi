@@ -12,6 +12,9 @@ namespace: gerbil/core/match
           (phi: 1 :gerbil/core/mop)
           (phi: 1 :gerbil/core/macro-object)
           (phi: 2 :gerbil/core/runtime))
+         (%#import
+          (in: :gerbil/core/sugar QuasiquoteRuntime)
+          (phi: 1 (in: :gerbil/core/sugar QuasiquoteExpander)))
          (%#export
           #t
           (spec: 1 match-macro match-macro)

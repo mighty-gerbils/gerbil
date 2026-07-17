@@ -4,7 +4,7 @@ package: gerbil/expander
 (begin
   (declare-type
    gx#*core-syntax-expanders*
-   (optimizer-resolve-class '(typedecl gx#*core-syntax-expanders*) 'pair::t))
+   (optimizer-resolve-class '(typedecl gx#*core-syntax-expanders*) 'list::t))
   (declare-type
    gx#*core-macro-expanders*
    (optimizer-resolve-class '(typedecl gx#*core-macro-expanders*) 'pair::t))

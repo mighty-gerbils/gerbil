@@ -1,14 +1,14 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/hash::timestamp 1783878475)
+  (define gerbil/runtime/hash::timestamp 1784279014)
   (begin
     (define UnboundKeyError::t
-      (let ((__tmp167209 (list Error::t)))
+      (let ((__tmp170006 (list Error::t)))
         (declare (not safe))
         (__make-class-type
          'UnboundKeyError::t
          'UnboundKeyError
-         __tmp167209
+         __tmp170006
          '()
          '()
          ':init!)))
@@ -17,8 +17,8 @@
         (declare (not safe))
         (__make-class-predicate UnboundKeyError::t)))
     (define make-UnboundKeyError
-      (lambda _%$args165873%_
-        (apply make-instance UnboundKeyError::t _%$args165873%_)))
+      (lambda _%$args168670%_
+        (apply make-instance UnboundKeyError::t _%$args168670%_)))
     (define UnboundKeyError-message
       (let ()
         (declare (not safe))
@@ -96,44 +96,44 @@
        UnboundKeyError:::init!
        '#f))
     (define raise-unbound-key-error
-      (lambda (_%where165747%_ _%message165748%_ . _%irritants165749%_)
-        (let ((__tmp167210
-               (let ((__obj167201
+      (lambda (_%where168544%_ _%message168545%_ . _%irritants168546%_)
+        (let ((__tmp170007
+               (let ((__obj169998
                       (let ()
                         (declare (not safe))
                         (##structure UnboundKeyError::t '#f '#f '#f '#f))))
                  (let ()
                    (declare (not safe))
                    (UnboundKeyError:::init!
-                    __obj167201
-                    _%message165748%_
+                    __obj169998
+                    _%message168545%_
                     'where:
-                    _%where165747%_
+                    _%where168544%_
                     'irritants:
-                    _%irritants165749%_))
-                 __obj167201)))
+                    _%irritants168546%_))
+                 __obj169998)))
           (declare (not safe))
-          (raise __tmp167210))))
+          (raise __tmp170007))))
     (define unbound-key-error? UnboundKeyError?)
     (define HashTable::t
-      (let ((__tmp167211 (cons interface-instance::t '())))
+      (let ((__tmp170008 (cons interface-instance::t '())))
         (declare (not safe))
         (__make-class-type
          'HashTable::t
          'HashTable
-         __tmp167211
+         __tmp170008
          '(clear! copy delete! for-each length new ref set! update!)
          '((final: . #t) (struct: . #t))
          '#f)))
     (define HashTable::interface
-      (let ((__obj167203
+      (let ((__obj170000
              (let ()
                (declare (not safe))
                (##structure interface-descriptor::t '#f '#f '#f))))
         (let ()
           (declare (not safe))
           (interface-descriptor:::init!
-           __obj167203
+           __obj170000
            HashTable::t
            '((HashTable::clear! clear!)
              (HashTable::copy copy)
@@ -144,7 +144,7 @@
              (HashTable::ref ref)
              (HashTable::set! set!)
              (HashTable::update! update!))))
-        __obj167203))
+        __obj170000))
     (let ()
       (declare (not safe))
       (__class-type-properties-put!
@@ -152,308 +152,308 @@
        'interface-descriptor:
        HashTable::interface))
     (define make-HashTable
-      (lambda (_%obj165745%_)
+      (lambda (_%obj168542%_)
         (let ()
           (declare (not safe))
-          (cast HashTable::interface _%obj165745%_))))
+          (cast HashTable::interface _%obj168542%_))))
     (define try-HashTable
-      (lambda (_%obj165743%_)
+      (lambda (_%obj168540%_)
         (let ()
           (declare (not safe))
-          (try-cast HashTable::interface _%obj165743%_))))
+          (try-cast HashTable::interface _%obj168540%_))))
     (define HashTable?
-      (lambda (_%obj165741%_)
-        (let ((__tmp167212
+      (lambda (_%obj168538%_)
+        (let ((__tmp170009
                (let () (declare (not safe)) (##type-id HashTable::t))))
           (declare (not safe))
-          (##structure-direct-instance-of? _%obj165741%_ __tmp167212))))
+          (##structure-direct-instance-of? _%obj168538%_ __tmp170009))))
     (define is-HashTable?
-      (lambda (_%obj165738%_)
+      (lambda (_%obj168535%_)
         (if (let ()
               (declare (not safe))
-              (satisfies? HashTable::interface _%obj165738%_))
+              (satisfies? HashTable::interface _%obj168535%_))
             '#t
             '#f)))
     (define __HashTable-clear!
-      (lambda (_%self149591165721%_)
-        (let ((_%self149591165723%_ _%self149591165721%_))
+      (lambda (_%self152388168518%_)
+        (let ((_%self152388168520%_ _%self152388168518%_))
           (declare (not safe))
-          (let ((_%object165730165735%_
+          (let ((_%object168527168532%_
                  (##unchecked-structure-ref
-                  _%self149591165723%_
+                  _%self152388168520%_
                   '1
                   '#f
                   'clear!))
-                (_%method165731165736%_
+                (_%method168528168533%_
                  (##unchecked-structure-ref
-                  _%self149591165723%_
+                  _%self152388168520%_
                   '2
                   '#f
                   'clear!)))
-            (_%method165731165736%_ _%object165730165735%_)))))
+            (_%method168528168533%_ _%object168527168532%_)))))
     (define ::HashTable-clear!
-      (lambda (_%self149592165691%_)
-        (let* ((_%self149592165696%_
-                (let ((_%$obj165693%_ _%self149592165691%_))
+      (lambda (_%self152389168488%_)
+        (let* ((_%self152389168493%_
+                (let ((_%$obj168490%_ _%self152389168488%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj165693%_))
+                             (##structure? _%$obj168490%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj165693%_)))
+                                  (##structure-type _%$obj168490%_)))
                            '#t)
-                      _%$obj165693%_
+                      _%$obj168490%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj165693%_)))))
-               (_%self149592165698%_ _%self149592165696%_))
+                        (cast HashTable::interface _%$obj168490%_)))))
+               (_%self152389168495%_ _%self152389168493%_))
           (if __DEBUG
               (let ()
                 (declare (not safe))
-                (let ((_%object165706165711%_
+                (let ((_%object168503168508%_
                        (##unchecked-structure-ref
-                        _%self149592165698%_
+                        _%self152389168495%_
                         '1
                         '#f
                         'clear!))
-                      (_%method165707165712%_
+                      (_%method168504168509%_
                        (##unchecked-structure-ref
-                        _%self149592165698%_
+                        _%self152389168495%_
                         '2
                         '#f
                         'clear!)))
-                  (_%method165707165712%_ _%object165706165711%_)))
+                  (_%method168504168509%_ _%object168503168508%_)))
               (let ()
                 (declare (not safe))
-                (let ((_%object165713165718%_
+                (let ((_%object168510168515%_
                        (##unchecked-structure-ref
-                        _%self149592165698%_
+                        _%self152389168495%_
                         '1
                         '#f
                         'clear!))
-                      (_%method165714165719%_
+                      (_%method168511168516%_
                        (##unchecked-structure-ref
-                        _%self149592165698%_
+                        _%self152389168495%_
                         '2
                         '#f
                         'clear!)))
-                  (_%method165714165719%_ _%object165713165718%_)))))))
+                  (_%method168511168516%_ _%object168510168515%_)))))))
     (define __HashTable-copy
-      (lambda (_%self149836165674%_)
-        (let ((_%self149836165676%_ _%self149836165674%_))
+      (lambda (_%self152633168471%_)
+        (let ((_%self152633168473%_ _%self152633168471%_))
           (declare (not safe))
-          (let ((_%object165683165688%_
-                 (##unchecked-structure-ref _%self149836165676%_ '1 '#f 'copy))
-                (_%method165684165689%_
+          (let ((_%object168480168485%_
+                 (##unchecked-structure-ref _%self152633168473%_ '1 '#f 'copy))
+                (_%method168481168486%_
                  (##unchecked-structure-ref
-                  _%self149836165676%_
+                  _%self152633168473%_
                   '3
                   '#f
                   'copy)))
-            (_%method165684165689%_ _%object165683165688%_)))))
+            (_%method168481168486%_ _%object168480168485%_)))))
     (define ::HashTable-copy
-      (lambda (_%self149837165641%_)
-        (let* ((_%self149837165646%_
-                (let ((_%$obj165643%_ _%self149837165641%_))
+      (lambda (_%self152634168438%_)
+        (let* ((_%self152634168443%_
+                (let ((_%$obj168440%_ _%self152634168438%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj165643%_))
+                             (##structure? _%$obj168440%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj165643%_)))
+                                  (##structure-type _%$obj168440%_)))
                            '#t)
-                      _%$obj165643%_
+                      _%$obj168440%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj165643%_)))))
-               (_%self149837165648%_ _%self149837165646%_))
+                        (cast HashTable::interface _%$obj168440%_)))))
+               (_%self152634168445%_ _%self152634168443%_))
           (if __DEBUG
-              (let ((_%$obj165664%_
+              (let ((_%$obj168461%_
                      (let ()
                        (declare (not safe))
-                       (let ((_%object165656165661%_
+                       (let ((_%object168453168458%_
                               (##unchecked-structure-ref
-                               _%self149837165648%_
+                               _%self152634168445%_
                                '1
                                '#f
                                'copy))
-                             (_%method165657165662%_
+                             (_%method168454168459%_
                               (##unchecked-structure-ref
-                               _%self149837165648%_
+                               _%self152634168445%_
                                '3
                                '#f
                                'copy)))
-                         (_%method165657165662%_ _%object165656165661%_)))))
+                         (_%method168454168459%_ _%object168453168458%_)))))
                 (if (and (let ()
                            (declare (not safe))
-                           (##structure? _%$obj165664%_))
+                           (##structure? _%$obj168461%_))
                          (eq? HashTable::t
                               (let ()
                                 (declare (not safe))
-                                (##structure-type _%$obj165664%_)))
+                                (##structure-type _%$obj168461%_)))
                          '#t)
-                    _%$obj165664%_
+                    _%$obj168461%_
                     (let ()
                       (declare (not safe))
-                      (cast HashTable::interface _%$obj165664%_))))
+                      (cast HashTable::interface _%$obj168461%_))))
               (let ()
                 (declare (not safe))
-                (let ((_%object165666165671%_
+                (let ((_%object168463168468%_
                        (##unchecked-structure-ref
-                        _%self149837165648%_
+                        _%self152634168445%_
                         '1
                         '#f
                         'copy))
-                      (_%method165667165672%_
+                      (_%method168464168469%_
                        (##unchecked-structure-ref
-                        _%self149837165648%_
+                        _%self152634168445%_
                         '3
                         '#f
                         'copy)))
-                  (_%method165667165672%_ _%object165666165671%_)))))))
+                  (_%method168464168469%_ _%object168463168468%_)))))))
     (define __HashTable-delete!
-      (lambda (_%self150080165623%_ _%key165624%_)
-        (let ((_%self150080165626%_ _%self150080165623%_))
+      (lambda (_%self152877168420%_ _%key168421%_)
+        (let ((_%self152877168423%_ _%self152877168420%_))
           (declare (not safe))
-          (let ((_%object165633165638%_
+          (let ((_%object168430168435%_
                  (##unchecked-structure-ref
-                  _%self150080165626%_
+                  _%self152877168423%_
                   '1
                   '#f
                   'delete!))
-                (_%method165634165639%_
+                (_%method168431168436%_
                  (##unchecked-structure-ref
-                  _%self150080165626%_
+                  _%self152877168423%_
                   '4
                   '#f
                   'delete!)))
-            (_%method165634165639%_ _%object165633165638%_ _%key165624%_)))))
+            (_%method168431168436%_ _%object168430168435%_ _%key168421%_)))))
     (define ::HashTable-delete!
-      (lambda (_%self150081165592%_ _%key165593%_)
-        (let* ((_%self150081165598%_
-                (let ((_%$obj165595%_ _%self150081165592%_))
+      (lambda (_%self152878168389%_ _%key168390%_)
+        (let* ((_%self152878168395%_
+                (let ((_%$obj168392%_ _%self152878168389%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj165595%_))
+                             (##structure? _%$obj168392%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj165595%_)))
+                                  (##structure-type _%$obj168392%_)))
                            '#t)
-                      _%$obj165595%_
+                      _%$obj168392%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj165595%_)))))
-               (_%self150081165600%_ _%self150081165598%_))
+                        (cast HashTable::interface _%$obj168392%_)))))
+               (_%self152878168397%_ _%self152878168395%_))
           (if __DEBUG
               (let ()
                 (declare (not safe))
-                (let ((_%object165608165613%_
+                (let ((_%object168405168410%_
                        (##unchecked-structure-ref
-                        _%self150081165600%_
+                        _%self152878168397%_
                         '1
                         '#f
                         'delete!))
-                      (_%method165609165614%_
+                      (_%method168406168411%_
                        (##unchecked-structure-ref
-                        _%self150081165600%_
+                        _%self152878168397%_
                         '4
                         '#f
                         'delete!)))
-                  (_%method165609165614%_
-                   _%object165608165613%_
-                   _%key165593%_)))
+                  (_%method168406168411%_
+                   _%object168405168410%_
+                   _%key168390%_)))
               (let ()
                 (declare (not safe))
-                (let ((_%object165615165620%_
+                (let ((_%object168412168417%_
                        (##unchecked-structure-ref
-                        _%self150081165600%_
+                        _%self152878168397%_
                         '1
                         '#f
                         'delete!))
-                      (_%method165616165621%_
+                      (_%method168413168418%_
                        (##unchecked-structure-ref
-                        _%self150081165600%_
+                        _%self152878168397%_
                         '4
                         '#f
                         'delete!)))
-                  (_%method165616165621%_
-                   _%object165615165620%_
-                   _%key165593%_)))))))
+                  (_%method168413168418%_
+                   _%object168412168417%_
+                   _%key168390%_)))))))
     (define __HashTable-for-each
-      (lambda (_%self150324165566%_ _%proc165567%_)
-        (let* ((_%self150324165569%_ _%self150324165566%_)
-               (_%proc165576%_ _%proc165567%_))
+      (lambda (_%self153121168363%_ _%proc168364%_)
+        (let* ((_%self153121168366%_ _%self153121168363%_)
+               (_%proc168373%_ _%proc168364%_))
           (declare (not safe))
-          (let ((_%object165584165589%_
+          (let ((_%object168381168386%_
                  (##unchecked-structure-ref
-                  _%self150324165569%_
+                  _%self153121168366%_
                   '1
                   '#f
                   'for-each))
-                (_%method165585165590%_
+                (_%method168382168387%_
                  (##unchecked-structure-ref
-                  _%self150324165569%_
+                  _%self153121168366%_
                   '5
                   '#f
                   'for-each)))
-            (_%method165585165590%_ _%object165584165589%_ _%proc165576%_)))))
+            (_%method168382168387%_ _%object168381168386%_ _%proc168373%_)))))
     (define ::HashTable-for-each
-      (lambda (_%self150325165525%_ _%proc165526%_)
-        (let* ((_%self150325165531%_
-                (let ((_%$obj165528%_ _%self150325165525%_))
+      (lambda (_%self153122168322%_ _%proc168323%_)
+        (let* ((_%self153122168328%_
+                (let ((_%$obj168325%_ _%self153122168322%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj165528%_))
+                             (##structure? _%$obj168325%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj165528%_)))
+                                  (##structure-type _%$obj168325%_)))
                            '#t)
-                      _%$obj165528%_
+                      _%$obj168325%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj165528%_)))))
-               (_%self150325165533%_ _%self150325165531%_))
-          (if (procedure? _%proc165526%_)
-              (let ((_%proc165542%_ _%proc165526%_))
+                        (cast HashTable::interface _%$obj168325%_)))))
+               (_%self153122168330%_ _%self153122168328%_))
+          (if (procedure? _%proc168323%_)
+              (let ((_%proc168339%_ _%proc168323%_))
                 (if __DEBUG
                     (let ()
                       (declare (not safe))
-                      (let ((_%object165551165556%_
+                      (let ((_%object168348168353%_
                              (##unchecked-structure-ref
-                              _%self150325165533%_
+                              _%self153122168330%_
                               '1
                               '#f
                               'for-each))
-                            (_%method165552165557%_
+                            (_%method168349168354%_
                              (##unchecked-structure-ref
-                              _%self150325165533%_
+                              _%self153122168330%_
                               '5
                               '#f
                               'for-each)))
-                        (_%method165552165557%_
-                         _%object165551165556%_
-                         _%proc165542%_)))
+                        (_%method168349168354%_
+                         _%object168348168353%_
+                         _%proc168339%_)))
                     (let ()
                       (declare (not safe))
-                      (let ((_%object165558165563%_
+                      (let ((_%object168355168360%_
                              (##unchecked-structure-ref
-                              _%self150325165533%_
+                              _%self153122168330%_
                               '1
                               '#f
                               'for-each))
-                            (_%method165559165564%_
+                            (_%method168356168361%_
                              (##unchecked-structure-ref
-                              _%self150325165533%_
+                              _%self153122168330%_
                               '5
                               '#f
                               'for-each)))
-                        (_%method165559165564%_
-                         _%object165558165563%_
-                         _%proc165542%_)))))
+                        (_%method168356168361%_
+                         _%object168355168360%_
+                         _%proc168339%_)))))
               (begin
                 (raise-contract-violation-error
                  '"contract violation"
@@ -462,61 +462,61 @@
                  'contract:
                  'procedure?
                  'value:
-                 _%proc165526%_)
+                 _%proc168323%_)
                 '#!void)))))
     (define __HashTable-length
-      (lambda (_%self150568165508%_)
-        (let ((_%self150568165510%_ _%self150568165508%_))
+      (lambda (_%self153365168305%_)
+        (let ((_%self153365168307%_ _%self153365168305%_))
           (declare (not safe))
-          (let ((_%object165517165522%_
+          (let ((_%object168314168319%_
                  (##unchecked-structure-ref
-                  _%self150568165510%_
+                  _%self153365168307%_
                   '1
                   '#f
                   'length))
-                (_%method165518165523%_
+                (_%method168315168320%_
                  (##unchecked-structure-ref
-                  _%self150568165510%_
+                  _%self153365168307%_
                   '6
                   '#f
                   'length)))
-            (_%method165518165523%_ _%object165517165522%_)))))
+            (_%method168315168320%_ _%object168314168319%_)))))
     (define ::HashTable-length
-      (lambda (_%self150569165475%_)
-        (let* ((_%self150569165480%_
-                (let ((_%$obj165477%_ _%self150569165475%_))
+      (lambda (_%self153366168272%_)
+        (let* ((_%self153366168277%_
+                (let ((_%$obj168274%_ _%self153366168272%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj165477%_))
+                             (##structure? _%$obj168274%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj165477%_)))
+                                  (##structure-type _%$obj168274%_)))
                            '#t)
-                      _%$obj165477%_
+                      _%$obj168274%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj165477%_)))))
-               (_%self150569165482%_ _%self150569165480%_))
+                        (cast HashTable::interface _%$obj168274%_)))))
+               (_%self153366168279%_ _%self153366168277%_))
           (if __DEBUG
-              (let ((_%val165498%_
+              (let ((_%val168295%_
                      (let ()
                        (declare (not safe))
-                       (let ((_%object165490165495%_
+                       (let ((_%object168287168292%_
                               (##unchecked-structure-ref
-                               _%self150569165482%_
+                               _%self153366168279%_
                                '1
                                '#f
                                'length))
-                             (_%method165491165496%_
+                             (_%method168288168293%_
                               (##unchecked-structure-ref
-                               _%self150569165482%_
+                               _%self153366168279%_
                                '6
                                '#f
                                'length)))
-                         (_%method165491165496%_ _%object165490165495%_)))))
-                (if (fixnum? _%val165498%_)
-                    _%val165498%_
+                         (_%method168288168293%_ _%object168287168292%_)))))
+                (if (fixnum? _%val168295%_)
+                    _%val168295%_
                     (begin
                       (raise-contract-violation-error
                        '"contract violation"
@@ -525,117 +525,117 @@
                        'contract:
                        '(fixnum? val)
                        'value:
-                       _%val165498%_)
+                       _%val168295%_)
                       '#!void)))
               (let ()
                 (declare (not safe))
-                (let ((_%object165500165505%_
+                (let ((_%object168297168302%_
                        (##unchecked-structure-ref
-                        _%self150569165482%_
+                        _%self153366168279%_
                         '1
                         '#f
                         'length))
-                      (_%method165501165506%_
+                      (_%method168298168303%_
                        (##unchecked-structure-ref
-                        _%self150569165482%_
+                        _%self153366168279%_
                         '6
                         '#f
                         'length)))
-                  (_%method165501165506%_ _%object165500165505%_)))))))
+                  (_%method168298168303%_ _%object168297168302%_)))))))
     (define __HashTable-new__%
-      (lambda (_%self150812165439%_ _%size-hint165440%_)
-        (let* ((_%self150812165442%_ _%self150812165439%_)
-               (_%size-hint165449%_ _%size-hint165440%_))
+      (lambda (_%self153609168236%_ _%size-hint168237%_)
+        (let* ((_%self153609168239%_ _%self153609168236%_)
+               (_%size-hint168246%_ _%size-hint168237%_))
           (declare (not safe))
-          (let ((_%object165457165462%_
-                 (##unchecked-structure-ref _%self150812165442%_ '1 '#f 'new))
-                (_%method165458165463%_
-                 (##unchecked-structure-ref _%self150812165442%_ '7 '#f 'new)))
-            (_%method165458165463%_
-             _%object165457165462%_
-             _%size-hint165449%_)))))
+          (let ((_%object168254168259%_
+                 (##unchecked-structure-ref _%self153609168239%_ '1 '#f 'new))
+                (_%method168255168260%_
+                 (##unchecked-structure-ref _%self153609168239%_ '7 '#f 'new)))
+            (_%method168255168260%_
+             _%object168254168259%_
+             _%size-hint168246%_)))))
     (define __HashTable-new__0
-      (lambda (_%self150812165468%_)
-        (let ((_%size-hint165470%_ '#f))
-          (__HashTable-new__% _%self150812165468%_ _%size-hint165470%_))))
+      (lambda (_%self153609168265%_)
+        (let ((_%size-hint168267%_ '#f))
+          (__HashTable-new__% _%self153609168265%_ _%size-hint168267%_))))
     (define __HashTable-new
-      (lambda _g167213_
-        (let ((_g167214_ (let () (declare (not safe)) (##length _g167213_))))
-          (cond ((let () (declare (not safe)) (##fx= _g167214_ 1))
-                 (apply __HashTable-new__0 _g167213_))
-                ((let () (declare (not safe)) (##fx= _g167214_ 2))
-                 (apply __HashTable-new__% _g167213_))
+      (lambda _g170010_
+        (let ((_g170011_ (let () (declare (not safe)) (##length _g170010_))))
+          (cond ((let () (declare (not safe)) (##fx= _g170011_ 1))
+                 (apply __HashTable-new__0 _g170010_))
+                ((let () (declare (not safe)) (##fx= _g170011_ 2))
+                 (apply __HashTable-new__% _g170010_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __HashTable-new
-                  _g167213_))))))
+                  _g170010_))))))
     (define ::HashTable-new__%
-      (lambda (_%self150813165378%_ _%size-hint165379%_)
-        (let* ((_%self150813165384%_
-                (let ((_%$obj165381%_ _%self150813165378%_))
+      (lambda (_%self153610168175%_ _%size-hint168176%_)
+        (let* ((_%self153610168181%_
+                (let ((_%$obj168178%_ _%self153610168175%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj165381%_))
+                             (##structure? _%$obj168178%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj165381%_)))
+                                  (##structure-type _%$obj168178%_)))
                            '#t)
-                      _%$obj165381%_
+                      _%$obj168178%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj165381%_)))))
-               (_%self150813165386%_ _%self150813165384%_))
-          (if (or (not _%size-hint165379%_) (fixnum? _%size-hint165379%_))
-              (let ((_%size-hint165401%_ _%size-hint165379%_))
+                        (cast HashTable::interface _%$obj168178%_)))))
+               (_%self153610168183%_ _%self153610168181%_))
+          (if (or (not _%size-hint168176%_) (fixnum? _%size-hint168176%_))
+              (let ((_%size-hint168198%_ _%size-hint168176%_))
                 (if __DEBUG
-                    (let ((_%$obj165418%_
+                    (let ((_%$obj168215%_
                            (let ()
                              (declare (not safe))
-                             (let ((_%object165410165415%_
+                             (let ((_%object168207168212%_
                                     (##unchecked-structure-ref
-                                     _%self150813165386%_
+                                     _%self153610168183%_
                                      '1
                                      '#f
                                      'new))
-                                   (_%method165411165416%_
+                                   (_%method168208168213%_
                                     (##unchecked-structure-ref
-                                     _%self150813165386%_
+                                     _%self153610168183%_
                                      '7
                                      '#f
                                      'new)))
-                               (_%method165411165416%_
-                                _%object165410165415%_
-                                _%size-hint165401%_)))))
+                               (_%method168208168213%_
+                                _%object168207168212%_
+                                _%size-hint168198%_)))))
                       (if (and (let ()
                                  (declare (not safe))
-                                 (##structure? _%$obj165418%_))
+                                 (##structure? _%$obj168215%_))
                                (eq? HashTable::t
                                     (let ()
                                       (declare (not safe))
-                                      (##structure-type _%$obj165418%_)))
+                                      (##structure-type _%$obj168215%_)))
                                '#t)
-                          _%$obj165418%_
+                          _%$obj168215%_
                           (let ()
                             (declare (not safe))
-                            (cast HashTable::interface _%$obj165418%_))))
+                            (cast HashTable::interface _%$obj168215%_))))
                     (let ()
                       (declare (not safe))
-                      (let ((_%object165420165425%_
+                      (let ((_%object168217168222%_
                              (##unchecked-structure-ref
-                              _%self150813165386%_
+                              _%self153610168183%_
                               '1
                               '#f
                               'new))
-                            (_%method165421165426%_
+                            (_%method168218168223%_
                              (##unchecked-structure-ref
-                              _%self150813165386%_
+                              _%self153610168183%_
                               '7
                               '#f
                               'new)))
-                        (_%method165421165426%_
-                         _%object165420165425%_
-                         _%size-hint165401%_)))))
+                        (_%method168218168223%_
+                         _%object168217168222%_
+                         _%size-hint168198%_)))))
               (begin
                 (raise-contract-violation-error
                  '"contract violation"
@@ -644,245 +644,245 @@
                  'contract:
                  '(? (or not fixnum?))
                  'value:
-                 _%size-hint165379%_)
+                 _%size-hint168176%_)
                 '#!void)))))
     (define ::HashTable-new__0
-      (lambda (_%self150813165431%_)
-        (let ((_%size-hint165433%_ '#f))
-          (::HashTable-new__% _%self150813165431%_ _%size-hint165433%_))))
+      (lambda (_%self153610168228%_)
+        (let ((_%size-hint168230%_ '#f))
+          (::HashTable-new__% _%self153610168228%_ _%size-hint168230%_))))
     (define ::HashTable-new
-      (lambda _g167215_
-        (let ((_g167216_ (let () (declare (not safe)) (##length _g167215_))))
-          (cond ((let () (declare (not safe)) (##fx= _g167216_ 1))
-                 (apply ::HashTable-new__0 _g167215_))
-                ((let () (declare (not safe)) (##fx= _g167216_ 2))
-                 (apply ::HashTable-new__% _g167215_))
+      (lambda _g170012_
+        (let ((_g170013_ (let () (declare (not safe)) (##length _g170012_))))
+          (cond ((let () (declare (not safe)) (##fx= _g170013_ 1))
+                 (apply ::HashTable-new__0 _g170012_))
+                ((let () (declare (not safe)) (##fx= _g170013_ 2))
+                 (apply ::HashTable-new__% _g170012_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   ::HashTable-new
-                  _g167215_))))))
+                  _g170012_))))))
     (define __HashTable-ref
-      (lambda (_%self151056165358%_ _%key165359%_ _%default165360%_)
-        (let ((_%self151056165362%_ _%self151056165358%_))
+      (lambda (_%self153853168155%_ _%key168156%_ _%default168157%_)
+        (let ((_%self153853168159%_ _%self153853168155%_))
           (declare (not safe))
-          (let ((_%object165369165374%_
-                 (##unchecked-structure-ref _%self151056165362%_ '1 '#f 'ref))
-                (_%method165370165375%_
-                 (##unchecked-structure-ref _%self151056165362%_ '8 '#f 'ref)))
-            (_%method165370165375%_
-             _%object165369165374%_
-             _%key165359%_
-             _%default165360%_)))))
+          (let ((_%object168166168171%_
+                 (##unchecked-structure-ref _%self153853168159%_ '1 '#f 'ref))
+                (_%method168167168172%_
+                 (##unchecked-structure-ref _%self153853168159%_ '8 '#f 'ref)))
+            (_%method168167168172%_
+             _%object168166168171%_
+             _%key168156%_
+             _%default168157%_)))))
     (define ::HashTable-ref
-      (lambda (_%self151057165326%_ _%key165327%_ _%default165328%_)
-        (let* ((_%self151057165333%_
-                (let ((_%$obj165330%_ _%self151057165326%_))
+      (lambda (_%self153854168123%_ _%key168124%_ _%default168125%_)
+        (let* ((_%self153854168130%_
+                (let ((_%$obj168127%_ _%self153854168123%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj165330%_))
+                             (##structure? _%$obj168127%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj165330%_)))
+                                  (##structure-type _%$obj168127%_)))
                            '#t)
-                      _%$obj165330%_
+                      _%$obj168127%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj165330%_)))))
-               (_%self151057165335%_ _%self151057165333%_))
+                        (cast HashTable::interface _%$obj168127%_)))))
+               (_%self153854168132%_ _%self153854168130%_))
           (if __DEBUG
               (let ()
                 (declare (not safe))
-                (let ((_%object165343165348%_
+                (let ((_%object168140168145%_
                        (##unchecked-structure-ref
-                        _%self151057165335%_
+                        _%self153854168132%_
                         '1
                         '#f
                         'ref))
-                      (_%method165344165349%_
+                      (_%method168141168146%_
                        (##unchecked-structure-ref
-                        _%self151057165335%_
+                        _%self153854168132%_
                         '8
                         '#f
                         'ref)))
-                  (_%method165344165349%_
-                   _%object165343165348%_
-                   _%key165327%_
-                   _%default165328%_)))
+                  (_%method168141168146%_
+                   _%object168140168145%_
+                   _%key168124%_
+                   _%default168125%_)))
               (let ()
                 (declare (not safe))
-                (let ((_%object165350165355%_
+                (let ((_%object168147168152%_
                        (##unchecked-structure-ref
-                        _%self151057165335%_
+                        _%self153854168132%_
                         '1
                         '#f
                         'ref))
-                      (_%method165351165356%_
+                      (_%method168148168153%_
                        (##unchecked-structure-ref
-                        _%self151057165335%_
+                        _%self153854168132%_
                         '8
                         '#f
                         'ref)))
-                  (_%method165351165356%_
-                   _%object165350165355%_
-                   _%key165327%_
-                   _%default165328%_)))))))
+                  (_%method168148168153%_
+                   _%object168147168152%_
+                   _%key168124%_
+                   _%default168125%_)))))))
     (define __HashTable-set!
-      (lambda (_%self151300165307%_ _%key165308%_ _%value165309%_)
-        (let ((_%self151300165311%_ _%self151300165307%_))
+      (lambda (_%self154097168104%_ _%key168105%_ _%value168106%_)
+        (let ((_%self154097168108%_ _%self154097168104%_))
           (declare (not safe))
-          (let ((_%object165318165323%_
-                 (##unchecked-structure-ref _%self151300165311%_ '1 '#f 'set!))
-                (_%method165319165324%_
+          (let ((_%object168115168120%_
+                 (##unchecked-structure-ref _%self154097168108%_ '1 '#f 'set!))
+                (_%method168116168121%_
                  (##unchecked-structure-ref
-                  _%self151300165311%_
+                  _%self154097168108%_
                   '9
                   '#f
                   'set!)))
-            (_%method165319165324%_
-             _%object165318165323%_
-             _%key165308%_
-             _%value165309%_)))))
+            (_%method168116168121%_
+             _%object168115168120%_
+             _%key168105%_
+             _%value168106%_)))))
     (define ::HashTable-set!
-      (lambda (_%self151301165275%_ _%key165276%_ _%value165277%_)
-        (let* ((_%self151301165282%_
-                (let ((_%$obj165279%_ _%self151301165275%_))
+      (lambda (_%self154098168072%_ _%key168073%_ _%value168074%_)
+        (let* ((_%self154098168079%_
+                (let ((_%$obj168076%_ _%self154098168072%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj165279%_))
+                             (##structure? _%$obj168076%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj165279%_)))
+                                  (##structure-type _%$obj168076%_)))
                            '#t)
-                      _%$obj165279%_
+                      _%$obj168076%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj165279%_)))))
-               (_%self151301165284%_ _%self151301165282%_))
+                        (cast HashTable::interface _%$obj168076%_)))))
+               (_%self154098168081%_ _%self154098168079%_))
           (if __DEBUG
               (let ()
                 (declare (not safe))
-                (let ((_%object165292165297%_
+                (let ((_%object168089168094%_
                        (##unchecked-structure-ref
-                        _%self151301165284%_
+                        _%self154098168081%_
                         '1
                         '#f
                         'set!))
-                      (_%method165293165298%_
+                      (_%method168090168095%_
                        (##unchecked-structure-ref
-                        _%self151301165284%_
+                        _%self154098168081%_
                         '9
                         '#f
                         'set!)))
-                  (_%method165293165298%_
-                   _%object165292165297%_
-                   _%key165276%_
-                   _%value165277%_)))
+                  (_%method168090168095%_
+                   _%object168089168094%_
+                   _%key168073%_
+                   _%value168074%_)))
               (let ()
                 (declare (not safe))
-                (let ((_%object165299165304%_
+                (let ((_%object168096168101%_
                        (##unchecked-structure-ref
-                        _%self151301165284%_
+                        _%self154098168081%_
                         '1
                         '#f
                         'set!))
-                      (_%method165300165305%_
+                      (_%method168097168102%_
                        (##unchecked-structure-ref
-                        _%self151301165284%_
+                        _%self154098168081%_
                         '9
                         '#f
                         'set!)))
-                  (_%method165300165305%_
-                   _%object165299165304%_
-                   _%key165276%_
-                   _%value165277%_)))))))
+                  (_%method168097168102%_
+                   _%object168096168101%_
+                   _%key168073%_
+                   _%value168074%_)))))))
     (define __HashTable-update!
-      (lambda (_%self151544165247%_
-               _%key165248%_
-               _%proc165249%_
-               _%default165250%_)
-        (let* ((_%self151544165252%_ _%self151544165247%_)
-               (_%proc165259%_ _%proc165249%_))
+      (lambda (_%self154341168044%_
+               _%key168045%_
+               _%proc168046%_
+               _%default168047%_)
+        (let* ((_%self154341168049%_ _%self154341168044%_)
+               (_%proc168056%_ _%proc168046%_))
           (declare (not safe))
-          (let ((_%object165267165272%_
+          (let ((_%object168064168069%_
                  (##unchecked-structure-ref
-                  _%self151544165252%_
+                  _%self154341168049%_
                   '1
                   '#f
                   'update!))
-                (_%method165268165273%_
+                (_%method168065168070%_
                  (##unchecked-structure-ref
-                  _%self151544165252%_
+                  _%self154341168049%_
                   '10
                   '#f
                   'update!)))
-            (_%method165268165273%_
-             _%object165267165272%_
-             _%key165248%_
-             _%proc165259%_
-             _%default165250%_)))))
+            (_%method168065168070%_
+             _%object168064168069%_
+             _%key168045%_
+             _%proc168056%_
+             _%default168047%_)))))
     (define ::HashTable-update!
-      (lambda (_%self151545165204%_
-               _%key165205%_
-               _%proc165206%_
-               _%default165207%_)
-        (let* ((_%self151545165212%_
-                (let ((_%$obj165209%_ _%self151545165204%_))
+      (lambda (_%self154342168001%_
+               _%key168002%_
+               _%proc168003%_
+               _%default168004%_)
+        (let* ((_%self154342168009%_
+                (let ((_%$obj168006%_ _%self154342168001%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj165209%_))
+                             (##structure? _%$obj168006%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj165209%_)))
+                                  (##structure-type _%$obj168006%_)))
                            '#t)
-                      _%$obj165209%_
+                      _%$obj168006%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj165209%_)))))
-               (_%self151545165214%_ _%self151545165212%_))
-          (if (procedure? _%proc165206%_)
-              (let ((_%proc165223%_ _%proc165206%_))
+                        (cast HashTable::interface _%$obj168006%_)))))
+               (_%self154342168011%_ _%self154342168009%_))
+          (if (procedure? _%proc168003%_)
+              (let ((_%proc168020%_ _%proc168003%_))
                 (if __DEBUG
                     (let ()
                       (declare (not safe))
-                      (let ((_%object165232165237%_
+                      (let ((_%object168029168034%_
                              (##unchecked-structure-ref
-                              _%self151545165214%_
+                              _%self154342168011%_
                               '1
                               '#f
                               'update!))
-                            (_%method165233165238%_
+                            (_%method168030168035%_
                              (##unchecked-structure-ref
-                              _%self151545165214%_
+                              _%self154342168011%_
                               '10
                               '#f
                               'update!)))
-                        (_%method165233165238%_
-                         _%object165232165237%_
-                         _%key165205%_
-                         _%proc165223%_
-                         _%default165207%_)))
+                        (_%method168030168035%_
+                         _%object168029168034%_
+                         _%key168002%_
+                         _%proc168020%_
+                         _%default168004%_)))
                     (let ()
                       (declare (not safe))
-                      (let ((_%object165239165244%_
+                      (let ((_%object168036168041%_
                              (##unchecked-structure-ref
-                              _%self151545165214%_
+                              _%self154342168011%_
                               '1
                               '#f
                               'update!))
-                            (_%method165240165245%_
+                            (_%method168037168042%_
                              (##unchecked-structure-ref
-                              _%self151545165214%_
+                              _%self154342168011%_
                               '10
                               '#f
                               'update!)))
-                        (_%method165240165245%_
-                         _%object165239165244%_
-                         _%key165205%_
-                         _%proc165223%_
-                         _%default165207%_)))))
+                        (_%method168037168042%_
+                         _%object168036168041%_
+                         _%key168002%_
+                         _%proc168020%_
+                         _%default168004%_)))))
               (begin
                 (raise-contract-violation-error
                  '"contract violation"
@@ -891,33 +891,33 @@
                  'contract:
                  'procedure?
                  'value:
-                 _%proc165206%_)
+                 _%proc168003%_)
                 '#!void)))))
     (define Locker::t
-      (let ((__tmp167217 (cons interface-instance::t '())))
+      (let ((__tmp170014 (cons interface-instance::t '())))
         (declare (not safe))
         (__make-class-type
          'Locker::t
          'Locker
-         __tmp167217
+         __tmp170014
          '(read-lock! read-unlock! write-lock! write-unlock!)
          '((final: . #t) (struct: . #t))
          '#f)))
     (define Locker::interface
-      (let ((__obj167205
+      (let ((__obj170002
              (let ()
                (declare (not safe))
                (##structure interface-descriptor::t '#f '#f '#f))))
         (let ()
           (declare (not safe))
           (interface-descriptor:::init!
-           __obj167205
+           __obj170002
            Locker::t
            '((Locker::read-lock! read-lock!)
              (Locker::read-unlock! read-unlock!)
              (Locker::write-lock! write-lock!)
              (Locker::write-unlock! write-unlock!))))
-        __obj167205))
+        __obj170002))
     (let ()
       (declare (not safe))
       (__class-type-properties-put!
@@ -925,651 +925,651 @@
        'interface-descriptor:
        Locker::interface))
     (define make-Locker
-      (lambda (_%obj165202%_)
-        (let () (declare (not safe)) (cast Locker::interface _%obj165202%_))))
+      (lambda (_%obj167999%_)
+        (let () (declare (not safe)) (cast Locker::interface _%obj167999%_))))
     (define try-Locker
-      (lambda (_%obj165200%_)
+      (lambda (_%obj167997%_)
         (let ()
           (declare (not safe))
-          (try-cast Locker::interface _%obj165200%_))))
+          (try-cast Locker::interface _%obj167997%_))))
     (define Locker?
-      (lambda (_%obj165198%_)
-        (let ((__tmp167218
+      (lambda (_%obj167995%_)
+        (let ((__tmp170015
                (let () (declare (not safe)) (##type-id Locker::t))))
           (declare (not safe))
-          (##structure-direct-instance-of? _%obj165198%_ __tmp167218))))
+          (##structure-direct-instance-of? _%obj167995%_ __tmp170015))))
     (define is-Locker?
-      (lambda (_%obj165195%_)
+      (lambda (_%obj167992%_)
         (if (let ()
               (declare (not safe))
-              (satisfies? Locker::interface _%obj165195%_))
+              (satisfies? Locker::interface _%obj167992%_))
             '#t
             '#f)))
     (define __Locker-read-lock!
-      (lambda (_%self151788165178%_)
-        (let ((_%self151788165180%_ _%self151788165178%_))
+      (lambda (_%self154585167975%_)
+        (let ((_%self154585167977%_ _%self154585167975%_))
           (declare (not safe))
-          (let ((_%object165187165192%_
+          (let ((_%object167984167989%_
                  (##unchecked-structure-ref
-                  _%self151788165180%_
+                  _%self154585167977%_
                   '1
                   '#f
                   'read-lock!))
-                (_%method165188165193%_
+                (_%method167985167990%_
                  (##unchecked-structure-ref
-                  _%self151788165180%_
+                  _%self154585167977%_
                   '2
                   '#f
                   'read-lock!)))
-            (_%method165188165193%_ _%object165187165192%_)))))
+            (_%method167985167990%_ _%object167984167989%_)))))
     (define ::Locker-read-lock!
-      (lambda (_%self151789165148%_)
-        (let* ((_%self151789165153%_
-                (let ((_%$obj165150%_ _%self151789165148%_))
+      (lambda (_%self154586167945%_)
+        (let* ((_%self154586167950%_
+                (let ((_%$obj167947%_ _%self154586167945%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj165150%_))
+                             (##structure? _%$obj167947%_))
                            (eq? Locker::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj165150%_)))
+                                  (##structure-type _%$obj167947%_)))
                            '#t)
-                      _%$obj165150%_
+                      _%$obj167947%_
                       (let ()
                         (declare (not safe))
-                        (cast Locker::interface _%$obj165150%_)))))
-               (_%self151789165155%_ _%self151789165153%_))
+                        (cast Locker::interface _%$obj167947%_)))))
+               (_%self154586167952%_ _%self154586167950%_))
           (if __DEBUG
               (let ()
                 (declare (not safe))
-                (let ((_%object165163165168%_
+                (let ((_%object167960167965%_
                        (##unchecked-structure-ref
-                        _%self151789165155%_
+                        _%self154586167952%_
                         '1
                         '#f
                         'read-lock!))
-                      (_%method165164165169%_
+                      (_%method167961167966%_
                        (##unchecked-structure-ref
-                        _%self151789165155%_
+                        _%self154586167952%_
                         '2
                         '#f
                         'read-lock!)))
-                  (_%method165164165169%_ _%object165163165168%_)))
+                  (_%method167961167966%_ _%object167960167965%_)))
               (let ()
                 (declare (not safe))
-                (let ((_%object165170165175%_
+                (let ((_%object167967167972%_
                        (##unchecked-structure-ref
-                        _%self151789165155%_
+                        _%self154586167952%_
                         '1
                         '#f
                         'read-lock!))
-                      (_%method165171165176%_
+                      (_%method167968167973%_
                        (##unchecked-structure-ref
-                        _%self151789165155%_
+                        _%self154586167952%_
                         '2
                         '#f
                         'read-lock!)))
-                  (_%method165171165176%_ _%object165170165175%_)))))))
+                  (_%method167968167973%_ _%object167967167972%_)))))))
     (define __Locker-read-unlock!
-      (lambda (_%self152032165131%_)
-        (let ((_%self152032165133%_ _%self152032165131%_))
+      (lambda (_%self154829167928%_)
+        (let ((_%self154829167930%_ _%self154829167928%_))
           (declare (not safe))
-          (let ((_%object165140165145%_
+          (let ((_%object167937167942%_
                  (##unchecked-structure-ref
-                  _%self152032165133%_
+                  _%self154829167930%_
                   '1
                   '#f
                   'read-unlock!))
-                (_%method165141165146%_
+                (_%method167938167943%_
                  (##unchecked-structure-ref
-                  _%self152032165133%_
+                  _%self154829167930%_
                   '3
                   '#f
                   'read-unlock!)))
-            (_%method165141165146%_ _%object165140165145%_)))))
+            (_%method167938167943%_ _%object167937167942%_)))))
     (define ::Locker-read-unlock!
-      (lambda (_%self152033165101%_)
-        (let* ((_%self152033165106%_
-                (let ((_%$obj165103%_ _%self152033165101%_))
+      (lambda (_%self154830167898%_)
+        (let* ((_%self154830167903%_
+                (let ((_%$obj167900%_ _%self154830167898%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj165103%_))
+                             (##structure? _%$obj167900%_))
                            (eq? Locker::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj165103%_)))
+                                  (##structure-type _%$obj167900%_)))
                            '#t)
-                      _%$obj165103%_
+                      _%$obj167900%_
                       (let ()
                         (declare (not safe))
-                        (cast Locker::interface _%$obj165103%_)))))
-               (_%self152033165108%_ _%self152033165106%_))
+                        (cast Locker::interface _%$obj167900%_)))))
+               (_%self154830167905%_ _%self154830167903%_))
           (if __DEBUG
               (let ()
                 (declare (not safe))
-                (let ((_%object165116165121%_
+                (let ((_%object167913167918%_
                        (##unchecked-structure-ref
-                        _%self152033165108%_
+                        _%self154830167905%_
                         '1
                         '#f
                         'read-unlock!))
-                      (_%method165117165122%_
+                      (_%method167914167919%_
                        (##unchecked-structure-ref
-                        _%self152033165108%_
+                        _%self154830167905%_
                         '3
                         '#f
                         'read-unlock!)))
-                  (_%method165117165122%_ _%object165116165121%_)))
+                  (_%method167914167919%_ _%object167913167918%_)))
               (let ()
                 (declare (not safe))
-                (let ((_%object165123165128%_
+                (let ((_%object167920167925%_
                        (##unchecked-structure-ref
-                        _%self152033165108%_
+                        _%self154830167905%_
                         '1
                         '#f
                         'read-unlock!))
-                      (_%method165124165129%_
+                      (_%method167921167926%_
                        (##unchecked-structure-ref
-                        _%self152033165108%_
+                        _%self154830167905%_
                         '3
                         '#f
                         'read-unlock!)))
-                  (_%method165124165129%_ _%object165123165128%_)))))))
+                  (_%method167921167926%_ _%object167920167925%_)))))))
     (define __Locker-write-lock!
-      (lambda (_%self152276165084%_)
-        (let ((_%self152276165086%_ _%self152276165084%_))
+      (lambda (_%self155073167881%_)
+        (let ((_%self155073167883%_ _%self155073167881%_))
           (declare (not safe))
-          (let ((_%object165093165098%_
+          (let ((_%object167890167895%_
                  (##unchecked-structure-ref
-                  _%self152276165086%_
+                  _%self155073167883%_
                   '1
                   '#f
                   'write-lock!))
-                (_%method165094165099%_
+                (_%method167891167896%_
                  (##unchecked-structure-ref
-                  _%self152276165086%_
+                  _%self155073167883%_
                   '4
                   '#f
                   'write-lock!)))
-            (_%method165094165099%_ _%object165093165098%_)))))
+            (_%method167891167896%_ _%object167890167895%_)))))
     (define ::Locker-write-lock!
-      (lambda (_%self152277165054%_)
-        (let* ((_%self152277165059%_
-                (let ((_%$obj165056%_ _%self152277165054%_))
+      (lambda (_%self155074167851%_)
+        (let* ((_%self155074167856%_
+                (let ((_%$obj167853%_ _%self155074167851%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj165056%_))
+                             (##structure? _%$obj167853%_))
                            (eq? Locker::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj165056%_)))
+                                  (##structure-type _%$obj167853%_)))
                            '#t)
-                      _%$obj165056%_
+                      _%$obj167853%_
                       (let ()
                         (declare (not safe))
-                        (cast Locker::interface _%$obj165056%_)))))
-               (_%self152277165061%_ _%self152277165059%_))
+                        (cast Locker::interface _%$obj167853%_)))))
+               (_%self155074167858%_ _%self155074167856%_))
           (if __DEBUG
               (let ()
                 (declare (not safe))
-                (let ((_%object165069165074%_
+                (let ((_%object167866167871%_
                        (##unchecked-structure-ref
-                        _%self152277165061%_
+                        _%self155074167858%_
                         '1
                         '#f
                         'write-lock!))
-                      (_%method165070165075%_
+                      (_%method167867167872%_
                        (##unchecked-structure-ref
-                        _%self152277165061%_
+                        _%self155074167858%_
                         '4
                         '#f
                         'write-lock!)))
-                  (_%method165070165075%_ _%object165069165074%_)))
+                  (_%method167867167872%_ _%object167866167871%_)))
               (let ()
                 (declare (not safe))
-                (let ((_%object165076165081%_
+                (let ((_%object167873167878%_
                        (##unchecked-structure-ref
-                        _%self152277165061%_
+                        _%self155074167858%_
                         '1
                         '#f
                         'write-lock!))
-                      (_%method165077165082%_
+                      (_%method167874167879%_
                        (##unchecked-structure-ref
-                        _%self152277165061%_
+                        _%self155074167858%_
                         '4
                         '#f
                         'write-lock!)))
-                  (_%method165077165082%_ _%object165076165081%_)))))))
+                  (_%method167874167879%_ _%object167873167878%_)))))))
     (define __Locker-write-unlock!
-      (lambda (_%self152520165037%_)
-        (let ((_%self152520165039%_ _%self152520165037%_))
+      (lambda (_%self155317167834%_)
+        (let ((_%self155317167836%_ _%self155317167834%_))
           (declare (not safe))
-          (let ((_%object165046165051%_
+          (let ((_%object167843167848%_
                  (##unchecked-structure-ref
-                  _%self152520165039%_
+                  _%self155317167836%_
                   '1
                   '#f
                   'write-unlock!))
-                (_%method165047165052%_
+                (_%method167844167849%_
                  (##unchecked-structure-ref
-                  _%self152520165039%_
+                  _%self155317167836%_
                   '5
                   '#f
                   'write-unlock!)))
-            (_%method165047165052%_ _%object165046165051%_)))))
+            (_%method167844167849%_ _%object167843167848%_)))))
     (define ::Locker-write-unlock!
-      (lambda (_%self152521165007%_)
-        (let* ((_%self152521165012%_
-                (let ((_%$obj165009%_ _%self152521165007%_))
+      (lambda (_%self155318167804%_)
+        (let* ((_%self155318167809%_
+                (let ((_%$obj167806%_ _%self155318167804%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj165009%_))
+                             (##structure? _%$obj167806%_))
                            (eq? Locker::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj165009%_)))
+                                  (##structure-type _%$obj167806%_)))
                            '#t)
-                      _%$obj165009%_
+                      _%$obj167806%_
                       (let ()
                         (declare (not safe))
-                        (cast Locker::interface _%$obj165009%_)))))
-               (_%self152521165014%_ _%self152521165012%_))
+                        (cast Locker::interface _%$obj167806%_)))))
+               (_%self155318167811%_ _%self155318167809%_))
           (if __DEBUG
               (let ()
                 (declare (not safe))
-                (let ((_%object165022165027%_
+                (let ((_%object167819167824%_
                        (##unchecked-structure-ref
-                        _%self152521165014%_
+                        _%self155318167811%_
                         '1
                         '#f
                         'write-unlock!))
-                      (_%method165023165028%_
+                      (_%method167820167825%_
                        (##unchecked-structure-ref
-                        _%self152521165014%_
+                        _%self155318167811%_
                         '5
                         '#f
                         'write-unlock!)))
-                  (_%method165023165028%_ _%object165022165027%_)))
+                  (_%method167820167825%_ _%object167819167824%_)))
               (let ()
                 (declare (not safe))
-                (let ((_%object165029165034%_
+                (let ((_%object167826167831%_
                        (##unchecked-structure-ref
-                        _%self152521165014%_
+                        _%self155318167811%_
                         '1
                         '#f
                         'write-unlock!))
-                      (_%method165030165035%_
+                      (_%method167827167832%_
                        (##unchecked-structure-ref
-                        _%self152521165014%_
+                        _%self155318167811%_
                         '5
                         '#f
                         'write-unlock!)))
-                  (_%method165030165035%_ _%object165029165034%_)))))))
-    (let* ((_%klass164970%_ __table::t)
-           (_%id164973%_ 'HashTable::ref)
-           (_%proc164976%_ raw-table-ref)
-           (_%rebind?164979%_ '#f)
-           (_%id164984%_ _%id164973%_)
-           (_%proc164997%_ _%proc164976%_))
+                  (_%method167827167832%_ _%object167826167831%_)))))))
+    (let* ((_%klass167767%_ __table::t)
+           (_%id167770%_ 'HashTable::ref)
+           (_%proc167773%_ raw-table-ref)
+           (_%rebind?167776%_ '#f)
+           (_%id167781%_ _%id167770%_)
+           (_%proc167794%_ _%proc167773%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164970%_
-       _%id164984%_
-       _%proc164997%_
-       _%rebind?164979%_))
-    (let* ((_%klass164933%_ __table::t)
-           (_%id164936%_ 'HashTable::set!)
-           (_%proc164939%_ raw-table-set!)
-           (_%rebind?164942%_ '#f)
-           (_%id164947%_ _%id164936%_)
-           (_%proc164960%_ _%proc164939%_))
+       _%klass167767%_
+       _%id167781%_
+       _%proc167794%_
+       _%rebind?167776%_))
+    (let* ((_%klass167730%_ __table::t)
+           (_%id167733%_ 'HashTable::set!)
+           (_%proc167736%_ raw-table-set!)
+           (_%rebind?167739%_ '#f)
+           (_%id167744%_ _%id167733%_)
+           (_%proc167757%_ _%proc167736%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164933%_
-       _%id164947%_
-       _%proc164960%_
-       _%rebind?164942%_))
-    (let* ((_%klass164896%_ __table::t)
-           (_%id164899%_ 'HashTable::update!)
-           (_%proc164902%_ raw-table-update!)
-           (_%rebind?164905%_ '#f)
-           (_%id164910%_ _%id164899%_)
-           (_%proc164923%_ _%proc164902%_))
+       _%klass167730%_
+       _%id167744%_
+       _%proc167757%_
+       _%rebind?167739%_))
+    (let* ((_%klass167693%_ __table::t)
+           (_%id167696%_ 'HashTable::update!)
+           (_%proc167699%_ raw-table-update!)
+           (_%rebind?167702%_ '#f)
+           (_%id167707%_ _%id167696%_)
+           (_%proc167720%_ _%proc167699%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164896%_
-       _%id164910%_
-       _%proc164923%_
-       _%rebind?164905%_))
-    (let* ((_%klass164859%_ __table::t)
-           (_%id164862%_ 'HashTable::delete!)
-           (_%proc164865%_ raw-table-delete!)
-           (_%rebind?164868%_ '#f)
-           (_%id164873%_ _%id164862%_)
-           (_%proc164886%_ _%proc164865%_))
+       _%klass167693%_
+       _%id167707%_
+       _%proc167720%_
+       _%rebind?167702%_))
+    (let* ((_%klass167656%_ __table::t)
+           (_%id167659%_ 'HashTable::delete!)
+           (_%proc167662%_ raw-table-delete!)
+           (_%rebind?167665%_ '#f)
+           (_%id167670%_ _%id167659%_)
+           (_%proc167683%_ _%proc167662%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164859%_
-       _%id164873%_
-       _%proc164886%_
-       _%rebind?164868%_))
-    (let* ((_%klass164822%_ __table::t)
-           (_%id164825%_ 'HashTable::for-each)
-           (_%proc164828%_ raw-table-for-each)
-           (_%rebind?164831%_ '#f)
-           (_%id164836%_ _%id164825%_)
-           (_%proc164849%_ _%proc164828%_))
+       _%klass167656%_
+       _%id167670%_
+       _%proc167683%_
+       _%rebind?167665%_))
+    (let* ((_%klass167619%_ __table::t)
+           (_%id167622%_ 'HashTable::for-each)
+           (_%proc167625%_ raw-table-for-each)
+           (_%rebind?167628%_ '#f)
+           (_%id167633%_ _%id167622%_)
+           (_%proc167646%_ _%proc167625%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164822%_
-       _%id164836%_
-       _%proc164849%_
-       _%rebind?164831%_))
-    (let* ((_%klass164785%_ __table::t)
-           (_%id164788%_ 'HashTable::length)
-           (_%proc164791%_ &raw-table-count)
-           (_%rebind?164794%_ '#f)
-           (_%id164799%_ _%id164788%_)
-           (_%proc164812%_ _%proc164791%_))
+       _%klass167619%_
+       _%id167633%_
+       _%proc167646%_
+       _%rebind?167628%_))
+    (let* ((_%klass167582%_ __table::t)
+           (_%id167585%_ 'HashTable::length)
+           (_%proc167588%_ &raw-table-count)
+           (_%rebind?167591%_ '#f)
+           (_%id167596%_ _%id167585%_)
+           (_%proc167609%_ _%proc167588%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164785%_
-       _%id164799%_
-       _%proc164812%_
-       _%rebind?164794%_))
-    (let* ((_%klass164748%_ __table::t)
-           (_%id164751%_ 'HashTable::copy)
-           (_%proc164754%_ raw-table-copy)
-           (_%rebind?164757%_ '#f)
-           (_%id164762%_ _%id164751%_)
-           (_%proc164775%_ _%proc164754%_))
+       _%klass167582%_
+       _%id167596%_
+       _%proc167609%_
+       _%rebind?167591%_))
+    (let* ((_%klass167545%_ __table::t)
+           (_%id167548%_ 'HashTable::copy)
+           (_%proc167551%_ raw-table-copy)
+           (_%rebind?167554%_ '#f)
+           (_%id167559%_ _%id167548%_)
+           (_%proc167572%_ _%proc167551%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164748%_
-       _%id164762%_
-       _%proc164775%_
-       _%rebind?164757%_))
-    (let* ((_%klass164711%_ __table::t)
-           (_%id164714%_ 'HashTable::new)
-           (_%proc164717%_ raw-table-new)
-           (_%rebind?164720%_ '#f)
-           (_%id164725%_ _%id164714%_)
-           (_%proc164738%_ _%proc164717%_))
+       _%klass167545%_
+       _%id167559%_
+       _%proc167572%_
+       _%rebind?167554%_))
+    (let* ((_%klass167508%_ __table::t)
+           (_%id167511%_ 'HashTable::new)
+           (_%proc167514%_ raw-table-new)
+           (_%rebind?167517%_ '#f)
+           (_%id167522%_ _%id167511%_)
+           (_%proc167535%_ _%proc167514%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164711%_
-       _%id164725%_
-       _%proc164738%_
-       _%rebind?164720%_))
-    (let* ((_%klass164674%_ __table::t)
-           (_%id164677%_ 'HashTable::clear!)
-           (_%proc164680%_ raw-table-clear!)
-           (_%rebind?164683%_ '#f)
-           (_%id164688%_ _%id164677%_)
-           (_%proc164701%_ _%proc164680%_))
+       _%klass167508%_
+       _%id167522%_
+       _%proc167535%_
+       _%rebind?167517%_))
+    (let* ((_%klass167471%_ __table::t)
+           (_%id167474%_ 'HashTable::clear!)
+           (_%proc167477%_ raw-table-clear!)
+           (_%rebind?167480%_ '#f)
+           (_%id167485%_ _%id167474%_)
+           (_%proc167498%_ _%proc167477%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164674%_
-       _%id164688%_
-       _%proc164701%_
-       _%rebind?164683%_))
-    (let* ((_%klass164637%_ __gc-table::t)
-           (_%id164640%_ 'HashTable::ref)
-           (_%proc164643%_ gc-table-ref)
-           (_%rebind?164646%_ '#f)
-           (_%id164651%_ _%id164640%_)
-           (_%proc164664%_ _%proc164643%_))
+       _%klass167471%_
+       _%id167485%_
+       _%proc167498%_
+       _%rebind?167480%_))
+    (let* ((_%klass167434%_ __gc-table::t)
+           (_%id167437%_ 'HashTable::ref)
+           (_%proc167440%_ gc-table-ref)
+           (_%rebind?167443%_ '#f)
+           (_%id167448%_ _%id167437%_)
+           (_%proc167461%_ _%proc167440%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164637%_
-       _%id164651%_
-       _%proc164664%_
-       _%rebind?164646%_))
-    (let* ((_%klass164600%_ __gc-table::t)
-           (_%id164603%_ 'HashTable::set!)
-           (_%proc164606%_ gc-table-set!)
-           (_%rebind?164609%_ '#f)
-           (_%id164614%_ _%id164603%_)
-           (_%proc164627%_ _%proc164606%_))
+       _%klass167434%_
+       _%id167448%_
+       _%proc167461%_
+       _%rebind?167443%_))
+    (let* ((_%klass167397%_ __gc-table::t)
+           (_%id167400%_ 'HashTable::set!)
+           (_%proc167403%_ gc-table-set!)
+           (_%rebind?167406%_ '#f)
+           (_%id167411%_ _%id167400%_)
+           (_%proc167424%_ _%proc167403%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164600%_
-       _%id164614%_
-       _%proc164627%_
-       _%rebind?164609%_))
-    (let* ((_%klass164563%_ __gc-table::t)
-           (_%id164566%_ 'HashTable::update!)
-           (_%proc164569%_ gc-table-update!)
-           (_%rebind?164572%_ '#f)
-           (_%id164577%_ _%id164566%_)
-           (_%proc164590%_ _%proc164569%_))
+       _%klass167397%_
+       _%id167411%_
+       _%proc167424%_
+       _%rebind?167406%_))
+    (let* ((_%klass167360%_ __gc-table::t)
+           (_%id167363%_ 'HashTable::update!)
+           (_%proc167366%_ gc-table-update!)
+           (_%rebind?167369%_ '#f)
+           (_%id167374%_ _%id167363%_)
+           (_%proc167387%_ _%proc167366%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164563%_
-       _%id164577%_
-       _%proc164590%_
-       _%rebind?164572%_))
-    (let* ((_%klass164526%_ __gc-table::t)
-           (_%id164529%_ 'HashTable::delete!)
-           (_%proc164532%_ gc-table-delete!)
-           (_%rebind?164535%_ '#f)
-           (_%id164540%_ _%id164529%_)
-           (_%proc164553%_ _%proc164532%_))
+       _%klass167360%_
+       _%id167374%_
+       _%proc167387%_
+       _%rebind?167369%_))
+    (let* ((_%klass167323%_ __gc-table::t)
+           (_%id167326%_ 'HashTable::delete!)
+           (_%proc167329%_ gc-table-delete!)
+           (_%rebind?167332%_ '#f)
+           (_%id167337%_ _%id167326%_)
+           (_%proc167350%_ _%proc167329%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164526%_
-       _%id164540%_
-       _%proc164553%_
-       _%rebind?164535%_))
-    (let* ((_%klass164489%_ __gc-table::t)
-           (_%id164492%_ 'HashTable::for-each)
-           (_%proc164495%_ gc-table-for-each)
-           (_%rebind?164498%_ '#f)
-           (_%id164503%_ _%id164492%_)
-           (_%proc164516%_ _%proc164495%_))
+       _%klass167323%_
+       _%id167337%_
+       _%proc167350%_
+       _%rebind?167332%_))
+    (let* ((_%klass167286%_ __gc-table::t)
+           (_%id167289%_ 'HashTable::for-each)
+           (_%proc167292%_ gc-table-for-each)
+           (_%rebind?167295%_ '#f)
+           (_%id167300%_ _%id167289%_)
+           (_%proc167313%_ _%proc167292%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164489%_
-       _%id164503%_
-       _%proc164516%_
-       _%rebind?164498%_))
-    (let* ((_%klass164452%_ __gc-table::t)
-           (_%id164455%_ 'HashTable::length)
-           (_%proc164458%_ gc-table-length)
-           (_%rebind?164461%_ '#f)
-           (_%id164466%_ _%id164455%_)
-           (_%proc164479%_ _%proc164458%_))
+       _%klass167286%_
+       _%id167300%_
+       _%proc167313%_
+       _%rebind?167295%_))
+    (let* ((_%klass167249%_ __gc-table::t)
+           (_%id167252%_ 'HashTable::length)
+           (_%proc167255%_ gc-table-length)
+           (_%rebind?167258%_ '#f)
+           (_%id167263%_ _%id167252%_)
+           (_%proc167276%_ _%proc167255%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164452%_
-       _%id164466%_
-       _%proc164479%_
-       _%rebind?164461%_))
-    (let* ((_%klass164415%_ __gc-table::t)
-           (_%id164418%_ 'HashTable::copy)
-           (_%proc164421%_ gc-table-copy)
-           (_%rebind?164424%_ '#f)
-           (_%id164429%_ _%id164418%_)
-           (_%proc164442%_ _%proc164421%_))
+       _%klass167249%_
+       _%id167263%_
+       _%proc167276%_
+       _%rebind?167258%_))
+    (let* ((_%klass167212%_ __gc-table::t)
+           (_%id167215%_ 'HashTable::copy)
+           (_%proc167218%_ gc-table-copy)
+           (_%rebind?167221%_ '#f)
+           (_%id167226%_ _%id167215%_)
+           (_%proc167239%_ _%proc167218%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164415%_
-       _%id164429%_
-       _%proc164442%_
-       _%rebind?164424%_))
-    (let* ((_%klass164378%_ __gc-table::t)
-           (_%id164381%_ 'HashTable::new)
-           (_%proc164384%_ gc-table-new)
-           (_%rebind?164387%_ '#f)
-           (_%id164392%_ _%id164381%_)
-           (_%proc164405%_ _%proc164384%_))
+       _%klass167212%_
+       _%id167226%_
+       _%proc167239%_
+       _%rebind?167221%_))
+    (let* ((_%klass167175%_ __gc-table::t)
+           (_%id167178%_ 'HashTable::new)
+           (_%proc167181%_ gc-table-new)
+           (_%rebind?167184%_ '#f)
+           (_%id167189%_ _%id167178%_)
+           (_%proc167202%_ _%proc167181%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164378%_
-       _%id164392%_
-       _%proc164405%_
-       _%rebind?164387%_))
-    (let* ((_%klass164341%_ __gc-table::t)
-           (_%id164344%_ 'HashTable::clear!)
-           (_%proc164347%_ gc-table-clear!)
-           (_%rebind?164350%_ '#f)
-           (_%id164355%_ _%id164344%_)
-           (_%proc164368%_ _%proc164347%_))
+       _%klass167175%_
+       _%id167189%_
+       _%proc167202%_
+       _%rebind?167184%_))
+    (let* ((_%klass167138%_ __gc-table::t)
+           (_%id167141%_ 'HashTable::clear!)
+           (_%proc167144%_ gc-table-clear!)
+           (_%rebind?167147%_ '#f)
+           (_%id167152%_ _%id167141%_)
+           (_%proc167165%_ _%proc167144%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164341%_
-       _%id164355%_
-       _%proc164368%_
-       _%rebind?164350%_))
+       _%klass167138%_
+       _%id167152%_
+       _%proc167165%_
+       _%rebind?167147%_))
     (define gambit-table-update!
-      (lambda (_%table164334%_
-               _%key164335%_
-               _%update164336%_
-               _%default164337%_)
-        (let ((_%result164339%_
-               (table-ref _%table164334%_ _%key164335%_ _%default164337%_)))
+      (lambda (_%table167131%_
+               _%key167132%_
+               _%update167133%_
+               _%default167134%_)
+        (let ((_%result167136%_
+               (table-ref _%table167131%_ _%key167132%_ _%default167134%_)))
           (table-set!
-           _%table164334%_
-           _%key164335%_
-           (_%update164336%_ _%result164339%_)))))
+           _%table167131%_
+           _%key167132%_
+           (_%update167133%_ _%result167136%_)))))
     (define gambit-table-for-each
-      (lambda (_%table164331%_ _%proc164332%_)
-        (table-for-each _%proc164332%_ _%table164331%_)))
+      (lambda (_%table167128%_ _%proc167129%_)
+        (table-for-each _%proc167129%_ _%table167128%_)))
     (define gambit-table-clear!
-      (lambda (_%table164329%_)
+      (lambda (_%table167126%_)
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! _%table164329%_ '0 '5 '#f '#f))))
-    (let* ((_%klass164292%_ (macro-type-table))
-           (_%id164295%_ 'HashTable::ref)
-           (_%proc164298%_ table-ref)
-           (_%rebind?164301%_ '#f)
-           (_%id164306%_ _%id164295%_)
-           (_%proc164319%_ _%proc164298%_))
+          (##unchecked-structure-set! _%table167126%_ '0 '5 '#f '#f))))
+    (let* ((_%klass167089%_ (macro-type-table))
+           (_%id167092%_ 'HashTable::ref)
+           (_%proc167095%_ table-ref)
+           (_%rebind?167098%_ '#f)
+           (_%id167103%_ _%id167092%_)
+           (_%proc167116%_ _%proc167095%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164292%_
-       _%id164306%_
-       _%proc164319%_
-       _%rebind?164301%_))
-    (let* ((_%klass164255%_ (macro-type-table))
-           (_%id164258%_ 'HashTable::set!)
-           (_%proc164261%_ table-set!)
-           (_%rebind?164264%_ '#f)
-           (_%id164269%_ _%id164258%_)
-           (_%proc164282%_ _%proc164261%_))
+       _%klass167089%_
+       _%id167103%_
+       _%proc167116%_
+       _%rebind?167098%_))
+    (let* ((_%klass167052%_ (macro-type-table))
+           (_%id167055%_ 'HashTable::set!)
+           (_%proc167058%_ table-set!)
+           (_%rebind?167061%_ '#f)
+           (_%id167066%_ _%id167055%_)
+           (_%proc167079%_ _%proc167058%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164255%_
-       _%id164269%_
-       _%proc164282%_
-       _%rebind?164264%_))
-    (let* ((_%klass164218%_ (macro-type-table))
-           (_%id164221%_ 'HashTable::update!)
-           (_%proc164224%_ gambit-table-update!)
-           (_%rebind?164227%_ '#f)
-           (_%id164232%_ _%id164221%_)
-           (_%proc164245%_ _%proc164224%_))
+       _%klass167052%_
+       _%id167066%_
+       _%proc167079%_
+       _%rebind?167061%_))
+    (let* ((_%klass167015%_ (macro-type-table))
+           (_%id167018%_ 'HashTable::update!)
+           (_%proc167021%_ gambit-table-update!)
+           (_%rebind?167024%_ '#f)
+           (_%id167029%_ _%id167018%_)
+           (_%proc167042%_ _%proc167021%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164218%_
-       _%id164232%_
-       _%proc164245%_
-       _%rebind?164227%_))
-    (let* ((_%klass164181%_ (macro-type-table))
-           (_%id164184%_ 'HashTable::delete!)
-           (_%proc164187%_ table-set!)
-           (_%rebind?164190%_ '#f)
-           (_%id164195%_ _%id164184%_)
-           (_%proc164208%_ _%proc164187%_))
+       _%klass167015%_
+       _%id167029%_
+       _%proc167042%_
+       _%rebind?167024%_))
+    (let* ((_%klass166978%_ (macro-type-table))
+           (_%id166981%_ 'HashTable::delete!)
+           (_%proc166984%_ table-set!)
+           (_%rebind?166987%_ '#f)
+           (_%id166992%_ _%id166981%_)
+           (_%proc167005%_ _%proc166984%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164181%_
-       _%id164195%_
-       _%proc164208%_
-       _%rebind?164190%_))
-    (let* ((_%klass164144%_ (macro-type-table))
-           (_%id164147%_ 'HashTable::for-each)
-           (_%proc164150%_ gambit-table-for-each)
-           (_%rebind?164153%_ '#f)
-           (_%id164158%_ _%id164147%_)
-           (_%proc164171%_ _%proc164150%_))
+       _%klass166978%_
+       _%id166992%_
+       _%proc167005%_
+       _%rebind?166987%_))
+    (let* ((_%klass166941%_ (macro-type-table))
+           (_%id166944%_ 'HashTable::for-each)
+           (_%proc166947%_ gambit-table-for-each)
+           (_%rebind?166950%_ '#f)
+           (_%id166955%_ _%id166944%_)
+           (_%proc166968%_ _%proc166947%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164144%_
-       _%id164158%_
-       _%proc164171%_
-       _%rebind?164153%_))
-    (let* ((_%klass164107%_ (macro-type-table))
-           (_%id164110%_ 'HashTable::length)
-           (_%proc164113%_ table-length)
-           (_%rebind?164116%_ '#f)
-           (_%id164121%_ _%id164110%_)
-           (_%proc164134%_ _%proc164113%_))
+       _%klass166941%_
+       _%id166955%_
+       _%proc166968%_
+       _%rebind?166950%_))
+    (let* ((_%klass166904%_ (macro-type-table))
+           (_%id166907%_ 'HashTable::length)
+           (_%proc166910%_ table-length)
+           (_%rebind?166913%_ '#f)
+           (_%id166918%_ _%id166907%_)
+           (_%proc166931%_ _%proc166910%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164107%_
-       _%id164121%_
-       _%proc164134%_
-       _%rebind?164116%_))
-    (let* ((_%klass164070%_ (macro-type-table))
-           (_%id164073%_ 'HashTable::copy)
-           (_%proc164076%_ table-copy)
-           (_%rebind?164079%_ '#f)
-           (_%id164084%_ _%id164073%_)
-           (_%proc164097%_ _%proc164076%_))
+       _%klass166904%_
+       _%id166918%_
+       _%proc166931%_
+       _%rebind?166913%_))
+    (let* ((_%klass166867%_ (macro-type-table))
+           (_%id166870%_ 'HashTable::copy)
+           (_%proc166873%_ table-copy)
+           (_%rebind?166876%_ '#f)
+           (_%id166881%_ _%id166870%_)
+           (_%proc166894%_ _%proc166873%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164070%_
-       _%id164084%_
-       _%proc164097%_
-       _%rebind?164079%_))
-    (let* ((_%klass164033%_ (macro-type-table))
-           (_%id164036%_ 'HashTable::new)
-           (_%proc164039%_ table-new)
-           (_%rebind?164042%_ '#f)
-           (_%id164047%_ _%id164036%_)
-           (_%proc164060%_ _%proc164039%_))
+       _%klass166867%_
+       _%id166881%_
+       _%proc166894%_
+       _%rebind?166876%_))
+    (let* ((_%klass166830%_ (macro-type-table))
+           (_%id166833%_ 'HashTable::new)
+           (_%proc166836%_ table-new)
+           (_%rebind?166839%_ '#f)
+           (_%id166844%_ _%id166833%_)
+           (_%proc166857%_ _%proc166836%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass164033%_
-       _%id164047%_
-       _%proc164060%_
-       _%rebind?164042%_))
-    (let* ((_%klass163996%_ (macro-type-table))
-           (_%id163999%_ 'HashTable::clear!)
-           (_%proc164002%_ gambit-table-clear!)
-           (_%rebind?164005%_ '#f)
-           (_%id164010%_ _%id163999%_)
-           (_%proc164023%_ _%proc164002%_))
+       _%klass166830%_
+       _%id166844%_
+       _%proc166857%_
+       _%rebind?166839%_))
+    (let* ((_%klass166793%_ (macro-type-table))
+           (_%id166796%_ 'HashTable::clear!)
+           (_%proc166799%_ gambit-table-clear!)
+           (_%rebind?166802%_ '#f)
+           (_%id166807%_ _%id166796%_)
+           (_%proc166820%_ _%proc166799%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163996%_
-       _%id164010%_
-       _%proc164023%_
-       _%rebind?164005%_))
+       _%klass166793%_
+       _%id166807%_
+       _%proc166820%_
+       _%rebind?166802%_))
     (define hash-table::t
-      (let* ((_%slots163959%_ '(table count free hash test seed lock))
-             (_%slot-vector163961%_ (list->vector (cons '#f _%slots163959%_)))
-             (_%slot-table163987%_
-              (let ((_%slot-table163963%_
+      (let* ((_%slots166756%_ '(table count free hash test seed lock))
+             (_%slot-vector166758%_ (list->vector (cons '#f _%slots166756%_)))
+             (_%slot-table166784%_
+              (let ((_%slot-table166760%_
                      (let ()
                        (declare (not safe))
                        (make-symbolic-table__% '#f '0))))
-                (let ((__tmp167221
-                       (lambda (_%slot163965%_ _%field163966%_)
+                (let ((__tmp170018
+                       (lambda (_%slot166762%_ _%field166763%_)
                          (let ()
                            (declare (not safe))
                            (symbolic-table-set!
-                            _%slot-table163963%_
-                            _%slot163965%_
-                            _%field163966%_))
-                         (let ((__tmp167222
-                                (let ((_%sym163968%_ _%slot163965%_))
-                                  (if (symbol? _%sym163968%_)
-                                      (let ((_%sym163973%_ _%sym163968%_))
+                            _%slot-table166760%_
+                            _%slot166762%_
+                            _%field166763%_))
+                         (let ((__tmp170019
+                                (let ((_%sym166765%_ _%slot166762%_))
+                                  (if (symbol? _%sym166765%_)
+                                      (let ((_%sym166770%_ _%sym166765%_))
                                         (declare (not safe))
-                                        (__symbol->keyword _%sym163973%_))
+                                        (__symbol->keyword _%sym166770%_))
                                       (begin
                                         (raise-contract-violation-error
                                          '"contract violation"
@@ -1578,76 +1578,72 @@
                                          'contract:
                                          'symbol?
                                          'value:
-                                         _%sym163968%_)
+                                         _%sym166765%_)
                                         '#!void)))))
                            (declare (not safe))
                            (symbolic-table-set!
-                            _%slot-table163963%_
-                            __tmp167222
-                            _%field163966%_))))
-                      (__tmp167219
-                       (let ((__tmp167220
+                            _%slot-table166760%_
+                            __tmp170019
+                            _%field166763%_))))
+                      (__tmp170016
+                       (let ((__tmp170017
                               (let ()
                                 (declare (not safe))
-                                (##length _%slots163959%_))))
+                                (##length _%slots166756%_))))
                          (declare (not safe))
-                         (##iota __tmp167220 '1))))
+                         (##iota __tmp170017 '1))))
                   (declare (not safe))
-                  (##for-each __tmp167221 _%slots163959%_ __tmp167219))
-                _%slot-table163963%_))
-             (_%flags163989%_
+                  (##for-each __tmp170018 _%slots166756%_ __tmp170016))
+                _%slot-table166760%_))
+             (_%flags166786%_
               (let ()
                 (declare (not safe))
                 (##fxior type-flag-extensible
                          type-flag-concrete
                          type-flag-id
                          class-type-flag-struct)))
-             (_%fields163991%_ '#())
-             (_%properties163993%_
-              (cons (cons 'direct-slots:
-                          (let ()
-                            (declare (not safe))
-                            (foldr__0 cons '() _%slots163959%_)))
-                    (cons (cons 'struct: '#t) '())))
-             (__tmp167223 (cons object::t (cons t::t '()))))
+             (_%fields166788%_ '#())
+             (_%properties166790%_
+              (cons (cons 'direct-slots: _%slots166756%_) '((struct: . #t))))
+             (__tmp170020 (cons object::t (cons t::t '()))))
         (declare (not safe))
         (##structure
          class::t
          'hash-table::t
          'hash-table
-         _%flags163989%_
+         _%flags166786%_
          __table::t
-         _%fields163991%_
-         __tmp167223
-         _%slot-vector163961%_
-         _%slot-table163987%_
-         _%properties163993%_
+         _%fields166788%_
+         __tmp170020
+         _%slot-vector166758%_
+         _%slot-table166784%_
+         _%properties166790%_
          '#f
          '#f
          '#f
          '#f)))
     (define gc-hash-table::t
-      (let* ((_%slots163922%_ '(gcht immediate))
-             (_%slot-vector163924%_ (list->vector (cons '#f _%slots163922%_)))
-             (_%slot-table163950%_
-              (let ((_%slot-table163926%_
+      (let* ((_%slots166719%_ '(gcht immediate))
+             (_%slot-vector166721%_ (list->vector (cons '#f _%slots166719%_)))
+             (_%slot-table166747%_
+              (let ((_%slot-table166723%_
                      (let ()
                        (declare (not safe))
                        (make-symbolic-table__% '#f '0))))
-                (let ((__tmp167226
-                       (lambda (_%slot163928%_ _%field163929%_)
+                (let ((__tmp170023
+                       (lambda (_%slot166725%_ _%field166726%_)
                          (let ()
                            (declare (not safe))
                            (symbolic-table-set!
-                            _%slot-table163926%_
-                            _%slot163928%_
-                            _%field163929%_))
-                         (let ((__tmp167227
-                                (let ((_%sym163931%_ _%slot163928%_))
-                                  (if (symbol? _%sym163931%_)
-                                      (let ((_%sym163936%_ _%sym163931%_))
+                            _%slot-table166723%_
+                            _%slot166725%_
+                            _%field166726%_))
+                         (let ((__tmp170024
+                                (let ((_%sym166728%_ _%slot166725%_))
+                                  (if (symbol? _%sym166728%_)
+                                      (let ((_%sym166733%_ _%sym166728%_))
                                         (declare (not safe))
-                                        (__symbol->keyword _%sym163936%_))
+                                        (__symbol->keyword _%sym166733%_))
                                       (begin
                                         (raise-contract-violation-error
                                          '"contract violation"
@@ -1656,73 +1652,69 @@
                                          'contract:
                                          'symbol?
                                          'value:
-                                         _%sym163931%_)
+                                         _%sym166728%_)
                                         '#!void)))))
                            (declare (not safe))
                            (symbolic-table-set!
-                            _%slot-table163926%_
-                            __tmp167227
-                            _%field163929%_))))
-                      (__tmp167224
-                       (let ((__tmp167225
+                            _%slot-table166723%_
+                            __tmp170024
+                            _%field166726%_))))
+                      (__tmp170021
+                       (let ((__tmp170022
                               (let ()
                                 (declare (not safe))
-                                (##length _%slots163922%_))))
+                                (##length _%slots166719%_))))
                          (declare (not safe))
-                         (##iota __tmp167225 '1))))
+                         (##iota __tmp170022 '1))))
                   (declare (not safe))
-                  (##for-each __tmp167226 _%slots163922%_ __tmp167224))
-                _%slot-table163926%_))
-             (_%flags163952%_
+                  (##for-each __tmp170023 _%slots166719%_ __tmp170021))
+                _%slot-table166723%_))
+             (_%flags166749%_
               (let ()
                 (declare (not safe))
                 (##fxior type-flag-extensible
                          type-flag-concrete
                          type-flag-id
                          class-type-flag-struct)))
-             (_%fields163954%_ '#())
-             (_%properties163956%_
-              (cons (cons 'direct-slots:
-                          (let ()
-                            (declare (not safe))
-                            (foldr__0 cons '() _%slots163922%_)))
-                    (cons (cons 'struct: '#t) '())))
-             (__tmp167228 (cons object::t (cons t::t '()))))
+             (_%fields166751%_ '#())
+             (_%properties166753%_
+              (cons (cons 'direct-slots: _%slots166719%_) '((struct: . #t))))
+             (__tmp170025 (cons object::t (cons t::t '()))))
         (declare (not safe))
         (##structure
          class::t
          'gc-hash-table::t
          'gc-hash-table
-         _%flags163952%_
+         _%flags166749%_
          __gc-table::t
-         _%fields163954%_
-         __tmp167228
-         _%slot-vector163924%_
-         _%slot-table163950%_
-         _%properties163956%_
+         _%fields166751%_
+         __tmp170025
+         _%slot-vector166721%_
+         _%slot-table166747%_
+         _%properties166753%_
          '#f
          '#f
          '#f
          '#f)))
     (define locked-hash-table::t
-      (let ((__tmp167230 (list))
-            (__tmp167229
+      (let ((__tmp170027 (list))
+            (__tmp170026
              (cons (cons 'struct: '#t) (cons (cons 'final: '#t) '()))))
         (declare (not safe))
         (__make-class-type
          'locked-hash-table::t
          'locked-hash-table
-         __tmp167230
+         __tmp170027
          '(table lock)
-         __tmp167229
+         __tmp170026
          '#f)))
     (define locked-hash-table?
       (let ()
         (declare (not safe))
         (__make-class-predicate locked-hash-table::t)))
     (define make-locked-hash-table
-      (lambda _%$args163919%_
-        (apply make-instance locked-hash-table::t _%$args163919%_)))
+      (lambda _%$args166716%_
+        (apply make-instance locked-hash-table::t _%$args166716%_)))
     (define locked-hash-table-table
       (let ()
         (declare (not safe))
@@ -1756,24 +1748,24 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator locked-hash-table::t 'lock)))
     (define checked-hash-table::t
-      (let ((__tmp167232 (list))
-            (__tmp167231
+      (let ((__tmp170029 (list))
+            (__tmp170028
              (cons (cons 'struct: '#t) (cons (cons 'final: '#t) '()))))
         (declare (not safe))
         (__make-class-type
          'checked-hash-table::t
          'checked-hash-table
-         __tmp167232
+         __tmp170029
          '(table key-check)
-         __tmp167231
+         __tmp170028
          '#f)))
     (define checked-hash-table?
       (let ()
         (declare (not safe))
         (__make-class-predicate checked-hash-table::t)))
     (define make-checked-hash-table
-      (lambda _%$args163916%_
-        (apply make-instance checked-hash-table::t _%$args163916%_)))
+      (lambda _%$args166713%_
+        (apply make-instance checked-hash-table::t _%$args166713%_)))
     (define checked-hash-table-table
       (let ()
         (declare (not safe))
@@ -1811,1009 +1803,1009 @@
          checked-hash-table::t
          'key-check)))
     (define eq-hash-table::t
-      (let ((__tmp167234 (list hash-table::t))
-            (__tmp167233 (cons (cons 'struct: '#t) '())))
+      (let ((__tmp170031 (list hash-table::t))
+            (__tmp170030 (cons (cons 'struct: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'eq-hash-table::t::t
          'eq-hash-table
-         __tmp167234
+         __tmp170031
          '()
-         __tmp167233
+         __tmp170030
          '#f)))
     (define eq-hash-table?
       (let () (declare (not safe)) (__make-class-predicate eq-hash-table::t)))
     (define make-eq-hash-table
-      (lambda _%$args163913%_
-        (apply make-instance eq-hash-table::t _%$args163913%_)))
+      (lambda _%$args166710%_
+        (apply make-instance eq-hash-table::t _%$args166710%_)))
     (define eqv-hash-table::t
-      (let ((__tmp167236 (list hash-table::t))
-            (__tmp167235 (cons (cons 'struct: '#t) '())))
+      (let ((__tmp170033 (list hash-table::t))
+            (__tmp170032 (cons (cons 'struct: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'eqv-hash-table::t::t
          'eqv-hash-table
-         __tmp167236
+         __tmp170033
          '()
-         __tmp167235
+         __tmp170032
          '#f)))
     (define eqv-hash-table?
       (let () (declare (not safe)) (__make-class-predicate eqv-hash-table::t)))
     (define make-eqv-hash-table
-      (lambda _%$args163910%_
-        (apply make-instance eqv-hash-table::t _%$args163910%_)))
+      (lambda _%$args166707%_
+        (apply make-instance eqv-hash-table::t _%$args166707%_)))
     (define symbol-hash-table::t
-      (let ((__tmp167238 (list hash-table::t))
-            (__tmp167237 (cons (cons 'struct: '#t) '())))
+      (let ((__tmp170035 (list hash-table::t))
+            (__tmp170034 (cons (cons 'struct: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'symbol-hash-table::t::t
          'symbol-hash-table
-         __tmp167238
+         __tmp170035
          '()
-         __tmp167237
+         __tmp170034
          '#f)))
     (define symbol-hash-table?
       (let ()
         (declare (not safe))
         (__make-class-predicate symbol-hash-table::t)))
     (define make-symbol-hash-table
-      (lambda _%$args163907%_
-        (apply make-instance symbol-hash-table::t _%$args163907%_)))
+      (lambda _%$args166704%_
+        (apply make-instance symbol-hash-table::t _%$args166704%_)))
     (define string-hash-table::t
-      (let ((__tmp167240 (list hash-table::t))
-            (__tmp167239 (cons (cons 'struct: '#t) '())))
+      (let ((__tmp170037 (list hash-table::t))
+            (__tmp170036 (cons (cons 'struct: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'string-hash-table::t::t
          'string-hash-table
-         __tmp167240
+         __tmp170037
          '()
-         __tmp167239
+         __tmp170036
          '#f)))
     (define string-hash-table?
       (let ()
         (declare (not safe))
         (__make-class-predicate string-hash-table::t)))
     (define make-string-hash-table
-      (lambda _%$args163904%_
-        (apply make-instance string-hash-table::t _%$args163904%_)))
+      (lambda _%$args166701%_
+        (apply make-instance string-hash-table::t _%$args166701%_)))
     (define immediate-hash-table::t
-      (let ((__tmp167242 (list hash-table::t))
-            (__tmp167241 (cons (cons 'struct: '#t) '())))
+      (let ((__tmp170039 (list hash-table::t))
+            (__tmp170038 (cons (cons 'struct: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'immediate-hash-table::t::t
          'immediate-hash-table
-         __tmp167242
+         __tmp170039
          '()
-         __tmp167241
+         __tmp170038
          '#f)))
     (define immediate-hash-table?
       (let ()
         (declare (not safe))
         (__make-class-predicate immediate-hash-table::t)))
     (define make-immediate-hash-table
-      (lambda _%$args163901%_
-        (apply make-instance immediate-hash-table::t _%$args163901%_)))
-    (let* ((_%klass163864%_ hash-table::t)
-           (_%id163867%_ 'HashTable::ref)
-           (_%proc163870%_ raw-table-ref)
-           (_%rebind?163873%_ '#f)
-           (_%id163878%_ _%id163867%_)
-           (_%proc163891%_ _%proc163870%_))
+      (lambda _%$args166698%_
+        (apply make-instance immediate-hash-table::t _%$args166698%_)))
+    (let* ((_%klass166661%_ hash-table::t)
+           (_%id166664%_ 'HashTable::ref)
+           (_%proc166667%_ raw-table-ref)
+           (_%rebind?166670%_ '#f)
+           (_%id166675%_ _%id166664%_)
+           (_%proc166688%_ _%proc166667%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163864%_
-       _%id163878%_
-       _%proc163891%_
-       _%rebind?163873%_))
-    (let* ((_%klass163827%_ hash-table::t)
-           (_%id163830%_ 'HashTable::set!)
-           (_%proc163833%_ raw-table-set!)
-           (_%rebind?163836%_ '#f)
-           (_%id163841%_ _%id163830%_)
-           (_%proc163854%_ _%proc163833%_))
+       _%klass166661%_
+       _%id166675%_
+       _%proc166688%_
+       _%rebind?166670%_))
+    (let* ((_%klass166624%_ hash-table::t)
+           (_%id166627%_ 'HashTable::set!)
+           (_%proc166630%_ raw-table-set!)
+           (_%rebind?166633%_ '#f)
+           (_%id166638%_ _%id166627%_)
+           (_%proc166651%_ _%proc166630%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163827%_
-       _%id163841%_
-       _%proc163854%_
-       _%rebind?163836%_))
-    (let* ((_%klass163790%_ hash-table::t)
-           (_%id163793%_ 'HashTable::update!)
-           (_%proc163796%_ raw-table-update!)
-           (_%rebind?163799%_ '#f)
-           (_%id163804%_ _%id163793%_)
-           (_%proc163817%_ _%proc163796%_))
+       _%klass166624%_
+       _%id166638%_
+       _%proc166651%_
+       _%rebind?166633%_))
+    (let* ((_%klass166587%_ hash-table::t)
+           (_%id166590%_ 'HashTable::update!)
+           (_%proc166593%_ raw-table-update!)
+           (_%rebind?166596%_ '#f)
+           (_%id166601%_ _%id166590%_)
+           (_%proc166614%_ _%proc166593%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163790%_
-       _%id163804%_
-       _%proc163817%_
-       _%rebind?163799%_))
-    (let* ((_%klass163753%_ hash-table::t)
-           (_%id163756%_ 'HashTable::delete!)
-           (_%proc163759%_ raw-table-delete!)
-           (_%rebind?163762%_ '#f)
-           (_%id163767%_ _%id163756%_)
-           (_%proc163780%_ _%proc163759%_))
+       _%klass166587%_
+       _%id166601%_
+       _%proc166614%_
+       _%rebind?166596%_))
+    (let* ((_%klass166550%_ hash-table::t)
+           (_%id166553%_ 'HashTable::delete!)
+           (_%proc166556%_ raw-table-delete!)
+           (_%rebind?166559%_ '#f)
+           (_%id166564%_ _%id166553%_)
+           (_%proc166577%_ _%proc166556%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163753%_
-       _%id163767%_
-       _%proc163780%_
-       _%rebind?163762%_))
-    (let* ((_%klass163716%_ hash-table::t)
-           (_%id163719%_ 'HashTable::for-each)
-           (_%proc163722%_ raw-table-for-each)
-           (_%rebind?163725%_ '#f)
-           (_%id163730%_ _%id163719%_)
-           (_%proc163743%_ _%proc163722%_))
+       _%klass166550%_
+       _%id166564%_
+       _%proc166577%_
+       _%rebind?166559%_))
+    (let* ((_%klass166513%_ hash-table::t)
+           (_%id166516%_ 'HashTable::for-each)
+           (_%proc166519%_ raw-table-for-each)
+           (_%rebind?166522%_ '#f)
+           (_%id166527%_ _%id166516%_)
+           (_%proc166540%_ _%proc166519%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163716%_
-       _%id163730%_
-       _%proc163743%_
-       _%rebind?163725%_))
-    (let* ((_%klass163679%_ hash-table::t)
-           (_%id163682%_ 'HashTable::length)
-           (_%proc163685%_ &raw-table-count)
-           (_%rebind?163688%_ '#f)
-           (_%id163693%_ _%id163682%_)
-           (_%proc163706%_ _%proc163685%_))
+       _%klass166513%_
+       _%id166527%_
+       _%proc166540%_
+       _%rebind?166522%_))
+    (let* ((_%klass166476%_ hash-table::t)
+           (_%id166479%_ 'HashTable::length)
+           (_%proc166482%_ &raw-table-count)
+           (_%rebind?166485%_ '#f)
+           (_%id166490%_ _%id166479%_)
+           (_%proc166503%_ _%proc166482%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163679%_
-       _%id163693%_
-       _%proc163706%_
-       _%rebind?163688%_))
-    (let* ((_%klass163642%_ hash-table::t)
-           (_%id163645%_ 'HashTable::copy)
-           (_%proc163648%_ raw-table-copy)
-           (_%rebind?163651%_ '#f)
-           (_%id163656%_ _%id163645%_)
-           (_%proc163669%_ _%proc163648%_))
+       _%klass166476%_
+       _%id166490%_
+       _%proc166503%_
+       _%rebind?166485%_))
+    (let* ((_%klass166439%_ hash-table::t)
+           (_%id166442%_ 'HashTable::copy)
+           (_%proc166445%_ raw-table-copy)
+           (_%rebind?166448%_ '#f)
+           (_%id166453%_ _%id166442%_)
+           (_%proc166466%_ _%proc166445%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163642%_
-       _%id163656%_
-       _%proc163669%_
-       _%rebind?163651%_))
-    (let* ((_%klass163605%_ hash-table::t)
-           (_%id163608%_ 'HashTable::new)
-           (_%proc163611%_ raw-table-new)
-           (_%rebind?163614%_ '#f)
-           (_%id163619%_ _%id163608%_)
-           (_%proc163632%_ _%proc163611%_))
+       _%klass166439%_
+       _%id166453%_
+       _%proc166466%_
+       _%rebind?166448%_))
+    (let* ((_%klass166402%_ hash-table::t)
+           (_%id166405%_ 'HashTable::new)
+           (_%proc166408%_ raw-table-new)
+           (_%rebind?166411%_ '#f)
+           (_%id166416%_ _%id166405%_)
+           (_%proc166429%_ _%proc166408%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163605%_
-       _%id163619%_
-       _%proc163632%_
-       _%rebind?163614%_))
-    (let* ((_%klass163568%_ hash-table::t)
-           (_%id163571%_ 'HashTable::clear!)
-           (_%proc163574%_ raw-table-clear!)
-           (_%rebind?163577%_ '#f)
-           (_%id163582%_ _%id163571%_)
-           (_%proc163595%_ _%proc163574%_))
+       _%klass166402%_
+       _%id166416%_
+       _%proc166429%_
+       _%rebind?166411%_))
+    (let* ((_%klass166365%_ hash-table::t)
+           (_%id166368%_ 'HashTable::clear!)
+           (_%proc166371%_ raw-table-clear!)
+           (_%rebind?166374%_ '#f)
+           (_%id166379%_ _%id166368%_)
+           (_%proc166392%_ _%proc166371%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163568%_
-       _%id163582%_
-       _%proc163595%_
-       _%rebind?163577%_))
-    (let* ((_%klass163531%_ eq-hash-table::t)
-           (_%id163534%_ 'HashTable::ref)
-           (_%proc163537%_ eq-table-ref)
-           (_%rebind?163540%_ '#f)
-           (_%id163545%_ _%id163534%_)
-           (_%proc163558%_ _%proc163537%_))
+       _%klass166365%_
+       _%id166379%_
+       _%proc166392%_
+       _%rebind?166374%_))
+    (let* ((_%klass166328%_ eq-hash-table::t)
+           (_%id166331%_ 'HashTable::ref)
+           (_%proc166334%_ eq-table-ref)
+           (_%rebind?166337%_ '#f)
+           (_%id166342%_ _%id166331%_)
+           (_%proc166355%_ _%proc166334%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163531%_
-       _%id163545%_
-       _%proc163558%_
-       _%rebind?163540%_))
-    (let* ((_%klass163494%_ eq-hash-table::t)
-           (_%id163497%_ 'HashTable::set!)
-           (_%proc163500%_ eq-table-set!)
-           (_%rebind?163503%_ '#f)
-           (_%id163508%_ _%id163497%_)
-           (_%proc163521%_ _%proc163500%_))
+       _%klass166328%_
+       _%id166342%_
+       _%proc166355%_
+       _%rebind?166337%_))
+    (let* ((_%klass166291%_ eq-hash-table::t)
+           (_%id166294%_ 'HashTable::set!)
+           (_%proc166297%_ eq-table-set!)
+           (_%rebind?166300%_ '#f)
+           (_%id166305%_ _%id166294%_)
+           (_%proc166318%_ _%proc166297%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163494%_
-       _%id163508%_
-       _%proc163521%_
-       _%rebind?163503%_))
-    (let* ((_%klass163457%_ eq-hash-table::t)
-           (_%id163460%_ 'HashTable::update!)
-           (_%proc163463%_ eq-table-update!)
-           (_%rebind?163466%_ '#f)
-           (_%id163471%_ _%id163460%_)
-           (_%proc163484%_ _%proc163463%_))
+       _%klass166291%_
+       _%id166305%_
+       _%proc166318%_
+       _%rebind?166300%_))
+    (let* ((_%klass166254%_ eq-hash-table::t)
+           (_%id166257%_ 'HashTable::update!)
+           (_%proc166260%_ eq-table-update!)
+           (_%rebind?166263%_ '#f)
+           (_%id166268%_ _%id166257%_)
+           (_%proc166281%_ _%proc166260%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163457%_
-       _%id163471%_
-       _%proc163484%_
-       _%rebind?163466%_))
-    (let* ((_%klass163420%_ eq-hash-table::t)
-           (_%id163423%_ 'HashTable::delete!)
-           (_%proc163426%_ eq-table-delete!)
-           (_%rebind?163429%_ '#f)
-           (_%id163434%_ _%id163423%_)
-           (_%proc163447%_ _%proc163426%_))
+       _%klass166254%_
+       _%id166268%_
+       _%proc166281%_
+       _%rebind?166263%_))
+    (let* ((_%klass166217%_ eq-hash-table::t)
+           (_%id166220%_ 'HashTable::delete!)
+           (_%proc166223%_ eq-table-delete!)
+           (_%rebind?166226%_ '#f)
+           (_%id166231%_ _%id166220%_)
+           (_%proc166244%_ _%proc166223%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163420%_
-       _%id163434%_
-       _%proc163447%_
-       _%rebind?163429%_))
-    (let* ((_%klass163383%_ eqv-hash-table::t)
-           (_%id163386%_ 'HashTable::ref)
-           (_%proc163389%_ eqv-table-ref)
-           (_%rebind?163392%_ '#f)
-           (_%id163397%_ _%id163386%_)
-           (_%proc163410%_ _%proc163389%_))
+       _%klass166217%_
+       _%id166231%_
+       _%proc166244%_
+       _%rebind?166226%_))
+    (let* ((_%klass166180%_ eqv-hash-table::t)
+           (_%id166183%_ 'HashTable::ref)
+           (_%proc166186%_ eqv-table-ref)
+           (_%rebind?166189%_ '#f)
+           (_%id166194%_ _%id166183%_)
+           (_%proc166207%_ _%proc166186%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163383%_
-       _%id163397%_
-       _%proc163410%_
-       _%rebind?163392%_))
-    (let* ((_%klass163346%_ eqv-hash-table::t)
-           (_%id163349%_ 'HashTable::set!)
-           (_%proc163352%_ eqv-table-set!)
-           (_%rebind?163355%_ '#f)
-           (_%id163360%_ _%id163349%_)
-           (_%proc163373%_ _%proc163352%_))
+       _%klass166180%_
+       _%id166194%_
+       _%proc166207%_
+       _%rebind?166189%_))
+    (let* ((_%klass166143%_ eqv-hash-table::t)
+           (_%id166146%_ 'HashTable::set!)
+           (_%proc166149%_ eqv-table-set!)
+           (_%rebind?166152%_ '#f)
+           (_%id166157%_ _%id166146%_)
+           (_%proc166170%_ _%proc166149%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163346%_
-       _%id163360%_
-       _%proc163373%_
-       _%rebind?163355%_))
-    (let* ((_%klass163309%_ eqv-hash-table::t)
-           (_%id163312%_ 'HashTable::update!)
-           (_%proc163315%_ eqv-table-update!)
-           (_%rebind?163318%_ '#f)
-           (_%id163323%_ _%id163312%_)
-           (_%proc163336%_ _%proc163315%_))
+       _%klass166143%_
+       _%id166157%_
+       _%proc166170%_
+       _%rebind?166152%_))
+    (let* ((_%klass166106%_ eqv-hash-table::t)
+           (_%id166109%_ 'HashTable::update!)
+           (_%proc166112%_ eqv-table-update!)
+           (_%rebind?166115%_ '#f)
+           (_%id166120%_ _%id166109%_)
+           (_%proc166133%_ _%proc166112%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163309%_
-       _%id163323%_
-       _%proc163336%_
-       _%rebind?163318%_))
-    (let* ((_%klass163272%_ eqv-hash-table::t)
-           (_%id163275%_ 'HashTable::delete!)
-           (_%proc163278%_ eqv-table-delete!)
-           (_%rebind?163281%_ '#f)
-           (_%id163286%_ _%id163275%_)
-           (_%proc163299%_ _%proc163278%_))
+       _%klass166106%_
+       _%id166120%_
+       _%proc166133%_
+       _%rebind?166115%_))
+    (let* ((_%klass166069%_ eqv-hash-table::t)
+           (_%id166072%_ 'HashTable::delete!)
+           (_%proc166075%_ eqv-table-delete!)
+           (_%rebind?166078%_ '#f)
+           (_%id166083%_ _%id166072%_)
+           (_%proc166096%_ _%proc166075%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163272%_
-       _%id163286%_
-       _%proc163299%_
-       _%rebind?163281%_))
-    (let* ((_%klass163235%_ symbol-hash-table::t)
-           (_%id163238%_ 'HashTable::ref)
-           (_%proc163241%_ symbolic-table-ref)
-           (_%rebind?163244%_ '#f)
-           (_%id163249%_ _%id163238%_)
-           (_%proc163262%_ _%proc163241%_))
+       _%klass166069%_
+       _%id166083%_
+       _%proc166096%_
+       _%rebind?166078%_))
+    (let* ((_%klass166032%_ symbol-hash-table::t)
+           (_%id166035%_ 'HashTable::ref)
+           (_%proc166038%_ symbolic-table-ref)
+           (_%rebind?166041%_ '#f)
+           (_%id166046%_ _%id166035%_)
+           (_%proc166059%_ _%proc166038%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163235%_
-       _%id163249%_
-       _%proc163262%_
-       _%rebind?163244%_))
-    (let* ((_%klass163198%_ symbol-hash-table::t)
-           (_%id163201%_ 'HashTable::set!)
-           (_%proc163204%_ symbolic-table-set!)
-           (_%rebind?163207%_ '#f)
-           (_%id163212%_ _%id163201%_)
-           (_%proc163225%_ _%proc163204%_))
+       _%klass166032%_
+       _%id166046%_
+       _%proc166059%_
+       _%rebind?166041%_))
+    (let* ((_%klass165995%_ symbol-hash-table::t)
+           (_%id165998%_ 'HashTable::set!)
+           (_%proc166001%_ symbolic-table-set!)
+           (_%rebind?166004%_ '#f)
+           (_%id166009%_ _%id165998%_)
+           (_%proc166022%_ _%proc166001%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163198%_
-       _%id163212%_
-       _%proc163225%_
-       _%rebind?163207%_))
-    (let* ((_%klass163161%_ symbol-hash-table::t)
-           (_%id163164%_ 'HashTable::update!)
-           (_%proc163167%_ symbolic-table-update!)
-           (_%rebind?163170%_ '#f)
-           (_%id163175%_ _%id163164%_)
-           (_%proc163188%_ _%proc163167%_))
+       _%klass165995%_
+       _%id166009%_
+       _%proc166022%_
+       _%rebind?166004%_))
+    (let* ((_%klass165958%_ symbol-hash-table::t)
+           (_%id165961%_ 'HashTable::update!)
+           (_%proc165964%_ symbolic-table-update!)
+           (_%rebind?165967%_ '#f)
+           (_%id165972%_ _%id165961%_)
+           (_%proc165985%_ _%proc165964%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163161%_
-       _%id163175%_
-       _%proc163188%_
-       _%rebind?163170%_))
-    (let* ((_%klass163124%_ symbol-hash-table::t)
-           (_%id163127%_ 'HashTable::delete!)
-           (_%proc163130%_ symbolic-table-delete!)
-           (_%rebind?163133%_ '#f)
-           (_%id163138%_ _%id163127%_)
-           (_%proc163151%_ _%proc163130%_))
+       _%klass165958%_
+       _%id165972%_
+       _%proc165985%_
+       _%rebind?165967%_))
+    (let* ((_%klass165921%_ symbol-hash-table::t)
+           (_%id165924%_ 'HashTable::delete!)
+           (_%proc165927%_ symbolic-table-delete!)
+           (_%rebind?165930%_ '#f)
+           (_%id165935%_ _%id165924%_)
+           (_%proc165948%_ _%proc165927%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163124%_
-       _%id163138%_
-       _%proc163151%_
-       _%rebind?163133%_))
-    (let* ((_%klass163087%_ string-hash-table::t)
-           (_%id163090%_ 'HashTable::ref)
-           (_%proc163093%_ string-table-ref)
-           (_%rebind?163096%_ '#f)
-           (_%id163101%_ _%id163090%_)
-           (_%proc163114%_ _%proc163093%_))
+       _%klass165921%_
+       _%id165935%_
+       _%proc165948%_
+       _%rebind?165930%_))
+    (let* ((_%klass165884%_ string-hash-table::t)
+           (_%id165887%_ 'HashTable::ref)
+           (_%proc165890%_ string-table-ref)
+           (_%rebind?165893%_ '#f)
+           (_%id165898%_ _%id165887%_)
+           (_%proc165911%_ _%proc165890%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163087%_
-       _%id163101%_
-       _%proc163114%_
-       _%rebind?163096%_))
-    (let* ((_%klass163050%_ string-hash-table::t)
-           (_%id163053%_ 'HashTable::set!)
-           (_%proc163056%_ string-table-set!)
-           (_%rebind?163059%_ '#f)
-           (_%id163064%_ _%id163053%_)
-           (_%proc163077%_ _%proc163056%_))
+       _%klass165884%_
+       _%id165898%_
+       _%proc165911%_
+       _%rebind?165893%_))
+    (let* ((_%klass165847%_ string-hash-table::t)
+           (_%id165850%_ 'HashTable::set!)
+           (_%proc165853%_ string-table-set!)
+           (_%rebind?165856%_ '#f)
+           (_%id165861%_ _%id165850%_)
+           (_%proc165874%_ _%proc165853%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163050%_
-       _%id163064%_
-       _%proc163077%_
-       _%rebind?163059%_))
-    (let* ((_%klass163013%_ string-hash-table::t)
-           (_%id163016%_ 'HashTable::update!)
-           (_%proc163019%_ string-table-update!)
-           (_%rebind?163022%_ '#f)
-           (_%id163027%_ _%id163016%_)
-           (_%proc163040%_ _%proc163019%_))
+       _%klass165847%_
+       _%id165861%_
+       _%proc165874%_
+       _%rebind?165856%_))
+    (let* ((_%klass165810%_ string-hash-table::t)
+           (_%id165813%_ 'HashTable::update!)
+           (_%proc165816%_ string-table-update!)
+           (_%rebind?165819%_ '#f)
+           (_%id165824%_ _%id165813%_)
+           (_%proc165837%_ _%proc165816%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass163013%_
-       _%id163027%_
-       _%proc163040%_
-       _%rebind?163022%_))
-    (let* ((_%klass162976%_ string-hash-table::t)
-           (_%id162979%_ 'HashTable::delete!)
-           (_%proc162982%_ string-table-delete!)
-           (_%rebind?162985%_ '#f)
-           (_%id162990%_ _%id162979%_)
-           (_%proc163003%_ _%proc162982%_))
+       _%klass165810%_
+       _%id165824%_
+       _%proc165837%_
+       _%rebind?165819%_))
+    (let* ((_%klass165773%_ string-hash-table::t)
+           (_%id165776%_ 'HashTable::delete!)
+           (_%proc165779%_ string-table-delete!)
+           (_%rebind?165782%_ '#f)
+           (_%id165787%_ _%id165776%_)
+           (_%proc165800%_ _%proc165779%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass162976%_
-       _%id162990%_
-       _%proc163003%_
-       _%rebind?162985%_))
-    (let* ((_%klass162939%_ immediate-hash-table::t)
-           (_%id162942%_ 'HashTable::ref)
-           (_%proc162945%_ immediate-table-ref)
-           (_%rebind?162948%_ '#f)
-           (_%id162953%_ _%id162942%_)
-           (_%proc162966%_ _%proc162945%_))
+       _%klass165773%_
+       _%id165787%_
+       _%proc165800%_
+       _%rebind?165782%_))
+    (let* ((_%klass165736%_ immediate-hash-table::t)
+           (_%id165739%_ 'HashTable::ref)
+           (_%proc165742%_ immediate-table-ref)
+           (_%rebind?165745%_ '#f)
+           (_%id165750%_ _%id165739%_)
+           (_%proc165763%_ _%proc165742%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass162939%_
-       _%id162953%_
-       _%proc162966%_
-       _%rebind?162948%_))
-    (let* ((_%klass162902%_ immediate-hash-table::t)
-           (_%id162905%_ 'HashTable::set!)
-           (_%proc162908%_ immediate-table-set!)
-           (_%rebind?162911%_ '#f)
-           (_%id162916%_ _%id162905%_)
-           (_%proc162929%_ _%proc162908%_))
+       _%klass165736%_
+       _%id165750%_
+       _%proc165763%_
+       _%rebind?165745%_))
+    (let* ((_%klass165699%_ immediate-hash-table::t)
+           (_%id165702%_ 'HashTable::set!)
+           (_%proc165705%_ immediate-table-set!)
+           (_%rebind?165708%_ '#f)
+           (_%id165713%_ _%id165702%_)
+           (_%proc165726%_ _%proc165705%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass162902%_
-       _%id162916%_
-       _%proc162929%_
-       _%rebind?162911%_))
-    (let* ((_%klass162865%_ immediate-hash-table::t)
-           (_%id162868%_ 'HashTable::update!)
-           (_%proc162871%_ immediate-table-update!)
-           (_%rebind?162874%_ '#f)
-           (_%id162879%_ _%id162868%_)
-           (_%proc162892%_ _%proc162871%_))
+       _%klass165699%_
+       _%id165713%_
+       _%proc165726%_
+       _%rebind?165708%_))
+    (let* ((_%klass165662%_ immediate-hash-table::t)
+           (_%id165665%_ 'HashTable::update!)
+           (_%proc165668%_ immediate-table-update!)
+           (_%rebind?165671%_ '#f)
+           (_%id165676%_ _%id165665%_)
+           (_%proc165689%_ _%proc165668%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass162865%_
-       _%id162879%_
-       _%proc162892%_
-       _%rebind?162874%_))
-    (let* ((_%klass162828%_ immediate-hash-table::t)
-           (_%id162831%_ 'HashTable::delete!)
-           (_%proc162834%_ immediate-table-delete!)
-           (_%rebind?162837%_ '#f)
-           (_%id162842%_ _%id162831%_)
-           (_%proc162855%_ _%proc162834%_))
+       _%klass165662%_
+       _%id165676%_
+       _%proc165689%_
+       _%rebind?165671%_))
+    (let* ((_%klass165625%_ immediate-hash-table::t)
+           (_%id165628%_ 'HashTable::delete!)
+           (_%proc165631%_ immediate-table-delete!)
+           (_%rebind?165634%_ '#f)
+           (_%id165639%_ _%id165628%_)
+           (_%proc165652%_ _%proc165631%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass162828%_
-       _%id162842%_
-       _%proc162855%_
-       _%rebind?162837%_))
-    (let* ((_%klass162791%_ gc-hash-table::t)
-           (_%id162794%_ 'HashTable::ref)
-           (_%proc162797%_ gc-table-ref)
-           (_%rebind?162800%_ '#f)
-           (_%id162805%_ _%id162794%_)
-           (_%proc162818%_ _%proc162797%_))
+       _%klass165625%_
+       _%id165639%_
+       _%proc165652%_
+       _%rebind?165634%_))
+    (let* ((_%klass165588%_ gc-hash-table::t)
+           (_%id165591%_ 'HashTable::ref)
+           (_%proc165594%_ gc-table-ref)
+           (_%rebind?165597%_ '#f)
+           (_%id165602%_ _%id165591%_)
+           (_%proc165615%_ _%proc165594%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass162791%_
-       _%id162805%_
-       _%proc162818%_
-       _%rebind?162800%_))
-    (let* ((_%klass162754%_ gc-hash-table::t)
-           (_%id162757%_ 'HashTable::set!)
-           (_%proc162760%_ gc-table-set!)
-           (_%rebind?162763%_ '#f)
-           (_%id162768%_ _%id162757%_)
-           (_%proc162781%_ _%proc162760%_))
+       _%klass165588%_
+       _%id165602%_
+       _%proc165615%_
+       _%rebind?165597%_))
+    (let* ((_%klass165551%_ gc-hash-table::t)
+           (_%id165554%_ 'HashTable::set!)
+           (_%proc165557%_ gc-table-set!)
+           (_%rebind?165560%_ '#f)
+           (_%id165565%_ _%id165554%_)
+           (_%proc165578%_ _%proc165557%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass162754%_
-       _%id162768%_
-       _%proc162781%_
-       _%rebind?162763%_))
-    (let* ((_%klass162717%_ gc-hash-table::t)
-           (_%id162720%_ 'HashTable::update!)
-           (_%proc162723%_ gc-table-update!)
-           (_%rebind?162726%_ '#f)
-           (_%id162731%_ _%id162720%_)
-           (_%proc162744%_ _%proc162723%_))
+       _%klass165551%_
+       _%id165565%_
+       _%proc165578%_
+       _%rebind?165560%_))
+    (let* ((_%klass165514%_ gc-hash-table::t)
+           (_%id165517%_ 'HashTable::update!)
+           (_%proc165520%_ gc-table-update!)
+           (_%rebind?165523%_ '#f)
+           (_%id165528%_ _%id165517%_)
+           (_%proc165541%_ _%proc165520%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass162717%_
-       _%id162731%_
-       _%proc162744%_
-       _%rebind?162726%_))
-    (let* ((_%klass162680%_ gc-hash-table::t)
-           (_%id162683%_ 'HashTable::delete!)
-           (_%proc162686%_ gc-table-delete!)
-           (_%rebind?162689%_ '#f)
-           (_%id162694%_ _%id162683%_)
-           (_%proc162707%_ _%proc162686%_))
+       _%klass165514%_
+       _%id165528%_
+       _%proc165541%_
+       _%rebind?165523%_))
+    (let* ((_%klass165477%_ gc-hash-table::t)
+           (_%id165480%_ 'HashTable::delete!)
+           (_%proc165483%_ gc-table-delete!)
+           (_%rebind?165486%_ '#f)
+           (_%id165491%_ _%id165480%_)
+           (_%proc165504%_ _%proc165483%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass162680%_
-       _%id162694%_
-       _%proc162707%_
-       _%rebind?162689%_))
-    (let* ((_%klass162643%_ gc-hash-table::t)
-           (_%id162646%_ 'HashTable::for-each)
-           (_%proc162649%_ gc-table-for-each)
-           (_%rebind?162652%_ '#f)
-           (_%id162657%_ _%id162646%_)
-           (_%proc162670%_ _%proc162649%_))
+       _%klass165477%_
+       _%id165491%_
+       _%proc165504%_
+       _%rebind?165486%_))
+    (let* ((_%klass165440%_ gc-hash-table::t)
+           (_%id165443%_ 'HashTable::for-each)
+           (_%proc165446%_ gc-table-for-each)
+           (_%rebind?165449%_ '#f)
+           (_%id165454%_ _%id165443%_)
+           (_%proc165467%_ _%proc165446%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass162643%_
-       _%id162657%_
-       _%proc162670%_
-       _%rebind?162652%_))
-    (let* ((_%klass162606%_ gc-hash-table::t)
-           (_%id162609%_ 'HashTable::length)
-           (_%proc162612%_ gc-table-length)
-           (_%rebind?162615%_ '#f)
-           (_%id162620%_ _%id162609%_)
-           (_%proc162633%_ _%proc162612%_))
+       _%klass165440%_
+       _%id165454%_
+       _%proc165467%_
+       _%rebind?165449%_))
+    (let* ((_%klass165403%_ gc-hash-table::t)
+           (_%id165406%_ 'HashTable::length)
+           (_%proc165409%_ gc-table-length)
+           (_%rebind?165412%_ '#f)
+           (_%id165417%_ _%id165406%_)
+           (_%proc165430%_ _%proc165409%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass162606%_
-       _%id162620%_
-       _%proc162633%_
-       _%rebind?162615%_))
-    (let* ((_%klass162569%_ gc-hash-table::t)
-           (_%id162572%_ 'HashTable::copy)
-           (_%proc162575%_ gc-table-copy)
-           (_%rebind?162578%_ '#f)
-           (_%id162583%_ _%id162572%_)
-           (_%proc162596%_ _%proc162575%_))
+       _%klass165403%_
+       _%id165417%_
+       _%proc165430%_
+       _%rebind?165412%_))
+    (let* ((_%klass165366%_ gc-hash-table::t)
+           (_%id165369%_ 'HashTable::copy)
+           (_%proc165372%_ gc-table-copy)
+           (_%rebind?165375%_ '#f)
+           (_%id165380%_ _%id165369%_)
+           (_%proc165393%_ _%proc165372%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass162569%_
-       _%id162583%_
-       _%proc162596%_
-       _%rebind?162578%_))
-    (let* ((_%klass162532%_ gc-hash-table::t)
-           (_%id162535%_ 'HashTable::new)
-           (_%proc162538%_ gc-table-new)
-           (_%rebind?162541%_ '#f)
-           (_%id162546%_ _%id162535%_)
-           (_%proc162559%_ _%proc162538%_))
+       _%klass165366%_
+       _%id165380%_
+       _%proc165393%_
+       _%rebind?165375%_))
+    (let* ((_%klass165329%_ gc-hash-table::t)
+           (_%id165332%_ 'HashTable::new)
+           (_%proc165335%_ gc-table-new)
+           (_%rebind?165338%_ '#f)
+           (_%id165343%_ _%id165332%_)
+           (_%proc165356%_ _%proc165335%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass162532%_
-       _%id162546%_
-       _%proc162559%_
-       _%rebind?162541%_))
-    (let* ((_%klass162495%_ gc-hash-table::t)
-           (_%id162498%_ 'HashTable::clear!)
-           (_%proc162501%_ gc-table-clear!)
-           (_%rebind?162504%_ '#f)
-           (_%id162509%_ _%id162498%_)
-           (_%proc162522%_ _%proc162501%_))
+       _%klass165329%_
+       _%id165343%_
+       _%proc165356%_
+       _%rebind?165338%_))
+    (let* ((_%klass165292%_ gc-hash-table::t)
+           (_%id165295%_ 'HashTable::clear!)
+           (_%proc165298%_ gc-table-clear!)
+           (_%rebind?165301%_ '#f)
+           (_%id165306%_ _%id165295%_)
+           (_%proc165319%_ _%proc165298%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass162495%_
-       _%id162509%_
-       _%proc162522%_
-       _%rebind?162504%_))
+       _%klass165292%_
+       _%id165306%_
+       _%proc165319%_
+       _%rebind?165301%_))
     (define hash-table? HashTable?)
     (define is-hash-table? is-HashTable?)
-    (define _%locked-hash-table::HashTable::ref153146%_
-      (lambda (_%self162416%_ _%key162418%_ _%default162419%_)
-        (let* ((_%self162422%_ _%self162416%_)
-               (_%key162431%_ _%key162418%_)
-               (_%default162439%_ _%default162419%_))
-          (let ((_%h162448%_
+    (define _%locked-hash-table::HashTable::ref155943%_
+      (lambda (_%self165213%_ _%key165215%_ _%default165216%_)
+        (let* ((_%self165219%_ _%self165213%_)
+               (_%key165228%_ _%key165215%_)
+               (_%default165236%_ _%default165216%_))
+          (let ((_%h165245%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self162422%_ '1 '#f '#f)))
-                (_%l162450%_
+                   (##unchecked-structure-ref _%self165219%_ '1 '#f '#f)))
+                (_%l165247%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self162422%_ '2 '#f '#f))))
-            (let ((__tmp167245
+                   (##unchecked-structure-ref _%self165219%_ '2 '#f '#f))))
+            (let ((__tmp170042
                    (lambda ()
-                     (let ((_%self151786162454%_ _%l162450%_))
+                     (let ((_%self154583165251%_ _%l165247%_))
                        (declare (not safe))
-                       (let ((_%object162457162462%_
+                       (let ((_%object165254165259%_
                               (##unchecked-structure-ref
-                               _%self151786162454%_
+                               _%self154583165251%_
                                '1
                                '#f
                                'read-lock!))
-                             (_%method162458162463%_
+                             (_%method165255165260%_
                               (##unchecked-structure-ref
-                               _%self151786162454%_
+                               _%self154583165251%_
                                '2
                                '#f
                                'read-lock!)))
-                         (_%method162458162463%_ _%object162457162462%_)))))
-                  (__tmp167244
+                         (_%method165255165260%_ _%object165254165259%_)))))
+                  (__tmp170041
                    (lambda ()
-                     (let* ((_%self151054162466%_ _%h162448%_)
-                            (_%key162469%_ _%key162431%_)
-                            (_%default162472%_ _%default162439%_))
+                     (let* ((_%self153851165263%_ _%h165245%_)
+                            (_%key165266%_ _%key165228%_)
+                            (_%default165269%_ _%default165236%_))
                        (declare (not safe))
-                       (let ((_%object162475162480%_
+                       (let ((_%object165272165277%_
                               (##unchecked-structure-ref
-                               _%self151054162466%_
+                               _%self153851165263%_
                                '1
                                '#f
                                'ref))
-                             (_%method162476162481%_
+                             (_%method165273165278%_
                               (##unchecked-structure-ref
-                               _%self151054162466%_
+                               _%self153851165263%_
                                '8
                                '#f
                                'ref)))
-                         (_%method162476162481%_
-                          _%object162475162480%_
-                          _%key162469%_
-                          _%default162472%_)))))
-                  (__tmp167243
+                         (_%method165273165278%_
+                          _%object165272165277%_
+                          _%key165266%_
+                          _%default165269%_)))))
+                  (__tmp170040
                    (lambda ()
-                     (let ((_%self152030162484%_ _%l162450%_))
+                     (let ((_%self154827165281%_ _%l165247%_))
                        (declare (not safe))
-                       (let ((_%object162487162492%_
+                       (let ((_%object165284165289%_
                               (##unchecked-structure-ref
-                               _%self152030162484%_
+                               _%self154827165281%_
                                '1
                                '#f
                                'read-unlock!))
-                             (_%method162488162493%_
+                             (_%method165285165290%_
                               (##unchecked-structure-ref
-                               _%self152030162484%_
+                               _%self154827165281%_
                                '3
                                '#f
                                'read-unlock!)))
-                         (_%method162488162493%_ _%object162487162492%_))))))
+                         (_%method165285165290%_ _%object165284165289%_))))))
               (declare (not safe))
-              (##dynamic-wind __tmp167245 __tmp167244 __tmp167243))))))
+              (##dynamic-wind __tmp170042 __tmp170041 __tmp170040))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        locked-hash-table::t
        'HashTable::ref
-       _%locked-hash-table::HashTable::ref153146%_
+       _%locked-hash-table::HashTable::ref155943%_
        '#f))
-    (define _%locked-hash-table::HashTable::set!153148%_
-      (lambda (_%self162214%_ _%key162216%_ _%value162217%_)
-        (let* ((_%self162220%_ _%self162214%_)
-               (_%key162229%_ _%key162216%_)
-               (_%value162237%_ _%value162217%_))
-          (let ((_%h162246%_
+    (define _%locked-hash-table::HashTable::set!155945%_
+      (lambda (_%self165011%_ _%key165013%_ _%value165014%_)
+        (let* ((_%self165017%_ _%self165011%_)
+               (_%key165026%_ _%key165013%_)
+               (_%value165034%_ _%value165014%_))
+          (let ((_%h165043%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self162220%_ '1 '#f '#f)))
-                (_%l162248%_
+                   (##unchecked-structure-ref _%self165017%_ '1 '#f '#f)))
+                (_%l165045%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self162220%_ '2 '#f '#f))))
-            (let ((__tmp167248
+                   (##unchecked-structure-ref _%self165017%_ '2 '#f '#f))))
+            (let ((__tmp170045
                    (lambda ()
-                     (let ((_%self152274162252%_ _%l162248%_))
+                     (let ((_%self155071165049%_ _%l165045%_))
                        (declare (not safe))
-                       (let ((_%object162255162260%_
+                       (let ((_%object165052165057%_
                               (##unchecked-structure-ref
-                               _%self152274162252%_
+                               _%self155071165049%_
                                '1
                                '#f
                                'write-lock!))
-                             (_%method162256162261%_
+                             (_%method165053165058%_
                               (##unchecked-structure-ref
-                               _%self152274162252%_
+                               _%self155071165049%_
                                '4
                                '#f
                                'write-lock!)))
-                         (_%method162256162261%_ _%object162255162260%_)))))
-                  (__tmp167247
+                         (_%method165053165058%_ _%object165052165057%_)))))
+                  (__tmp170044
                    (lambda ()
-                     (let* ((_%self151298162264%_ _%h162246%_)
-                            (_%key162267%_ _%key162229%_)
-                            (_%value162270%_ _%value162237%_))
+                     (let* ((_%self154095165061%_ _%h165043%_)
+                            (_%key165064%_ _%key165026%_)
+                            (_%value165067%_ _%value165034%_))
                        (declare (not safe))
-                       (let ((_%object162273162278%_
+                       (let ((_%object165070165075%_
                               (##unchecked-structure-ref
-                               _%self151298162264%_
+                               _%self154095165061%_
                                '1
                                '#f
                                'set!))
-                             (_%method162274162279%_
+                             (_%method165071165076%_
                               (##unchecked-structure-ref
-                               _%self151298162264%_
+                               _%self154095165061%_
                                '9
                                '#f
                                'set!)))
-                         (_%method162274162279%_
-                          _%object162273162278%_
-                          _%key162267%_
-                          _%value162270%_)))))
-                  (__tmp167246
+                         (_%method165071165076%_
+                          _%object165070165075%_
+                          _%key165064%_
+                          _%value165067%_)))))
+                  (__tmp170043
                    (lambda ()
-                     (let ((_%self152518162282%_ _%l162248%_))
+                     (let ((_%self155315165079%_ _%l165045%_))
                        (declare (not safe))
-                       (let ((_%object162285162290%_
+                       (let ((_%object165082165087%_
                               (##unchecked-structure-ref
-                               _%self152518162282%_
+                               _%self155315165079%_
                                '1
                                '#f
                                'write-unlock!))
-                             (_%method162286162291%_
+                             (_%method165083165088%_
                               (##unchecked-structure-ref
-                               _%self152518162282%_
+                               _%self155315165079%_
                                '5
                                '#f
                                'write-unlock!)))
-                         (_%method162286162291%_ _%object162285162290%_))))))
+                         (_%method165083165088%_ _%object165082165087%_))))))
               (declare (not safe))
-              (##dynamic-wind __tmp167248 __tmp167247 __tmp167246))
+              (##dynamic-wind __tmp170045 __tmp170044 __tmp170043))
             '#!void))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        locked-hash-table::t
        'HashTable::set!
-       _%locked-hash-table::HashTable::set!153148%_
+       _%locked-hash-table::HashTable::set!155945%_
        '#f))
-    (define _%locked-hash-table::HashTable::update!153150%_
-      (lambda (_%self162000%_ _%key162002%_ _%update162003%_ _%default162004%_)
-        (let* ((_%self162007%_ _%self162000%_)
-               (_%key162016%_ _%key162002%_)
-               (_%update162024%_ _%update162003%_)
-               (_%default162032%_ _%default162004%_))
-          (let ((_%h162041%_
+    (define _%locked-hash-table::HashTable::update!155947%_
+      (lambda (_%self164797%_ _%key164799%_ _%update164800%_ _%default164801%_)
+        (let* ((_%self164804%_ _%self164797%_)
+               (_%key164813%_ _%key164799%_)
+               (_%update164821%_ _%update164800%_)
+               (_%default164829%_ _%default164801%_))
+          (let ((_%h164838%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self162007%_ '1 '#f '#f)))
-                (_%l162043%_
+                   (##unchecked-structure-ref _%self164804%_ '1 '#f '#f)))
+                (_%l164840%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self162007%_ '2 '#f '#f))))
-            (let ((__tmp167251
+                   (##unchecked-structure-ref _%self164804%_ '2 '#f '#f))))
+            (let ((__tmp170048
                    (lambda ()
-                     (let ((_%self152274162047%_ _%l162043%_))
+                     (let ((_%self155071164844%_ _%l164840%_))
                        (declare (not safe))
-                       (let ((_%object162050162055%_
+                       (let ((_%object164847164852%_
                               (##unchecked-structure-ref
-                               _%self152274162047%_
+                               _%self155071164844%_
                                '1
                                '#f
                                'write-lock!))
-                             (_%method162051162056%_
+                             (_%method164848164853%_
                               (##unchecked-structure-ref
-                               _%self152274162047%_
+                               _%self155071164844%_
                                '4
                                '#f
                                'write-lock!)))
-                         (_%method162051162056%_ _%object162050162055%_)))))
-                  (__tmp167250
+                         (_%method164848164853%_ _%object164847164852%_)))))
+                  (__tmp170047
                    (lambda ()
-                     (let* ((_%self151542162059%_ _%h162041%_)
-                            (_%key162062%_ _%key162016%_)
-                            (_%proc162065%_ _%update162024%_)
-                            (_%default162068%_ _%default162032%_))
+                     (let* ((_%self154339164856%_ _%h164838%_)
+                            (_%key164859%_ _%key164813%_)
+                            (_%proc164862%_ _%update164821%_)
+                            (_%default164865%_ _%default164829%_))
                        (declare (not safe))
-                       (let ((_%object162071162076%_
+                       (let ((_%object164868164873%_
                               (##unchecked-structure-ref
-                               _%self151542162059%_
+                               _%self154339164856%_
                                '1
                                '#f
                                'update!))
-                             (_%method162072162077%_
+                             (_%method164869164874%_
                               (##unchecked-structure-ref
-                               _%self151542162059%_
+                               _%self154339164856%_
                                '10
                                '#f
                                'update!)))
-                         (_%method162072162077%_
-                          _%object162071162076%_
-                          _%key162062%_
-                          _%proc162065%_
-                          _%default162068%_)))))
-                  (__tmp167249
+                         (_%method164869164874%_
+                          _%object164868164873%_
+                          _%key164859%_
+                          _%proc164862%_
+                          _%default164865%_)))))
+                  (__tmp170046
                    (lambda ()
-                     (let ((_%self152518162080%_ _%l162043%_))
+                     (let ((_%self155315164877%_ _%l164840%_))
                        (declare (not safe))
-                       (let ((_%object162083162088%_
+                       (let ((_%object164880164885%_
                               (##unchecked-structure-ref
-                               _%self152518162080%_
+                               _%self155315164877%_
                                '1
                                '#f
                                'write-unlock!))
-                             (_%method162084162089%_
+                             (_%method164881164886%_
                               (##unchecked-structure-ref
-                               _%self152518162080%_
+                               _%self155315164877%_
                                '5
                                '#f
                                'write-unlock!)))
-                         (_%method162084162089%_ _%object162083162088%_))))))
+                         (_%method164881164886%_ _%object164880164885%_))))))
               (declare (not safe))
-              (##dynamic-wind __tmp167251 __tmp167250 __tmp167249))
+              (##dynamic-wind __tmp170048 __tmp170047 __tmp170046))
             '#!void))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        locked-hash-table::t
        'HashTable::update!
-       _%locked-hash-table::HashTable::update!153150%_
+       _%locked-hash-table::HashTable::update!155947%_
        '#f))
-    (define _%locked-hash-table::HashTable::delete!153152%_
-      (lambda (_%self161810%_ _%key161812%_)
-        (let* ((_%self161815%_ _%self161810%_) (_%key161824%_ _%key161812%_))
-          (let ((_%h161833%_
+    (define _%locked-hash-table::HashTable::delete!155949%_
+      (lambda (_%self164607%_ _%key164609%_)
+        (let* ((_%self164612%_ _%self164607%_) (_%key164621%_ _%key164609%_))
+          (let ((_%h164630%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self161815%_ '1 '#f '#f)))
-                (_%l161835%_
+                   (##unchecked-structure-ref _%self164612%_ '1 '#f '#f)))
+                (_%l164632%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self161815%_ '2 '#f '#f))))
-            (let ((__tmp167254
+                   (##unchecked-structure-ref _%self164612%_ '2 '#f '#f))))
+            (let ((__tmp170051
                    (lambda ()
-                     (let ((_%self152274161839%_ _%l161835%_))
+                     (let ((_%self155071164636%_ _%l164632%_))
                        (declare (not safe))
-                       (let ((_%object161842161847%_
+                       (let ((_%object164639164644%_
                               (##unchecked-structure-ref
-                               _%self152274161839%_
+                               _%self155071164636%_
                                '1
                                '#f
                                'write-lock!))
-                             (_%method161843161848%_
+                             (_%method164640164645%_
                               (##unchecked-structure-ref
-                               _%self152274161839%_
+                               _%self155071164636%_
                                '4
                                '#f
                                'write-lock!)))
-                         (_%method161843161848%_ _%object161842161847%_)))))
-                  (__tmp167253
+                         (_%method164640164645%_ _%object164639164644%_)))))
+                  (__tmp170050
                    (lambda ()
-                     (let* ((_%self150078161851%_ _%h161833%_)
-                            (_%key161854%_ _%key161824%_))
+                     (let* ((_%self152875164648%_ _%h164630%_)
+                            (_%key164651%_ _%key164621%_))
                        (declare (not safe))
-                       (let ((_%object161857161862%_
+                       (let ((_%object164654164659%_
                               (##unchecked-structure-ref
-                               _%self150078161851%_
+                               _%self152875164648%_
                                '1
                                '#f
                                'delete!))
-                             (_%method161858161863%_
+                             (_%method164655164660%_
                               (##unchecked-structure-ref
-                               _%self150078161851%_
+                               _%self152875164648%_
                                '4
                                '#f
                                'delete!)))
-                         (_%method161858161863%_
-                          _%object161857161862%_
-                          _%key161854%_)))))
-                  (__tmp167252
+                         (_%method164655164660%_
+                          _%object164654164659%_
+                          _%key164651%_)))))
+                  (__tmp170049
                    (lambda ()
-                     (let ((_%self152518161866%_ _%l161835%_))
+                     (let ((_%self155315164663%_ _%l164632%_))
                        (declare (not safe))
-                       (let ((_%object161869161874%_
+                       (let ((_%object164666164671%_
                               (##unchecked-structure-ref
-                               _%self152518161866%_
+                               _%self155315164663%_
                                '1
                                '#f
                                'write-unlock!))
-                             (_%method161870161875%_
+                             (_%method164667164672%_
                               (##unchecked-structure-ref
-                               _%self152518161866%_
+                               _%self155315164663%_
                                '5
                                '#f
                                'write-unlock!)))
-                         (_%method161870161875%_ _%object161869161874%_))))))
+                         (_%method164667164672%_ _%object164666164671%_))))))
               (declare (not safe))
-              (##dynamic-wind __tmp167254 __tmp167253 __tmp167252))
+              (##dynamic-wind __tmp170051 __tmp170050 __tmp170049))
             '#!void))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        locked-hash-table::t
        'HashTable::delete!
-       _%locked-hash-table::HashTable::delete!153152%_
+       _%locked-hash-table::HashTable::delete!155949%_
        '#f))
-    (define _%locked-hash-table::HashTable::for-each153154%_
-      (lambda (_%self161620%_ _%proc161622%_)
-        (let* ((_%self161625%_ _%self161620%_) (_%proc161634%_ _%proc161622%_))
-          (let ((_%h161643%_
+    (define _%locked-hash-table::HashTable::for-each155951%_
+      (lambda (_%self164417%_ _%proc164419%_)
+        (let* ((_%self164422%_ _%self164417%_) (_%proc164431%_ _%proc164419%_))
+          (let ((_%h164440%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self161625%_ '1 '#f '#f)))
-                (_%l161645%_
+                   (##unchecked-structure-ref _%self164422%_ '1 '#f '#f)))
+                (_%l164442%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self161625%_ '2 '#f '#f))))
-            (let ((__tmp167257
+                   (##unchecked-structure-ref _%self164422%_ '2 '#f '#f))))
+            (let ((__tmp170054
                    (lambda ()
-                     (let ((_%self151786161649%_ _%l161645%_))
+                     (let ((_%self154583164446%_ _%l164442%_))
                        (declare (not safe))
-                       (let ((_%object161652161657%_
+                       (let ((_%object164449164454%_
                               (##unchecked-structure-ref
-                               _%self151786161649%_
+                               _%self154583164446%_
                                '1
                                '#f
                                'read-lock!))
-                             (_%method161653161658%_
+                             (_%method164450164455%_
                               (##unchecked-structure-ref
-                               _%self151786161649%_
+                               _%self154583164446%_
                                '2
                                '#f
                                'read-lock!)))
-                         (_%method161653161658%_ _%object161652161657%_)))))
-                  (__tmp167256
+                         (_%method164450164455%_ _%object164449164454%_)))))
+                  (__tmp170053
                    (lambda ()
-                     (let* ((_%self150322161661%_ _%h161643%_)
-                            (_%proc161664%_ _%proc161634%_))
+                     (let* ((_%self153119164458%_ _%h164440%_)
+                            (_%proc164461%_ _%proc164431%_))
                        (declare (not safe))
-                       (let ((_%object161667161672%_
+                       (let ((_%object164464164469%_
                               (##unchecked-structure-ref
-                               _%self150322161661%_
+                               _%self153119164458%_
                                '1
                                '#f
                                'for-each))
-                             (_%method161668161673%_
+                             (_%method164465164470%_
                               (##unchecked-structure-ref
-                               _%self150322161661%_
+                               _%self153119164458%_
                                '5
                                '#f
                                'for-each)))
-                         (_%method161668161673%_
-                          _%object161667161672%_
-                          _%proc161664%_)))))
-                  (__tmp167255
+                         (_%method164465164470%_
+                          _%object164464164469%_
+                          _%proc164461%_)))))
+                  (__tmp170052
                    (lambda ()
-                     (let ((_%self152030161676%_ _%l161645%_))
+                     (let ((_%self154827164473%_ _%l164442%_))
                        (declare (not safe))
-                       (let ((_%object161679161684%_
+                       (let ((_%object164476164481%_
                               (##unchecked-structure-ref
-                               _%self152030161676%_
+                               _%self154827164473%_
                                '1
                                '#f
                                'read-unlock!))
-                             (_%method161680161685%_
+                             (_%method164477164482%_
                               (##unchecked-structure-ref
-                               _%self152030161676%_
+                               _%self154827164473%_
                                '3
                                '#f
                                'read-unlock!)))
-                         (_%method161680161685%_ _%object161679161684%_))))))
+                         (_%method164477164482%_ _%object164476164481%_))))))
               (declare (not safe))
-              (##dynamic-wind __tmp167257 __tmp167256 __tmp167255))
+              (##dynamic-wind __tmp170054 __tmp170053 __tmp170052))
             '#!void))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        locked-hash-table::t
        'HashTable::for-each
-       _%locked-hash-table::HashTable::for-each153154%_
+       _%locked-hash-table::HashTable::for-each155951%_
        '#f))
-    (define _%locked-hash-table::HashTable::length153156%_
-      (lambda (_%self161435%_)
-        (let ((_%self161439%_ _%self161435%_))
-          (let ((_%h161449%_
+    (define _%locked-hash-table::HashTable::length155953%_
+      (lambda (_%self164232%_)
+        (let ((_%self164236%_ _%self164232%_))
+          (let ((_%h164246%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self161439%_ '1 '#f '#f)))
-                (_%l161451%_
+                   (##unchecked-structure-ref _%self164236%_ '1 '#f '#f)))
+                (_%l164248%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self161439%_ '2 '#f '#f))))
-            (let* ((_%$%g161453161455%_
-                    (let ((__tmp167260
+                   (##unchecked-structure-ref _%self164236%_ '2 '#f '#f))))
+            (let* ((_%$%g164250164252%_
+                    (let ((__tmp170057
                            (lambda ()
-                             (let ((_%self151786161462%_ _%l161451%_))
+                             (let ((_%self154583164259%_ _%l164248%_))
                                (declare (not safe))
-                               (let ((_%object161465161470%_
+                               (let ((_%object164262164267%_
                                       (##unchecked-structure-ref
-                                       _%self151786161462%_
+                                       _%self154583164259%_
                                        '1
                                        '#f
                                        'read-lock!))
-                                     (_%method161466161471%_
+                                     (_%method164263164268%_
                                       (##unchecked-structure-ref
-                                       _%self151786161462%_
+                                       _%self154583164259%_
                                        '2
                                        '#f
                                        'read-lock!)))
-                                 (_%method161466161471%_
-                                  _%object161465161470%_)))))
-                          (__tmp167259
+                                 (_%method164263164268%_
+                                  _%object164262164267%_)))))
+                          (__tmp170056
                            (lambda ()
-                             (let ((_%self150566161474%_ _%h161449%_))
+                             (let ((_%self153363164271%_ _%h164246%_))
                                (declare (not safe))
-                               (let ((_%object161477161482%_
+                               (let ((_%object164274164279%_
                                       (##unchecked-structure-ref
-                                       _%self150566161474%_
+                                       _%self153363164271%_
                                        '1
                                        '#f
                                        'length))
-                                     (_%method161478161483%_
+                                     (_%method164275164280%_
                                       (##unchecked-structure-ref
-                                       _%self150566161474%_
+                                       _%self153363164271%_
                                        '6
                                        '#f
                                        'length)))
-                                 (_%method161478161483%_
-                                  _%object161477161482%_)))))
-                          (__tmp167258
+                                 (_%method164275164280%_
+                                  _%object164274164279%_)))))
+                          (__tmp170055
                            (lambda ()
-                             (let ((_%self152030161486%_ _%l161451%_))
+                             (let ((_%self154827164283%_ _%l164248%_))
                                (declare (not safe))
-                               (let ((_%object161489161494%_
+                               (let ((_%object164286164291%_
                                       (##unchecked-structure-ref
-                                       _%self152030161486%_
+                                       _%self154827164283%_
                                        '1
                                        '#f
                                        'read-unlock!))
-                                     (_%method161490161495%_
+                                     (_%method164287164292%_
                                       (##unchecked-structure-ref
-                                       _%self152030161486%_
+                                       _%self154827164283%_
                                        '3
                                        '#f
                                        'read-unlock!)))
-                                 (_%method161490161495%_
-                                  _%object161489161494%_))))))
+                                 (_%method164287164292%_
+                                  _%object164286164291%_))))))
                       (declare (not safe))
-                      (##dynamic-wind __tmp167260 __tmp167259 __tmp167258)))
-                   (_%val161458%_ _%$%g161453161455%_))
-              (if (fixnum? _%val161458%_)
-                  _%val161458%_
+                      (##dynamic-wind __tmp170057 __tmp170056 __tmp170055)))
+                   (_%val164255%_ _%$%g164250164252%_))
+              (if (fixnum? _%val164255%_)
+                  _%val164255%_
                   (begin
                     (raise-contract-violation-error
                      '"contract violation"
@@ -2822,198 +2814,198 @@
                      'contract:
                      '(fixnum? val)
                      'value:
-                     _%val161458%_)
+                     _%val164255%_)
                     '#!void)))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        locked-hash-table::t
        'HashTable::length
-       _%locked-hash-table::HashTable::length153156%_
+       _%locked-hash-table::HashTable::length155953%_
        '#f))
-    (define _%locked-hash-table::HashTable::copy153158%_
-      (lambda (_%self161254%_)
-        (let ((_%self161258%_ _%self161254%_))
-          (let ((_%h161268%_
+    (define _%locked-hash-table::HashTable::copy155955%_
+      (lambda (_%self164051%_)
+        (let ((_%self164055%_ _%self164051%_))
+          (let ((_%h164065%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self161258%_ '1 '#f '#f)))
-                (_%l161270%_
+                   (##unchecked-structure-ref _%self164055%_ '1 '#f '#f)))
+                (_%l164067%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self161258%_ '2 '#f '#f))))
-            (let ((_%$obj161309%_
-                   (let ((__tmp167263
+                   (##unchecked-structure-ref _%self164055%_ '2 '#f '#f))))
+            (let ((_%$obj164106%_
+                   (let ((__tmp170060
                           (lambda ()
-                            (let ((_%self151786161274%_ _%l161270%_))
+                            (let ((_%self154583164071%_ _%l164067%_))
                               (declare (not safe))
-                              (let ((_%object161277161282%_
+                              (let ((_%object164074164079%_
                                      (##unchecked-structure-ref
-                                      _%self151786161274%_
+                                      _%self154583164071%_
                                       '1
                                       '#f
                                       'read-lock!))
-                                    (_%method161278161283%_
+                                    (_%method164075164080%_
                                      (##unchecked-structure-ref
-                                      _%self151786161274%_
+                                      _%self154583164071%_
                                       '2
                                       '#f
                                       'read-lock!)))
-                                (_%method161278161283%_
-                                 _%object161277161282%_)))))
-                         (__tmp167262
+                                (_%method164075164080%_
+                                 _%object164074164079%_)))))
+                         (__tmp170059
                           (lambda ()
-                            (let ((_%self149834161286%_ _%h161268%_))
+                            (let ((_%self152631164083%_ _%h164065%_))
                               (declare (not safe))
-                              (let ((_%object161289161294%_
+                              (let ((_%object164086164091%_
                                      (##unchecked-structure-ref
-                                      _%self149834161286%_
+                                      _%self152631164083%_
                                       '1
                                       '#f
                                       'copy))
-                                    (_%method161290161295%_
+                                    (_%method164087164092%_
                                      (##unchecked-structure-ref
-                                      _%self149834161286%_
+                                      _%self152631164083%_
                                       '3
                                       '#f
                                       'copy)))
-                                (_%method161290161295%_
-                                 _%object161289161294%_)))))
-                         (__tmp167261
+                                (_%method164087164092%_
+                                 _%object164086164091%_)))))
+                         (__tmp170058
                           (lambda ()
-                            (let ((_%self152030161298%_ _%l161270%_))
+                            (let ((_%self154827164095%_ _%l164067%_))
                               (declare (not safe))
-                              (let ((_%object161301161306%_
+                              (let ((_%object164098164103%_
                                      (##unchecked-structure-ref
-                                      _%self152030161298%_
+                                      _%self154827164095%_
                                       '1
                                       '#f
                                       'read-unlock!))
-                                    (_%method161302161307%_
+                                    (_%method164099164104%_
                                      (##unchecked-structure-ref
-                                      _%self152030161298%_
+                                      _%self154827164095%_
                                       '3
                                       '#f
                                       'read-unlock!)))
-                                (_%method161302161307%_
-                                 _%object161301161306%_))))))
+                                (_%method164099164104%_
+                                 _%object164098164103%_))))))
                      (declare (not safe))
-                     (##dynamic-wind __tmp167263 __tmp167262 __tmp167261))))
+                     (##dynamic-wind __tmp170060 __tmp170059 __tmp170058))))
               (if (and (let ()
                          (declare (not safe))
-                         (##structure? _%$obj161309%_))
+                         (##structure? _%$obj164106%_))
                        (eq? HashTable::t
                             (let ()
                               (declare (not safe))
-                              (##structure-type _%$obj161309%_)))
+                              (##structure-type _%$obj164106%_)))
                        '#t)
-                  _%$obj161309%_
+                  _%$obj164106%_
                   (let ()
                     (declare (not safe))
-                    (cast HashTable::interface _%$obj161309%_))))))))
+                    (cast HashTable::interface _%$obj164106%_))))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        locked-hash-table::t
        'HashTable::copy
-       _%locked-hash-table::HashTable::copy153158%_
+       _%locked-hash-table::HashTable::copy155955%_
        '#f))
-    (define _%locked-hash-table::HashTable::new153160%_
-      (lambda (_%self161053%_ _%size-hint161055%_)
-        (let ((_%self161058%_ _%self161053%_))
-          (if (or (not _%size-hint161055%_) (fixnum? _%size-hint161055%_))
-              (let ((_%size-hint161074%_ _%size-hint161055%_))
-                (let ((_%h161084%_
+    (define _%locked-hash-table::HashTable::new155957%_
+      (lambda (_%self163850%_ _%size-hint163852%_)
+        (let ((_%self163855%_ _%self163850%_))
+          (if (or (not _%size-hint163852%_) (fixnum? _%size-hint163852%_))
+              (let ((_%size-hint163871%_ _%size-hint163852%_))
+                (let ((_%h163881%_
                        (let ()
                          (declare (not safe))
                          (##unchecked-structure-ref
-                          _%self161058%_
+                          _%self163855%_
                           '1
                           '#f
                           '#f)))
-                      (_%l161086%_
+                      (_%l163883%_
                        (let ()
                          (declare (not safe))
                          (##unchecked-structure-ref
-                          _%self161058%_
+                          _%self163855%_
                           '2
                           '#f
                           '#f))))
-                  (let ((_%$obj161128%_
-                         (let ((__tmp167266
+                  (let ((_%$obj163925%_
+                         (let ((__tmp170063
                                 (lambda ()
-                                  (let ((_%self151786161090%_ _%l161086%_))
+                                  (let ((_%self154583163887%_ _%l163883%_))
                                     (declare (not safe))
-                                    (let ((_%object161093161098%_
+                                    (let ((_%object163890163895%_
                                            (##unchecked-structure-ref
-                                            _%self151786161090%_
+                                            _%self154583163887%_
                                             '1
                                             '#f
                                             'read-lock!))
-                                          (_%method161094161099%_
+                                          (_%method163891163896%_
                                            (##unchecked-structure-ref
-                                            _%self151786161090%_
+                                            _%self154583163887%_
                                             '2
                                             '#f
                                             'read-lock!)))
-                                      (_%method161094161099%_
-                                       _%object161093161098%_)))))
-                               (__tmp167265
+                                      (_%method163891163896%_
+                                       _%object163890163895%_)))))
+                               (__tmp170062
                                 (lambda ()
-                                  (let* ((_%self150810161102%_ _%h161084%_)
-                                         (_%size-hint161105%_
-                                          _%size-hint161074%_))
+                                  (let* ((_%self153607163899%_ _%h163881%_)
+                                         (_%size-hint163902%_
+                                          _%size-hint163871%_))
                                     (declare (not safe))
-                                    (let ((_%object161108161113%_
+                                    (let ((_%object163905163910%_
                                            (##unchecked-structure-ref
-                                            _%self150810161102%_
+                                            _%self153607163899%_
                                             '1
                                             '#f
                                             'new))
-                                          (_%method161109161114%_
+                                          (_%method163906163911%_
                                            (##unchecked-structure-ref
-                                            _%self150810161102%_
+                                            _%self153607163899%_
                                             '7
                                             '#f
                                             'new)))
-                                      (_%method161109161114%_
-                                       _%object161108161113%_
-                                       _%size-hint161105%_)))))
-                               (__tmp167264
+                                      (_%method163906163911%_
+                                       _%object163905163910%_
+                                       _%size-hint163902%_)))))
+                               (__tmp170061
                                 (lambda ()
-                                  (let ((_%self152030161117%_ _%l161086%_))
+                                  (let ((_%self154827163914%_ _%l163883%_))
                                     (declare (not safe))
-                                    (let ((_%object161120161125%_
+                                    (let ((_%object163917163922%_
                                            (##unchecked-structure-ref
-                                            _%self152030161117%_
+                                            _%self154827163914%_
                                             '1
                                             '#f
                                             'read-unlock!))
-                                          (_%method161121161126%_
+                                          (_%method163918163923%_
                                            (##unchecked-structure-ref
-                                            _%self152030161117%_
+                                            _%self154827163914%_
                                             '3
                                             '#f
                                             'read-unlock!)))
-                                      (_%method161121161126%_
-                                       _%object161120161125%_))))))
+                                      (_%method163918163923%_
+                                       _%object163917163922%_))))))
                            (declare (not safe))
                            (##dynamic-wind
-                            __tmp167266
-                            __tmp167265
-                            __tmp167264))))
+                            __tmp170063
+                            __tmp170062
+                            __tmp170061))))
                     (if (and (let ()
                                (declare (not safe))
-                               (##structure? _%$obj161128%_))
+                               (##structure? _%$obj163925%_))
                              (eq? HashTable::t
                                   (let ()
                                     (declare (not safe))
-                                    (##structure-type _%$obj161128%_)))
+                                    (##structure-type _%$obj163925%_)))
                              '#t)
-                        _%$obj161128%_
+                        _%$obj163925%_
                         (let ()
                           (declare (not safe))
-                          (cast HashTable::interface _%$obj161128%_))))))
+                          (cast HashTable::interface _%$obj163925%_))))))
               (begin
                 (raise-contract-violation-error
                  '"contract violation"
@@ -3022,385 +3014,385 @@
                  'contract:
                  '(? (or not fixnum?))
                  'value:
-                 _%size-hint161055%_)
+                 _%size-hint163852%_)
                 '#!void)))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        locked-hash-table::t
        'HashTable::new
-       _%locked-hash-table::HashTable::new153160%_
+       _%locked-hash-table::HashTable::new155957%_
        '#f))
-    (define _%locked-hash-table::HashTable::clear!153162%_
-      (lambda (_%self160875%_)
-        (let ((_%self160879%_ _%self160875%_))
-          (let ((_%h160889%_
+    (define _%locked-hash-table::HashTable::clear!155959%_
+      (lambda (_%self163672%_)
+        (let ((_%self163676%_ _%self163672%_))
+          (let ((_%h163686%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self160879%_ '1 '#f '#f)))
-                (_%l160891%_
+                   (##unchecked-structure-ref _%self163676%_ '1 '#f '#f)))
+                (_%l163688%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self160879%_ '2 '#f '#f))))
-            (let ((__tmp167269
+                   (##unchecked-structure-ref _%self163676%_ '2 '#f '#f))))
+            (let ((__tmp170066
                    (lambda ()
-                     (let ((_%self152274160895%_ _%l160891%_))
+                     (let ((_%self155071163692%_ _%l163688%_))
                        (declare (not safe))
-                       (let ((_%object160898160903%_
+                       (let ((_%object163695163700%_
                               (##unchecked-structure-ref
-                               _%self152274160895%_
+                               _%self155071163692%_
                                '1
                                '#f
                                'write-lock!))
-                             (_%method160899160904%_
+                             (_%method163696163701%_
                               (##unchecked-structure-ref
-                               _%self152274160895%_
+                               _%self155071163692%_
                                '4
                                '#f
                                'write-lock!)))
-                         (_%method160899160904%_ _%object160898160903%_)))))
-                  (__tmp167268
+                         (_%method163696163701%_ _%object163695163700%_)))))
+                  (__tmp170065
                    (lambda ()
-                     (let ((_%self149589160907%_ _%h160889%_))
+                     (let ((_%self152386163704%_ _%h163686%_))
                        (declare (not safe))
-                       (let ((_%object160910160915%_
+                       (let ((_%object163707163712%_
                               (##unchecked-structure-ref
-                               _%self149589160907%_
+                               _%self152386163704%_
                                '1
                                '#f
                                'clear!))
-                             (_%method160911160916%_
+                             (_%method163708163713%_
                               (##unchecked-structure-ref
-                               _%self149589160907%_
+                               _%self152386163704%_
                                '2
                                '#f
                                'clear!)))
-                         (_%method160911160916%_ _%object160910160915%_)))))
-                  (__tmp167267
+                         (_%method163708163713%_ _%object163707163712%_)))))
+                  (__tmp170064
                    (lambda ()
-                     (let ((_%self152518160919%_ _%l160891%_))
+                     (let ((_%self155315163716%_ _%l163688%_))
                        (declare (not safe))
-                       (let ((_%object160922160927%_
+                       (let ((_%object163719163724%_
                               (##unchecked-structure-ref
-                               _%self152518160919%_
+                               _%self155315163716%_
                                '1
                                '#f
                                'write-unlock!))
-                             (_%method160923160928%_
+                             (_%method163720163725%_
                               (##unchecked-structure-ref
-                               _%self152518160919%_
+                               _%self155315163716%_
                                '5
                                '#f
                                'write-unlock!)))
-                         (_%method160923160928%_ _%object160922160927%_))))))
+                         (_%method163720163725%_ _%object163719163724%_))))))
               (declare (not safe))
-              (##dynamic-wind __tmp167269 __tmp167268 __tmp167267))
+              (##dynamic-wind __tmp170066 __tmp170065 __tmp170064))
             '#!void))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        locked-hash-table::t
        'HashTable::clear!
-       _%locked-hash-table::HashTable::clear!153162%_
+       _%locked-hash-table::HashTable::clear!155959%_
        '#f))
-    (let* ((_%klass160715%_ (macro-type-mutex))
-           (_%id160718%_ 'Locker::read-lock!)
-           (_%proc160721%_ mutex-lock!)
-           (_%rebind?160724%_ '#f)
-           (_%id160729%_ _%id160718%_)
-           (_%proc160742%_ _%proc160721%_))
+    (let* ((_%klass163512%_ (macro-type-mutex))
+           (_%id163515%_ 'Locker::read-lock!)
+           (_%proc163518%_ mutex-lock!)
+           (_%rebind?163521%_ '#f)
+           (_%id163526%_ _%id163515%_)
+           (_%proc163539%_ _%proc163518%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass160715%_
-       _%id160729%_
-       _%proc160742%_
-       _%rebind?160724%_))
-    (let* ((_%klass160678%_ (macro-type-mutex))
-           (_%id160681%_ 'Locker::read-unlock!)
-           (_%proc160684%_ mutex-unlock!)
-           (_%rebind?160687%_ '#f)
-           (_%id160692%_ _%id160681%_)
-           (_%proc160705%_ _%proc160684%_))
+       _%klass163512%_
+       _%id163526%_
+       _%proc163539%_
+       _%rebind?163521%_))
+    (let* ((_%klass163475%_ (macro-type-mutex))
+           (_%id163478%_ 'Locker::read-unlock!)
+           (_%proc163481%_ mutex-unlock!)
+           (_%rebind?163484%_ '#f)
+           (_%id163489%_ _%id163478%_)
+           (_%proc163502%_ _%proc163481%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass160678%_
-       _%id160692%_
-       _%proc160705%_
-       _%rebind?160687%_))
-    (let* ((_%klass160641%_ (macro-type-mutex))
-           (_%id160644%_ 'Locker::write-lock!)
-           (_%proc160647%_ mutex-lock!)
-           (_%rebind?160650%_ '#f)
-           (_%id160655%_ _%id160644%_)
-           (_%proc160668%_ _%proc160647%_))
+       _%klass163475%_
+       _%id163489%_
+       _%proc163502%_
+       _%rebind?163484%_))
+    (let* ((_%klass163438%_ (macro-type-mutex))
+           (_%id163441%_ 'Locker::write-lock!)
+           (_%proc163444%_ mutex-lock!)
+           (_%rebind?163447%_ '#f)
+           (_%id163452%_ _%id163441%_)
+           (_%proc163465%_ _%proc163444%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass160641%_
-       _%id160655%_
-       _%proc160668%_
-       _%rebind?160650%_))
-    (let* ((_%klass160604%_ (macro-type-mutex))
-           (_%id160607%_ 'Locker::write-unlock!)
-           (_%proc160610%_ mutex-unlock!)
-           (_%rebind?160613%_ '#f)
-           (_%id160618%_ _%id160607%_)
-           (_%proc160631%_ _%proc160610%_))
+       _%klass163438%_
+       _%id163452%_
+       _%proc163465%_
+       _%rebind?163447%_))
+    (let* ((_%klass163401%_ (macro-type-mutex))
+           (_%id163404%_ 'Locker::write-unlock!)
+           (_%proc163407%_ mutex-unlock!)
+           (_%rebind?163410%_ '#f)
+           (_%id163415%_ _%id163404%_)
+           (_%proc163428%_ _%proc163407%_))
       (declare (not safe))
       (__bind-method!__%
-       _%klass160604%_
-       _%id160618%_
-       _%proc160631%_
-       _%rebind?160613%_))
-    (define _%checked-hash-table::HashTable::ref153373%_
-      (lambda (_%self160545%_ _%key160546%_ _%default160547%_)
-        (let* ((_%self160550%_ _%self160545%_)
-               (_%key160559%_ _%key160546%_)
-               (_%default160567%_ _%default160547%_))
+       _%klass163401%_
+       _%id163415%_
+       _%proc163428%_
+       _%rebind?163410%_))
+    (define _%checked-hash-table::HashTable::ref156170%_
+      (lambda (_%self163342%_ _%key163343%_ _%default163344%_)
+        (let* ((_%self163347%_ _%self163342%_)
+               (_%key163356%_ _%key163343%_)
+               (_%default163364%_ _%default163344%_))
           (declare (not safe))
-          (let ((_%h160578%_
-                 (##unchecked-structure-ref _%self160550%_ '1 '#f '#f))
-                (_%key?160580%_
-                 (##unchecked-structure-ref _%self160550%_ '2 '#f '#f)))
-            (if (_%key?160580%_ _%key160559%_)
-                (let* ((_%self151054160587%_ _%h160578%_)
-                       (_%key160590%_ _%key160559%_)
-                       (_%default160593%_ _%default160567%_))
+          (let ((_%h163375%_
+                 (##unchecked-structure-ref _%self163347%_ '1 '#f '#f))
+                (_%key?163377%_
+                 (##unchecked-structure-ref _%self163347%_ '2 '#f '#f)))
+            (if (_%key?163377%_ _%key163356%_)
+                (let* ((_%self153851163384%_ _%h163375%_)
+                       (_%key163387%_ _%key163356%_)
+                       (_%default163390%_ _%default163364%_))
                   (declare (not safe))
-                  (let ((_%object160596160601%_
+                  (let ((_%object163393163398%_
                          (##unchecked-structure-ref
-                          _%self151054160587%_
+                          _%self153851163384%_
                           '1
                           '#f
                           'ref))
-                        (_%method160597160602%_
+                        (_%method163394163399%_
                          (##unchecked-structure-ref
-                          _%self151054160587%_
+                          _%self153851163384%_
                           '8
                           '#f
                           'ref)))
-                    (_%method160597160602%_
-                     _%object160596160601%_
-                     _%key160590%_
-                     _%default160593%_)))
+                    (_%method163394163399%_
+                     _%object163393163398%_
+                     _%key163387%_
+                     _%default163390%_)))
                 (begin
                   (raise-contract-violation-error
                    '"invalid key"
                    'context:
                    '&HashTable-ref
                    'value:
-                   (cons _%key160559%_ (cons _%default160567%_ '())))
+                   (cons _%key163356%_ (cons _%default163364%_ '())))
                   '#!void))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        checked-hash-table::t
        'HashTable::ref
-       _%checked-hash-table::HashTable::ref153373%_
+       _%checked-hash-table::HashTable::ref156170%_
        '#f))
-    (define _%checked-hash-table::HashTable::set!153375%_
-      (lambda (_%self160363%_ _%key160364%_ _%value160365%_)
-        (let* ((_%self160368%_ _%self160363%_)
-               (_%key160377%_ _%key160364%_)
-               (_%value160385%_ _%value160365%_))
+    (define _%checked-hash-table::HashTable::set!156172%_
+      (lambda (_%self163160%_ _%key163161%_ _%value163162%_)
+        (let* ((_%self163165%_ _%self163160%_)
+               (_%key163174%_ _%key163161%_)
+               (_%value163182%_ _%value163162%_))
           (declare (not safe))
-          (let ((_%h160396%_
-                 (##unchecked-structure-ref _%self160368%_ '1 '#f '#f))
-                (_%key?160398%_
-                 (##unchecked-structure-ref _%self160368%_ '2 '#f '#f)))
-            (if (_%key?160398%_ _%key160377%_)
-                (let* ((_%self151298160405%_ _%h160396%_)
-                       (_%key160408%_ _%key160377%_)
-                       (_%value160411%_ _%value160385%_))
+          (let ((_%h163193%_
+                 (##unchecked-structure-ref _%self163165%_ '1 '#f '#f))
+                (_%key?163195%_
+                 (##unchecked-structure-ref _%self163165%_ '2 '#f '#f)))
+            (if (_%key?163195%_ _%key163174%_)
+                (let* ((_%self154095163202%_ _%h163193%_)
+                       (_%key163205%_ _%key163174%_)
+                       (_%value163208%_ _%value163182%_))
                   (declare (not safe))
-                  (let ((_%object160414160419%_
+                  (let ((_%object163211163216%_
                          (##unchecked-structure-ref
-                          _%self151298160405%_
+                          _%self154095163202%_
                           '1
                           '#f
                           'set!))
-                        (_%method160415160420%_
+                        (_%method163212163217%_
                          (##unchecked-structure-ref
-                          _%self151298160405%_
+                          _%self154095163202%_
                           '9
                           '#f
                           'set!)))
-                    (_%method160415160420%_
-                     _%object160414160419%_
-                     _%key160408%_
-                     _%value160411%_)))
+                    (_%method163212163217%_
+                     _%object163211163216%_
+                     _%key163205%_
+                     _%value163208%_)))
                 (begin
                   (raise-contract-violation-error
                    '"invalid key"
                    'context:
                    '&HashTable-set!
                    'value:
-                   (cons _%key160377%_ (cons _%value160385%_ '())))
+                   (cons _%key163174%_ (cons _%value163182%_ '())))
                   '#!void))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        checked-hash-table::t
        'HashTable::set!
-       _%checked-hash-table::HashTable::set!153375%_
+       _%checked-hash-table::HashTable::set!156172%_
        '#f))
-    (define _%checked-hash-table::HashTable::update!153377%_
-      (lambda (_%self160168%_ _%key160169%_ _%update160170%_ _%default160171%_)
-        (let* ((_%self160174%_ _%self160168%_)
-               (_%key160183%_ _%key160169%_)
-               (_%update160191%_ _%update160170%_)
-               (_%default160199%_ _%default160171%_))
+    (define _%checked-hash-table::HashTable::update!156174%_
+      (lambda (_%self162965%_ _%key162966%_ _%update162967%_ _%default162968%_)
+        (let* ((_%self162971%_ _%self162965%_)
+               (_%key162980%_ _%key162966%_)
+               (_%update162988%_ _%update162967%_)
+               (_%default162996%_ _%default162968%_))
           (declare (not safe))
-          (let ((_%h160210%_
-                 (##unchecked-structure-ref _%self160174%_ '1 '#f '#f))
-                (_%key?160212%_
-                 (##unchecked-structure-ref _%self160174%_ '2 '#f '#f)))
-            (if (_%key?160212%_ _%key160183%_)
-                (let* ((_%self151542160220%_ _%h160210%_)
-                       (_%key160223%_ _%key160183%_)
-                       (_%proc160226%_ _%update160191%_)
-                       (_%default160229%_ _%default160199%_))
+          (let ((_%h163007%_
+                 (##unchecked-structure-ref _%self162971%_ '1 '#f '#f))
+                (_%key?163009%_
+                 (##unchecked-structure-ref _%self162971%_ '2 '#f '#f)))
+            (if (_%key?163009%_ _%key162980%_)
+                (let* ((_%self154339163017%_ _%h163007%_)
+                       (_%key163020%_ _%key162980%_)
+                       (_%proc163023%_ _%update162988%_)
+                       (_%default163026%_ _%default162996%_))
                   (declare (not safe))
-                  (let ((_%object160232160237%_
+                  (let ((_%object163029163034%_
                          (##unchecked-structure-ref
-                          _%self151542160220%_
+                          _%self154339163017%_
                           '1
                           '#f
                           'update!))
-                        (_%method160233160238%_
+                        (_%method163030163035%_
                          (##unchecked-structure-ref
-                          _%self151542160220%_
+                          _%self154339163017%_
                           '10
                           '#f
                           'update!)))
-                    (_%method160233160238%_
-                     _%object160232160237%_
-                     _%key160223%_
-                     _%proc160226%_
-                     _%default160229%_)))
+                    (_%method163030163035%_
+                     _%object163029163034%_
+                     _%key163020%_
+                     _%proc163023%_
+                     _%default163026%_)))
                 (begin
                   (raise-contract-violation-error
                    '"invalid key"
                    'context:
                    '&HashTable-update!
                    'value:
-                   (cons _%key160183%_
-                         (cons _%update160191%_ (cons _%default160199%_ '()))))
+                   (cons _%key162980%_
+                         (cons _%update162988%_ (cons _%default162996%_ '()))))
                   '#!void))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        checked-hash-table::t
        'HashTable::update!
-       _%checked-hash-table::HashTable::update!153377%_
+       _%checked-hash-table::HashTable::update!156174%_
        '#f))
-    (define _%checked-hash-table::HashTable::delete!153379%_
-      (lambda (_%self159999%_ _%key160000%_)
-        (let* ((_%self160003%_ _%self159999%_) (_%key160012%_ _%key160000%_))
+    (define _%checked-hash-table::HashTable::delete!156176%_
+      (lambda (_%self162796%_ _%key162797%_)
+        (let* ((_%self162800%_ _%self162796%_) (_%key162809%_ _%key162797%_))
           (declare (not safe))
-          (let ((_%h160023%_
-                 (##unchecked-structure-ref _%self160003%_ '1 '#f '#f))
-                (_%key?160025%_
-                 (##unchecked-structure-ref _%self160003%_ '2 '#f '#f)))
-            (if (_%key?160025%_ _%key160012%_)
-                (let* ((_%self150078160031%_ _%h160023%_)
-                       (_%key160034%_ _%key160012%_))
+          (let ((_%h162820%_
+                 (##unchecked-structure-ref _%self162800%_ '1 '#f '#f))
+                (_%key?162822%_
+                 (##unchecked-structure-ref _%self162800%_ '2 '#f '#f)))
+            (if (_%key?162822%_ _%key162809%_)
+                (let* ((_%self152875162828%_ _%h162820%_)
+                       (_%key162831%_ _%key162809%_))
                   (declare (not safe))
-                  (let ((_%object160037160042%_
+                  (let ((_%object162834162839%_
                          (##unchecked-structure-ref
-                          _%self150078160031%_
+                          _%self152875162828%_
                           '1
                           '#f
                           'delete!))
-                        (_%method160038160043%_
+                        (_%method162835162840%_
                          (##unchecked-structure-ref
-                          _%self150078160031%_
+                          _%self152875162828%_
                           '4
                           '#f
                           'delete!)))
-                    (_%method160038160043%_
-                     _%object160037160042%_
-                     _%key160034%_)))
+                    (_%method162835162840%_
+                     _%object162834162839%_
+                     _%key162831%_)))
                 (begin
                   (raise-contract-violation-error
                    '"invalid key"
                    'context:
                    '&HashTable-delete!
                    'value:
-                   (cons _%key160012%_ '()))
+                   (cons _%key162809%_ '()))
                   '#!void))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        checked-hash-table::t
        'HashTable::delete!
-       _%checked-hash-table::HashTable::delete!153379%_
+       _%checked-hash-table::HashTable::delete!156176%_
        '#f))
-    (define _%checked-hash-table::HashTable::for-each153381%_
-      (lambda (_%self159830%_ _%proc159831%_)
-        (let* ((_%self159834%_ _%self159830%_) (_%proc159843%_ _%proc159831%_))
+    (define _%checked-hash-table::HashTable::for-each156178%_
+      (lambda (_%self162627%_ _%proc162628%_)
+        (let* ((_%self162631%_ _%self162627%_) (_%proc162640%_ _%proc162628%_))
           (declare (not safe))
-          (let ((_%h159854%_
-                 (##unchecked-structure-ref _%self159834%_ '1 '#f '#f))
-                (_%key?159856%_
-                 (##unchecked-structure-ref _%self159834%_ '2 '#f '#f)))
+          (let ((_%h162651%_
+                 (##unchecked-structure-ref _%self162631%_ '1 '#f '#f))
+                (_%key?162653%_
+                 (##unchecked-structure-ref _%self162631%_ '2 '#f '#f)))
             (if '#t
-                (let* ((_%self150322159862%_ _%h159854%_)
-                       (_%proc159865%_ _%proc159843%_))
+                (let* ((_%self153119162659%_ _%h162651%_)
+                       (_%proc162662%_ _%proc162640%_))
                   (declare (not safe))
-                  (let ((_%object159868159873%_
+                  (let ((_%object162665162670%_
                          (##unchecked-structure-ref
-                          _%self150322159862%_
+                          _%self153119162659%_
                           '1
                           '#f
                           'for-each))
-                        (_%method159869159874%_
+                        (_%method162666162671%_
                          (##unchecked-structure-ref
-                          _%self150322159862%_
+                          _%self153119162659%_
                           '5
                           '#f
                           'for-each)))
-                    (_%method159869159874%_
-                     _%object159868159873%_
-                     _%proc159865%_)))
+                    (_%method162666162671%_
+                     _%object162665162670%_
+                     _%proc162662%_)))
                 (begin
                   (raise-contract-violation-error
                    '"invalid key"
                    'context:
                    '&HashTable-for-each
                    'value:
-                   (cons _%proc159843%_ '()))
+                   (cons _%proc162640%_ '()))
                   '#!void))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        checked-hash-table::t
        'HashTable::for-each
-       _%checked-hash-table::HashTable::for-each153381%_
+       _%checked-hash-table::HashTable::for-each156178%_
        '#f))
-    (define _%checked-hash-table::HashTable::length153383%_
-      (lambda (_%self159676%_)
-        (let ((_%self159679%_ _%self159676%_))
+    (define _%checked-hash-table::HashTable::length156180%_
+      (lambda (_%self162473%_)
+        (let ((_%self162476%_ _%self162473%_))
           (declare (not safe))
-          (let ((_%h159691%_
-                 (##unchecked-structure-ref _%self159679%_ '1 '#f '#f))
-                (_%key?159693%_
-                 (##unchecked-structure-ref _%self159679%_ '2 '#f '#f)))
+          (let ((_%h162488%_
+                 (##unchecked-structure-ref _%self162476%_ '1 '#f '#f))
+                (_%key?162490%_
+                 (##unchecked-structure-ref _%self162476%_ '2 '#f '#f)))
             (if '#!void
-                (let ((_%self150566159696%_ _%h159691%_))
+                (let ((_%self153363162493%_ _%h162488%_))
                   (declare (not safe))
-                  (let ((_%object159699159704%_
+                  (let ((_%object162496162501%_
                          (##unchecked-structure-ref
-                          _%self150566159696%_
+                          _%self153363162493%_
                           '1
                           '#f
                           'length))
-                        (_%method159700159705%_
+                        (_%method162497162502%_
                          (##unchecked-structure-ref
-                          _%self150566159696%_
+                          _%self153363162493%_
                           '6
                           '#f
                           'length)))
-                    (_%method159700159705%_ _%object159699159704%_)))
+                    (_%method162497162502%_ _%object162496162501%_)))
                 (begin
                   (raise-contract-violation-error
                    '"invalid key"
@@ -3414,32 +3406,32 @@
       (__bind-method!__%
        checked-hash-table::t
        'HashTable::length
-       _%checked-hash-table::HashTable::length153383%_
+       _%checked-hash-table::HashTable::length156180%_
        '#f))
-    (define _%checked-hash-table::HashTable::copy153385%_
-      (lambda (_%self159522%_)
-        (let ((_%self159525%_ _%self159522%_))
+    (define _%checked-hash-table::HashTable::copy156182%_
+      (lambda (_%self162319%_)
+        (let ((_%self162322%_ _%self162319%_))
           (declare (not safe))
-          (let ((_%h159537%_
-                 (##unchecked-structure-ref _%self159525%_ '1 '#f '#f))
-                (_%key?159539%_
-                 (##unchecked-structure-ref _%self159525%_ '2 '#f '#f)))
+          (let ((_%h162334%_
+                 (##unchecked-structure-ref _%self162322%_ '1 '#f '#f))
+                (_%key?162336%_
+                 (##unchecked-structure-ref _%self162322%_ '2 '#f '#f)))
             (if '#!void
-                (let ((_%self149834159542%_ _%h159537%_))
+                (let ((_%self152631162339%_ _%h162334%_))
                   (declare (not safe))
-                  (let ((_%object159545159550%_
+                  (let ((_%object162342162347%_
                          (##unchecked-structure-ref
-                          _%self149834159542%_
+                          _%self152631162339%_
                           '1
                           '#f
                           'copy))
-                        (_%method159546159551%_
+                        (_%method162343162348%_
                          (##unchecked-structure-ref
-                          _%self149834159542%_
+                          _%self152631162339%_
                           '3
                           '#f
                           'copy)))
-                    (_%method159546159551%_ _%object159545159550%_)))
+                    (_%method162343162348%_ _%object162342162347%_)))
                 (begin
                   (raise-contract-violation-error
                    '"invalid key"
@@ -3453,44 +3445,44 @@
       (__bind-method!__%
        checked-hash-table::t
        'HashTable::copy
-       _%checked-hash-table::HashTable::copy153385%_
+       _%checked-hash-table::HashTable::copy156182%_
        '#f))
-    (define _%checked-hash-table::HashTable::new153387%_
-      (lambda (_%self159348%_ _%size-hint159349%_)
-        (let ((_%self159352%_ _%self159348%_))
-          (if (or (not _%size-hint159349%_) (fixnum? _%size-hint159349%_))
-              (let ((_%size-hint159368%_ _%size-hint159349%_))
+    (define _%checked-hash-table::HashTable::new156184%_
+      (lambda (_%self162145%_ _%size-hint162146%_)
+        (let ((_%self162149%_ _%self162145%_))
+          (if (or (not _%size-hint162146%_) (fixnum? _%size-hint162146%_))
+              (let ((_%size-hint162165%_ _%size-hint162146%_))
                 (declare (not safe))
-                (let ((_%h159380%_
-                       (##unchecked-structure-ref _%self159352%_ '1 '#f '#f))
-                      (_%key?159382%_
-                       (##unchecked-structure-ref _%self159352%_ '2 '#f '#f)))
+                (let ((_%h162177%_
+                       (##unchecked-structure-ref _%self162149%_ '1 '#f '#f))
+                      (_%key?162179%_
+                       (##unchecked-structure-ref _%self162149%_ '2 '#f '#f)))
                   (if '#!void
-                      (let* ((_%self150810159385%_ _%h159380%_)
-                             (_%size-hint159388%_ _%size-hint159368%_))
+                      (let* ((_%self153607162182%_ _%h162177%_)
+                             (_%size-hint162185%_ _%size-hint162165%_))
                         (declare (not safe))
-                        (let ((_%object159391159396%_
+                        (let ((_%object162188162193%_
                                (##unchecked-structure-ref
-                                _%self150810159385%_
+                                _%self153607162182%_
                                 '1
                                 '#f
                                 'new))
-                              (_%method159392159397%_
+                              (_%method162189162194%_
                                (##unchecked-structure-ref
-                                _%self150810159385%_
+                                _%self153607162182%_
                                 '7
                                 '#f
                                 'new)))
-                          (_%method159392159397%_
-                           _%object159391159396%_
-                           _%size-hint159388%_)))
+                          (_%method162189162194%_
+                           _%object162188162193%_
+                           _%size-hint162185%_)))
                       (begin
                         (raise-contract-violation-error
                          '"invalid key"
                          'context:
                          '&HashTable-new
                          'value:
-                         (cons _%size-hint159368%_ '()))
+                         (cons _%size-hint162165%_ '()))
                         '#!void))))
               (begin
                 (raise-contract-violation-error
@@ -3500,39 +3492,39 @@
                  'contract:
                  '(? (or not fixnum?))
                  'value:
-                 _%size-hint159349%_)
+                 _%size-hint162146%_)
                 '#!void)))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        checked-hash-table::t
        'HashTable::new
-       _%checked-hash-table::HashTable::new153387%_
+       _%checked-hash-table::HashTable::new156184%_
        '#f))
-    (define _%checked-hash-table::HashTable::clear!153389%_
-      (lambda (_%self159194%_)
-        (let ((_%self159197%_ _%self159194%_))
+    (define _%checked-hash-table::HashTable::clear!156186%_
+      (lambda (_%self161991%_)
+        (let ((_%self161994%_ _%self161991%_))
           (declare (not safe))
-          (let ((_%h159209%_
-                 (##unchecked-structure-ref _%self159197%_ '1 '#f '#f))
-                (_%key?159211%_
-                 (##unchecked-structure-ref _%self159197%_ '2 '#f '#f)))
+          (let ((_%h162006%_
+                 (##unchecked-structure-ref _%self161994%_ '1 '#f '#f))
+                (_%key?162008%_
+                 (##unchecked-structure-ref _%self161994%_ '2 '#f '#f)))
             (if '#!void
-                (let ((_%self149589159214%_ _%h159209%_))
+                (let ((_%self152386162011%_ _%h162006%_))
                   (declare (not safe))
-                  (let ((_%object159217159222%_
+                  (let ((_%object162014162019%_
                          (##unchecked-structure-ref
-                          _%self149589159214%_
+                          _%self152386162011%_
                           '1
                           '#f
                           'clear!))
-                        (_%method159218159223%_
+                        (_%method162015162020%_
                          (##unchecked-structure-ref
-                          _%self149589159214%_
+                          _%self152386162011%_
                           '2
                           '#f
                           'clear!)))
-                    (_%method159218159223%_ _%object159217159222%_)))
+                    (_%method162015162020%_ _%object162014162019%_)))
                 (begin
                   (raise-contract-violation-error
                    '"invalid key"
@@ -3546,443 +3538,443 @@
       (__bind-method!__%
        checked-hash-table::t
        'HashTable::clear!
-       _%checked-hash-table::HashTable::clear!153389%_
+       _%checked-hash-table::HashTable::clear!156186%_
        '#f))
     (define make-generic-hash-table__%
-      (lambda (_%table159043%_
-               _%count159044%_
-               _%free159045%_
-               _%hash159046%_
-               _%test159047%_
-               _%seed159048%_
-               _%lock159049%_)
-        (let ((__tmp167270
-               (let () (declare (not safe)) (ensure-lock _%lock159049%_))))
+      (lambda (_%table161840%_
+               _%count161841%_
+               _%free161842%_
+               _%hash161843%_
+               _%test161844%_
+               _%seed161845%_
+               _%lock161846%_)
+        (let ((__tmp170067
+               (let () (declare (not safe)) (ensure-lock _%lock161846%_))))
           (declare (not safe))
           (##structure
            hash-table::t
-           _%table159043%_
-           _%count159044%_
-           _%free159045%_
-           _%hash159046%_
-           _%test159047%_
-           _%seed159048%_
-           __tmp167270))))
+           _%table161840%_
+           _%count161841%_
+           _%free161842%_
+           _%hash161843%_
+           _%test161844%_
+           _%seed161845%_
+           __tmp170067))))
     (define make-generic-hash-table__0
-      (lambda (_%table159054%_
-               _%count159055%_
-               _%free159056%_
-               _%hash159057%_
-               _%test159058%_
-               _%seed159059%_)
-        (let ((_%lock159061%_ '#f))
+      (lambda (_%table161851%_
+               _%count161852%_
+               _%free161853%_
+               _%hash161854%_
+               _%test161855%_
+               _%seed161856%_)
+        (let ((_%lock161858%_ '#f))
           (make-generic-hash-table__%
-           _%table159054%_
-           _%count159055%_
-           _%free159056%_
-           _%hash159057%_
-           _%test159058%_
-           _%seed159059%_
-           _%lock159061%_))))
+           _%table161851%_
+           _%count161852%_
+           _%free161853%_
+           _%hash161854%_
+           _%test161855%_
+           _%seed161856%_
+           _%lock161858%_))))
     (define make-generic-hash-table
-      (lambda _g167271_
-        (let ((_g167272_ (let () (declare (not safe)) (##length _g167271_))))
-          (cond ((let () (declare (not safe)) (##fx= _g167272_ 6))
-                 (apply make-generic-hash-table__0 _g167271_))
-                ((let () (declare (not safe)) (##fx= _g167272_ 7))
-                 (apply make-generic-hash-table__% _g167271_))
+      (lambda _g170068_
+        (let ((_g170069_ (let () (declare (not safe)) (##length _g170068_))))
+          (cond ((let () (declare (not safe)) (##fx= _g170069_ 6))
+                 (apply make-generic-hash-table__0 _g170068_))
+                ((let () (declare (not safe)) (##fx= _g170069_ 7))
+                 (apply make-generic-hash-table__% _g170068_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   make-generic-hash-table
-                  _g167271_))))))
+                  _g170068_))))))
     (define make-hash-table__%
-      (lambda (_%@@keywords158452%_
-               _%$%size-hint158442158453%_
-               _%$%seed158443158454%_
-               _%$%test158444158455%_
-               _%$%hash158445158456%_
-               _%$%lock158446158457%_
-               _%$%check158447158458%_
-               _%$%weak-keys158448158459%_
-               _%$%weak-values158449158460%_)
-        (let* ((_%size-hint158462%_
-                (if (eq? _%$%size-hint158442158453%_ absent-value)
+      (lambda (_%@@keywords161249%_
+               _%$%size-hint161239161250%_
+               _%$%seed161240161251%_
+               _%$%test161241161252%_
+               _%$%hash161242161253%_
+               _%$%lock161243161254%_
+               _%$%check161244161255%_
+               _%$%weak-keys161245161256%_
+               _%$%weak-values161246161257%_)
+        (let* ((_%size-hint161259%_
+                (if (eq? _%$%size-hint161239161250%_ absent-value)
                     '#f
-                    _%$%size-hint158442158453%_))
-               (_%seed158464%_
-                (if (eq? _%$%seed158443158454%_ absent-value)
+                    _%$%size-hint161239161250%_))
+               (_%seed161261%_
+                (if (eq? _%$%seed161240161251%_ absent-value)
                     '#f
-                    _%$%seed158443158454%_))
-               (_%test158466%_
-                (if (eq? _%$%test158444158455%_ absent-value)
+                    _%$%seed161240161251%_))
+               (_%test161263%_
+                (if (eq? _%$%test161241161252%_ absent-value)
                     equal?
-                    _%$%test158444158455%_))
-               (_%hash158468%_
-                (if (eq? _%$%hash158445158456%_ absent-value)
+                    _%$%test161241161252%_))
+               (_%hash161265%_
+                (if (eq? _%$%hash161242161253%_ absent-value)
                     '#f
-                    _%$%hash158445158456%_))
-               (_%lock158470%_
-                (if (eq? _%$%lock158446158457%_ absent-value)
+                    _%$%hash161242161253%_))
+               (_%lock161267%_
+                (if (eq? _%$%lock161243161254%_ absent-value)
                     '#f
-                    _%$%lock158446158457%_))
-               (_%check158472%_
-                (if (eq? _%$%check158447158458%_ absent-value)
+                    _%$%lock161243161254%_))
+               (_%check161269%_
+                (if (eq? _%$%check161244161255%_ absent-value)
                     '#f
-                    _%$%check158447158458%_))
-               (_%weak-keys158474%_
-                (if (eq? _%$%weak-keys158448158459%_ absent-value)
+                    _%$%check161244161255%_))
+               (_%weak-keys161271%_
+                (if (eq? _%$%weak-keys161245161256%_ absent-value)
                     '#f
-                    _%$%weak-keys158448158459%_))
-               (_%weak-values158476%_
-                (if (eq? _%$%weak-values158449158460%_ absent-value)
+                    _%$%weak-keys161245161256%_))
+               (_%weak-values161273%_
+                (if (eq? _%$%weak-values161246161257%_ absent-value)
                     '#f
-                    _%$%weak-values158449158460%_)))
-          (letrec ((_%table-seed158479%_
+                    _%$%weak-values161246161257%_)))
+          (letrec ((_%table-seed161276%_
                     (lambda ()
-                      (if (fixnum? _%seed158464%_)
-                          _%seed158464%_
+                      (if (fixnum? _%seed161261%_)
+                          _%seed161261%_
                           (random-integer (macro-max-fixnum32)))))
-                   (_%__wrap-lock158623%_
-                    (lambda (_%ht159010%_)
-                      (let ((_%ht159013%_ _%ht159010%_))
-                        (if _%lock158470%_
-                            (let ((_%$obj159025%_
-                                   (let ((__tmp167273
-                                          (let ((_%$obj159022%_
-                                                 _%lock158470%_))
+                   (_%__wrap-lock161420%_
+                    (lambda (_%ht161807%_)
+                      (let ((_%ht161810%_ _%ht161807%_))
+                        (if _%lock161267%_
+                            (let ((_%$obj161822%_
+                                   (let ((__tmp170070
+                                          (let ((_%$obj161819%_
+                                                 _%lock161267%_))
                                             (if (and (let ()
                                                        (declare (not safe))
                                                        (##structure?
-                                                        _%$obj159022%_))
+                                                        _%$obj161819%_))
                                                      (eq? Locker::t
                                                           (let ()
                                                             (declare
                                                               (not safe))
                                                             (##structure-type
-                                                             _%$obj159022%_)))
+                                                             _%$obj161819%_)))
                                                      '#t)
-                                                _%$obj159022%_
+                                                _%$obj161819%_
                                                 (let ()
                                                   (declare (not safe))
                                                   (cast Locker::interface
-                                                        _%$obj159022%_))))))
+                                                        _%$obj161819%_))))))
                                      (declare (not safe))
                                      (##structure
                                       locked-hash-table::t
-                                      _%ht159013%_
-                                      __tmp167273))))
+                                      _%ht161810%_
+                                      __tmp170070))))
                               (if (and (let ()
                                          (declare (not safe))
-                                         (##structure? _%$obj159025%_))
+                                         (##structure? _%$obj161822%_))
                                        (eq? HashTable::t
                                             (let ()
                                               (declare (not safe))
                                               (##structure-type
-                                               _%$obj159025%_)))
+                                               _%$obj161822%_)))
                                        '#t)
-                                  _%$obj159025%_
+                                  _%$obj161822%_
                                   (let ()
                                     (declare (not safe))
                                     (cast HashTable::interface
-                                          _%$obj159025%_))))
-                            _%ht159013%_))))
-                   (_%wrap-lock158624%_
-                    (lambda (_%ht158998%_)
-                      (let ((_%ht159001%_ _%ht158998%_))
-                        (_%__wrap-lock158623%_ _%ht159001%_))))
-                   (_%__wrap-checked158746%_
-                    (lambda (_%ht158982%_ _%implicit158983%_)
-                      (let ((_%ht158986%_ _%ht158982%_))
-                        (if _%check158472%_
-                            (let ((_%$obj158995%_
-                                   (let ((__tmp167274
-                                          (if (procedure? _%check158472%_)
-                                              _%check158472%_
-                                              _%implicit158983%_)))
+                                          _%$obj161822%_))))
+                            _%ht161810%_))))
+                   (_%wrap-lock161421%_
+                    (lambda (_%ht161795%_)
+                      (let ((_%ht161798%_ _%ht161795%_))
+                        (_%__wrap-lock161420%_ _%ht161798%_))))
+                   (_%__wrap-checked161543%_
+                    (lambda (_%ht161779%_ _%implicit161780%_)
+                      (let ((_%ht161783%_ _%ht161779%_))
+                        (if _%check161269%_
+                            (let ((_%$obj161792%_
+                                   (let ((__tmp170071
+                                          (if (procedure? _%check161269%_)
+                                              _%check161269%_
+                                              _%implicit161780%_)))
                                      (declare (not safe))
                                      (##structure
                                       checked-hash-table::t
-                                      _%ht158986%_
-                                      __tmp167274))))
+                                      _%ht161783%_
+                                      __tmp170071))))
                               (if (and (let ()
                                          (declare (not safe))
-                                         (##structure? _%$obj158995%_))
+                                         (##structure? _%$obj161792%_))
                                        (eq? HashTable::t
                                             (let ()
                                               (declare (not safe))
                                               (##structure-type
-                                               _%$obj158995%_)))
+                                               _%$obj161792%_)))
                                        '#t)
-                                  _%$obj158995%_
+                                  _%$obj161792%_
                                   (let ()
                                     (declare (not safe))
                                     (cast HashTable::interface
-                                          _%$obj158995%_))))
-                            _%ht158986%_))))
-                   (_%wrap-checked158747%_
-                    (lambda (_%ht158969%_ _%implicit158970%_)
-                      (let ((_%ht158973%_ _%ht158969%_))
-                        (_%__wrap-checked158746%_
-                         _%ht158973%_
-                         _%implicit158970%_))))
-                   (_%make158748%_
-                    (lambda (_%kons158917%_
-                             _%key?158918%_
-                             _%hash158919%_
-                             _%test158920%_)
-                      (let* ((_%size158923%_
+                                          _%$obj161792%_))))
+                            _%ht161783%_))))
+                   (_%wrap-checked161544%_
+                    (lambda (_%ht161766%_ _%implicit161767%_)
+                      (let ((_%ht161770%_ _%ht161766%_))
+                        (_%__wrap-checked161543%_
+                         _%ht161770%_
+                         _%implicit161767%_))))
+                   (_%make161545%_
+                    (lambda (_%kons161714%_
+                             _%key?161715%_
+                             _%hash161716%_
+                             _%test161717%_)
+                      (let* ((_%size161720%_
                               (let ()
                                 (declare (not safe))
                                 (raw-table-size-hint->size
-                                 _%size-hint158462%_)))
-                             (_%table158925%_
-                              (let ((__tmp167275 (macro-unused-obj)))
+                                 _%size-hint161259%_)))
+                             (_%table161722%_
+                              (let ((__tmp170072 (macro-unused-obj)))
                                 (declare (not safe))
-                                (##make-vector _%size158923%_ __tmp167275)))
-                             (_%ht158930%_
-                              (let ((_%$obj158927%_
-                                     (_%kons158917%_
-                                      _%table158925%_
+                                (##make-vector _%size161720%_ __tmp170072)))
+                             (_%ht161727%_
+                              (let ((_%$obj161724%_
+                                     (_%kons161714%_
+                                      _%table161722%_
                                       '0
                                       (let ()
                                         (declare (not safe))
-                                        (##fxquotient _%size158923%_ '2))
-                                      _%hash158919%_
-                                      _%test158920%_
-                                      (_%table-seed158479%_)
+                                        (##fxquotient _%size161720%_ '2))
+                                      _%hash161716%_
+                                      _%test161717%_
+                                      (_%table-seed161276%_)
                                       '#f)))
                                 (if (and (let ()
                                            (declare (not safe))
-                                           (##structure? _%$obj158927%_))
+                                           (##structure? _%$obj161724%_))
                                          (eq? HashTable::t
                                               (let ()
                                                 (declare (not safe))
                                                 (##structure-type
-                                                 _%$obj158927%_)))
+                                                 _%$obj161724%_)))
                                          '#t)
-                                    _%$obj158927%_
+                                    _%$obj161724%_
                                     (let ()
                                       (declare (not safe))
                                       (cast HashTable::interface
-                                            _%$obj158927%_)))))
-                             (_%ht158952%_
-                              (let* ((_%ht158933%_ _%ht158930%_)
-                                     (_%ht158937%_ _%ht158933%_))
-                                (_%__wrap-lock158623%_ _%ht158937%_)))
-                             (_%implicit158955%_ _%key?158918%_)
-                             (_%ht158959%_ _%ht158952%_))
-                        (_%__wrap-checked158746%_
-                         _%ht158959%_
-                         _%implicit158955%_))))
-                   (_%make-gc-hash-table158749%_
+                                            _%$obj161724%_)))))
+                             (_%ht161749%_
+                              (let* ((_%ht161730%_ _%ht161727%_)
+                                     (_%ht161734%_ _%ht161730%_))
+                                (_%__wrap-lock161420%_ _%ht161734%_)))
+                             (_%implicit161752%_ _%key?161715%_)
+                             (_%ht161756%_ _%ht161749%_))
+                        (_%__wrap-checked161543%_
+                         _%ht161756%_
+                         _%implicit161752%_))))
+                   (_%make-gc-hash-table161546%_
                     (lambda ()
-                      (let* ((_%ht158882%_
-                              (let ((_%$obj158879%_
+                      (let* ((_%ht161679%_
+                              (let ((_%$obj161676%_
                                      (let ()
                                        (declare (not safe))
                                        (make-gc-table__1
-                                        _%size-hint158462%_
+                                        _%size-hint161259%_
                                         gc-hash-table::t))))
                                 (if (and (let ()
                                            (declare (not safe))
-                                           (##structure? _%$obj158879%_))
+                                           (##structure? _%$obj161676%_))
                                          (eq? HashTable::t
                                               (let ()
                                                 (declare (not safe))
                                                 (##structure-type
-                                                 _%$obj158879%_)))
+                                                 _%$obj161676%_)))
                                          '#t)
-                                    _%$obj158879%_
+                                    _%$obj161676%_
                                     (let ()
                                       (declare (not safe))
                                       (cast HashTable::interface
-                                            _%$obj158879%_)))))
-                             (_%ht158900%_
-                              (let* ((_%ht158884%_ _%ht158882%_)
-                                     (_%ht158888%_ _%ht158884%_))
-                                (_%__wrap-lock158623%_ _%ht158888%_)))
-                             (_%implicit158903%_ true)
-                             (_%ht158907%_ _%ht158900%_))
-                        (_%__wrap-checked158746%_
-                         _%ht158907%_
-                         _%implicit158903%_))))
-                   (_%make-gambit-table158750%_
+                                            _%$obj161676%_)))))
+                             (_%ht161697%_
+                              (let* ((_%ht161681%_ _%ht161679%_)
+                                     (_%ht161685%_ _%ht161681%_))
+                                (_%__wrap-lock161420%_ _%ht161685%_)))
+                             (_%implicit161700%_ true)
+                             (_%ht161704%_ _%ht161697%_))
+                        (_%__wrap-checked161543%_
+                         _%ht161704%_
+                         _%implicit161700%_))))
+                   (_%make-gambit-table161547%_
                     (lambda ()
-                      (let* ((_%size158819%_
-                              (let ((_%$e158816%_ _%size-hint158462%_))
-                                (if _%$e158816%_
-                                    _%$e158816%_
+                      (let* ((_%size161616%_
+                              (let ((_%$e161613%_ _%size-hint161259%_))
+                                (if _%$e161613%_
+                                    _%$e161613%_
                                     (macro-absent-obj))))
-                             (_%test158824%_
-                              (let ((_%$e158821%_ _%test158466%_))
-                                (if _%$e158821%_ _%$e158821%_ equal?)))
-                             (_%hash158832%_
-                              (let ((_%$e158826%_ _%hash158468%_))
-                                (if _%$e158826%_
-                                    _%$e158826%_
-                                    (if (eq? _%test158824%_ eq?)
+                             (_%test161621%_
+                              (let ((_%$e161618%_ _%test161263%_))
+                                (if _%$e161618%_ _%$e161618%_ equal?)))
+                             (_%hash161629%_
+                              (let ((_%$e161623%_ _%hash161265%_))
+                                (if _%$e161623%_
+                                    _%$e161623%_
+                                    (if (eq? _%test161621%_ eq?)
                                         eq?-hash
-                                        (if (eq? _%test158824%_ eqv?)
+                                        (if (eq? _%test161621%_ eqv?)
                                             eqv?-hash
                                             equal?-hash)))))
-                             (_%ht158837%_
-                              (let ((_%$obj158834%_
+                             (_%ht161634%_
+                              (let ((_%$obj161631%_
                                      (make-table
                                       'size:
-                                      _%size158819%_
+                                      _%size161616%_
                                       'test:
-                                      _%test158824%_
+                                      _%test161621%_
                                       'hash:
-                                      _%hash158832%_
+                                      _%hash161629%_
                                       'weak-keys:
-                                      _%weak-keys158474%_
+                                      _%weak-keys161271%_
                                       'weak-values:
-                                      _%weak-values158476%_)))
+                                      _%weak-values161273%_)))
                                 (if (and (let ()
                                            (declare (not safe))
-                                           (##structure? _%$obj158834%_))
+                                           (##structure? _%$obj161631%_))
                                          (eq? HashTable::t
                                               (let ()
                                                 (declare (not safe))
                                                 (##structure-type
-                                                 _%$obj158834%_)))
+                                                 _%$obj161631%_)))
                                          '#t)
-                                    _%$obj158834%_
+                                    _%$obj161631%_
                                     (let ()
                                       (declare (not safe))
                                       (cast HashTable::interface
-                                            _%$obj158834%_)))))
-                             (_%ht158860%_
-                              (let* ((_%ht158840%_ _%ht158837%_)
-                                     (_%ht158844%_ _%ht158840%_))
-                                (_%__wrap-lock158623%_ _%ht158844%_)))
-                             (_%implicit158863%_ true)
-                             (_%ht158867%_ _%ht158860%_))
-                        (_%__wrap-checked158746%_
-                         _%ht158867%_
-                         _%implicit158863%_)))))
-            (if (or _%weak-keys158474%_ _%weak-values158476%_)
-                (_%make-gambit-table158750%_)
-                (if (and (or (eq? _%test158466%_ eq?)
-                             (eq? _%test158466%_ ##eq?))
-                         (or (not _%hash158468%_)
-                             (eq? _%hash158468%_ eq?-hash)
-                             (eq? _%hash158468%_ eq-hash))
-                         (not _%seed158464%_))
-                    (_%make-gc-hash-table158749%_)
-                    (if (and (or (eq? _%test158466%_ eq?)
-                                 (eq? _%test158466%_ ##eq?))
-                             (or (not _%hash158468%_)
-                                 (eq? _%hash158468%_ eq?-hash)
-                                 (eq? _%hash158468%_ eq-hash)))
-                        (_%make158748%_ make-eq-hash-table true eq-hash eq?)
-                        (if (and (or (eq? _%test158466%_ eqv?)
-                                     (eq? _%test158466%_ ##eqv?))
-                                 (or (not _%hash158468%_)
-                                     (eq? _%hash158468%_ eqv?-hash)
-                                     (eq? _%hash158468%_ eqv-hash)))
-                            (_%make158748%_
+                                            _%$obj161631%_)))))
+                             (_%ht161657%_
+                              (let* ((_%ht161637%_ _%ht161634%_)
+                                     (_%ht161641%_ _%ht161637%_))
+                                (_%__wrap-lock161420%_ _%ht161641%_)))
+                             (_%implicit161660%_ true)
+                             (_%ht161664%_ _%ht161657%_))
+                        (_%__wrap-checked161543%_
+                         _%ht161664%_
+                         _%implicit161660%_)))))
+            (if (or _%weak-keys161271%_ _%weak-values161273%_)
+                (_%make-gambit-table161547%_)
+                (if (and (or (eq? _%test161263%_ eq?)
+                             (eq? _%test161263%_ ##eq?))
+                         (or (not _%hash161265%_)
+                             (eq? _%hash161265%_ eq?-hash)
+                             (eq? _%hash161265%_ eq-hash))
+                         (not _%seed161261%_))
+                    (_%make-gc-hash-table161546%_)
+                    (if (and (or (eq? _%test161263%_ eq?)
+                                 (eq? _%test161263%_ ##eq?))
+                             (or (not _%hash161265%_)
+                                 (eq? _%hash161265%_ eq?-hash)
+                                 (eq? _%hash161265%_ eq-hash)))
+                        (_%make161545%_ make-eq-hash-table true eq-hash eq?)
+                        (if (and (or (eq? _%test161263%_ eqv?)
+                                     (eq? _%test161263%_ ##eqv?))
+                                 (or (not _%hash161265%_)
+                                     (eq? _%hash161265%_ eqv?-hash)
+                                     (eq? _%hash161265%_ eqv-hash)))
+                            (_%make161545%_
                              make-eqv-hash-table
                              true
                              eqv-hash
                              eqv?)
-                            (if (and (or (eq? _%test158466%_ eq?)
-                                         (eq? _%test158466%_ ##eq?))
-                                     (or (eq? _%hash158468%_ symbolic-hash)
-                                         (eq? _%hash158468%_ ##symbol-hash)))
-                                (_%make158748%_
+                            (if (and (or (eq? _%test161263%_ eq?)
+                                         (eq? _%test161263%_ ##eq?))
+                                     (or (eq? _%hash161265%_ symbolic-hash)
+                                         (eq? _%hash161265%_ ##symbol-hash)))
+                                (_%make161545%_
                                  make-symbol-hash-table
                                  symbolic?
                                  symbolic-hash
                                  eq?)
-                                (if (and (or (eq? _%test158466%_ eq?)
-                                             (eq? _%test158466%_ ##eq?))
-                                         (eq? _%hash158468%_ immediate-hash))
-                                    (_%make158748%_
+                                (if (and (or (eq? _%test161263%_ eq?)
+                                             (eq? _%test161263%_ ##eq?))
+                                         (eq? _%hash161265%_ immediate-hash))
+                                    (_%make161545%_
                                      make-immediate-hash-table
                                      immediate?
                                      immediate-hash
                                      eq?)
-                                    (if (and (or (eq? _%test158466%_ equal?)
-                                                 (eq? _%test158466%_ ##equal?)
-                                                 (eq? _%test158466%_ string=?)
-                                                 (eq? _%test158466%_
+                                    (if (and (or (eq? _%test161263%_ equal?)
+                                                 (eq? _%test161263%_ ##equal?)
+                                                 (eq? _%test161263%_ string=?)
+                                                 (eq? _%test161263%_
                                                       ##string=?))
-                                             (or (eq? _%hash158468%_
+                                             (or (eq? _%hash161265%_
                                                       string-hash)
-                                                 (eq? _%hash158468%_
+                                                 (eq? _%hash161265%_
                                                       ##string=?-hash)))
-                                        (_%make158748%_
+                                        (_%make161545%_
                                          make-string-hash-table
                                          string?
                                          string-hash
                                          ##string=?)
-                                        (if (and (eq? _%test158466%_ equal?)
-                                                 (not _%hash158468%_))
-                                            (_%make158748%_
+                                        (if (and (eq? _%test161263%_ equal?)
+                                                 (not _%hash161265%_))
+                                            (_%make161545%_
                                              make-generic-hash-table
                                              true
                                              equal?-hash
                                              equal?)
-                                            (if (procedure? _%test158466%_)
-                                                (if (procedure? _%hash158468%_)
-                                                    (_%make158748%_
+                                            (if (procedure? _%test161263%_)
+                                                (if (procedure? _%hash161265%_)
+                                                    (_%make161545%_
                                                      make-generic-hash-table
                                                      true
-                                                     _%hash158468%_
-                                                     _%test158466%_)
+                                                     _%hash161265%_
+                                                     _%test161263%_)
                                                     (let ()
                                                       (let ()
                                                         (declare (not safe))
                                                         (error '"bad hash table hash function; expected procedure"
-                                                               _%hash158468%_))
+                                                               _%hash161265%_))
                                                       '#!void))
                                                 (let ()
                                                   (let ()
                                                     (declare (not safe))
                                                     (error '"bad hash table test function; expected procedure"
-                                                           _%test158466%_))
+                                                           _%test161263%_))
                                                   '#!void))))))))))))))
     (define make-hash-table__@
-      (lambda (_%@@keywords159032%_ . _%args159033%_)
+      (lambda (_%@@keywords161829%_ . _%args161830%_)
         (apply make-hash-table__%
-               _%@@keywords159032%_
+               _%@@keywords161829%_
                (let ()
                  (declare (not safe))
-                 (symbolic-table-ref _%@@keywords159032%_ 'size: absent-value))
+                 (symbolic-table-ref _%@@keywords161829%_ 'size: absent-value))
                (let ()
                  (declare (not safe))
-                 (symbolic-table-ref _%@@keywords159032%_ 'seed: absent-value))
+                 (symbolic-table-ref _%@@keywords161829%_ 'seed: absent-value))
                (let ()
                  (declare (not safe))
-                 (symbolic-table-ref _%@@keywords159032%_ 'test: absent-value))
+                 (symbolic-table-ref _%@@keywords161829%_ 'test: absent-value))
                (let ()
                  (declare (not safe))
-                 (symbolic-table-ref _%@@keywords159032%_ 'hash: absent-value))
+                 (symbolic-table-ref _%@@keywords161829%_ 'hash: absent-value))
                (let ()
                  (declare (not safe))
-                 (symbolic-table-ref _%@@keywords159032%_ 'lock: absent-value))
+                 (symbolic-table-ref _%@@keywords161829%_ 'lock: absent-value))
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords159032%_
+                  _%@@keywords161829%_
                   'check:
                   absent-value))
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords159032%_
+                  _%@@keywords161829%_
                   'weak-keys:
                   absent-value))
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords159032%_
+                  _%@@keywords161829%_
                   'weak-values:
                   absent-value))
-               _%args159033%_)))
+               _%args161830%_)))
     (define make-hash-table
-      (lambda _%$%args158450159039%_
+      (lambda _%$%args161247161836%_
         (apply keyword-dispatch
                '#(#f
                   #f
@@ -4025,287 +4017,287 @@
                   #f
                   #f)
                make-hash-table__@
-               _%$%args158450159039%_)))
+               _%$%args161247161836%_)))
     (define make-hash-table-eq
-      (lambda _%args158439%_
-        (apply make-hash-table 'test: eq? _%args158439%_)))
+      (lambda _%args161236%_
+        (apply make-hash-table 'test: eq? _%args161236%_)))
     (define make-hash-table-eqv
-      (lambda _%args158437%_
-        (apply make-hash-table 'test: eqv? _%args158437%_)))
+      (lambda _%args161234%_
+        (apply make-hash-table 'test: eqv? _%args161234%_)))
     (define make-hash-table-symbolic
-      (lambda _%args158435%_
+      (lambda _%args161232%_
         (apply make-hash-table
                'test:
                eq?
                'hash:
                symbolic-hash
-               _%args158435%_)))
+               _%args161232%_)))
     (define make-hash-table-string
-      (lambda _%args158433%_
+      (lambda _%args161230%_
         (apply make-hash-table
                'test:
                string=?
                'hash:
                string-hash
-               _%args158433%_)))
+               _%args161230%_)))
     (define make-hash-table-immediate
-      (lambda _%args158431%_
+      (lambda _%args161228%_
         (apply make-hash-table
                'test:
                eq?
                'hash:
                immediate-hash
-               _%args158431%_)))
+               _%args161228%_)))
     (define list->hash-table
-      (lambda (_%lst158428%_ . _%args158429%_)
+      (lambda (_%lst161225%_ . _%args161226%_)
         (list->hash-table!
-         _%lst158428%_
+         _%lst161225%_
          (apply make-hash-table
                 'size:
-                (length _%lst158428%_)
-                _%args158429%_))))
+                (length _%lst161225%_)
+                _%args161226%_))))
     (define list->hash-table-eq
-      (lambda (_%lst158425%_ . _%args158426%_)
+      (lambda (_%lst161222%_ . _%args161223%_)
         (list->hash-table!
-         _%lst158425%_
+         _%lst161222%_
          (apply make-hash-table-eq
                 'size:
-                (length _%lst158425%_)
-                _%args158426%_))))
+                (length _%lst161222%_)
+                _%args161223%_))))
     (define list->hash-table-eqv
-      (lambda (_%lst158422%_ . _%args158423%_)
+      (lambda (_%lst161219%_ . _%args161220%_)
         (list->hash-table!
-         _%lst158422%_
+         _%lst161219%_
          (apply make-hash-table-eqv
                 'size:
-                (length _%lst158422%_)
-                _%args158423%_))))
+                (length _%lst161219%_)
+                _%args161220%_))))
     (define list->hash-table-symbolic
-      (lambda (_%lst158419%_ . _%args158420%_)
+      (lambda (_%lst161216%_ . _%args161217%_)
         (list->hash-table!
-         _%lst158419%_
+         _%lst161216%_
          (apply make-hash-table-symbolic
                 'size:
-                (length _%lst158419%_)
-                _%args158420%_))))
+                (length _%lst161216%_)
+                _%args161217%_))))
     (define list->hash-table-string
-      (lambda (_%lst158416%_ . _%args158417%_)
+      (lambda (_%lst161213%_ . _%args161214%_)
         (list->hash-table!
-         _%lst158416%_
+         _%lst161213%_
          (apply make-hash-table-string
                 'size:
-                (length _%lst158416%_)
-                _%args158417%_))))
+                (length _%lst161213%_)
+                _%args161214%_))))
     (define list->hash-table-immediate
-      (lambda (_%lst158413%_ . _%args158414%_)
+      (lambda (_%lst161210%_ . _%args161211%_)
         (list->hash-table!
-         _%lst158413%_
+         _%lst161210%_
          (apply make-hash-table-immediate
                 'size:
-                (length _%lst158413%_)
-                _%args158414%_))))
+                (length _%lst161210%_)
+                _%args161211%_))))
     (define list->hash-table!
-      (lambda (_%lst158364%_ _%h158365%_)
+      (lambda (_%lst161161%_ _%h161162%_)
         (for-each
-         (lambda (_%el158367%_)
-           (let* ((_%$%el158368158375%_ _%el158367%_)
-                  (_%$%E158370158378%_
+         (lambda (_%el161164%_)
+           (let* ((_%$%el161165161172%_ _%el161164%_)
+                  (_%$%E161167161175%_
                    (lambda ()
                      (let ()
                        (declare (not safe))
                        (error '"No clause matching"
-                              _%$%el158368158375%_
+                              _%$%el161165161172%_
                               '([k . v])))
                      '#!void))
-                  (_%$%K158371158401%_
-                   (lambda (_%v158381%_ _%k158382%_)
-                     (let* ((_%self151298158384%_ _%h158365%_)
-                            (_%key158387%_ _%k158382%_)
-                            (_%value158390%_ _%v158381%_))
+                  (_%$%K161168161198%_
+                   (lambda (_%v161178%_ _%k161179%_)
+                     (let* ((_%self154095161181%_ _%h161162%_)
+                            (_%key161184%_ _%k161179%_)
+                            (_%value161187%_ _%v161178%_))
                        (declare (not safe))
-                       (let ((_%object158393158398%_
+                       (let ((_%object161190161195%_
                               (##unchecked-structure-ref
-                               _%self151298158384%_
+                               _%self154095161181%_
                                '1
                                '#f
                                'set!))
-                             (_%method158394158399%_
+                             (_%method161191161196%_
                               (##unchecked-structure-ref
-                               _%self151298158384%_
+                               _%self154095161181%_
                                '9
                                '#f
                                'set!)))
-                         (_%method158394158399%_
-                          _%object158393158398%_
-                          _%key158387%_
-                          _%value158390%_))))))
-             (if (pair? _%$%el158368158375%_)
-                 (let ((_%$%hd158372158404%_
+                         (_%method161191161196%_
+                          _%object161190161195%_
+                          _%key161184%_
+                          _%value161187%_))))))
+             (if (pair? _%$%el161165161172%_)
+                 (let ((_%$%hd161169161201%_
                         (let ()
                           (declare (not safe))
-                          (##car _%$%el158368158375%_)))
-                       (_%$%tl158373158406%_
+                          (##car _%$%el161165161172%_)))
+                       (_%$%tl161170161203%_
                         (let ()
                           (declare (not safe))
-                          (##cdr _%$%el158368158375%_))))
-                   (let* ((_%k158409%_ _%$%hd158372158404%_)
-                          (_%v158411%_ _%$%tl158373158406%_))
-                     (_%$%K158371158401%_ _%v158411%_ _%k158409%_)))
-                 (_%$%E158370158378%_))))
-         _%lst158364%_)
-        _%h158365%_))
+                          (##cdr _%$%el161165161172%_))))
+                   (let* ((_%k161206%_ _%$%hd161169161201%_)
+                          (_%v161208%_ _%$%tl161170161203%_))
+                     (_%$%K161168161198%_ _%v161208%_ _%k161206%_)))
+                 (_%$%E161167161175%_))))
+         _%lst161161%_)
+        _%h161162%_))
     (define plist->hash-table
-      (lambda (_%lst158361%_ . _%args158362%_)
+      (lambda (_%lst161158%_ . _%args161159%_)
         (plist->hash-table!
-         _%lst158361%_
+         _%lst161158%_
          (apply make-hash-table
                 'size:
-                (length _%lst158361%_)
-                _%args158362%_))))
+                (length _%lst161158%_)
+                _%args161159%_))))
     (define plist->hash-table-eq
-      (lambda (_%lst158358%_ . _%args158359%_)
+      (lambda (_%lst161155%_ . _%args161156%_)
         (plist->hash-table!
-         _%lst158358%_
+         _%lst161155%_
          (apply make-hash-table-eq
                 'size:
-                (length _%lst158358%_)
-                _%args158359%_))))
+                (length _%lst161155%_)
+                _%args161156%_))))
     (define plist->hash-table-eqv
-      (lambda (_%lst158355%_ . _%args158356%_)
+      (lambda (_%lst161152%_ . _%args161153%_)
         (plist->hash-table!
-         _%lst158355%_
+         _%lst161152%_
          (apply make-hash-table-eqv
                 'size:
-                (length _%lst158355%_)
-                _%args158356%_))))
+                (length _%lst161152%_)
+                _%args161153%_))))
     (define plist->hash-table-symbolic
-      (lambda (_%lst158352%_ . _%args158353%_)
+      (lambda (_%lst161149%_ . _%args161150%_)
         (plist->hash-table!
-         _%lst158352%_
+         _%lst161149%_
          (apply make-hash-table-symbolic
                 'size:
-                (length _%lst158352%_)
-                _%args158353%_))))
+                (length _%lst161149%_)
+                _%args161150%_))))
     (define plist->hash-table-string
-      (lambda (_%lst158349%_ . _%args158350%_)
+      (lambda (_%lst161146%_ . _%args161147%_)
         (plist->hash-table!
-         _%lst158349%_
+         _%lst161146%_
          (apply make-hash-table-string
                 'size:
-                (length _%lst158349%_)
-                _%args158350%_))))
+                (length _%lst161146%_)
+                _%args161147%_))))
     (define plist->hash-table-immediate
-      (lambda (_%lst158346%_ . _%args158347%_)
+      (lambda (_%lst161143%_ . _%args161144%_)
         (plist->hash-table!
-         _%lst158346%_
+         _%lst161143%_
          (apply make-hash-table-immediate
                 'size:
-                (length _%lst158346%_)
-                _%args158347%_))))
+                (length _%lst161143%_)
+                _%args161144%_))))
     (define plist->hash-table!
-      (lambda (_%lst158269%_ _%h158270%_)
-        (let _%loop158272%_ ((_%rest158274%_ _%lst158269%_))
-          (let* ((_%$%rest158275158287%_ _%rest158274%_)
-                 (_%$%else158278158295%_
+      (lambda (_%lst161066%_ _%h161067%_)
+        (let _%loop161069%_ ((_%rest161071%_ _%lst161066%_))
+          (let* ((_%$%rest161072161084%_ _%rest161071%_)
+                 (_%$%else161075161092%_
                   (lambda ()
                     (let ()
                       (declare (not safe))
                       (error '"bad property list -- uneven list"
-                             _%lst158269%_)))))
-            (let ((_%$%K158281158327%_
-                   (lambda (_%rest158306%_ _%val158307%_ _%key158308%_)
-                     (let* ((_%self151298158310%_ _%h158270%_)
-                            (_%key158313%_ _%key158308%_)
-                            (_%value158316%_ _%val158307%_))
+                             _%lst161066%_)))))
+            (let ((_%$%K161078161124%_
+                   (lambda (_%rest161103%_ _%val161104%_ _%key161105%_)
+                     (let* ((_%self154095161107%_ _%h161067%_)
+                            (_%key161110%_ _%key161105%_)
+                            (_%value161113%_ _%val161104%_))
                        (declare (not safe))
-                       (let ((_%object158319158324%_
+                       (let ((_%object161116161121%_
                               (##unchecked-structure-ref
-                               _%self151298158310%_
+                               _%self154095161107%_
                                '1
                                '#f
                                'set!))
-                             (_%method158320158325%_
+                             (_%method161117161122%_
                               (##unchecked-structure-ref
-                               _%self151298158310%_
+                               _%self154095161107%_
                                '9
                                '#f
                                'set!)))
-                         (_%method158320158325%_
-                          _%object158319158324%_
-                          _%key158313%_
-                          _%value158316%_)))
-                     (_%loop158272%_ _%rest158306%_)))
-                  (_%$%K158280158300%_ (lambda () _%h158270%_)))
-              (let ((_%$%try-match158277158303%_
+                         (_%method161117161122%_
+                          _%object161116161121%_
+                          _%key161110%_
+                          _%value161113%_)))
+                     (_%loop161069%_ _%rest161103%_)))
+                  (_%$%K161077161097%_ (lambda () _%h161067%_)))
+              (let ((_%$%try-match161074161100%_
                      (lambda ()
-                       (if (null? _%$%rest158275158287%_)
-                           (_%$%K158280158300%_)
-                           (_%$%else158278158295%_)))))
-                (if (pair? _%$%rest158275158287%_)
-                    (let ((_%$%tl158283158332%_
+                       (if (null? _%$%rest161072161084%_)
+                           (_%$%K161077161097%_)
+                           (_%$%else161075161092%_)))))
+                (if (pair? _%$%rest161072161084%_)
+                    (let ((_%$%tl161080161129%_
                            (let ()
                              (declare (not safe))
-                             (##cdr _%$%rest158275158287%_)))
-                          (_%$%hd158282158330%_
+                             (##cdr _%$%rest161072161084%_)))
+                          (_%$%hd161079161127%_
                            (let ()
                              (declare (not safe))
-                             (##car _%$%rest158275158287%_))))
-                      (if (pair? _%$%tl158283158332%_)
-                          (let ((_%$%tl158285158339%_
+                             (##car _%$%rest161072161084%_))))
+                      (if (pair? _%$%tl161080161129%_)
+                          (let ((_%$%tl161082161136%_
                                  (let ()
                                    (declare (not safe))
-                                   (##cdr _%$%tl158283158332%_)))
-                                (_%$%hd158284158337%_
+                                   (##cdr _%$%tl161080161129%_)))
+                                (_%$%hd161081161134%_
                                  (let ()
                                    (declare (not safe))
-                                   (##car _%$%tl158283158332%_))))
-                            (let ((_%key158335%_ _%$%hd158282158330%_)
-                                  (_%val158342%_ _%$%hd158284158337%_)
-                                  (_%rest158344%_ _%$%tl158285158339%_))
-                              (_%$%K158281158327%_
-                               _%rest158344%_
-                               _%val158342%_
-                               _%key158335%_)))
-                          (_%$%else158278158295%_)))
-                    (_%$%try-match158277158303%_))))))))
+                                   (##car _%$%tl161080161129%_))))
+                            (let ((_%key161132%_ _%$%hd161079161127%_)
+                                  (_%val161139%_ _%$%hd161081161134%_)
+                                  (_%rest161141%_ _%$%tl161082161136%_))
+                              (_%$%K161078161124%_
+                               _%rest161141%_
+                               _%val161139%_
+                               _%key161132%_)))
+                          (_%$%else161075161092%_)))
+                    (_%$%try-match161074161100%_))))))))
     (define __hash-length
-      (lambda (_%h158218%_)
-        (let* ((_%h158221%_ _%h158218%_)
-               (_%self150567158230%_ _%h158221%_)
-               (_%self150567158237%_
-                (let ((_%$obj158234%_ _%self150567158230%_))
+      (lambda (_%h161015%_)
+        (let* ((_%h161018%_ _%h161015%_)
+               (_%self153364161027%_ _%h161018%_)
+               (_%self153364161034%_
+                (let ((_%$obj161031%_ _%self153364161027%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj158234%_))
+                             (##structure? _%$obj161031%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj158234%_)))
+                                  (##structure-type _%$obj161031%_)))
                            '#t)
-                      _%$obj158234%_
+                      _%$obj161031%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj158234%_)))))
-               (_%self150567158239%_ _%self150567158237%_))
+                        (cast HashTable::interface _%$obj161031%_)))))
+               (_%self153364161036%_ _%self153364161034%_))
           (if __DEBUG
-              (let ((_%val158259%_
+              (let ((_%val161056%_
                      (let ()
                        (declare (not safe))
-                       (let ((_%object158251158256%_
+                       (let ((_%object161048161053%_
                               (##unchecked-structure-ref
-                               _%self150567158239%_
+                               _%self153364161036%_
                                '1
                                '#f
                                'length))
-                             (_%method158252158257%_
+                             (_%method161049161054%_
                               (##unchecked-structure-ref
-                               _%self150567158239%_
+                               _%self153364161036%_
                                '6
                                '#f
                                'length)))
-                         (_%method158252158257%_ _%object158251158256%_)))))
-                (if (fixnum? _%val158259%_)
-                    _%val158259%_
+                         (_%method161049161054%_ _%object161048161053%_)))))
+                (if (fixnum? _%val161056%_)
+                    _%val161056%_
                     (begin
                       (raise-contract-violation-error
                        '"contract violation"
@@ -4314,372 +4306,372 @@
                        'contract:
                        '(fixnum? val)
                        'value:
-                       _%val158259%_)
+                       _%val161056%_)
                       '#!void)))
               (let ()
                 (declare (not safe))
-                (let ((_%object158261158266%_
+                (let ((_%object161058161063%_
                        (##unchecked-structure-ref
-                        _%self150567158239%_
+                        _%self153364161036%_
                         '1
                         '#f
                         'length))
-                      (_%method158262158267%_
+                      (_%method161059161064%_
                        (##unchecked-structure-ref
-                        _%self150567158239%_
+                        _%self153364161036%_
                         '6
                         '#f
                         'length)))
-                  (_%method158262158267%_ _%object158261158266%_)))))))
+                  (_%method161059161064%_ _%object161058161063%_)))))))
     (define hash-length
-      (lambda (_%h158200%_)
-        (let* ((_%h158206%_
-                (let ((_%$obj158203%_ _%h158200%_))
+      (lambda (_%h160997%_)
+        (let* ((_%h161003%_
+                (let ((_%$obj161000%_ _%h160997%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj158203%_))
+                             (##structure? _%$obj161000%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj158203%_)))
+                                  (##structure-type _%$obj161000%_)))
                            '#t)
-                      _%$obj158203%_
+                      _%$obj161000%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj158203%_)))))
-               (_%h158208%_ _%h158206%_))
-          (__hash-length _%h158208%_))))
+                        (cast HashTable::interface _%$obj161000%_)))))
+               (_%h161005%_ _%h161003%_))
+          (__hash-length _%h161005%_))))
     (define __hash-ref__%
-      (lambda (_%h158128%_ _%key158129%_ _%default158130%_)
-        (let* ((_%h158133%_ _%h158128%_)
-               (_%result158186%_
-                (let* ((_%self151055158142%_ _%h158133%_)
-                       (_%key158145%_ _%key158129%_)
-                       (_%default158148%_ _%default158130%_)
-                       (_%self151055158155%_
-                        (let ((_%$obj158152%_ _%self151055158142%_))
+      (lambda (_%h160925%_ _%key160926%_ _%default160927%_)
+        (let* ((_%h160930%_ _%h160925%_)
+               (_%result160983%_
+                (let* ((_%self153852160939%_ _%h160930%_)
+                       (_%key160942%_ _%key160926%_)
+                       (_%default160945%_ _%default160927%_)
+                       (_%self153852160952%_
+                        (let ((_%$obj160949%_ _%self153852160939%_))
                           (if (and (let ()
                                      (declare (not safe))
-                                     (##structure? _%$obj158152%_))
+                                     (##structure? _%$obj160949%_))
                                    (eq? HashTable::t
                                         (let ()
                                           (declare (not safe))
-                                          (##structure-type _%$obj158152%_)))
+                                          (##structure-type _%$obj160949%_)))
                                    '#t)
-                              _%$obj158152%_
+                              _%$obj160949%_
                               (let ()
                                 (declare (not safe))
-                                (cast HashTable::interface _%$obj158152%_)))))
-                       (_%self151055158157%_ _%self151055158155%_))
+                                (cast HashTable::interface _%$obj160949%_)))))
+                       (_%self153852160954%_ _%self153852160952%_))
                   (if __DEBUG
                       (let ()
                         (declare (not safe))
-                        (let ((_%object158171158176%_
+                        (let ((_%object160968160973%_
                                (##unchecked-structure-ref
-                                _%self151055158157%_
+                                _%self153852160954%_
                                 '1
                                 '#f
                                 'ref))
-                              (_%method158172158177%_
+                              (_%method160969160974%_
                                (##unchecked-structure-ref
-                                _%self151055158157%_
+                                _%self153852160954%_
                                 '8
                                 '#f
                                 'ref)))
-                          (_%method158172158177%_
-                           _%object158171158176%_
-                           _%key158145%_
-                           _%default158148%_)))
+                          (_%method160969160974%_
+                           _%object160968160973%_
+                           _%key160942%_
+                           _%default160945%_)))
                       (let ()
                         (declare (not safe))
-                        (let ((_%object158178158183%_
+                        (let ((_%object160975160980%_
                                (##unchecked-structure-ref
-                                _%self151055158157%_
+                                _%self153852160954%_
                                 '1
                                 '#f
                                 'ref))
-                              (_%method158179158184%_
+                              (_%method160976160981%_
                                (##unchecked-structure-ref
-                                _%self151055158157%_
+                                _%self153852160954%_
                                 '8
                                 '#f
                                 'ref)))
-                          (_%method158179158184%_
-                           _%object158178158183%_
-                           _%key158145%_
-                           _%default158148%_)))))))
-          (if (eq? _%result158186%_ (macro-absent-obj))
+                          (_%method160976160981%_
+                           _%object160975160980%_
+                           _%key160942%_
+                           _%default160945%_)))))))
+          (if (eq? _%result160983%_ (macro-absent-obj))
               (raise-unbound-key-error
                'hash-ref
                '"unknown hash key"
                'hash:
-               _%h158133%_
+               _%h160930%_
                'key:
-               _%key158129%_)
-              _%result158186%_))))
+               _%key160926%_)
+              _%result160983%_))))
     (define __hash-ref__0
-      (lambda (_%h158191%_ _%key158192%_)
-        (let ((_%default158194%_ absent-obj))
-          (__hash-ref__% _%h158191%_ _%key158192%_ _%default158194%_))))
+      (lambda (_%h160988%_ _%key160989%_)
+        (let ((_%default160991%_ absent-obj))
+          (__hash-ref__% _%h160988%_ _%key160989%_ _%default160991%_))))
     (define __hash-ref
-      (lambda _g167276_
-        (let ((_g167277_ (let () (declare (not safe)) (##length _g167276_))))
-          (cond ((let () (declare (not safe)) (##fx= _g167277_ 2))
-                 (apply __hash-ref__0 _g167276_))
-                ((let () (declare (not safe)) (##fx= _g167277_ 3))
-                 (apply __hash-ref__% _g167276_))
+      (lambda _g170073_
+        (let ((_g170074_ (let () (declare (not safe)) (##length _g170073_))))
+          (cond ((let () (declare (not safe)) (##fx= _g170074_ 2))
+                 (apply __hash-ref__0 _g170073_))
+                ((let () (declare (not safe)) (##fx= _g170074_ 3))
+                 (apply __hash-ref__% _g170073_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __hash-ref
-                  _g167276_))))))
+                  _g170073_))))))
     (define hash-ref__%
-      (lambda (_%h158095%_ _%key158096%_ _%default158097%_)
-        (let* ((_%h158103%_
-                (let ((_%$obj158100%_ _%h158095%_))
+      (lambda (_%h160892%_ _%key160893%_ _%default160894%_)
+        (let* ((_%h160900%_
+                (let ((_%$obj160897%_ _%h160892%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj158100%_))
+                             (##structure? _%$obj160897%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj158100%_)))
+                                  (##structure-type _%$obj160897%_)))
                            '#t)
-                      _%$obj158100%_
+                      _%$obj160897%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj158100%_)))))
-               (_%h158105%_ _%h158103%_))
-          (__hash-ref__% _%h158105%_ _%key158096%_ _%default158097%_))))
+                        (cast HashTable::interface _%$obj160897%_)))))
+               (_%h160902%_ _%h160900%_))
+          (__hash-ref__% _%h160902%_ _%key160893%_ _%default160894%_))))
     (define hash-ref__0
-      (lambda (_%h158118%_ _%key158119%_)
-        (let ((_%default158121%_ absent-obj))
-          (hash-ref__% _%h158118%_ _%key158119%_ _%default158121%_))))
+      (lambda (_%h160915%_ _%key160916%_)
+        (let ((_%default160918%_ absent-obj))
+          (hash-ref__% _%h160915%_ _%key160916%_ _%default160918%_))))
     (define hash-ref
-      (lambda _g167278_
-        (let ((_g167279_ (let () (declare (not safe)) (##length _g167278_))))
-          (cond ((let () (declare (not safe)) (##fx= _g167279_ 2))
-                 (apply hash-ref__0 _g167278_))
-                ((let () (declare (not safe)) (##fx= _g167279_ 3))
-                 (apply hash-ref__% _g167278_))
+      (lambda _g170075_
+        (let ((_g170076_ (let () (declare (not safe)) (##length _g170075_))))
+          (cond ((let () (declare (not safe)) (##fx= _g170076_ 2))
+                 (apply hash-ref__0 _g170075_))
+                ((let () (declare (not safe)) (##fx= _g170076_ 3))
+                 (apply hash-ref__% _g170075_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   hash-ref
-                  _g167278_))))))
+                  _g170075_))))))
     (define __hash-get
-      (lambda (_%h158037%_ _%key158038%_)
-        (let* ((_%h158041%_ _%h158037%_)
-               (_%self151055158050%_ _%h158041%_)
-               (_%key158053%_ _%key158038%_)
-               (_%default158056%_ '#f)
-               (_%self151055158063%_
-                (let ((_%$obj158060%_ _%self151055158050%_))
+      (lambda (_%h160834%_ _%key160835%_)
+        (let* ((_%h160838%_ _%h160834%_)
+               (_%self153852160847%_ _%h160838%_)
+               (_%key160850%_ _%key160835%_)
+               (_%default160853%_ '#f)
+               (_%self153852160860%_
+                (let ((_%$obj160857%_ _%self153852160847%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj158060%_))
+                             (##structure? _%$obj160857%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj158060%_)))
+                                  (##structure-type _%$obj160857%_)))
                            '#t)
-                      _%$obj158060%_
+                      _%$obj160857%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj158060%_)))))
-               (_%self151055158065%_ _%self151055158063%_))
+                        (cast HashTable::interface _%$obj160857%_)))))
+               (_%self153852160862%_ _%self153852160860%_))
           (if __DEBUG
               (let ()
                 (declare (not safe))
-                (let ((_%object158079158084%_
+                (let ((_%object160876160881%_
                        (##unchecked-structure-ref
-                        _%self151055158065%_
+                        _%self153852160862%_
                         '1
                         '#f
                         'ref))
-                      (_%method158080158085%_
+                      (_%method160877160882%_
                        (##unchecked-structure-ref
-                        _%self151055158065%_
+                        _%self153852160862%_
                         '8
                         '#f
                         'ref)))
-                  (_%method158080158085%_
-                   _%object158079158084%_
-                   _%key158053%_
-                   _%default158056%_)))
+                  (_%method160877160882%_
+                   _%object160876160881%_
+                   _%key160850%_
+                   _%default160853%_)))
               (let ()
                 (declare (not safe))
-                (let ((_%object158086158091%_
+                (let ((_%object160883160888%_
                        (##unchecked-structure-ref
-                        _%self151055158065%_
+                        _%self153852160862%_
                         '1
                         '#f
                         'ref))
-                      (_%method158087158092%_
+                      (_%method160884160889%_
                        (##unchecked-structure-ref
-                        _%self151055158065%_
+                        _%self153852160862%_
                         '8
                         '#f
                         'ref)))
-                  (_%method158087158092%_
-                   _%object158086158091%_
-                   _%key158053%_
-                   _%default158056%_)))))))
+                  (_%method160884160889%_
+                   _%object160883160888%_
+                   _%key160850%_
+                   _%default160853%_)))))))
     (define hash-get
-      (lambda (_%h158018%_ _%key158019%_)
-        (let* ((_%h158025%_
-                (let ((_%$obj158022%_ _%h158018%_))
+      (lambda (_%h160815%_ _%key160816%_)
+        (let* ((_%h160822%_
+                (let ((_%$obj160819%_ _%h160815%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj158022%_))
+                             (##structure? _%$obj160819%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj158022%_)))
+                                  (##structure-type _%$obj160819%_)))
                            '#t)
-                      _%$obj158022%_
+                      _%$obj160819%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj158022%_)))))
-               (_%h158027%_ _%h158025%_))
-          (__hash-get _%h158027%_ _%key158019%_))))
+                        (cast HashTable::interface _%$obj160819%_)))))
+               (_%h160824%_ _%h160822%_))
+          (__hash-get _%h160824%_ _%key160816%_))))
     (define __hash-put!
-      (lambda (_%h157960%_ _%key157961%_ _%value157962%_)
-        (let* ((_%h157965%_ _%h157960%_)
-               (_%self151299157974%_ _%h157965%_)
-               (_%key157977%_ _%key157961%_)
-               (_%value157980%_ _%value157962%_)
-               (_%self151299157987%_
-                (let ((_%$obj157984%_ _%self151299157974%_))
+      (lambda (_%h160757%_ _%key160758%_ _%value160759%_)
+        (let* ((_%h160762%_ _%h160757%_)
+               (_%self154096160771%_ _%h160762%_)
+               (_%key160774%_ _%key160758%_)
+               (_%value160777%_ _%value160759%_)
+               (_%self154096160784%_
+                (let ((_%$obj160781%_ _%self154096160771%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj157984%_))
+                             (##structure? _%$obj160781%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj157984%_)))
+                                  (##structure-type _%$obj160781%_)))
                            '#t)
-                      _%$obj157984%_
+                      _%$obj160781%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj157984%_)))))
-               (_%self151299157989%_ _%self151299157987%_))
+                        (cast HashTable::interface _%$obj160781%_)))))
+               (_%self154096160786%_ _%self154096160784%_))
           (if __DEBUG
               (let ()
                 (declare (not safe))
-                (let ((_%object158003158008%_
+                (let ((_%object160800160805%_
                        (##unchecked-structure-ref
-                        _%self151299157989%_
+                        _%self154096160786%_
                         '1
                         '#f
                         'set!))
-                      (_%method158004158009%_
+                      (_%method160801160806%_
                        (##unchecked-structure-ref
-                        _%self151299157989%_
+                        _%self154096160786%_
                         '9
                         '#f
                         'set!)))
-                  (_%method158004158009%_
-                   _%object158003158008%_
-                   _%key157977%_
-                   _%value157980%_)))
+                  (_%method160801160806%_
+                   _%object160800160805%_
+                   _%key160774%_
+                   _%value160777%_)))
               (let ()
                 (declare (not safe))
-                (let ((_%object158010158015%_
+                (let ((_%object160807160812%_
                        (##unchecked-structure-ref
-                        _%self151299157989%_
+                        _%self154096160786%_
                         '1
                         '#f
                         'set!))
-                      (_%method158011158016%_
+                      (_%method160808160813%_
                        (##unchecked-structure-ref
-                        _%self151299157989%_
+                        _%self154096160786%_
                         '9
                         '#f
                         'set!)))
-                  (_%method158011158016%_
-                   _%object158010158015%_
-                   _%key157977%_
-                   _%value157980%_)))))))
+                  (_%method160808160813%_
+                   _%object160807160812%_
+                   _%key160774%_
+                   _%value160777%_)))))))
     (define hash-put!
-      (lambda (_%h157940%_ _%key157941%_ _%value157942%_)
-        (let* ((_%h157948%_
-                (let ((_%$obj157945%_ _%h157940%_))
+      (lambda (_%h160737%_ _%key160738%_ _%value160739%_)
+        (let* ((_%h160745%_
+                (let ((_%$obj160742%_ _%h160737%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj157945%_))
+                             (##structure? _%$obj160742%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj157945%_)))
+                                  (##structure-type _%$obj160742%_)))
                            '#t)
-                      _%$obj157945%_
+                      _%$obj160742%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj157945%_)))))
-               (_%h157950%_ _%h157948%_))
-          (__hash-put! _%h157950%_ _%key157941%_ _%value157942%_))))
+                        (cast HashTable::interface _%$obj160742%_)))))
+               (_%h160747%_ _%h160745%_))
+          (__hash-put! _%h160747%_ _%key160738%_ _%value160739%_))))
     (define __hash-update!__%
-      (lambda (_%h157853%_ _%key157854%_ _%update157855%_ _%default157856%_)
-        (let* ((_%h157859%_ _%h157853%_)
-               (_%self151543157868%_ _%h157859%_)
-               (_%key157871%_ _%key157854%_)
-               (_%proc157874%_ _%update157855%_)
-               (_%default157877%_ _%default157856%_)
-               (_%self151543157884%_
-                (let ((_%$obj157881%_ _%self151543157868%_))
+      (lambda (_%h160650%_ _%key160651%_ _%update160652%_ _%default160653%_)
+        (let* ((_%h160656%_ _%h160650%_)
+               (_%self154340160665%_ _%h160656%_)
+               (_%key160668%_ _%key160651%_)
+               (_%proc160671%_ _%update160652%_)
+               (_%default160674%_ _%default160653%_)
+               (_%self154340160681%_
+                (let ((_%$obj160678%_ _%self154340160665%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj157881%_))
+                             (##structure? _%$obj160678%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj157881%_)))
+                                  (##structure-type _%$obj160678%_)))
                            '#t)
-                      _%$obj157881%_
+                      _%$obj160678%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj157881%_)))))
-               (_%self151543157886%_ _%self151543157884%_))
-          (if (procedure? _%proc157874%_)
-              (let ((_%proc157902%_ _%proc157874%_))
+                        (cast HashTable::interface _%$obj160678%_)))))
+               (_%self154340160683%_ _%self154340160681%_))
+          (if (procedure? _%proc160671%_)
+              (let ((_%proc160699%_ _%proc160671%_))
                 (if __DEBUG
                     (let ()
                       (declare (not safe))
-                      (let ((_%object157911157916%_
+                      (let ((_%object160708160713%_
                              (##unchecked-structure-ref
-                              _%self151543157886%_
+                              _%self154340160683%_
                               '1
                               '#f
                               'update!))
-                            (_%method157912157917%_
+                            (_%method160709160714%_
                              (##unchecked-structure-ref
-                              _%self151543157886%_
+                              _%self154340160683%_
                               '10
                               '#f
                               'update!)))
-                        (_%method157912157917%_
-                         _%object157911157916%_
-                         _%key157871%_
-                         _%proc157902%_
-                         _%default157877%_)))
+                        (_%method160709160714%_
+                         _%object160708160713%_
+                         _%key160668%_
+                         _%proc160699%_
+                         _%default160674%_)))
                     (let ()
                       (declare (not safe))
-                      (let ((_%object157918157923%_
+                      (let ((_%object160715160720%_
                              (##unchecked-structure-ref
-                              _%self151543157886%_
+                              _%self154340160683%_
                               '1
                               '#f
                               'update!))
-                            (_%method157919157924%_
+                            (_%method160716160721%_
                              (##unchecked-structure-ref
-                              _%self151543157886%_
+                              _%self154340160683%_
                               '10
                               '#f
                               'update!)))
-                        (_%method157919157924%_
-                         _%object157918157923%_
-                         _%key157871%_
-                         _%proc157902%_
-                         _%default157877%_)))))
+                        (_%method160716160721%_
+                         _%object160715160720%_
+                         _%key160668%_
+                         _%proc160699%_
+                         _%default160674%_)))))
               (begin
                 (raise-contract-violation-error
                  '"contract violation"
@@ -4688,455 +4680,455 @@
                  'contract:
                  'procedure?
                  'value:
-                 _%proc157874%_)
+                 _%proc160671%_)
                 '#!void)))))
     (define __hash-update!__0
-      (lambda (_%h157929%_ _%key157930%_ _%update157931%_)
-        (let ((_%default157933%_ '#!void))
+      (lambda (_%h160726%_ _%key160727%_ _%update160728%_)
+        (let ((_%default160730%_ '#!void))
           (__hash-update!__%
-           _%h157929%_
-           _%key157930%_
-           _%update157931%_
-           _%default157933%_))))
+           _%h160726%_
+           _%key160727%_
+           _%update160728%_
+           _%default160730%_))))
     (define __hash-update!
-      (lambda _g167280_
-        (let ((_g167281_ (let () (declare (not safe)) (##length _g167280_))))
-          (cond ((let () (declare (not safe)) (##fx= _g167281_ 3))
-                 (apply __hash-update!__0 _g167280_))
-                ((let () (declare (not safe)) (##fx= _g167281_ 4))
-                 (apply __hash-update!__% _g167280_))
+      (lambda _g170077_
+        (let ((_g170078_ (let () (declare (not safe)) (##length _g170077_))))
+          (cond ((let () (declare (not safe)) (##fx= _g170078_ 3))
+                 (apply __hash-update!__0 _g170077_))
+                ((let () (declare (not safe)) (##fx= _g170078_ 4))
+                 (apply __hash-update!__% _g170077_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __hash-update!
-                  _g167280_))))))
+                  _g170077_))))))
     (define hash-update!__%
-      (lambda (_%h157817%_ _%key157818%_ _%update157819%_ _%default157820%_)
-        (let* ((_%h157826%_
-                (let ((_%$obj157823%_ _%h157817%_))
+      (lambda (_%h160614%_ _%key160615%_ _%update160616%_ _%default160617%_)
+        (let* ((_%h160623%_
+                (let ((_%$obj160620%_ _%h160614%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj157823%_))
+                             (##structure? _%$obj160620%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj157823%_)))
+                                  (##structure-type _%$obj160620%_)))
                            '#t)
-                      _%$obj157823%_
+                      _%$obj160620%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj157823%_)))))
-               (_%h157828%_ _%h157826%_))
+                        (cast HashTable::interface _%$obj160620%_)))))
+               (_%h160625%_ _%h160623%_))
           (__hash-update!__%
-           _%h157828%_
-           _%key157818%_
-           _%update157819%_
-           _%default157820%_))))
+           _%h160625%_
+           _%key160615%_
+           _%update160616%_
+           _%default160617%_))))
     (define hash-update!__0
-      (lambda (_%h157841%_ _%key157842%_ _%update157843%_)
-        (let ((_%default157845%_ '#!void))
+      (lambda (_%h160638%_ _%key160639%_ _%update160640%_)
+        (let ((_%default160642%_ '#!void))
           (hash-update!__%
-           _%h157841%_
-           _%key157842%_
-           _%update157843%_
-           _%default157845%_))))
+           _%h160638%_
+           _%key160639%_
+           _%update160640%_
+           _%default160642%_))))
     (define hash-update!
-      (lambda _g167282_
-        (let ((_g167283_ (let () (declare (not safe)) (##length _g167282_))))
-          (cond ((let () (declare (not safe)) (##fx= _g167283_ 3))
-                 (apply hash-update!__0 _g167282_))
-                ((let () (declare (not safe)) (##fx= _g167283_ 4))
-                 (apply hash-update!__% _g167282_))
+      (lambda _g170079_
+        (let ((_g170080_ (let () (declare (not safe)) (##length _g170079_))))
+          (cond ((let () (declare (not safe)) (##fx= _g170080_ 3))
+                 (apply hash-update!__0 _g170079_))
+                ((let () (declare (not safe)) (##fx= _g170080_ 4))
+                 (apply hash-update!__% _g170079_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   hash-update!
-                  _g167282_))))))
+                  _g170079_))))))
     (define __hash-remove!
-      (lambda (_%h157763%_ _%key157764%_)
-        (let* ((_%h157767%_ _%h157763%_)
-               (_%self150079157776%_ _%h157767%_)
-               (_%key157779%_ _%key157764%_)
-               (_%self150079157786%_
-                (let ((_%$obj157783%_ _%self150079157776%_))
+      (lambda (_%h160560%_ _%key160561%_)
+        (let* ((_%h160564%_ _%h160560%_)
+               (_%self152876160573%_ _%h160564%_)
+               (_%key160576%_ _%key160561%_)
+               (_%self152876160583%_
+                (let ((_%$obj160580%_ _%self152876160573%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj157783%_))
+                             (##structure? _%$obj160580%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj157783%_)))
+                                  (##structure-type _%$obj160580%_)))
                            '#t)
-                      _%$obj157783%_
+                      _%$obj160580%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj157783%_)))))
-               (_%self150079157788%_ _%self150079157786%_))
+                        (cast HashTable::interface _%$obj160580%_)))))
+               (_%self152876160585%_ _%self152876160583%_))
           (if __DEBUG
               (let ()
                 (declare (not safe))
-                (let ((_%object157801157806%_
+                (let ((_%object160598160603%_
                        (##unchecked-structure-ref
-                        _%self150079157788%_
+                        _%self152876160585%_
                         '1
                         '#f
                         'delete!))
-                      (_%method157802157807%_
+                      (_%method160599160604%_
                        (##unchecked-structure-ref
-                        _%self150079157788%_
+                        _%self152876160585%_
                         '4
                         '#f
                         'delete!)))
-                  (_%method157802157807%_
-                   _%object157801157806%_
-                   _%key157779%_)))
+                  (_%method160599160604%_
+                   _%object160598160603%_
+                   _%key160576%_)))
               (let ()
                 (declare (not safe))
-                (let ((_%object157808157813%_
+                (let ((_%object160605160610%_
                        (##unchecked-structure-ref
-                        _%self150079157788%_
+                        _%self152876160585%_
                         '1
                         '#f
                         'delete!))
-                      (_%method157809157814%_
+                      (_%method160606160611%_
                        (##unchecked-structure-ref
-                        _%self150079157788%_
+                        _%self152876160585%_
                         '4
                         '#f
                         'delete!)))
-                  (_%method157809157814%_
-                   _%object157808157813%_
-                   _%key157779%_)))))))
+                  (_%method160606160611%_
+                   _%object160605160610%_
+                   _%key160576%_)))))))
     (define hash-remove!
-      (lambda (_%h157744%_ _%key157745%_)
-        (let* ((_%h157751%_
-                (let ((_%$obj157748%_ _%h157744%_))
+      (lambda (_%h160541%_ _%key160542%_)
+        (let* ((_%h160548%_
+                (let ((_%$obj160545%_ _%h160541%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj157748%_))
+                             (##structure? _%$obj160545%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj157748%_)))
+                                  (##structure-type _%$obj160545%_)))
                            '#t)
-                      _%$obj157748%_
+                      _%$obj160545%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj157748%_)))))
-               (_%h157753%_ _%h157751%_))
-          (__hash-remove! _%h157753%_ _%key157745%_))))
+                        (cast HashTable::interface _%$obj160545%_)))))
+               (_%h160550%_ _%h160548%_))
+          (__hash-remove! _%h160550%_ _%key160542%_))))
     (define __hash-key?
-      (lambda (_%h157687%_ _%k157688%_)
-        (let ((_%h157691%_ _%h157687%_))
-          (not (eq? (let* ((_%self151055157700%_ _%h157691%_)
-                           (_%key157703%_ _%k157688%_)
-                           (_%default157706%_ absent-value)
-                           (_%self151055157713%_
-                            (let ((_%$obj157710%_ _%self151055157700%_))
+      (lambda (_%h160484%_ _%k160485%_)
+        (let ((_%h160488%_ _%h160484%_))
+          (not (eq? (let* ((_%self153852160497%_ _%h160488%_)
+                           (_%key160500%_ _%k160485%_)
+                           (_%default160503%_ absent-value)
+                           (_%self153852160510%_
+                            (let ((_%$obj160507%_ _%self153852160497%_))
                               (if (and (let ()
                                          (declare (not safe))
-                                         (##structure? _%$obj157710%_))
+                                         (##structure? _%$obj160507%_))
                                        (eq? HashTable::t
                                             (let ()
                                               (declare (not safe))
                                               (##structure-type
-                                               _%$obj157710%_)))
+                                               _%$obj160507%_)))
                                        '#t)
-                                  _%$obj157710%_
+                                  _%$obj160507%_
                                   (let ()
                                     (declare (not safe))
                                     (cast HashTable::interface
-                                          _%$obj157710%_)))))
-                           (_%self151055157715%_ _%self151055157713%_))
+                                          _%$obj160507%_)))))
+                           (_%self153852160512%_ _%self153852160510%_))
                       (if __DEBUG
                           (let ()
                             (declare (not safe))
-                            (let ((_%object157729157734%_
+                            (let ((_%object160526160531%_
                                    (##unchecked-structure-ref
-                                    _%self151055157715%_
+                                    _%self153852160512%_
                                     '1
                                     '#f
                                     'ref))
-                                  (_%method157730157735%_
+                                  (_%method160527160532%_
                                    (##unchecked-structure-ref
-                                    _%self151055157715%_
+                                    _%self153852160512%_
                                     '8
                                     '#f
                                     'ref)))
-                              (_%method157730157735%_
-                               _%object157729157734%_
-                               _%key157703%_
-                               _%default157706%_)))
+                              (_%method160527160532%_
+                               _%object160526160531%_
+                               _%key160500%_
+                               _%default160503%_)))
                           (let ()
                             (declare (not safe))
-                            (let ((_%object157736157741%_
+                            (let ((_%object160533160538%_
                                    (##unchecked-structure-ref
-                                    _%self151055157715%_
+                                    _%self153852160512%_
                                     '1
                                     '#f
                                     'ref))
-                                  (_%method157737157742%_
+                                  (_%method160534160539%_
                                    (##unchecked-structure-ref
-                                    _%self151055157715%_
+                                    _%self153852160512%_
                                     '8
                                     '#f
                                     'ref)))
-                              (_%method157737157742%_
-                               _%object157736157741%_
-                               _%key157703%_
-                               _%default157706%_)))))
+                              (_%method160534160539%_
+                               _%object160533160538%_
+                               _%key160500%_
+                               _%default160503%_)))))
                     absent-value)))))
     (define hash-key?
-      (lambda (_%h157668%_ _%k157669%_)
-        (let* ((_%h157675%_
-                (let ((_%$obj157672%_ _%h157668%_))
+      (lambda (_%h160465%_ _%k160466%_)
+        (let* ((_%h160472%_
+                (let ((_%$obj160469%_ _%h160465%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj157672%_))
+                             (##structure? _%$obj160469%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj157672%_)))
+                                  (##structure-type _%$obj160469%_)))
                            '#t)
-                      _%$obj157672%_
+                      _%$obj160469%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj157672%_)))))
-               (_%h157677%_ _%h157675%_))
-          (__hash-key? _%h157677%_ _%k157669%_))))
+                        (cast HashTable::interface _%$obj160469%_)))))
+               (_%h160474%_ _%h160472%_))
+          (__hash-key? _%h160474%_ _%k160466%_))))
     (define __hash->list
-      (lambda (_%h157600%_)
-        (let* ((_%h157603%_ _%h157600%_) (_%lst157612%_ '()))
-          (let* ((_%self150323157614%_ _%h157603%_)
-                 (_%proc157620%_
-                  (lambda (_%k157617%_ _%v157618%_)
-                    (set! _%lst157612%_
-                          (cons (cons _%k157617%_ _%v157618%_)
-                                _%lst157612%_))))
-                 (_%self150323157627%_
-                  (let ((_%$obj157624%_ _%self150323157614%_))
+      (lambda (_%h160397%_)
+        (let* ((_%h160400%_ _%h160397%_) (_%lst160409%_ '()))
+          (let* ((_%self153120160411%_ _%h160400%_)
+                 (_%proc160417%_
+                  (lambda (_%k160414%_ _%v160415%_)
+                    (set! _%lst160409%_
+                          (cons (cons _%k160414%_ _%v160415%_)
+                                _%lst160409%_))))
+                 (_%self153120160424%_
+                  (let ((_%$obj160421%_ _%self153120160411%_))
                     (if (and (let ()
                                (declare (not safe))
-                               (##structure? _%$obj157624%_))
+                               (##structure? _%$obj160421%_))
                              (eq? HashTable::t
                                   (let ()
                                     (declare (not safe))
-                                    (##structure-type _%$obj157624%_)))
+                                    (##structure-type _%$obj160421%_)))
                              '#t)
-                        _%$obj157624%_
+                        _%$obj160421%_
                         (let ()
                           (declare (not safe))
-                          (cast HashTable::interface _%$obj157624%_)))))
-                 (_%self150323157629%_ _%self150323157627%_)
-                 (_%proc157644%_ _%proc157620%_))
+                          (cast HashTable::interface _%$obj160421%_)))))
+                 (_%self153120160426%_ _%self153120160424%_)
+                 (_%proc160441%_ _%proc160417%_))
             (if __DEBUG
                 (let ()
                   (declare (not safe))
-                  (let ((_%object157653157658%_
+                  (let ((_%object160450160455%_
                          (##unchecked-structure-ref
-                          _%self150323157629%_
+                          _%self153120160426%_
                           '1
                           '#f
                           'for-each))
-                        (_%method157654157659%_
+                        (_%method160451160456%_
                          (##unchecked-structure-ref
-                          _%self150323157629%_
+                          _%self153120160426%_
                           '5
                           '#f
                           'for-each)))
-                    (_%method157654157659%_
-                     _%object157653157658%_
-                     _%proc157644%_)))
+                    (_%method160451160456%_
+                     _%object160450160455%_
+                     _%proc160441%_)))
                 (let ()
                   (declare (not safe))
-                  (let ((_%object157660157665%_
+                  (let ((_%object160457160462%_
                          (##unchecked-structure-ref
-                          _%self150323157629%_
+                          _%self153120160426%_
                           '1
                           '#f
                           'for-each))
-                        (_%method157661157666%_
+                        (_%method160458160463%_
                          (##unchecked-structure-ref
-                          _%self150323157629%_
+                          _%self153120160426%_
                           '5
                           '#f
                           'for-each)))
-                    (_%method157661157666%_
-                     _%object157660157665%_
-                     _%proc157644%_)))))
-          _%lst157612%_)))
+                    (_%method160458160463%_
+                     _%object160457160462%_
+                     _%proc160441%_)))))
+          _%lst160409%_)))
     (define hash->list
-      (lambda (_%h157582%_)
-        (let* ((_%h157588%_
-                (let ((_%$obj157585%_ _%h157582%_))
+      (lambda (_%h160379%_)
+        (let* ((_%h160385%_
+                (let ((_%$obj160382%_ _%h160379%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj157585%_))
+                             (##structure? _%$obj160382%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj157585%_)))
+                                  (##structure-type _%$obj160382%_)))
                            '#t)
-                      _%$obj157585%_
+                      _%$obj160382%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj157585%_)))))
-               (_%h157590%_ _%h157588%_))
-          (__hash->list _%h157590%_))))
+                        (cast HashTable::interface _%$obj160382%_)))))
+               (_%h160387%_ _%h160385%_))
+          (__hash->list _%h160387%_))))
     (define __hash->plist
-      (lambda (_%h157514%_)
-        (let* ((_%h157517%_ _%h157514%_) (_%lst157526%_ '()))
-          (let* ((_%self150323157528%_ _%h157517%_)
-                 (_%proc157534%_
-                  (lambda (_%k157531%_ _%v157532%_)
-                    (set! _%lst157526%_
-                          (cons _%k157531%_
-                                (cons _%v157532%_ _%lst157526%_)))))
-                 (_%self150323157541%_
-                  (let ((_%$obj157538%_ _%self150323157528%_))
+      (lambda (_%h160311%_)
+        (let* ((_%h160314%_ _%h160311%_) (_%lst160323%_ '()))
+          (let* ((_%self153120160325%_ _%h160314%_)
+                 (_%proc160331%_
+                  (lambda (_%k160328%_ _%v160329%_)
+                    (set! _%lst160323%_
+                          (cons _%k160328%_
+                                (cons _%v160329%_ _%lst160323%_)))))
+                 (_%self153120160338%_
+                  (let ((_%$obj160335%_ _%self153120160325%_))
                     (if (and (let ()
                                (declare (not safe))
-                               (##structure? _%$obj157538%_))
+                               (##structure? _%$obj160335%_))
                              (eq? HashTable::t
                                   (let ()
                                     (declare (not safe))
-                                    (##structure-type _%$obj157538%_)))
+                                    (##structure-type _%$obj160335%_)))
                              '#t)
-                        _%$obj157538%_
+                        _%$obj160335%_
                         (let ()
                           (declare (not safe))
-                          (cast HashTable::interface _%$obj157538%_)))))
-                 (_%self150323157543%_ _%self150323157541%_)
-                 (_%proc157558%_ _%proc157534%_))
+                          (cast HashTable::interface _%$obj160335%_)))))
+                 (_%self153120160340%_ _%self153120160338%_)
+                 (_%proc160355%_ _%proc160331%_))
             (if __DEBUG
                 (let ()
                   (declare (not safe))
-                  (let ((_%object157567157572%_
+                  (let ((_%object160364160369%_
                          (##unchecked-structure-ref
-                          _%self150323157543%_
+                          _%self153120160340%_
                           '1
                           '#f
                           'for-each))
-                        (_%method157568157573%_
+                        (_%method160365160370%_
                          (##unchecked-structure-ref
-                          _%self150323157543%_
+                          _%self153120160340%_
                           '5
                           '#f
                           'for-each)))
-                    (_%method157568157573%_
-                     _%object157567157572%_
-                     _%proc157558%_)))
+                    (_%method160365160370%_
+                     _%object160364160369%_
+                     _%proc160355%_)))
                 (let ()
                   (declare (not safe))
-                  (let ((_%object157574157579%_
+                  (let ((_%object160371160376%_
                          (##unchecked-structure-ref
-                          _%self150323157543%_
+                          _%self153120160340%_
                           '1
                           '#f
                           'for-each))
-                        (_%method157575157580%_
+                        (_%method160372160377%_
                          (##unchecked-structure-ref
-                          _%self150323157543%_
+                          _%self153120160340%_
                           '5
                           '#f
                           'for-each)))
-                    (_%method157575157580%_
-                     _%object157574157579%_
-                     _%proc157558%_)))))
-          _%lst157526%_)))
+                    (_%method160372160377%_
+                     _%object160371160376%_
+                     _%proc160355%_)))))
+          _%lst160323%_)))
     (define hash->plist
-      (lambda (_%h157496%_)
-        (let* ((_%h157502%_
-                (let ((_%$obj157499%_ _%h157496%_))
+      (lambda (_%h160293%_)
+        (let* ((_%h160299%_
+                (let ((_%$obj160296%_ _%h160293%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj157499%_))
+                             (##structure? _%$obj160296%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj157499%_)))
+                                  (##structure-type _%$obj160296%_)))
                            '#t)
-                      _%$obj157499%_
+                      _%$obj160296%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj157499%_)))))
-               (_%h157504%_ _%h157502%_))
-          (__hash->plist _%h157504%_))))
+                        (cast HashTable::interface _%$obj160296%_)))))
+               (_%h160301%_ _%h160299%_))
+          (__hash->plist _%h160301%_))))
     (define __hash-for-each
-      (lambda (_%proc157425%_ _%h157426%_)
-        (let* ((_%proc157429%_ _%proc157425%_)
-               (_%h157437%_ _%h157426%_)
-               (_%self150323157446%_ _%h157437%_)
-               (_%proc157449%_ _%proc157429%_)
-               (_%self150323157456%_
-                (let ((_%$obj157453%_ _%self150323157446%_))
+      (lambda (_%proc160222%_ _%h160223%_)
+        (let* ((_%proc160226%_ _%proc160222%_)
+               (_%h160234%_ _%h160223%_)
+               (_%self153120160243%_ _%h160234%_)
+               (_%proc160246%_ _%proc160226%_)
+               (_%self153120160253%_
+                (let ((_%$obj160250%_ _%self153120160243%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj157453%_))
+                             (##structure? _%$obj160250%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj157453%_)))
+                                  (##structure-type _%$obj160250%_)))
                            '#t)
-                      _%$obj157453%_
+                      _%$obj160250%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj157453%_)))))
-               (_%self150323157458%_ _%self150323157456%_)
-               (_%proc157472%_ _%proc157449%_))
+                        (cast HashTable::interface _%$obj160250%_)))))
+               (_%self153120160255%_ _%self153120160253%_)
+               (_%proc160269%_ _%proc160246%_))
           (if __DEBUG
               (let ()
                 (declare (not safe))
-                (let ((_%object157481157486%_
+                (let ((_%object160278160283%_
                        (##unchecked-structure-ref
-                        _%self150323157458%_
+                        _%self153120160255%_
                         '1
                         '#f
                         'for-each))
-                      (_%method157482157487%_
+                      (_%method160279160284%_
                        (##unchecked-structure-ref
-                        _%self150323157458%_
+                        _%self153120160255%_
                         '5
                         '#f
                         'for-each)))
-                  (_%method157482157487%_
-                   _%object157481157486%_
-                   _%proc157472%_)))
+                  (_%method160279160284%_
+                   _%object160278160283%_
+                   _%proc160269%_)))
               (let ()
                 (declare (not safe))
-                (let ((_%object157488157493%_
+                (let ((_%object160285160290%_
                        (##unchecked-structure-ref
-                        _%self150323157458%_
+                        _%self153120160255%_
                         '1
                         '#f
                         'for-each))
-                      (_%method157489157494%_
+                      (_%method160286160291%_
                        (##unchecked-structure-ref
-                        _%self150323157458%_
+                        _%self153120160255%_
                         '5
                         '#f
                         'for-each)))
-                  (_%method157489157494%_
-                   _%object157488157493%_
-                   _%proc157472%_)))))))
+                  (_%method160286160291%_
+                   _%object160285160290%_
+                   _%proc160269%_)))))))
     (define hash-for-each
-      (lambda (_%proc157396%_ _%h157397%_)
-        (if (procedure? _%proc157396%_)
-            (let* ((_%proc157401%_ _%proc157396%_)
-                   (_%h157413%_
-                    (let ((_%$obj157410%_ _%h157397%_))
+      (lambda (_%proc160193%_ _%h160194%_)
+        (if (procedure? _%proc160193%_)
+            (let* ((_%proc160198%_ _%proc160193%_)
+                   (_%h160210%_
+                    (let ((_%$obj160207%_ _%h160194%_))
                       (if (and (let ()
                                  (declare (not safe))
-                                 (##structure? _%$obj157410%_))
+                                 (##structure? _%$obj160207%_))
                                (eq? HashTable::t
                                     (let ()
                                       (declare (not safe))
-                                      (##structure-type _%$obj157410%_)))
+                                      (##structure-type _%$obj160207%_)))
                                '#t)
-                          _%$obj157410%_
+                          _%$obj160207%_
                           (let ()
                             (declare (not safe))
-                            (cast HashTable::interface _%$obj157410%_)))))
-                   (_%h157415%_ _%h157413%_))
-              (__hash-for-each _%proc157401%_ _%h157415%_))
+                            (cast HashTable::interface _%$obj160207%_)))))
+                   (_%h160212%_ _%h160210%_))
+              (__hash-for-each _%proc160198%_ _%h160212%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -5145,93 +5137,93 @@
                'contract:
                'procedure?
                'value:
-               _%proc157396%_)
+               _%proc160193%_)
               '#!void))))
     (define __hash-map
-      (lambda (_%proc157319%_ _%h157320%_)
-        (let* ((_%proc157323%_ _%proc157319%_)
-               (_%h157331%_ _%h157320%_)
-               (_%result157340%_ '()))
-          (let* ((_%self150323157342%_ _%h157331%_)
-                 (_%proc157348%_
-                  (lambda (_%k157345%_ _%v157346%_)
-                    (set! _%result157340%_
+      (lambda (_%proc160116%_ _%h160117%_)
+        (let* ((_%proc160120%_ _%proc160116%_)
+               (_%h160128%_ _%h160117%_)
+               (_%result160137%_ '()))
+          (let* ((_%self153120160139%_ _%h160128%_)
+                 (_%proc160145%_
+                  (lambda (_%k160142%_ _%v160143%_)
+                    (set! _%result160137%_
                           (cons (let ()
                                   (declare (not safe))
-                                  (_%proc157323%_ _%k157345%_ _%v157346%_))
-                                _%result157340%_))))
-                 (_%self150323157355%_
-                  (let ((_%$obj157352%_ _%self150323157342%_))
+                                  (_%proc160120%_ _%k160142%_ _%v160143%_))
+                                _%result160137%_))))
+                 (_%self153120160152%_
+                  (let ((_%$obj160149%_ _%self153120160139%_))
                     (if (and (let ()
                                (declare (not safe))
-                               (##structure? _%$obj157352%_))
+                               (##structure? _%$obj160149%_))
                              (eq? HashTable::t
                                   (let ()
                                     (declare (not safe))
-                                    (##structure-type _%$obj157352%_)))
+                                    (##structure-type _%$obj160149%_)))
                              '#t)
-                        _%$obj157352%_
+                        _%$obj160149%_
                         (let ()
                           (declare (not safe))
-                          (cast HashTable::interface _%$obj157352%_)))))
-                 (_%self150323157357%_ _%self150323157355%_)
-                 (_%proc157372%_ _%proc157348%_))
+                          (cast HashTable::interface _%$obj160149%_)))))
+                 (_%self153120160154%_ _%self153120160152%_)
+                 (_%proc160169%_ _%proc160145%_))
             (if __DEBUG
                 (let ()
                   (declare (not safe))
-                  (let ((_%object157381157386%_
+                  (let ((_%object160178160183%_
                          (##unchecked-structure-ref
-                          _%self150323157357%_
+                          _%self153120160154%_
                           '1
                           '#f
                           'for-each))
-                        (_%method157382157387%_
+                        (_%method160179160184%_
                          (##unchecked-structure-ref
-                          _%self150323157357%_
+                          _%self153120160154%_
                           '5
                           '#f
                           'for-each)))
-                    (_%method157382157387%_
-                     _%object157381157386%_
-                     _%proc157372%_)))
+                    (_%method160179160184%_
+                     _%object160178160183%_
+                     _%proc160169%_)))
                 (let ()
                   (declare (not safe))
-                  (let ((_%object157388157393%_
+                  (let ((_%object160185160190%_
                          (##unchecked-structure-ref
-                          _%self150323157357%_
+                          _%self153120160154%_
                           '1
                           '#f
                           'for-each))
-                        (_%method157389157394%_
+                        (_%method160186160191%_
                          (##unchecked-structure-ref
-                          _%self150323157357%_
+                          _%self153120160154%_
                           '5
                           '#f
                           'for-each)))
-                    (_%method157389157394%_
-                     _%object157388157393%_
-                     _%proc157372%_)))))
-          _%result157340%_)))
+                    (_%method160186160191%_
+                     _%object160185160190%_
+                     _%proc160169%_)))))
+          _%result160137%_)))
     (define hash-map
-      (lambda (_%proc157290%_ _%h157291%_)
-        (if (procedure? _%proc157290%_)
-            (let* ((_%proc157295%_ _%proc157290%_)
-                   (_%h157307%_
-                    (let ((_%$obj157304%_ _%h157291%_))
+      (lambda (_%proc160087%_ _%h160088%_)
+        (if (procedure? _%proc160087%_)
+            (let* ((_%proc160092%_ _%proc160087%_)
+                   (_%h160104%_
+                    (let ((_%$obj160101%_ _%h160088%_))
                       (if (and (let ()
                                  (declare (not safe))
-                                 (##structure? _%$obj157304%_))
+                                 (##structure? _%$obj160101%_))
                                (eq? HashTable::t
                                     (let ()
                                       (declare (not safe))
-                                      (##structure-type _%$obj157304%_)))
+                                      (##structure-type _%$obj160101%_)))
                                '#t)
-                          _%$obj157304%_
+                          _%$obj160101%_
                           (let ()
                             (declare (not safe))
-                            (cast HashTable::interface _%$obj157304%_)))))
-                   (_%h157309%_ _%h157307%_))
-              (__hash-map _%proc157295%_ _%h157309%_))
+                            (cast HashTable::interface _%$obj160101%_)))))
+                   (_%h160106%_ _%h160104%_))
+              (__hash-map _%proc160092%_ _%h160106%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -5240,95 +5232,95 @@
                'contract:
                'procedure?
                'value:
-               _%proc157290%_)
+               _%proc160087%_)
               '#!void))))
     (define __hash-fold
-      (lambda (_%proc157212%_ _%iv157213%_ _%h157214%_)
-        (let* ((_%proc157217%_ _%proc157212%_)
-               (_%h157225%_ _%h157214%_)
-               (_%result157234%_ _%iv157213%_))
-          (let* ((_%self150323157236%_ _%h157225%_)
-                 (_%proc157242%_
-                  (lambda (_%k157239%_ _%v157240%_)
-                    (set! _%result157234%_
+      (lambda (_%proc160009%_ _%iv160010%_ _%h160011%_)
+        (let* ((_%proc160014%_ _%proc160009%_)
+               (_%h160022%_ _%h160011%_)
+               (_%result160031%_ _%iv160010%_))
+          (let* ((_%self153120160033%_ _%h160022%_)
+                 (_%proc160039%_
+                  (lambda (_%k160036%_ _%v160037%_)
+                    (set! _%result160031%_
                           (let ()
                             (declare (not safe))
-                            (_%proc157217%_
-                             _%k157239%_
-                             _%v157240%_
-                             _%result157234%_)))))
-                 (_%self150323157249%_
-                  (let ((_%$obj157246%_ _%self150323157236%_))
+                            (_%proc160014%_
+                             _%k160036%_
+                             _%v160037%_
+                             _%result160031%_)))))
+                 (_%self153120160046%_
+                  (let ((_%$obj160043%_ _%self153120160033%_))
                     (if (and (let ()
                                (declare (not safe))
-                               (##structure? _%$obj157246%_))
+                               (##structure? _%$obj160043%_))
                              (eq? HashTable::t
                                   (let ()
                                     (declare (not safe))
-                                    (##structure-type _%$obj157246%_)))
+                                    (##structure-type _%$obj160043%_)))
                              '#t)
-                        _%$obj157246%_
+                        _%$obj160043%_
                         (let ()
                           (declare (not safe))
-                          (cast HashTable::interface _%$obj157246%_)))))
-                 (_%self150323157251%_ _%self150323157249%_)
-                 (_%proc157266%_ _%proc157242%_))
+                          (cast HashTable::interface _%$obj160043%_)))))
+                 (_%self153120160048%_ _%self153120160046%_)
+                 (_%proc160063%_ _%proc160039%_))
             (if __DEBUG
                 (let ()
                   (declare (not safe))
-                  (let ((_%object157275157280%_
+                  (let ((_%object160072160077%_
                          (##unchecked-structure-ref
-                          _%self150323157251%_
+                          _%self153120160048%_
                           '1
                           '#f
                           'for-each))
-                        (_%method157276157281%_
+                        (_%method160073160078%_
                          (##unchecked-structure-ref
-                          _%self150323157251%_
+                          _%self153120160048%_
                           '5
                           '#f
                           'for-each)))
-                    (_%method157276157281%_
-                     _%object157275157280%_
-                     _%proc157266%_)))
+                    (_%method160073160078%_
+                     _%object160072160077%_
+                     _%proc160063%_)))
                 (let ()
                   (declare (not safe))
-                  (let ((_%object157282157287%_
+                  (let ((_%object160079160084%_
                          (##unchecked-structure-ref
-                          _%self150323157251%_
+                          _%self153120160048%_
                           '1
                           '#f
                           'for-each))
-                        (_%method157283157288%_
+                        (_%method160080160085%_
                          (##unchecked-structure-ref
-                          _%self150323157251%_
+                          _%self153120160048%_
                           '5
                           '#f
                           'for-each)))
-                    (_%method157283157288%_
-                     _%object157282157287%_
-                     _%proc157266%_)))))
-          _%result157234%_)))
+                    (_%method160080160085%_
+                     _%object160079160084%_
+                     _%proc160063%_)))))
+          _%result160031%_)))
     (define hash-fold
-      (lambda (_%proc157182%_ _%iv157183%_ _%h157184%_)
-        (if (procedure? _%proc157182%_)
-            (let* ((_%proc157188%_ _%proc157182%_)
-                   (_%h157200%_
-                    (let ((_%$obj157197%_ _%h157184%_))
+      (lambda (_%proc159979%_ _%iv159980%_ _%h159981%_)
+        (if (procedure? _%proc159979%_)
+            (let* ((_%proc159985%_ _%proc159979%_)
+                   (_%h159997%_
+                    (let ((_%$obj159994%_ _%h159981%_))
                       (if (and (let ()
                                  (declare (not safe))
-                                 (##structure? _%$obj157197%_))
+                                 (##structure? _%$obj159994%_))
                                (eq? HashTable::t
                                     (let ()
                                       (declare (not safe))
-                                      (##structure-type _%$obj157197%_)))
+                                      (##structure-type _%$obj159994%_)))
                                '#t)
-                          _%$obj157197%_
+                          _%$obj159994%_
                           (let ()
                             (declare (not safe))
-                            (cast HashTable::interface _%$obj157197%_)))))
-                   (_%h157202%_ _%h157200%_))
-              (__hash-fold _%proc157188%_ _%iv157183%_ _%h157202%_))
+                            (cast HashTable::interface _%$obj159994%_)))))
+                   (_%h159999%_ _%h159997%_))
+              (__hash-fold _%proc159985%_ _%iv159980%_ _%h159999%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -5337,122 +5329,122 @@
                'contract:
                'procedure?
                'value:
-               _%proc157182%_)
+               _%proc159979%_)
               '#!void))))
     (define __hash-find__%
-      (lambda (_%proc157089%_ _%h157090%_ _%default-value157091%_)
-        (let* ((_%proc157094%_ _%proc157089%_)
-               (_%h157102%_ _%h157090%_)
-               (__tmp167284
-                (lambda (_%return157111%_)
-                  (let* ((_%self150323157113%_ _%h157102%_)
-                         (_%proc157122%_
-                          (lambda (_%k157116%_ _%v157117%_)
-                            (let ((_%$e157119%_
+      (lambda (_%proc159886%_ _%h159887%_ _%default-value159888%_)
+        (let* ((_%proc159891%_ _%proc159886%_)
+               (_%h159899%_ _%h159887%_)
+               (__tmp170081
+                (lambda (_%return159908%_)
+                  (let* ((_%self153120159910%_ _%h159899%_)
+                         (_%proc159919%_
+                          (lambda (_%k159913%_ _%v159914%_)
+                            (let ((_%$e159916%_
                                    (let ()
                                      (declare (not safe))
-                                     (_%proc157094%_
-                                      _%k157116%_
-                                      _%v157117%_))))
-                              (if _%$e157119%_
-                                  (_%return157111%_ _%$e157119%_)
+                                     (_%proc159891%_
+                                      _%k159913%_
+                                      _%v159914%_))))
+                              (if _%$e159916%_
+                                  (_%return159908%_ _%$e159916%_)
                                   '#!void))))
-                         (_%self150323157129%_
-                          (let ((_%$obj157126%_ _%self150323157113%_))
+                         (_%self153120159926%_
+                          (let ((_%$obj159923%_ _%self153120159910%_))
                             (if (and (let ()
                                        (declare (not safe))
-                                       (##structure? _%$obj157126%_))
+                                       (##structure? _%$obj159923%_))
                                      (eq? HashTable::t
                                           (let ()
                                             (declare (not safe))
-                                            (##structure-type _%$obj157126%_)))
+                                            (##structure-type _%$obj159923%_)))
                                      '#t)
-                                _%$obj157126%_
+                                _%$obj159923%_
                                 (let ()
                                   (declare (not safe))
                                   (cast HashTable::interface
-                                        _%$obj157126%_)))))
-                         (_%self150323157131%_ _%self150323157129%_)
-                         (_%proc157146%_ _%proc157122%_))
+                                        _%$obj159923%_)))))
+                         (_%self153120159928%_ _%self153120159926%_)
+                         (_%proc159943%_ _%proc159919%_))
                     (if __DEBUG
                         (let ()
                           (declare (not safe))
-                          (let ((_%object157155157160%_
+                          (let ((_%object159952159957%_
                                  (##unchecked-structure-ref
-                                  _%self150323157131%_
+                                  _%self153120159928%_
                                   '1
                                   '#f
                                   'for-each))
-                                (_%method157156157161%_
+                                (_%method159953159958%_
                                  (##unchecked-structure-ref
-                                  _%self150323157131%_
+                                  _%self153120159928%_
                                   '5
                                   '#f
                                   'for-each)))
-                            (_%method157156157161%_
-                             _%object157155157160%_
-                             _%proc157146%_)))
+                            (_%method159953159958%_
+                             _%object159952159957%_
+                             _%proc159943%_)))
                         (let ()
                           (declare (not safe))
-                          (let ((_%object157162157167%_
+                          (let ((_%object159959159964%_
                                  (##unchecked-structure-ref
-                                  _%self150323157131%_
+                                  _%self153120159928%_
                                   '1
                                   '#f
                                   'for-each))
-                                (_%method157163157168%_
+                                (_%method159960159965%_
                                  (##unchecked-structure-ref
-                                  _%self150323157131%_
+                                  _%self153120159928%_
                                   '5
                                   '#f
                                   'for-each)))
-                            (_%method157163157168%_
-                             _%object157162157167%_
-                             _%proc157146%_)))))
-                  _%default-value157091%_)))
+                            (_%method159960159965%_
+                             _%object159959159964%_
+                             _%proc159943%_)))))
+                  _%default-value159888%_)))
           (declare (not safe))
-          (##call-with-current-continuation __tmp167284))))
+          (##call-with-current-continuation __tmp170081))))
     (define __hash-find__0
-      (lambda (_%proc157173%_ _%h157174%_)
-        (let ((_%default-value157176%_ '#f))
+      (lambda (_%proc159970%_ _%h159971%_)
+        (let ((_%default-value159973%_ '#f))
           (__hash-find__%
-           _%proc157173%_
-           _%h157174%_
-           _%default-value157176%_))))
+           _%proc159970%_
+           _%h159971%_
+           _%default-value159973%_))))
     (define __hash-find
-      (lambda _g167285_
-        (let ((_g167286_ (let () (declare (not safe)) (##length _g167285_))))
-          (cond ((let () (declare (not safe)) (##fx= _g167286_ 2))
-                 (apply __hash-find__0 _g167285_))
-                ((let () (declare (not safe)) (##fx= _g167286_ 3))
-                 (apply __hash-find__% _g167285_))
+      (lambda _g170082_
+        (let ((_g170083_ (let () (declare (not safe)) (##length _g170082_))))
+          (cond ((let () (declare (not safe)) (##fx= _g170083_ 2))
+                 (apply __hash-find__0 _g170082_))
+                ((let () (declare (not safe)) (##fx= _g170083_ 3))
+                 (apply __hash-find__% _g170082_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __hash-find
-                  _g167285_))))))
+                  _g170082_))))))
     (define hash-find__%
-      (lambda (_%proc157046%_ _%h157047%_ _%default-value157048%_)
-        (if (procedure? _%proc157046%_)
-            (let* ((_%proc157052%_ _%proc157046%_)
-                   (_%h157064%_
-                    (let ((_%$obj157061%_ _%h157047%_))
+      (lambda (_%proc159843%_ _%h159844%_ _%default-value159845%_)
+        (if (procedure? _%proc159843%_)
+            (let* ((_%proc159849%_ _%proc159843%_)
+                   (_%h159861%_
+                    (let ((_%$obj159858%_ _%h159844%_))
                       (if (and (let ()
                                  (declare (not safe))
-                                 (##structure? _%$obj157061%_))
+                                 (##structure? _%$obj159858%_))
                                (eq? HashTable::t
                                     (let ()
                                       (declare (not safe))
-                                      (##structure-type _%$obj157061%_)))
+                                      (##structure-type _%$obj159858%_)))
                                '#t)
-                          _%$obj157061%_
+                          _%$obj159858%_
                           (let ()
                             (declare (not safe))
-                            (cast HashTable::interface _%$obj157061%_)))))
-                   (_%h157066%_ _%h157064%_))
+                            (cast HashTable::interface _%$obj159858%_)))))
+                   (_%h159863%_ _%h159861%_))
               (__hash-find__%
-               _%proc157052%_
-               _%h157066%_
-               _%default-value157048%_))
+               _%proc159849%_
+               _%h159863%_
+               _%default-value159845%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -5461,330 +5453,330 @@
                'contract:
                'procedure?
                'value:
-               _%proc157046%_)
+               _%proc159843%_)
               '#!void))))
     (define hash-find__0
-      (lambda (_%proc157079%_ _%h157080%_)
-        (let ((_%default-value157082%_ '#f))
-          (hash-find__% _%proc157079%_ _%h157080%_ _%default-value157082%_))))
+      (lambda (_%proc159876%_ _%h159877%_)
+        (let ((_%default-value159879%_ '#f))
+          (hash-find__% _%proc159876%_ _%h159877%_ _%default-value159879%_))))
     (define hash-find
-      (lambda _g167287_
-        (let ((_g167288_ (let () (declare (not safe)) (##length _g167287_))))
-          (cond ((let () (declare (not safe)) (##fx= _g167288_ 2))
-                 (apply hash-find__0 _g167287_))
-                ((let () (declare (not safe)) (##fx= _g167288_ 3))
-                 (apply hash-find__% _g167287_))
+      (lambda _g170084_
+        (let ((_g170085_ (let () (declare (not safe)) (##length _g170084_))))
+          (cond ((let () (declare (not safe)) (##fx= _g170085_ 2))
+                 (apply hash-find__0 _g170084_))
+                ((let () (declare (not safe)) (##fx= _g170085_ 3))
+                 (apply hash-find__% _g170084_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   hash-find
-                  _g167287_))))))
+                  _g170084_))))))
     (define __hash-keys
-      (lambda (_%h156977%_)
-        (let* ((_%h156980%_ _%h156977%_) (_%result156989%_ '()))
-          (let* ((_%self150323156991%_ _%h156980%_)
-                 (_%proc156997%_
-                  (lambda (_%k156994%_ _%v156995%_)
-                    (set! _%result156989%_
-                          (cons _%k156994%_ _%result156989%_))))
-                 (_%self150323157004%_
-                  (let ((_%$obj157001%_ _%self150323156991%_))
+      (lambda (_%h159774%_)
+        (let* ((_%h159777%_ _%h159774%_) (_%result159786%_ '()))
+          (let* ((_%self153120159788%_ _%h159777%_)
+                 (_%proc159794%_
+                  (lambda (_%k159791%_ _%v159792%_)
+                    (set! _%result159786%_
+                          (cons _%k159791%_ _%result159786%_))))
+                 (_%self153120159801%_
+                  (let ((_%$obj159798%_ _%self153120159788%_))
                     (if (and (let ()
                                (declare (not safe))
-                               (##structure? _%$obj157001%_))
+                               (##structure? _%$obj159798%_))
                              (eq? HashTable::t
                                   (let ()
                                     (declare (not safe))
-                                    (##structure-type _%$obj157001%_)))
+                                    (##structure-type _%$obj159798%_)))
                              '#t)
-                        _%$obj157001%_
+                        _%$obj159798%_
                         (let ()
                           (declare (not safe))
-                          (cast HashTable::interface _%$obj157001%_)))))
-                 (_%self150323157006%_ _%self150323157004%_)
-                 (_%proc157021%_ _%proc156997%_))
+                          (cast HashTable::interface _%$obj159798%_)))))
+                 (_%self153120159803%_ _%self153120159801%_)
+                 (_%proc159818%_ _%proc159794%_))
             (if __DEBUG
                 (let ()
                   (declare (not safe))
-                  (let ((_%object157030157035%_
+                  (let ((_%object159827159832%_
                          (##unchecked-structure-ref
-                          _%self150323157006%_
+                          _%self153120159803%_
                           '1
                           '#f
                           'for-each))
-                        (_%method157031157036%_
+                        (_%method159828159833%_
                          (##unchecked-structure-ref
-                          _%self150323157006%_
+                          _%self153120159803%_
                           '5
                           '#f
                           'for-each)))
-                    (_%method157031157036%_
-                     _%object157030157035%_
-                     _%proc157021%_)))
+                    (_%method159828159833%_
+                     _%object159827159832%_
+                     _%proc159818%_)))
                 (let ()
                   (declare (not safe))
-                  (let ((_%object157037157042%_
+                  (let ((_%object159834159839%_
                          (##unchecked-structure-ref
-                          _%self150323157006%_
+                          _%self153120159803%_
                           '1
                           '#f
                           'for-each))
-                        (_%method157038157043%_
+                        (_%method159835159840%_
                          (##unchecked-structure-ref
-                          _%self150323157006%_
+                          _%self153120159803%_
                           '5
                           '#f
                           'for-each)))
-                    (_%method157038157043%_
-                     _%object157037157042%_
-                     _%proc157021%_)))))
-          _%result156989%_)))
+                    (_%method159835159840%_
+                     _%object159834159839%_
+                     _%proc159818%_)))))
+          _%result159786%_)))
     (define hash-keys
-      (lambda (_%h156959%_)
-        (let* ((_%h156965%_
-                (let ((_%$obj156962%_ _%h156959%_))
+      (lambda (_%h159756%_)
+        (let* ((_%h159762%_
+                (let ((_%$obj159759%_ _%h159756%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj156962%_))
+                             (##structure? _%$obj159759%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj156962%_)))
+                                  (##structure-type _%$obj159759%_)))
                            '#t)
-                      _%$obj156962%_
+                      _%$obj159759%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj156962%_)))))
-               (_%h156967%_ _%h156965%_))
-          (__hash-keys _%h156967%_))))
+                        (cast HashTable::interface _%$obj159759%_)))))
+               (_%h159764%_ _%h159762%_))
+          (__hash-keys _%h159764%_))))
     (define __hash-values
-      (lambda (_%h156891%_)
-        (let* ((_%h156894%_ _%h156891%_) (_%result156903%_ '()))
-          (let* ((_%self150323156905%_ _%h156894%_)
-                 (_%proc156911%_
-                  (lambda (_%k156908%_ _%v156909%_)
-                    (set! _%result156903%_
-                          (cons _%v156909%_ _%result156903%_))))
-                 (_%self150323156918%_
-                  (let ((_%$obj156915%_ _%self150323156905%_))
+      (lambda (_%h159688%_)
+        (let* ((_%h159691%_ _%h159688%_) (_%result159700%_ '()))
+          (let* ((_%self153120159702%_ _%h159691%_)
+                 (_%proc159708%_
+                  (lambda (_%k159705%_ _%v159706%_)
+                    (set! _%result159700%_
+                          (cons _%v159706%_ _%result159700%_))))
+                 (_%self153120159715%_
+                  (let ((_%$obj159712%_ _%self153120159702%_))
                     (if (and (let ()
                                (declare (not safe))
-                               (##structure? _%$obj156915%_))
+                               (##structure? _%$obj159712%_))
                              (eq? HashTable::t
                                   (let ()
                                     (declare (not safe))
-                                    (##structure-type _%$obj156915%_)))
+                                    (##structure-type _%$obj159712%_)))
                              '#t)
-                        _%$obj156915%_
+                        _%$obj159712%_
                         (let ()
                           (declare (not safe))
-                          (cast HashTable::interface _%$obj156915%_)))))
-                 (_%self150323156920%_ _%self150323156918%_)
-                 (_%proc156935%_ _%proc156911%_))
+                          (cast HashTable::interface _%$obj159712%_)))))
+                 (_%self153120159717%_ _%self153120159715%_)
+                 (_%proc159732%_ _%proc159708%_))
             (if __DEBUG
                 (let ()
                   (declare (not safe))
-                  (let ((_%object156944156949%_
+                  (let ((_%object159741159746%_
                          (##unchecked-structure-ref
-                          _%self150323156920%_
+                          _%self153120159717%_
                           '1
                           '#f
                           'for-each))
-                        (_%method156945156950%_
+                        (_%method159742159747%_
                          (##unchecked-structure-ref
-                          _%self150323156920%_
+                          _%self153120159717%_
                           '5
                           '#f
                           'for-each)))
-                    (_%method156945156950%_
-                     _%object156944156949%_
-                     _%proc156935%_)))
+                    (_%method159742159747%_
+                     _%object159741159746%_
+                     _%proc159732%_)))
                 (let ()
                   (declare (not safe))
-                  (let ((_%object156951156956%_
+                  (let ((_%object159748159753%_
                          (##unchecked-structure-ref
-                          _%self150323156920%_
+                          _%self153120159717%_
                           '1
                           '#f
                           'for-each))
-                        (_%method156952156957%_
+                        (_%method159749159754%_
                          (##unchecked-structure-ref
-                          _%self150323156920%_
+                          _%self153120159717%_
                           '5
                           '#f
                           'for-each)))
-                    (_%method156952156957%_
-                     _%object156951156956%_
-                     _%proc156935%_)))))
-          _%result156903%_)))
+                    (_%method159749159754%_
+                     _%object159748159753%_
+                     _%proc159732%_)))))
+          _%result159700%_)))
     (define hash-values
-      (lambda (_%h156873%_)
-        (let* ((_%h156879%_
-                (let ((_%$obj156876%_ _%h156873%_))
+      (lambda (_%h159670%_)
+        (let* ((_%h159676%_
+                (let ((_%$obj159673%_ _%h159670%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj156876%_))
+                             (##structure? _%$obj159673%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj156876%_)))
+                                  (##structure-type _%$obj159673%_)))
                            '#t)
-                      _%$obj156876%_
+                      _%$obj159673%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj156876%_)))))
-               (_%h156881%_ _%h156879%_))
-          (__hash-values _%h156881%_))))
+                        (cast HashTable::interface _%$obj159673%_)))))
+               (_%h159678%_ _%h159676%_))
+          (__hash-values _%h159678%_))))
     (define __hash-copy
-      (lambda (_%h156822%_)
-        (let* ((_%h156825%_ _%h156822%_)
-               (_%self149835156834%_ _%h156825%_)
-               (_%self149835156841%_
-                (let ((_%$obj156838%_ _%self149835156834%_))
+      (lambda (_%h159619%_)
+        (let* ((_%h159622%_ _%h159619%_)
+               (_%self152632159631%_ _%h159622%_)
+               (_%self152632159638%_
+                (let ((_%$obj159635%_ _%self152632159631%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj156838%_))
+                             (##structure? _%$obj159635%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj156838%_)))
+                                  (##structure-type _%$obj159635%_)))
                            '#t)
-                      _%$obj156838%_
+                      _%$obj159635%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj156838%_)))))
-               (_%self149835156843%_ _%self149835156841%_))
+                        (cast HashTable::interface _%$obj159635%_)))))
+               (_%self152632159640%_ _%self152632159638%_))
           (if __DEBUG
-              (let ((_%$obj156863%_
+              (let ((_%$obj159660%_
                      (let ()
                        (declare (not safe))
-                       (let ((_%object156855156860%_
+                       (let ((_%object159652159657%_
                               (##unchecked-structure-ref
-                               _%self149835156843%_
+                               _%self152632159640%_
                                '1
                                '#f
                                'copy))
-                             (_%method156856156861%_
+                             (_%method159653159658%_
                               (##unchecked-structure-ref
-                               _%self149835156843%_
+                               _%self152632159640%_
                                '3
                                '#f
                                'copy)))
-                         (_%method156856156861%_ _%object156855156860%_)))))
+                         (_%method159653159658%_ _%object159652159657%_)))))
                 (if (and (let ()
                            (declare (not safe))
-                           (##structure? _%$obj156863%_))
+                           (##structure? _%$obj159660%_))
                          (eq? HashTable::t
                               (let ()
                                 (declare (not safe))
-                                (##structure-type _%$obj156863%_)))
+                                (##structure-type _%$obj159660%_)))
                          '#t)
-                    _%$obj156863%_
+                    _%$obj159660%_
                     (let ()
                       (declare (not safe))
-                      (cast HashTable::interface _%$obj156863%_))))
+                      (cast HashTable::interface _%$obj159660%_))))
               (let ()
                 (declare (not safe))
-                (let ((_%object156865156870%_
+                (let ((_%object159662159667%_
                        (##unchecked-structure-ref
-                        _%self149835156843%_
+                        _%self152632159640%_
                         '1
                         '#f
                         'copy))
-                      (_%method156866156871%_
+                      (_%method159663159668%_
                        (##unchecked-structure-ref
-                        _%self149835156843%_
+                        _%self152632159640%_
                         '3
                         '#f
                         'copy)))
-                  (_%method156866156871%_ _%object156865156870%_)))))))
+                  (_%method159663159668%_ _%object159662159667%_)))))))
     (define hash-copy
-      (lambda (_%h156804%_)
-        (let* ((_%h156810%_
-                (let ((_%$obj156807%_ _%h156804%_))
+      (lambda (_%h159601%_)
+        (let* ((_%h159607%_
+                (let ((_%$obj159604%_ _%h159601%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj156807%_))
+                             (##structure? _%$obj159604%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj156807%_)))
+                                  (##structure-type _%$obj159604%_)))
                            '#t)
-                      _%$obj156807%_
+                      _%$obj159604%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj156807%_)))))
-               (_%h156812%_ _%h156810%_))
-          (__hash-copy _%h156812%_))))
+                        (cast HashTable::interface _%$obj159604%_)))))
+               (_%h159609%_ _%h159607%_))
+          (__hash-copy _%h159609%_))))
     (define __hash-new
-      (lambda (_%h156733%_)
-        (let* ((_%h156736%_ _%h156733%_)
-               (_%self150811156745%_ _%h156736%_)
-               (_%size-hint156748%_ '#f)
-               (_%self150811156755%_
-                (let ((_%$obj156752%_ _%self150811156745%_))
+      (lambda (_%h159530%_)
+        (let* ((_%h159533%_ _%h159530%_)
+               (_%self153608159542%_ _%h159533%_)
+               (_%size-hint159545%_ '#f)
+               (_%self153608159552%_
+                (let ((_%$obj159549%_ _%self153608159542%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj156752%_))
+                             (##structure? _%$obj159549%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj156752%_)))
+                                  (##structure-type _%$obj159549%_)))
                            '#t)
-                      _%$obj156752%_
+                      _%$obj159549%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj156752%_)))))
-               (_%self150811156757%_ _%self150811156755%_))
-          (if (let ((_%$e156773%_ '#t)) (and _%$e156773%_ _%$e156773%_))
-              (let ((_%size-hint156777%_ _%size-hint156748%_))
+                        (cast HashTable::interface _%$obj159549%_)))))
+               (_%self153608159554%_ _%self153608159552%_))
+          (if (let ((_%$e159570%_ '#t)) (and _%$e159570%_ _%$e159570%_))
+              (let ((_%size-hint159574%_ _%size-hint159545%_))
                 (if __DEBUG
-                    (let ((_%$obj156794%_
+                    (let ((_%$obj159591%_
                            (let ()
                              (declare (not safe))
-                             (let ((_%object156786156791%_
+                             (let ((_%object159583159588%_
                                     (##unchecked-structure-ref
-                                     _%self150811156757%_
+                                     _%self153608159554%_
                                      '1
                                      '#f
                                      'new))
-                                   (_%method156787156792%_
+                                   (_%method159584159589%_
                                     (##unchecked-structure-ref
-                                     _%self150811156757%_
+                                     _%self153608159554%_
                                      '7
                                      '#f
                                      'new)))
-                               (_%method156787156792%_
-                                _%object156786156791%_
-                                _%size-hint156777%_)))))
+                               (_%method159584159589%_
+                                _%object159583159588%_
+                                _%size-hint159574%_)))))
                       (if (and (let ()
                                  (declare (not safe))
-                                 (##structure? _%$obj156794%_))
+                                 (##structure? _%$obj159591%_))
                                (eq? HashTable::t
                                     (let ()
                                       (declare (not safe))
-                                      (##structure-type _%$obj156794%_)))
+                                      (##structure-type _%$obj159591%_)))
                                '#t)
-                          _%$obj156794%_
+                          _%$obj159591%_
                           (let ()
                             (declare (not safe))
-                            (cast HashTable::interface _%$obj156794%_))))
+                            (cast HashTable::interface _%$obj159591%_))))
                     (let ()
                       (declare (not safe))
-                      (let ((_%object156796156801%_
+                      (let ((_%object159593159598%_
                              (##unchecked-structure-ref
-                              _%self150811156757%_
+                              _%self153608159554%_
                               '1
                               '#f
                               'new))
-                            (_%method156797156802%_
+                            (_%method159594159599%_
                              (##unchecked-structure-ref
-                              _%self150811156757%_
+                              _%self153608159554%_
                               '7
                               '#f
                               'new)))
-                        (_%method156797156802%_
-                         _%object156796156801%_
-                         _%size-hint156777%_)))))
+                        (_%method159594159599%_
+                         _%object159593159598%_
+                         _%size-hint159574%_)))))
               (begin
                 (raise-contract-violation-error
                  '"contract violation"
@@ -5793,605 +5785,605 @@
                  'contract:
                  '(? (or not fixnum?))
                  'value:
-                 _%size-hint156748%_)
+                 _%size-hint159545%_)
                 '#!void)))))
     (define hash-new
-      (lambda (_%h156715%_)
-        (let* ((_%h156721%_
-                (let ((_%$obj156718%_ _%h156715%_))
+      (lambda (_%h159512%_)
+        (let* ((_%h159518%_
+                (let ((_%$obj159515%_ _%h159512%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj156718%_))
+                             (##structure? _%$obj159515%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj156718%_)))
+                                  (##structure-type _%$obj159515%_)))
                            '#t)
-                      _%$obj156718%_
+                      _%$obj159515%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj156718%_)))))
-               (_%h156723%_ _%h156721%_))
-          (__hash-new _%h156723%_))))
+                        (cast HashTable::interface _%$obj159515%_)))))
+               (_%h159520%_ _%h159518%_))
+          (__hash-new _%h159520%_))))
     (define __hash-clear!
-      (lambda (_%h156667%_)
-        (let* ((_%h156670%_ _%h156667%_)
-               (_%self149590156679%_ _%h156670%_)
-               (_%self149590156686%_
-                (let ((_%$obj156683%_ _%self149590156679%_))
+      (lambda (_%h159464%_)
+        (let* ((_%h159467%_ _%h159464%_)
+               (_%self152387159476%_ _%h159467%_)
+               (_%self152387159483%_
+                (let ((_%$obj159480%_ _%self152387159476%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj156683%_))
+                             (##structure? _%$obj159480%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj156683%_)))
+                                  (##structure-type _%$obj159480%_)))
                            '#t)
-                      _%$obj156683%_
+                      _%$obj159480%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj156683%_)))))
-               (_%self149590156688%_ _%self149590156686%_))
+                        (cast HashTable::interface _%$obj159480%_)))))
+               (_%self152387159485%_ _%self152387159483%_))
           (if __DEBUG
               (let ()
                 (declare (not safe))
-                (let ((_%object156700156705%_
+                (let ((_%object159497159502%_
                        (##unchecked-structure-ref
-                        _%self149590156688%_
+                        _%self152387159485%_
                         '1
                         '#f
                         'clear!))
-                      (_%method156701156706%_
+                      (_%method159498159503%_
                        (##unchecked-structure-ref
-                        _%self149590156688%_
+                        _%self152387159485%_
                         '2
                         '#f
                         'clear!)))
-                  (_%method156701156706%_ _%object156700156705%_)))
+                  (_%method159498159503%_ _%object159497159502%_)))
               (let ()
                 (declare (not safe))
-                (let ((_%object156707156712%_
+                (let ((_%object159504159509%_
                        (##unchecked-structure-ref
-                        _%self149590156688%_
+                        _%self152387159485%_
                         '1
                         '#f
                         'clear!))
-                      (_%method156708156713%_
+                      (_%method159505159510%_
                        (##unchecked-structure-ref
-                        _%self149590156688%_
+                        _%self152387159485%_
                         '2
                         '#f
                         'clear!)))
-                  (_%method156708156713%_ _%object156707156712%_)))))))
+                  (_%method159505159510%_ _%object159504159509%_)))))))
     (define hash-clear!
-      (lambda (_%h156649%_)
-        (let* ((_%h156655%_
-                (let ((_%$obj156652%_ _%h156649%_))
+      (lambda (_%h159446%_)
+        (let* ((_%h159452%_
+                (let ((_%$obj159449%_ _%h159446%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj156652%_))
+                             (##structure? _%$obj159449%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj156652%_)))
+                                  (##structure-type _%$obj159449%_)))
                            '#t)
-                      _%$obj156652%_
+                      _%$obj159449%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj156652%_)))))
-               (_%h156657%_ _%h156655%_))
-          (__hash-clear! _%h156657%_))))
+                        (cast HashTable::interface _%$obj159449%_)))))
+               (_%h159454%_ _%h159452%_))
+          (__hash-clear! _%h159454%_))))
     (define __hash-merge
-      (lambda (_%h156595%_ . _%rest156596%_)
-        (let* ((_%h156599%_ _%h156595%_)
-               (_%copy156647%_
-                (let* ((_%self149835156608%_ _%h156599%_)
-                       (_%self149835156615%_
-                        (let ((_%$obj156612%_ _%self149835156608%_))
+      (lambda (_%h159392%_ . _%rest159393%_)
+        (let* ((_%h159396%_ _%h159392%_)
+               (_%copy159444%_
+                (let* ((_%self152632159405%_ _%h159396%_)
+                       (_%self152632159412%_
+                        (let ((_%$obj159409%_ _%self152632159405%_))
                           (if (and (let ()
                                      (declare (not safe))
-                                     (##structure? _%$obj156612%_))
+                                     (##structure? _%$obj159409%_))
                                    (eq? HashTable::t
                                         (let ()
                                           (declare (not safe))
-                                          (##structure-type _%$obj156612%_)))
+                                          (##structure-type _%$obj159409%_)))
                                    '#t)
-                              _%$obj156612%_
+                              _%$obj159409%_
                               (let ()
                                 (declare (not safe))
-                                (cast HashTable::interface _%$obj156612%_)))))
-                       (_%self149835156617%_ _%self149835156615%_))
+                                (cast HashTable::interface _%$obj159409%_)))))
+                       (_%self152632159414%_ _%self152632159412%_))
                   (if __DEBUG
-                      (let ((_%$obj156637%_
+                      (let ((_%$obj159434%_
                              (let ()
                                (declare (not safe))
-                               (let ((_%object156629156634%_
+                               (let ((_%object159426159431%_
                                       (##unchecked-structure-ref
-                                       _%self149835156617%_
+                                       _%self152632159414%_
                                        '1
                                        '#f
                                        'copy))
-                                     (_%method156630156635%_
+                                     (_%method159427159432%_
                                       (##unchecked-structure-ref
-                                       _%self149835156617%_
+                                       _%self152632159414%_
                                        '3
                                        '#f
                                        'copy)))
-                                 (_%method156630156635%_
-                                  _%object156629156634%_)))))
+                                 (_%method159427159432%_
+                                  _%object159426159431%_)))))
                         (if (and (let ()
                                    (declare (not safe))
-                                   (##structure? _%$obj156637%_))
+                                   (##structure? _%$obj159434%_))
                                  (eq? HashTable::t
                                       (let ()
                                         (declare (not safe))
-                                        (##structure-type _%$obj156637%_)))
+                                        (##structure-type _%$obj159434%_)))
                                  '#t)
-                            _%$obj156637%_
+                            _%$obj159434%_
                             (let ()
                               (declare (not safe))
-                              (cast HashTable::interface _%$obj156637%_))))
+                              (cast HashTable::interface _%$obj159434%_))))
                       (let ()
                         (declare (not safe))
-                        (let ((_%object156639156644%_
+                        (let ((_%object159436159441%_
                                (##unchecked-structure-ref
-                                _%self149835156617%_
+                                _%self152632159414%_
                                 '1
                                 '#f
                                 'copy))
-                              (_%method156640156645%_
+                              (_%method159437159442%_
                                (##unchecked-structure-ref
-                                _%self149835156617%_
+                                _%self152632159414%_
                                 '3
                                 '#f
                                 'copy)))
-                          (_%method156640156645%_ _%object156639156644%_)))))))
-          (apply hash-merge! _%copy156647%_ _%rest156596%_)
-          _%copy156647%_)))
+                          (_%method159437159442%_ _%object159436159441%_)))))))
+          (apply hash-merge! _%copy159444%_ _%rest159393%_)
+          _%copy159444%_)))
     (define hash-merge
-      (lambda (_%h156576%_ . _%rest156577%_)
-        (let* ((_%h156583%_
-                (let ((_%$obj156580%_ _%h156576%_))
+      (lambda (_%h159373%_ . _%rest159374%_)
+        (let* ((_%h159380%_
+                (let ((_%$obj159377%_ _%h159373%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj156580%_))
+                             (##structure? _%$obj159377%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj156580%_)))
+                                  (##structure-type _%$obj159377%_)))
                            '#t)
-                      _%$obj156580%_
+                      _%$obj159377%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj156580%_)))))
-               (_%h156585%_ _%h156583%_))
+                        (cast HashTable::interface _%$obj159377%_)))))
+               (_%h159382%_ _%h159380%_))
           (declare (not safe))
-          (##apply __hash-merge _%h156585%_ _%rest156577%_))))
+          (##apply __hash-merge _%h159382%_ _%rest159374%_))))
     (define __hash-merge-right
-      (lambda (_%h156522%_ . _%rest156523%_)
-        (let* ((_%h156526%_ _%h156522%_)
-               (_%copy156574%_
-                (let* ((_%self149835156535%_ _%h156526%_)
-                       (_%self149835156542%_
-                        (let ((_%$obj156539%_ _%self149835156535%_))
+      (lambda (_%h159319%_ . _%rest159320%_)
+        (let* ((_%h159323%_ _%h159319%_)
+               (_%copy159371%_
+                (let* ((_%self152632159332%_ _%h159323%_)
+                       (_%self152632159339%_
+                        (let ((_%$obj159336%_ _%self152632159332%_))
                           (if (and (let ()
                                      (declare (not safe))
-                                     (##structure? _%$obj156539%_))
+                                     (##structure? _%$obj159336%_))
                                    (eq? HashTable::t
                                         (let ()
                                           (declare (not safe))
-                                          (##structure-type _%$obj156539%_)))
+                                          (##structure-type _%$obj159336%_)))
                                    '#t)
-                              _%$obj156539%_
+                              _%$obj159336%_
                               (let ()
                                 (declare (not safe))
-                                (cast HashTable::interface _%$obj156539%_)))))
-                       (_%self149835156544%_ _%self149835156542%_))
+                                (cast HashTable::interface _%$obj159336%_)))))
+                       (_%self152632159341%_ _%self152632159339%_))
                   (if __DEBUG
-                      (let ((_%$obj156564%_
+                      (let ((_%$obj159361%_
                              (let ()
                                (declare (not safe))
-                               (let ((_%object156556156561%_
+                               (let ((_%object159353159358%_
                                       (##unchecked-structure-ref
-                                       _%self149835156544%_
+                                       _%self152632159341%_
                                        '1
                                        '#f
                                        'copy))
-                                     (_%method156557156562%_
+                                     (_%method159354159359%_
                                       (##unchecked-structure-ref
-                                       _%self149835156544%_
+                                       _%self152632159341%_
                                        '3
                                        '#f
                                        'copy)))
-                                 (_%method156557156562%_
-                                  _%object156556156561%_)))))
+                                 (_%method159354159359%_
+                                  _%object159353159358%_)))))
                         (if (and (let ()
                                    (declare (not safe))
-                                   (##structure? _%$obj156564%_))
+                                   (##structure? _%$obj159361%_))
                                  (eq? HashTable::t
                                       (let ()
                                         (declare (not safe))
-                                        (##structure-type _%$obj156564%_)))
+                                        (##structure-type _%$obj159361%_)))
                                  '#t)
-                            _%$obj156564%_
+                            _%$obj159361%_
                             (let ()
                               (declare (not safe))
-                              (cast HashTable::interface _%$obj156564%_))))
+                              (cast HashTable::interface _%$obj159361%_))))
                       (let ()
                         (declare (not safe))
-                        (let ((_%object156566156571%_
+                        (let ((_%object159363159368%_
                                (##unchecked-structure-ref
-                                _%self149835156544%_
+                                _%self152632159341%_
                                 '1
                                 '#f
                                 'copy))
-                              (_%method156567156572%_
+                              (_%method159364159369%_
                                (##unchecked-structure-ref
-                                _%self149835156544%_
+                                _%self152632159341%_
                                 '3
                                 '#f
                                 'copy)))
-                          (_%method156567156572%_ _%object156566156571%_)))))))
-          (apply hash-merge-right! _%copy156574%_ _%rest156523%_)
-          _%copy156574%_)))
+                          (_%method159364159369%_ _%object159363159368%_)))))))
+          (apply hash-merge-right! _%copy159371%_ _%rest159320%_)
+          _%copy159371%_)))
     (define hash-merge-right
-      (lambda (_%h156503%_ . _%rest156504%_)
-        (let* ((_%h156510%_
-                (let ((_%$obj156507%_ _%h156503%_))
+      (lambda (_%h159300%_ . _%rest159301%_)
+        (let* ((_%h159307%_
+                (let ((_%$obj159304%_ _%h159300%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj156507%_))
+                             (##structure? _%$obj159304%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj156507%_)))
+                                  (##structure-type _%$obj159304%_)))
                            '#t)
-                      _%$obj156507%_
+                      _%$obj159304%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj156507%_)))))
-               (_%h156512%_ _%h156510%_))
+                        (cast HashTable::interface _%$obj159304%_)))))
+               (_%h159309%_ _%h159307%_))
           (declare (not safe))
-          (##apply __hash-merge-right _%h156512%_ _%rest156504%_))))
+          (##apply __hash-merge-right _%h159309%_ _%rest159301%_))))
     (define __hash-merge!
-      (lambda (_%h156351%_ . _%rest156352%_)
-        (let ((_%h156355%_ _%h156351%_))
-          (let ((__tmp167289
-                 (lambda (_%hr156364%_)
-                   (let* ((_%hr156370%_
-                           (let ((_%$obj156367%_ _%hr156364%_))
+      (lambda (_%h159148%_ . _%rest159149%_)
+        (let ((_%h159152%_ _%h159148%_))
+          (let ((__tmp170086
+                 (lambda (_%hr159161%_)
+                   (let* ((_%hr159167%_
+                           (let ((_%$obj159164%_ _%hr159161%_))
                              (if (and (let ()
                                         (declare (not safe))
-                                        (##structure? _%$obj156367%_))
+                                        (##structure? _%$obj159164%_))
                                       (eq? HashTable::t
                                            (let ()
                                              (declare (not safe))
                                              (##structure-type
-                                              _%$obj156367%_)))
+                                              _%$obj159164%_)))
                                       '#t)
-                                 _%$obj156367%_
+                                 _%$obj159164%_
                                  (let ()
                                    (declare (not safe))
                                    (cast HashTable::interface
-                                         _%$obj156367%_)))))
-                          (_%hr156372%_ _%hr156370%_)
-                          (_%self150323156385%_ _%hr156372%_)
-                          (_%proc156460%_
-                           (lambda (_%k156388%_ _%v156389%_)
-                             (if (let* ((_%h156391%_ _%h156355%_)
-                                        (_%k156394%_ _%k156388%_)
-                                        (_%h156401%_
-                                         (let ((_%$obj156398%_ _%h156391%_))
+                                         _%$obj159164%_)))))
+                          (_%hr159169%_ _%hr159167%_)
+                          (_%self153120159182%_ _%hr159169%_)
+                          (_%proc159257%_
+                           (lambda (_%k159185%_ _%v159186%_)
+                             (if (let* ((_%h159188%_ _%h159152%_)
+                                        (_%k159191%_ _%k159185%_)
+                                        (_%h159198%_
+                                         (let ((_%$obj159195%_ _%h159188%_))
                                            (if (and (let ()
                                                       (declare (not safe))
                                                       (##structure?
-                                                       _%$obj156398%_))
+                                                       _%$obj159195%_))
                                                     (eq? HashTable::t
                                                          (let ()
                                                            (declare (not safe))
                                                            (##structure-type
-                                                            _%$obj156398%_)))
+                                                            _%$obj159195%_)))
                                                     '#t)
-                                               _%$obj156398%_
+                                               _%$obj159195%_
                                                (let ()
                                                  (declare (not safe))
                                                  (cast HashTable::interface
-                                                       _%$obj156398%_)))))
-                                        (_%h156403%_ _%h156401%_))
-                                   (__hash-key? _%h156403%_ _%k156394%_))
+                                                       _%$obj159195%_)))))
+                                        (_%h159200%_ _%h159198%_))
+                                   (__hash-key? _%h159200%_ _%k159191%_))
                                  '#!void
-                                 (let* ((_%self151299156419%_ _%h156355%_)
-                                        (_%key156422%_ _%k156388%_)
-                                        (_%value156425%_ _%v156389%_)
-                                        (_%self151299156432%_
-                                         (let ((_%$obj156429%_
-                                                _%self151299156419%_))
+                                 (let* ((_%self154096159216%_ _%h159152%_)
+                                        (_%key159219%_ _%k159185%_)
+                                        (_%value159222%_ _%v159186%_)
+                                        (_%self154096159229%_
+                                         (let ((_%$obj159226%_
+                                                _%self154096159216%_))
                                            (if (and (let ()
                                                       (declare (not safe))
                                                       (##structure?
-                                                       _%$obj156429%_))
+                                                       _%$obj159226%_))
                                                     (eq? HashTable::t
                                                          (let ()
                                                            (declare (not safe))
                                                            (##structure-type
-                                                            _%$obj156429%_)))
+                                                            _%$obj159226%_)))
                                                     '#t)
-                                               _%$obj156429%_
+                                               _%$obj159226%_
                                                (let ()
                                                  (declare (not safe))
                                                  (cast HashTable::interface
-                                                       _%$obj156429%_)))))
-                                        (_%self151299156434%_
-                                         _%self151299156432%_))
+                                                       _%$obj159226%_)))))
+                                        (_%self154096159231%_
+                                         _%self154096159229%_))
                                    (if __DEBUG
                                        (let ()
                                          (declare (not safe))
-                                         (let ((_%object156445156450%_
+                                         (let ((_%object159242159247%_
                                                 (##unchecked-structure-ref
-                                                 _%self151299156434%_
+                                                 _%self154096159231%_
                                                  '1
                                                  '#f
                                                  'set!))
-                                               (_%method156446156451%_
+                                               (_%method159243159248%_
                                                 (##unchecked-structure-ref
-                                                 _%self151299156434%_
+                                                 _%self154096159231%_
                                                  '9
                                                  '#f
                                                  'set!)))
-                                           (_%method156446156451%_
-                                            _%object156445156450%_
-                                            _%key156422%_
-                                            _%value156425%_)))
+                                           (_%method159243159248%_
+                                            _%object159242159247%_
+                                            _%key159219%_
+                                            _%value159222%_)))
                                        (let ()
                                          (declare (not safe))
-                                         (let ((_%object156452156457%_
+                                         (let ((_%object159249159254%_
                                                 (##unchecked-structure-ref
-                                                 _%self151299156434%_
+                                                 _%self154096159231%_
                                                  '1
                                                  '#f
                                                  'set!))
-                                               (_%method156453156458%_
+                                               (_%method159250159255%_
                                                 (##unchecked-structure-ref
-                                                 _%self151299156434%_
+                                                 _%self154096159231%_
                                                  '9
                                                  '#f
                                                  'set!)))
-                                           (_%method156453156458%_
-                                            _%object156452156457%_
-                                            _%key156422%_
-                                            _%value156425%_))))))))
-                          (_%self150323156467%_
-                           (let ((_%$obj156464%_ _%self150323156385%_))
+                                           (_%method159250159255%_
+                                            _%object159249159254%_
+                                            _%key159219%_
+                                            _%value159222%_))))))))
+                          (_%self153120159264%_
+                           (let ((_%$obj159261%_ _%self153120159182%_))
                              (if (and (let ()
                                         (declare (not safe))
-                                        (##structure? _%$obj156464%_))
+                                        (##structure? _%$obj159261%_))
                                       (eq? HashTable::t
                                            (let ()
                                              (declare (not safe))
                                              (##structure-type
-                                              _%$obj156464%_)))
+                                              _%$obj159261%_)))
                                       '#t)
-                                 _%$obj156464%_
+                                 _%$obj159261%_
                                  (let ()
                                    (declare (not safe))
                                    (cast HashTable::interface
-                                         _%$obj156464%_)))))
-                          (_%self150323156469%_ _%self150323156467%_)
-                          (_%proc156479%_ _%proc156460%_))
+                                         _%$obj159261%_)))))
+                          (_%self153120159266%_ _%self153120159264%_)
+                          (_%proc159276%_ _%proc159257%_))
                      (if __DEBUG
                          (let ()
                            (declare (not safe))
-                           (let ((_%object156488156493%_
+                           (let ((_%object159285159290%_
                                   (##unchecked-structure-ref
-                                   _%self150323156469%_
+                                   _%self153120159266%_
                                    '1
                                    '#f
                                    'for-each))
-                                 (_%method156489156494%_
+                                 (_%method159286159291%_
                                   (##unchecked-structure-ref
-                                   _%self150323156469%_
+                                   _%self153120159266%_
                                    '5
                                    '#f
                                    'for-each)))
-                             (_%method156489156494%_
-                              _%object156488156493%_
-                              _%proc156479%_)))
+                             (_%method159286159291%_
+                              _%object159285159290%_
+                              _%proc159276%_)))
                          (let ()
                            (declare (not safe))
-                           (let ((_%object156495156500%_
+                           (let ((_%object159292159297%_
                                   (##unchecked-structure-ref
-                                   _%self150323156469%_
+                                   _%self153120159266%_
                                    '1
                                    '#f
                                    'for-each))
-                                 (_%method156496156501%_
+                                 (_%method159293159298%_
                                   (##unchecked-structure-ref
-                                   _%self150323156469%_
+                                   _%self153120159266%_
                                    '5
                                    '#f
                                    'for-each)))
-                             (_%method156496156501%_
-                              _%object156495156500%_
-                              _%proc156479%_))))))))
+                             (_%method159293159298%_
+                              _%object159292159297%_
+                              _%proc159276%_))))))))
             (declare (not safe))
-            (##for-each __tmp167289 _%rest156352%_))
-          _%h156355%_)))
+            (##for-each __tmp170086 _%rest159149%_))
+          _%h159152%_)))
     (define hash-merge!
-      (lambda (_%h156332%_ . _%rest156333%_)
-        (let* ((_%h156339%_
-                (let ((_%$obj156336%_ _%h156332%_))
+      (lambda (_%h159129%_ . _%rest159130%_)
+        (let* ((_%h159136%_
+                (let ((_%$obj159133%_ _%h159129%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj156336%_))
+                             (##structure? _%$obj159133%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj156336%_)))
+                                  (##structure-type _%$obj159133%_)))
                            '#t)
-                      _%$obj156336%_
+                      _%$obj159133%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj156336%_)))))
-               (_%h156341%_ _%h156339%_))
+                        (cast HashTable::interface _%$obj159133%_)))))
+               (_%h159138%_ _%h159136%_))
           (declare (not safe))
-          (##apply __hash-merge! _%h156341%_ _%rest156333%_))))
+          (##apply __hash-merge! _%h159138%_ _%rest159130%_))))
     (define __hash-merge-right!
-      (lambda (_%h156203%_ . _%rest156204%_)
-        (let ((_%h156207%_ _%h156203%_))
-          (let ((__tmp167290
-                 (lambda (_%hr156216%_)
-                   (let* ((_%hr156222%_
-                           (let ((_%$obj156219%_ _%hr156216%_))
+      (lambda (_%h159000%_ . _%rest159001%_)
+        (let ((_%h159004%_ _%h159000%_))
+          (let ((__tmp170087
+                 (lambda (_%hr159013%_)
+                   (let* ((_%hr159019%_
+                           (let ((_%$obj159016%_ _%hr159013%_))
                              (if (and (let ()
                                         (declare (not safe))
-                                        (##structure? _%$obj156219%_))
+                                        (##structure? _%$obj159016%_))
                                       (eq? HashTable::t
                                            (let ()
                                              (declare (not safe))
                                              (##structure-type
-                                              _%$obj156219%_)))
+                                              _%$obj159016%_)))
                                       '#t)
-                                 _%$obj156219%_
+                                 _%$obj159016%_
                                  (let ()
                                    (declare (not safe))
                                    (cast HashTable::interface
-                                         _%$obj156219%_)))))
-                          (_%hr156224%_ _%hr156222%_)
-                          (_%self150323156237%_ _%hr156224%_)
-                          (_%proc156289%_
-                           (lambda (_%k156240%_ _%v156241%_)
-                             (let* ((_%self151299156243%_ _%h156207%_)
-                                    (_%key156246%_ _%k156240%_)
-                                    (_%value156249%_ _%v156241%_)
-                                    (_%self151299156256%_
-                                     (let ((_%$obj156253%_
-                                            _%self151299156243%_))
+                                         _%$obj159016%_)))))
+                          (_%hr159021%_ _%hr159019%_)
+                          (_%self153120159034%_ _%hr159021%_)
+                          (_%proc159086%_
+                           (lambda (_%k159037%_ _%v159038%_)
+                             (let* ((_%self154096159040%_ _%h159004%_)
+                                    (_%key159043%_ _%k159037%_)
+                                    (_%value159046%_ _%v159038%_)
+                                    (_%self154096159053%_
+                                     (let ((_%$obj159050%_
+                                            _%self154096159040%_))
                                        (if (and (let ()
                                                   (declare (not safe))
                                                   (##structure?
-                                                   _%$obj156253%_))
+                                                   _%$obj159050%_))
                                                 (eq? HashTable::t
                                                      (let ()
                                                        (declare (not safe))
                                                        (##structure-type
-                                                        _%$obj156253%_)))
+                                                        _%$obj159050%_)))
                                                 '#t)
-                                           _%$obj156253%_
+                                           _%$obj159050%_
                                            (let ()
                                              (declare (not safe))
                                              (cast HashTable::interface
-                                                   _%$obj156253%_)))))
-                                    (_%self151299156258%_
-                                     _%self151299156256%_))
+                                                   _%$obj159050%_)))))
+                                    (_%self154096159055%_
+                                     _%self154096159053%_))
                                (if __DEBUG
                                    (let ()
                                      (declare (not safe))
-                                     (let ((_%object156274156279%_
+                                     (let ((_%object159071159076%_
                                             (##unchecked-structure-ref
-                                             _%self151299156258%_
+                                             _%self154096159055%_
                                              '1
                                              '#f
                                              'set!))
-                                           (_%method156275156280%_
+                                           (_%method159072159077%_
                                             (##unchecked-structure-ref
-                                             _%self151299156258%_
+                                             _%self154096159055%_
                                              '9
                                              '#f
                                              'set!)))
-                                       (_%method156275156280%_
-                                        _%object156274156279%_
-                                        _%key156246%_
-                                        _%value156249%_)))
+                                       (_%method159072159077%_
+                                        _%object159071159076%_
+                                        _%key159043%_
+                                        _%value159046%_)))
                                    (let ()
                                      (declare (not safe))
-                                     (let ((_%object156281156286%_
+                                     (let ((_%object159078159083%_
                                             (##unchecked-structure-ref
-                                             _%self151299156258%_
+                                             _%self154096159055%_
                                              '1
                                              '#f
                                              'set!))
-                                           (_%method156282156287%_
+                                           (_%method159079159084%_
                                             (##unchecked-structure-ref
-                                             _%self151299156258%_
+                                             _%self154096159055%_
                                              '9
                                              '#f
                                              'set!)))
-                                       (_%method156282156287%_
-                                        _%object156281156286%_
-                                        _%key156246%_
-                                        _%value156249%_)))))))
-                          (_%self150323156296%_
-                           (let ((_%$obj156293%_ _%self150323156237%_))
+                                       (_%method159079159084%_
+                                        _%object159078159083%_
+                                        _%key159043%_
+                                        _%value159046%_)))))))
+                          (_%self153120159093%_
+                           (let ((_%$obj159090%_ _%self153120159034%_))
                              (if (and (let ()
                                         (declare (not safe))
-                                        (##structure? _%$obj156293%_))
+                                        (##structure? _%$obj159090%_))
                                       (eq? HashTable::t
                                            (let ()
                                              (declare (not safe))
                                              (##structure-type
-                                              _%$obj156293%_)))
+                                              _%$obj159090%_)))
                                       '#t)
-                                 _%$obj156293%_
+                                 _%$obj159090%_
                                  (let ()
                                    (declare (not safe))
                                    (cast HashTable::interface
-                                         _%$obj156293%_)))))
-                          (_%self150323156298%_ _%self150323156296%_)
-                          (_%proc156308%_ _%proc156289%_))
+                                         _%$obj159090%_)))))
+                          (_%self153120159095%_ _%self153120159093%_)
+                          (_%proc159105%_ _%proc159086%_))
                      (if __DEBUG
                          (let ()
                            (declare (not safe))
-                           (let ((_%object156317156322%_
+                           (let ((_%object159114159119%_
                                   (##unchecked-structure-ref
-                                   _%self150323156298%_
+                                   _%self153120159095%_
                                    '1
                                    '#f
                                    'for-each))
-                                 (_%method156318156323%_
+                                 (_%method159115159120%_
                                   (##unchecked-structure-ref
-                                   _%self150323156298%_
+                                   _%self153120159095%_
                                    '5
                                    '#f
                                    'for-each)))
-                             (_%method156318156323%_
-                              _%object156317156322%_
-                              _%proc156308%_)))
+                             (_%method159115159120%_
+                              _%object159114159119%_
+                              _%proc159105%_)))
                          (let ()
                            (declare (not safe))
-                           (let ((_%object156324156329%_
+                           (let ((_%object159121159126%_
                                   (##unchecked-structure-ref
-                                   _%self150323156298%_
+                                   _%self153120159095%_
                                    '1
                                    '#f
                                    'for-each))
-                                 (_%method156325156330%_
+                                 (_%method159122159127%_
                                   (##unchecked-structure-ref
-                                   _%self150323156298%_
+                                   _%self153120159095%_
                                    '5
                                    '#f
                                    'for-each)))
-                             (_%method156325156330%_
-                              _%object156324156329%_
-                              _%proc156308%_))))))))
+                             (_%method159122159127%_
+                              _%object159121159126%_
+                              _%proc159105%_))))))))
             (declare (not safe))
-            (##for-each __tmp167290 _%rest156204%_))
-          _%h156207%_)))
+            (##for-each __tmp170087 _%rest159001%_))
+          _%h159004%_)))
     (define hash-merge-right!
-      (lambda (_%h156184%_ . _%rest156185%_)
-        (let* ((_%h156191%_
-                (let ((_%$obj156188%_ _%h156184%_))
+      (lambda (_%h158981%_ . _%rest158982%_)
+        (let* ((_%h158988%_
+                (let ((_%$obj158985%_ _%h158981%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj156188%_))
+                             (##structure? _%$obj158985%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj156188%_)))
+                                  (##structure-type _%$obj158985%_)))
                            '#t)
-                      _%$obj156188%_
+                      _%$obj158985%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj156188%_)))))
-               (_%h156193%_ _%h156191%_))
+                        (cast HashTable::interface _%$obj158985%_)))))
+               (_%h158990%_ _%h158988%_))
           (declare (not safe))
-          (##apply __hash-merge-right! _%h156193%_ _%rest156185%_))))))
+          (##apply __hash-merge-right! _%h158990%_ _%rest158982%_))))))

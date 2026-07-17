@@ -6,7 +6,9 @@ prelude: :<root>
 package: gerbil/core
 
 (import "runtime" (phi: +1 "runtime" "expander"))
-(export (import: Sugar-1 Sugar-2 Sugar-3))
+(export (import: Sugar-1 Sugar-2 Sugar-3 QuasiquoteRuntime Quasiquote))
+
+(export #t)
 
 (module Sugar-1
   (export #t)
@@ -303,7 +305,7 @@ package: gerbil/core
             (cons
              (list #'(pre-bind ... opt-bind ... bind)
                    (generate-opt-clause primary
-                                        (foldr cons (reverse right*) pre)
+                                        (append pre (reverse right*))
                                         rest))
              (recur rest right*))))
          ((stx-null? tail) '())
@@ -993,61 +995,10 @@ package: gerbil/core
      xs)
     ((recur xs dots . rest)
      (ellipsis? #'dots)
-     (foldr cons (recur . rest) xs))
+     (append xs (recur . rest)))
     ((recur x . xs)
      (cons x (recur . xs)))
     ((_ . tl) tl))
-
-  ;; and its cousin, the quasiquote
-  (defsyntax% (quasiquote stx)
-    (define (simple-quote? e)
-      (syntax-case e (unquote unquote-splicing)
-        ((unquote _) #f)
-        ((unquote-splicing _) #f)
-        ((hd . tl)
-         (and (simple-quote? #'hd)
-              (simple-quote? #'tl)))
-        (#(e ...)
-         (simple-quote? #'(e ...)))
-        (#&e
-         (simple-quote? #'e))
-        (_ #t)))
-
-    (define (generate e d)
-      (syntax-case e (quasiquote unquote unquote-splicing)
-        ((quasiquote e)
-         (with-syntax ((e (generate #'e (fx1+ d))))
-           #'(list 'quasiquote e)))
-        ((unquote e)
-         (if (fxzero? d) #'e
-             (with-syntax ((e (generate #'e (fx1- d))))
-               #'(list 'unquote e))))
-        ((unquote-splicing e)
-         (if (fxzero? d)
-           #'(foldr cons '() e)
-           (with-syntax ((e (generate #'e (fx1- d))))
-             #'(list 'unquote-splicing e))))
-        (((unquote-splicing hd) . rest)
-         (fxzero? d)
-         (with-syntax ((tl (generate #'rest d)))
-           #'(foldr cons tl hd)))
-        ((hd . tl)
-         (with-syntax ((hd (generate #'hd d))
-                       (tl (generate #'tl d)))
-           #'(cons hd tl)))
-        (#(e ...)
-         (with-syntax ((es (generate #'(e ...) d)))
-           #'(list->vector es)))
-        (#&e
-         (with-syntax ((e (generate #'e d)))
-           #'(box e)))
-        (e #'(quote e))))
-
-    (syntax-case stx ()
-      ((_ e)
-       (if (simple-quote? #'e)
-         #'(quote e)
-         (generate #'e 0)))))
 
   (defrules delay (quote)
     ((_ datum)
@@ -1133,4 +1084,170 @@ package: gerbil/core
      (and (identifier? #'id) (stx-datum? #'expr))
      (recur id (quote expr)))))
 
-(import Sugar-1 Sugar-2 Sugar-3)
+(module QuasiquoteRuntime
+  (export #t)
+  (import Sugar-1)
+  (defrule (qq-quote x) 'x)
+  (defrule (qq-list x ...) (list x ...))
+  (defrule (qq-list* x y ...) (cons* x y ...))
+  (defrule (qq-append x ...) (append x ...)))
+
+(module QuasiquoteExpander
+  (export quasiquote-expand)
+  (import (phi: -1 QuasiquoteRuntime) Sugar-1 Sugar-2 "expander")
+
+  ;; When translating quasiquote to quasiquote-less forms,
+  ;; we maintain two values, a "top" token, and a form that follows.
+  ;; The top token can be one of these 8 literals:
+  ;;   qq-quote qq-literal qq-null qq-list qq-list* qq-append unquote unquote-splicing
+  ;; Here is what they mean for the form:
+  ;; qq-null: is an empty list
+  ;; qq-literal: is a literal beside the empty list
+  ;; qq-quote: a constant form that needs a ' because it contains non-literals inside
+  ;; qq-list: a proper list that contains unquoting but no direct unquote-splicing
+  ;; qq-list*: a list without direct unquote-splicing before the end, but with improper or unquote-splicing ending
+  ;; qq-append: binary only, starts with unquote-splicing, ending may be any of the top tokens
+  ;; unquote: a general form to be evaluated
+  ;; unquote-splicing: this form must be in a list, in which case it will be unquote-spliced
+
+  ;; Given an expression e under a quasiquote, return two values:
+  ;; 1- a top token identifying the context
+  ;; 2- a syntax object
+  ;; When combining quasiquoted expressions, tokens are used for simplifications.
+  (def (quasiquote-expand-0 e)
+    (syntax-case e (unquote unquote unquote-splicing quasiquote qq-quote)
+      (()
+       (values 'qq-null '()))
+      #;((qq-quote (unquote-splicing x))
+       (values 'unquote-splicing #'x))
+      ((qq-quote _)
+       (values 'qq-quote e))
+      (_ (identifier? e)
+         (values 'qq-quote e))
+      ((unquote-splicing x)
+       (values 'unquote-splicing #'x))
+      ((unquote x)
+       (values 'unquote #'x))
+      ((quasiquote x)
+       (quasiquote-expand-0 (quasiquote-expand #'x)))
+      ((ax . dx)
+       (let-values (((atop a) (quasiquote-expand-0 #'ax))
+                    ((dtop d) (quasiquote-expand-0 #'dx)))
+         (when (eq? dtop 'unquote-splicing)
+           (raise-syntax-error #f ",@ after dot" e))
+         (with-syntax* ((aa a) (dd d))
+           (if (eq? atop 'unquote-splicing)
+             (if (eq? dtop 'qq-null)
+               (syntax-case a (unquote-splicing)
+                 ((unquote-splicing _) (values 'qq-append #'(aa)))
+                 (_ (unquote-expand a)))
+               (values 'qq-append
+                       (if (eq? dtop 'qq-append)
+                         #'(aa . dd)
+                         (with-syntax ((d1 (quasiquote-expand-1 dtop d)))
+                           #'(aa d1)))))
+             (let ((default (lambda ()
+                              (with-syntax ((a1 (quasiquote-expand-1 atop a))
+                                            (d1 (quasiquote-expand-1 dtop d)))
+                                (values 'qq-list* #'(a1 d1))))))
+               (case dtop
+                 ((qq-quote qq-literal qq-null)
+                  (cond
+                   ((member atop '(qq-quote qq-literal qq-null))
+                    (values 'qq-quote #'(aa . dd)))
+                   ((eq? dtop 'qq-null)
+                    (with-syntax ((a1 (quasiquote-expand-1 atop a)))
+                      (values 'qq-list #'(a1))))
+                   (else ;; atop: qq-list qq-list* qq-append unquote
+                    (default))))
+                 ((qq-list qq-list*)
+                  (with-syntax ((a1 (quasiquote-expand-1 atop a)))
+                    (values dtop #'(a1 . dd))))
+                 (else ;; dtop: qq-append unquote
+                  (default))))))))
+      (#(r ...)
+       (let-values (((top r1) (quasiquote-expand-0 #'(r ...))))
+         (with-syntax (((r1 ...) r1))
+           (case top
+             ((qq-quote qq-literal qq-null) (values 'qq-quote #'#(r1 ...)))
+             ((qq-list) (values 'unquote #'(vector r1 ...)))
+             ((qq-list*) (values 'unquote #'(list->vector (qq-list* r1 ...))))
+             ((qq-append) (values 'unquote #'(list->vector (qq-append r1 ...))))))))
+      (#&x
+       (let-values (((top x1) (quasiquote-expand-0 #'x)))
+         (case top
+           ((qq-quote qq-literal qq-null) (values 'qq-quote (with-syntax ((x2 x1)) #'#&x2)))
+           ((qq-list qq-list* qq-append unquote)
+            (with-syntax ((x2 (quasiquote-expand-1 top x1)))
+              (values 'unquote #'(box x2))))
+           ((unquote-splicing)
+            (raise-syntax-error #f ",@ after #&" #'x)))))
+      ;; Else: it's a literal
+      (_ (values 'qq-literal e)))) ;; or 'quote e
+
+  (def (unquote-expand e)
+    (syntax-case e (unquote unquote-splicing qq-quote qq-list qq-list* qq-append)
+      (()
+       (values 'qq-null '()))
+      (_ (identifier? e)
+         (values 'unquote e))
+      ((unquote-splicing x) ;; this case should never be called
+       (values 'unquote #'(apply qq-append x)))
+      ((qq-list . r)
+       (values 'qq-list #'r))
+      ((qq-list* . r)
+       (values 'qq-list* #'r))
+      ((qq-append . r)
+       (values 'qq-append #'r))
+      ((qq-quote ())
+       (values 'qq-null #'()))
+      ((qq-quote x)
+       (values 'qq-quote #'x))
+      ((_ . _)
+       (values 'unquote e))
+      (_ ;; else: literal
+       (values 'qq-literal e))))
+
+  ;; Given a top token and an expression, give the quasiquoting
+  ;; of the result of the top operation applied to the expression
+  (def (quasiquote-expand-1 top x)
+    (with-syntax ((xx x))
+      (case top
+        ((unquote qq-literal)
+         x)
+        ((qq-null)
+         #'(qq-quote ()))
+        ((qq-quote)
+         #'(qq-quote xx))
+        ((qq-list*)
+         ;; cannot be simplified to cons in the case of two argument, because
+         ;; the first one may be expanded to an unquote-splicing in some outer quasiquote
+         ;; and then we'd need logic to de-simplify it in that case.
+         (syntax-case x (unquote-splicing qq-quote)
+           ((elems ... (unquote-splicing last))
+            #'(qq-append (qq-list elems ...) (unquote-splicing last)))
+           ((elems ... (qq-quote ()))
+            #'(qq-list elems ...))
+           (_ #'(qq-list* . xx))))
+        ((qq-list)
+         #'(qq-list . xx))
+        ((qq-append)
+         #'(qq-append . xx))
+        (else ;; should never happen
+         (raise-syntax-error #f "quasiquote-expand-1 error" top x)))))
+
+  (def (quasiquote-expand e)
+    (let-values (((top arg) (quasiquote-expand-0 e)))
+      (when (eq? top 'unquote-splicing)
+        (raise-syntax-error #f ",@ after `" e))
+      (quasiquote-expand-1 top arg))))
+
+(module Quasiquote
+  (export quasiquote)
+  (import (phi: +1 Sugar-1 Sugar-2 QuasiquoteExpander))
+  (define-syntax quasiquote
+    (lambda% (stx)
+      (syntax-case stx ()
+        ((_ e) (quasiquote-expand #'e))))))
+
+(import Sugar-1 Sugar-2 Sugar-3 QuasiquoteRuntime Quasiquote)

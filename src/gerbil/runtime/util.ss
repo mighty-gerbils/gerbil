@@ -917,8 +917,8 @@ namespace: #f
        (n (lambda () (newline e)))
        (v (lambda (l) (for-each (lambda (x) (d " ") (w x)) l) (n)))
        (x (lambda (expr thunk)
-            (f) (d "  ") (w expr) (d " =>")
-            (call-with-values thunk (lambda x (v x) (f) (apply values x))))))
+            (call-with-values thunk
+              (lambda x (f) (d "  ") (w expr) (d " =>") (v x) (f) (apply values x))))))
     (if tag
       (begin
         (unless (void? tag) (f) (d tag) (n))

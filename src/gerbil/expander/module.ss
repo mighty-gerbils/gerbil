@@ -717,7 +717,7 @@ namespace: gx
        (let (rbody
              (parameterize ((current-phi (fx+ (stx-e dphi) (current-phi))))
                (K body [])))
-         (K rest (foldr cons r rbody))))
+         (K rest (append rbody r))))
       ((begin: . body)
        (K (stx-foldr cons rest body) r))
       ((macro . body)

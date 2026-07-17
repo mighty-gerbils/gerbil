@@ -316,7 +316,7 @@ namespace: gx
                (parameterize ((current-expander-path
                                (cons rpath (current-expander-path))))
                  (core-expand-block block expand-special #f expand-e))))
-         (K rest (foldr cons r rbody))))))
+         (K rest (append rbody r))))))
 
   (def (expand-expression hd rest r)
     (K rest (cons (expand-e hd) r)))
