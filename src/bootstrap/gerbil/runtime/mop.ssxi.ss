@@ -424,6 +424,21 @@ package: gerbil/runtime
              #f
              origin:
              gerbil/runtime/mop)))
+  (declare-type
+   struct-field-fold
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/mop)))
   (declare-type class-type-id (@accessor class::t id #t))
   (declare-type &class-type-id (@accessor class::t id #f))
   (declare-type class-type-id-set! (@mutator class::t id #t))

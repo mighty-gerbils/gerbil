@@ -97,6 +97,7 @@ namespace: #f
          (%#define-runtime
           make-class-type-descriptor
           make-class-type-descriptor)
+         (%#define-runtime struct-field-fold struct-field-fold)
          (%#define-syntax defrefset |[:0:]#defrefset|)
          (%#define-syntax defrefset* |[:0:]#defrefset*|)
          (%#define-runtime class-type-id class-type-id)
