@@ -16,7 +16,7 @@
 ;; returns the identity did
 (defcap-ext (generate-identity! ctx)
   => :string
-  (let (pkey (keygen-ed25519))
+  (let (pkey (generate-ed25519-key))
     (ctx.add-principal! pkey)))
 
 ;; generate a root token of type, granting capabilities from

@@ -17,13 +17,13 @@
    (key :- :foreign))
   transparent: #f)
 
-(def (keygen-ed25519)
+(def (generate-ed25519-key)
   => PrivKey
-  (let (ctx (check-pointer keygen-ed25519 (EVP_PKEY_CTX_new_id EVP_PKEY_ED25519 #f)))
-    (with-libcrypto-error keygen-ed25519
+  (let (ctx (check-pointer generate-ed25519-key (EVP_PKEY_CTX_new_id EVP_PKEY_ED25519 #f)))
+    (with-libcrypto-error generate-ed25519-key
       (EVP_PKEY_keygen_init ctx)
       (cut >= <> 0))
-    (let (evp (check-pointer keygen-ed25519 (EVP_PKEY_keygen ctx)))
+    (let (evp (check-pointer generate-ed25519-key (EVP_PKEY_keygen ctx)))
       (foreign-release! ctx)
       (PrivKey EVP_PKEY_ED25519 evp))))
 

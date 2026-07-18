@@ -27,7 +27,7 @@
               (did->public-key test-pubkey-did))
              => test-pubkey-bytes))
     (test-case "private key"
-      (def test-privkey (keygen-ed25519))
+      (def test-privkey (generate-ed25519-key))
       (def test-pubkey-bytes
         (private-key->public-bytes
          test-privkey))
