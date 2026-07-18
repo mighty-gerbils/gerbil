@@ -15,15 +15,14 @@
         datagram-socket-test)
 
 (def (echo-server srv)
-  (with-catch
-   (lambda (e)
+  (try
+   (let lp ()
+     (let (cli (ServerSocket-accept srv))
+       (spawn/name 'echo-server-handler echo-server-handler cli)
+       (lp)))
+   (catch (e)
      (unless (io-closed-error? e)
-       (raise e)))
-   (lambda ()
-     (let lp ()
-       (let (cli (ServerSocket-accept srv))
-         (spawn/name 'echo-server-handler echo-server-handler cli)
-         (lp))))))
+       (raise e)))))
 
 (def (echo-server-handler cli)
   (let ((reader (StreamSocket-reader cli))
@@ -46,17 +45,16 @@
     (utf8->string buffer)))
 
 (def (echo-server-udp sock)
-  (with-catch
-   (lambda (e)
+  (try
+   (let ((peer (box #f))
+         (buffer (make-u8vector 2048)))
+     (let lp ()
+       (let (read (DatagramSocket-recvfrom sock peer buffer))
+         (DatagramSocket-sendto sock (unbox peer) buffer 0 read)
+         (lp))))
+   (catch (e)
      (unless (io-closed-error? e)
-       (raise e)))
-   (lambda ()
-     (let ((peer (box #f))
-           (buffer (make-u8vector 2048)))
-       (let lp ()
-         (let (read (DatagramSocket-recvfrom sock peer buffer))
-           (DatagramSocket-sendto sock (unbox peer) buffer 0 read)
-           (lp)))))))
+       (raise e)))))
 
 (def (do-echo-udp sock input peer)
   (Socket-set-input-timeout! sock (IOTimeout 1))

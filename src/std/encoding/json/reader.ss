@@ -7,11 +7,18 @@
         :std/list/walist
         :std/encoding/hex
         :std/text/parser/char-set
-        (only-in :std/text/parser/char-set char-strict-whitespace?)
+        (only-in :std/text/parser/ll1 ll1-skip-space*)
         ./env)
 (export parse-json
-        skip-strict-whitespace ;; TODO: move to a general parser?
-        )
+        raise-invalid-json-token
+        read-json-hash
+        read-json-walist/string
+        read-json-walist/symbol
+        read-json-hash/symbol
+        read-json-hash/string
+        read-json-list
+        read-json-string
+        read-json-number)
 (declare (not safe))
 
 ;;; error helper
@@ -22,14 +29,7 @@
 
 ;;; whitespace
 
-(def (skip-strict-whitespace (reader : BufferedReader))
-  (let lp ()
-    (let (char (reader.peek-char-utf8))
-      (when (and (not (eof-object? char)) (char-strict-whitespace? char))
-        (reader.read-char-utf8)
-        (lp)))))
-
-(def skip-whitespace skip-strict-whitespace)
+(defalias skip-whitespace ll1-skip-space*)
 
 ;;; main dispatch (exported)
 

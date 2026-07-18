@@ -247,6 +247,9 @@
          64 2 => 6
          65 2 => 6
          63 2 => 5
+         65535 4 => 7
+         65536 4 => 8
+         #x123456 16 => 5
          (expt 5 881) 5 => 881))
 
     (test-case "integer-digit-count"
@@ -262,6 +265,24 @@
          -1729 10 => 4
          (expt 10 666) 10 => 667
          (- (expt 10 666) 1) 10 => 666))
+
+    (test-case "power-of-2?"
+      (check-function power-of-2?
+        0 => #f
+        1 => #t
+        2 => #t
+        3 => #f
+        4 => #t
+        5 => #f
+        8 => #t
+        65535 => #f
+        65536 => #t
+        65537 => #f
+        #xbadf00d => #f
+        -1 => #f
+        -2 => #f
+        -3 => #f
+        -4 => #f))
 
     (test-case "factor-out-powers-of-2"
       (defrule (checks (n m k) ...)

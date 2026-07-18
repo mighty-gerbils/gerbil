@@ -15,10 +15,14 @@
 (import
   :std/iter
   (only-in :std/error raise-bad-argument check-argument)
-  (only-in :std/vector/evector memoize-recursive-sequence
-           evector-ref evector-ref-set! evector-push! extend-evector!
-           evector-fill-pointer evector-fill-pointer-set! list->evector evector->list
-           make-ebits ebits-ref ebits-fill-pointer-set! ebits-set? ebits-set! ebits-fill-pointer)
+  (only-in :std/vector/extensible memoize-recursive-sequence
+           ExtensibleVector-ref ExtensibleVector-ref-set!
+           ExtensibleVector-push! extend-ExtensibleVector!
+           ExtensibleVector-fill-pointer ExtensibleVector-fill-pointer-set!
+           list->ExtensibleVector ExtensibleVector->list
+           make-ExtensibleBitVector ExtensibleBitVector-ref
+           ExtensibleBitVector-fill-pointer ExtensibleBitVector-fill-pointer-set!
+           ExtensibleBitVector-set? ExtensibleBitVector-set!)
   (only-in :std/list/list reduce)
   (only-in :std/list/list-builder with-list-builder)
   (only-in :std/number/misc uint? positive-integer? mult-mod expt-mod pre-increment! half ceiling-align
@@ -26,8 +30,8 @@
 
 ;; An extensible vector containing the increasing sequence of all small enough primes
 ;; NB: the initial 0 is so the useful array indices start with 1, keeping with convention.
-;; Note that this evector must contain all the primes already in the prime-sieve below.
-(def primes (list->evector '(0 2 3 5 7 11 13)))
+;; Note that this ExtensibleVector must contain all the primes already in the prime-sieve below.
+(def primes (list->ExtensibleVector '(0 2 3 5 7 11 13)))
 
 ;; Given a list of primes, return a vector the size of which is the product M of those primes,
 ;; that at index I contains the smallest positive increment J such that I+J is a unit modulo M.
@@ -36,7 +40,7 @@
   (def product (reduce * 1 prime-list))
   (unless (and (fixnum? product)
                (<= 2 product)
-               (let (p (evector->list primes)) (every (cut member <> p) prime-list)))
+               (let (p (ExtensibleVector->list primes)) (every (cut member <> p) prime-list)))
     (raise-bad-argument compute-prime-wheel "invalid list of primes" prime-list))
   (def rp (list->vector (for/collect (n (in-range product)) (= 1 (gcd n product)))))
   (list->vector (for/collect (n (in-range product))
@@ -71,14 +75,14 @@
 ;; To save half the space, we only store a bitmask for odd numbers.
 ;; We could further save space, by using a variant of the 2,3,5,7-wheel,
 ;; from 50% to under 23% (48/210), but that would mean a much larger access factor constant.
-(def prime-sieve (make-ebits #u8(#x6E) 8))
+(def prime-sieve (make-ExtensibleBitVector #u8(#x6E) 8))
 
 (definline (double (n : :integer)) => :integer
   (+ n n))
 
 ;; Return how far we can use the sieve
 (def (sieve-end) => :integer
-  (double (ebits-fill-pointer prime-sieve)))
+  (double (ExtensibleBitVector-fill-pointer prime-sieve)))
 
 ;; return true if the sieve found the number to be prime,
 ;; false if the number was found to be composite,
@@ -87,7 +91,7 @@
   (unless (< n (sieve-end))
     (error "sieve not run far enough to test prime"))
   (if (bit-set? 0 n)
-    (ebits-set? prime-sieve (half n))
+    (ExtensibleBitVector-set? prime-sieve (half n))
     (= n 2))) ;; handle even numbers
 
 ;; Return the next prime number P such that P > N
@@ -104,40 +108,40 @@
   (let/cc return
     (unless (bit-set? 0 n) (return (= n 2))) ;; handle even numbers
     (let (n/2 (half n))
-      (when (< n/2 (ebits-fill-pointer prime-sieve))
-        (return (ebits-set? prime-sieve n/2))))
-    (def fp (evector-fill-pointer primes))
+      (when (< n/2 (ExtensibleBitVector-fill-pointer prime-sieve))
+        (return (ExtensibleBitVector-set? prime-sieve n/2))))
+    (def fp (ExtensibleVector-fill-pointer primes))
     (for (i (in-range 2 fp)) ;; 0 is not prime, 2 already handled
-      (let (p (evector-ref primes i))
+      (let (p (ExtensibleVector-ref primes i))
         (when (zero? (modulo n p)) (return #f))
         (when (< n (* p p)) (return #t))))
     (erathostenes-sieve (integer-sqrt n)) ;; extend sieve up to sqrt(n)
-    (for (i (in-range fp (evector-fill-pointer primes)))
-      (when (zero? (modulo n (evector-ref primes i))) (return #f)))
+    (for (i (in-range fp (ExtensibleVector-fill-pointer primes)))
+      (when (zero? (modulo n (ExtensibleVector-ref primes i))) (return #f)))
     #t))
 
 ;; The largest small prime computed so far
 (def (largest-sieve-prime) => :integer
-  (: (evector-ref primes (1- (evector-fill-pointer primes))) :integer))
+  (: (ExtensibleVector-ref primes (1- (ExtensibleVector-fill-pointer primes))) :integer))
 
 ;; Run the sieve of Erathostenes up to `n`
 (def (erathostenes-sieve (n :~ positive-integer? :- :integer))
-  (def m (1+ (double (ebits-fill-pointer prime-sieve)))) ; smallest odd number not sieved yet
+  (def m (1+ (double (ExtensibleBitVector-fill-pointer prime-sieve)))) ; smallest odd number not sieved yet
   (def u (1+ (half n)))
   (def (sieve! p) ;; sieve away multiples of an odd prime number
     (def p2 (* p p))
     (let loop ((q (half (if (>= p2 m) p2
                             (- (ceiling-align (+ m p) (double p)) p))))) ;; next *odd* multiple of p
       (when (< q u)
-        (ebits-set! prime-sieve q 0)
+        (ExtensibleBitVector-set! prime-sieve q 0)
         (loop (+ q p)))))
   (when (>= n m)
     ;; Ensure there is enough space for the sieve
-    (ebits-fill-pointer-set! prime-sieve u 1)
+    (ExtensibleBitVector-fill-pointer-set! prime-sieve u 1)
     (let/cc return
       ;; Sieve off multiples of odd primes known so far
       (def r (integer-sqrt n))
-      (for (i (in-range 2 (evector-fill-pointer primes)))
+      (for (i (in-range 2 (ExtensibleVector-fill-pointer primes)))
         (let (p (nth-prime i))
           (when (> p r) (return))
           (sieve! p)))
@@ -146,8 +150,8 @@
       (let loop ((p p) (wp (wheel-position wheel p)))
         (defvalues (q wq) (wheel-next wheel p wp))
         (when (> q r) (return))
-        (when (ebits-set? prime-sieve (half q))
-          (evector-push! primes q)
+        (when (ExtensibleBitVector-set? prime-sieve (half q))
+          (ExtensibleVector-push! primes q)
           (sieve! q))
         (loop q wq)))
     ;; Collect new primes above sqrt(n)
@@ -156,13 +160,13 @@
         (let loop ((p p) (wp (wheel-position wheel p)))
           (defvalues (q wq) (wheel-next wheel p wp))
           (unless (> q n)
-            (when (ebits-set? prime-sieve (half q))
-              (evector-push! primes q))
+            (when (ExtensibleBitVector-set? prime-sieve (half q))
+              (ExtensibleVector-push! primes q))
             (loop q wq)))))))
 
 ;; (pi-function n) is the number of positive prime integers no greater than n
 ;; This is a naive implementation using the sieve of Erathostenes.
-(def pi-cache (list->evector '(0 0 1 2 2 3 3 4 4 4 4)))
+(def pi-cache (list->ExtensibleVector '(0 0 1 2 2 3 3 4 4 4 4)))
 (def pi-function
   (memoize-recursive-sequence
    (lambda (n)

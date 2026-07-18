@@ -24,10 +24,9 @@
         not-zero?
         divides? bezout invert-mod div-mod mult-mod mult-expt-mod expt-mod
         integer-log integer-digit-count
-        factor-out-powers-of-2 factor-out-powers)
+        power-of-2? factor-out-powers-of-2 factor-out-powers)
 
 (import
-  ;;(only-in :gerbil/gambit first-set-bit bit-set? replace-bit-field extract-bit-field)
   (only-in :std/list/list reduce))
 
 ;;; xmin and xmax on the (affine) extended real number line.
@@ -273,6 +272,10 @@
                (n : :integer)) => :integer
   (mult-expt-mod 1 x e n))
 
+(def (power-of-2? (n : :integer)) => :boolean
+  (and (positive? n)
+       (zero? (bitwise-and n (- n 1)))))
+
 (def (valid-base? b) => :boolean
   (and (exact-integer? b) (< 1 b)))
 
@@ -295,6 +298,7 @@
       (upward q (* bp bp) (+ p p) (cons bp bps))))
   (cond
    ((= b 2) (- (integer-length a) 1))
+   ((power-of-2? b) (floor-quotient (- (integer-length a) 1) (- (integer-length b) 1)))
    (else (upward a b 1 []))))
 
 ;; number of digits of a in base b

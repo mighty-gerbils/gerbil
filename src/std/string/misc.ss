@@ -358,8 +358,9 @@
 ;;; Continuations are applied to s1's mismatch index;
 ;;; in the case of equality, this is END1.
 
-(def (%string-compare s1 start1 end1 s2 start2 end2
-                      proc< proc= proc>)
+(def (%string-compare (s1 :- :string) (start1 :- :fixnum) (end1 :- :fixnum)
+                      (s2 :- :string) (start2 :- :fixnum) (end2 :- :fixnum)
+                      (proc< :- :procedure) (proc= :- :procedure) (proc> :- :procedure))
   (let ((size1 (- end1 start1))
         (size2 (- end2 start2)))
     (let ((match (%string-prefix-length s1 start1 end1 s2 start2 end2)))
@@ -372,8 +373,9 @@
              proc< proc>))
          (+ match start1))))))
 
-(def (%string-compare-ci s1 start1 end1 s2 start2 end2
-                         proc< proc= proc>)
+(def (%string-compare-ci (s1 :- :string) (start1 :- :fixnum) (end1 :- :fixnum)
+                         (s2 :- :string) (start2 :- :fixnum) (end2 :- :fixnum)
+                         (proc< :- :procedure) (proc= :- :procedure) (proc> :- :procedure))
   (let ((size1 (- end1 start1))
         (size2 (- end2 start2)))
     (let ((match (%string-prefix-length-ci s1 start1 end1 s2 start2 end2)))
@@ -385,14 +387,16 @@
                proc< proc>))
          (+ start1 match))))))
 
-(def (string-compare s1 s2 proc< proc= proc>
-                     (start1 0) (end1 (string-length s1))
-                     (start2 0) (end2 (string-length s2)))
+(def (string-compare (s1 : :string) (s2 : :string)
+                     (proc< : :procedure) (proc= : :procedure) (proc> : :procedure)
+                     (start1 : :fixnum := 0) (end1 : :fixnum := (string-length s1))
+                     (start2 : :fixnum := 0) (end2 : :fixnum := (string-length s2)))
   (%string-compare s1 start1 end1 s2 start2 end2 proc< proc= proc>))
 
-(def (string-compare-ci s1 s2 proc< proc= proc>
-                        (start1 0) (end1 (string-length s1))
-                        (start2 0) (end2 (string-length s2)))
+(def (string-compare-ci (s1 : :string) (s2 : :string)
+                        (proc< : :procedure) (proc= : :procedure) (proc> : :procedure)
+                        (start1 : :fixnum := 0) (end1 : :fixnum := (string-length s1))
+                        (start2 : :fixnum := 0) (end2 : :fixnum := (string-length s2)))
   (%string-compare-ci s1 start1 end1 s2 start2 end2 proc< proc= proc>))
 
 ;;; string=          string<>		string-ci=          string-ci<>
@@ -402,9 +406,9 @@
 ;;; Simple definitions in terms of the previous comparison funs.
 ;;; I sure hope the %STRING-COMPARE calls get integrated.
 
-(def (string= s1 s2
-              (start1 0) (end1 (string-length s1))
-              (start2 0) (end2 (string-length s2)))
+(def (string= (s1 : :string) (s2 : :string)
+              (start1 : :fixnum := 0) (end1 : :fixnum := (string-length s1))
+              (start2 : :fixnum := 0) (end2 : :fixnum := (string-length s2)))
   (and (= (- end1 start1) (- end2 start2))     ; Quick filter
        (or (and (eq? s1 s2) (= start1 start2)) ; Fast path
            (%string-compare s1 start1 end1 s2 start2 end2 ; Real test
@@ -412,9 +416,9 @@
                             values
                             (lambda (i) #f)))))
 
-(def (string<> s1 s2
-               (start1 0) (end1 (string-length s1))
-               (start2 0) (end2 (string-length s2)))
+(def (string<> (s1 : :string) (s2 : :string)
+               (start1 : :fixnum := 0) (end1 : :fixnum := (string-length s1))
+               (start2 : :fixnum := 0) (end2 : :fixnum := (string-length s2)))
   (or (not (= (- end1 start1) (- end2 start2)))      ; Fast path
       (and (not (and (eq? s1 s2) (= start1 start2))) ; Quick filter
            (%string-compare s1 start1 end1 s2 start2 end2 ; Real test
@@ -422,9 +426,9 @@
                             (lambda (i) #f)
                             values))))
 
-(def (string< s1 s2
-              (start1 0) (end1 (string-length s1))
-              (start2 0) (end2 (string-length s2)))
+(def (string< (s1 : :string) (s2 : :string)
+              (start1 : :fixnum := 0) (end1 : :fixnum := (string-length s1))
+              (start2 : :fixnum := 0) (end2 : :fixnum := (string-length s2)))
   (if (and (eq? s1 s2) (= start1 start2)) ; Fast path
 	(< end1 end2)
 	(%string-compare s1 start1 end1 s2 start2 end2 ; Real test
@@ -432,9 +436,9 @@
                      (lambda (i) #f)
                      (lambda (i) #f))))
 
-(def (string> s1 s2
-              (start1 0) (end1 (string-length s1))
-              (start2 0) (end2 (string-length s2)))
+(def (string> (s1 : :string) (s2 : :string)
+              (start1 : :fixnum := 0) (end1 : :fixnum := (string-length s1))
+              (start2 : :fixnum := 0) (end2 : :fixnum := (string-length s2)))
   (if (and (eq? s1 s2) (= start1 start2)) ; Fast path
 	(> end1 end2)
 	(%string-compare s1 start1 end1 s2 start2 end2 ; Real test
@@ -442,9 +446,9 @@
                      (lambda (i) #f)
                      values)))
 
-(def (string<= s1 s2
-               (start1 0) (end1 (string-length s1))
-               (start2 0) (end2 (string-length s2)))
+(def (string<= (s1 : :string) (s2 : :string)
+               (start1 : :fixnum := 0) (end1 : :fixnum := (string-length s1))
+               (start2 : :fixnum := 0) (end2 : :fixnum := (string-length s2)))
   (if (and (eq? s1 s2) (= start1 start2)) ; Fast path
 	(<= end1 end2)
 	(%string-compare s1 start1 end1 s2 start2 end2 ; Real test
@@ -452,9 +456,9 @@
                      values
                      (lambda (i) #f))))
 
-(def (string>= s1 s2
-               (start1 0) (end1 (string-length s1))
-               (start2 0) (end2 (string-length s2)))
+(def (string>= (s1 : :string) (s2 : :string)
+               (start1 : :fixnum := 0) (end1 : :fixnum := (string-length s1))
+               (start2 : :fixnum := 0) (end2 : :fixnum := (string-length s2)))
   (if (and (eq? s1 s2) (= start1 start2)) ; Fast path
 	(>= end1 end2)
 	(%string-compare s1 start1 end1 s2 start2 end2 ; Real test
@@ -462,9 +466,9 @@
                      values
                      values)))
 
-(def (string-ci= s1 s2
-                 (start1 0) (end1 (string-length s1))
-                 (start2 0) (end2 (string-length s2)))
+(def (string-ci= (s1 : :string) (s2 : :string)
+                 (start1 : :fixnum := 0) (end1 : :fixnum := (string-length s1))
+                 (start2 : :fixnum := 0) (end2 : :fixnum := (string-length s2)))
   (and (= (- end1 start1) (- end2 start2))     ; Quick filter
        (or (and (eq? s1 s2) (= start1 start2)) ; Fast path
            (%string-compare-ci s1 start1 end1 s2 start2 end2 ; Real test
@@ -472,9 +476,9 @@
                                values
                                (lambda (i) #f)))))
 
-(def (string-ci<> s1 s2
-                  (start1 0) (end1 (string-length s1))
-                  (start2 0) (end2 (string-length s2)))
+(def (string-ci<> (s1 : :string) (s2 : :string)
+                  (start1 : :fixnum := 0) (end1 : :fixnum := (string-length s1))
+                  (start2 : :fixnum := 0) (end2 : :fixnum := (string-length s2)))
   (or (not (= (- end1 start1) (- end2 start2)))      ; Fast path
       (and (not (and (eq? s1 s2) (= start1 start2))) ; Quick filter
            (%string-compare-ci s1 start1 end1 s2 start2 end2 ; Real test
@@ -482,9 +486,9 @@
                                (lambda (i) #f)
                                values))))
 
-(def (string-ci< s1 s2
-                 (start1 0) (end1 (string-length s1))
-                 (start2 0) (end2 (string-length s2)))
+(def (string-ci< (s1 : :string) (s2 : :string)
+                 (start1 : :fixnum := 0) (end1 : :fixnum := (string-length s1))
+                 (start2 : :fixnum := 0) (end2 : :fixnum := (string-length s2)))
   (if (and (eq? s1 s2) (= start1 start2)) ; Fast path
 	(< end1 end2)
 	(%string-compare-ci s1 start1 end1 s2 start2 end2 ; Real test
@@ -492,9 +496,9 @@
                         (lambda (i) #f)
                         (lambda (i) #f))))
 
-(def (string-ci> s1 s2
-                 (start1 0) (end1 (string-length s1))
-                 (start2 0) (end2 (string-length s2)))
+(def (string-ci> (s1 : :string) (s2 : :string)
+                 (start1 : :fixnum := 0) (end1 : :fixnum := (string-length s1))
+                 (start2 : :fixnum := 0) (end2 : :fixnum := (string-length s2)))
   (if (and (eq? s1 s2) (= start1 start2)) ; Fast path
 	(> end1 end2)
 	(%string-compare-ci s1 start1 end1 s2 start2 end2 ; Real test
@@ -502,9 +506,9 @@
                         (lambda (i) #f)
                         values)))
 
-(def (string-ci<= s1 s2
-                  (start1 0) (end1 (string-length s1))
-                  (start2 0) (end2 (string-length s2)))
+(def (string-ci<= (s1 : :string) (s2 : :string)
+                  (start1 : :fixnum := 0) (end1 : :fixnum := (string-length s1))
+                  (start2 : :fixnum := 0) (end2 : :fixnum := (string-length s2)))
   (if (and (eq? s1 s2) (= start1 start2)) ; Fast path
 	(<= end1 end2)
 	(%string-compare-ci s1 start1 end1 s2 start2 end2 ; Real test
@@ -512,9 +516,9 @@
                         values
                         (lambda (i) #f))))
 
-(def (string-ci>= s1 s2
-                  (start1 0) (end1 (string-length s1))
-                  (start2 0) (end2 (string-length s2)))
+(def (string-ci>= (s1 : :string) (s2 : :string)
+                  (start1 : :fixnum := 0) (end1 : :fixnum := (string-length s1))
+                  (start2 : :fixnum := 0) (end2 : :fixnum := (string-length s2)))
   (if (and (eq? s1 s2) (= start1 start2)) ; Fast path
 	(>= end1 end2)
 	(%string-compare-ci s1 start1 end1 s2 start2 end2 ; Real test
@@ -531,7 +535,8 @@
 ;;; %STRING-PREFIX-LENGTH is the core routine of all string-comparisons,
 ;;; so should be as tense as possible.
 
-(def (%string-prefix-length s1 start1 end1 s2 start2 end2)
+(def (%string-prefix-length (s1 :- :string) (start1 :- :fixnum) (end1 :- :fixnum)
+                            (s2 :- :string) (start2 :- :fixnum) (end2 :- :fixnum))
   (let* ((delta (min (- end1 start1) (- end2 start2)))
          (end1 (+ start1 delta)))
     (if (and (eq? s1 s2) (= start1 start2))	; EQ fast path
@@ -543,7 +548,8 @@
 	      (- i start1)
 	      (lp (+ i 1) (+ j 1)))))))
 
-(def (%string-suffix-length s1 start1 end1 s2 start2 end2)
+(def (%string-suffix-length (s1 :- :string) (start1 :- :fixnum) (end1 :- :fixnum)
+                            (s2 :- :string) (start2 :- :fixnum) (end2 :- :fixnum))
   (let* ((delta (min (- end1 start1) (- end2 start2)))
          (start1 (- end1 delta)))
     (if (and (eq? s1 s2) (= end1 end2)) ; EQ fast path
@@ -555,8 +561,9 @@
 	      (- (- end1 i) 1)
 	      (lp (- i 1) (- j 1)))))))
 
-(def (%string-prefix-length-ci s1 start1 end1 s2 start2 end2)
-  (let* ((delta (min (- end1 start1) (- end2 start2)))
+(def (%string-prefix-length-ci (s1 :- :string) (start1 :- :fixnum) (end1 :- :fixnum)
+                               (s2 :- :string) (start2 :- :fixnum) (end2 :- :fixnum))
+    (let* ((delta (min (- end1 start1) (- end2 start2)))
          (end1 (+ start1 delta)))
     (if (and (eq? s1 s2) (= start1 start2))	; EQ fast path
       delta
@@ -567,7 +574,8 @@
 	      (- i start1)
 	      (lp (+ i 1) (+ j 1)))))))
 
-(def (%string-suffix-length-ci s1 start1 end1 s2 start2 end2)
+(def (%string-suffix-length-ci (s1 :- :string) (start1 :- :fixnum) (end1 :- :fixnum)
+                               (s2 :- :string) (start2 :- :fixnum) (end2 :- :fixnum))
   (let* ((delta (min (- end1 start1) (- end2 start2)))
          (start1 (- end1 delta)))
     (if (and (eq? s1 s2) (= end1 end2)) ; EQ fast path
@@ -579,9 +587,9 @@
 	      (- (- end1 i) 1)
 	      (lp (- i 1) (- j 1)))))))
 
-(def (string-prefix-length s1 s2
-                           (start1 0) (end1 (string-length s1))
-                           (start2 0) (end2 (string-length s2)))
+(def (string-prefix-length (s1 : :string) (s2 : :string)
+                           (start1 : :fixnum := 0) (end1 : :fixnum := (string-length s1))
+                           (start2 : :fixnum := 0) (end2 : :fixnum := (string-length s2)))
   (%string-prefix-length s1 start1 end1 s2 start2 end2))
 
 (def (string-suffix-length s1 s2
@@ -599,9 +607,10 @@
                               (start2 0) (end2 (string-length s2)))
   (%string-suffix-length-ci s1 start1 end1 s2 start2 end2))
 
-(def (string-null? s) (zero? (string-length s)))
+(def (string-null? (s : :string))
+  (zero? (string-length s)))
 
-(def (string-reverse s (start 0) (end (string-length s)))
+(def (string-reverse (s : :string) (start : :fixnum := 0) (end : :fixnum := (string-length s)))
   (let* ((len (- end start))
          (ans (make-string len)))
     (do ((i start (+ i 1))
@@ -610,7 +619,7 @@
       (string-set! ans j (string-ref s i)))
     ans))
 
-(def (string-reverse! s (start 0) (end (string-length s)))
+(def (string-reverse! (s : :string) (start : :fixnum := 0) (end : :fixnum := (string-length s)))
   (do ((i (- end 1) (- i 1))
        (j start (+ j 1)))
       ((<= i j))

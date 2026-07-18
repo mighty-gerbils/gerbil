@@ -67,7 +67,7 @@
                       (cons #'(writer.write-char arg)
 		            result))))
 	     (['int arg how flags width]
-	      (with-syntax ((ctx ctx) (arg arg) (how how) (flags (datum->syntax ctx (list 'quote flags))) (width width) (writer writer))
+	      (with-syntax ((ctx ctx) (arg arg) (how how) (flags flags) (width width) (writer writer))
 		(loop rest
                       (cons #'(using ($ctx (@format-env ctx
 						        (flags: flags)
@@ -77,7 +77,7 @@
 			        ($ctx.methods.write-integer writer (: arg :integer) $ctx))
 		            result))))
 	     (['float arg how flags width precision result]
-	      (with-syntax ((ctx ctx) (arg arg) (how how) (flags (datum->syntax ctx (list 'quote flags))) (width width) (precision precision) (writer writer))
+	      (with-syntax ((ctx ctx) (arg arg) (how how) (flags flags) (width width) (precision precision) (writer writer))
 		(loop rest
                       (cons #'(using ($ctx (@format-env ctx
 						        (flags: flags)

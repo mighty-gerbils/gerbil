@@ -186,7 +186,7 @@
     "encoding/json"
 
     "vector/u8vector"
-    "vector/evector"
+    "vector/extensible"
     "vector/vector"
 
     "number/misc"

@@ -2,8 +2,7 @@
 
 (import
   :std/iter
-  :std/vector/evector
-  ;;:std/misc/func
+  :std/vector/extensible
   :std/number/misc
   :std/number/prime
   :std/test)
@@ -13,11 +12,11 @@
     (test-case "simple primes"
       (check (map prime? (iota 20)) => [#f #f #t #t #f #t #f #t #f #f
                                            #f #t #f #t #f #f #f #t #f #t])
-      (check (evector->vector primes) => #(0 2 3 5 7 11 13))
+      (check (ExtensibleVector->vector primes) => #(0 2 3 5 7 11 13))
       (check (erathostenes-sieve 32) => (void))
-      (check (evector->vector primes) => #(0 2 3 5 7 11 13 17 19 23 29 31))
+      (check (ExtensibleVector->vector primes) => #(0 2 3 5 7 11 13 17 19 23 29 31))
       (check (nth-prime 1000) => 7919)
-      (check (evector->vector primes) =>
+      (check (ExtensibleVector->vector primes) =>
              #(0 2 3 5 7 11 13 17 19 23 29
                  31 37 41 43 47 53 59 61 67 71
                  73 79 83 89 97 101 103 107 109 113

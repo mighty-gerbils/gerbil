@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; string conversions
-(import :std/interface
-        :std/format/api)
+(import :std/interface)
 (export #t)
 
 (interface Stringer
@@ -14,9 +13,7 @@
 
 (implement Stringer
   (:t
-   (to-string
-    (lambda (self)
-      (format "%a" self))))
+   (to-string object->string))
   (:string
    (to-string identity))
   (:symbol

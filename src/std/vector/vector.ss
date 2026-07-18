@@ -11,6 +11,7 @@
   subvector->list
   cons->vector
   vector-filter
+  ;; the /index variants implement srfi-43 API (there without /index)
   vector-fold/index
   vector-fold-right/index
   vector-map/index
@@ -118,64 +119,47 @@
 ;;;   %SMALLEST-LENGTH takes care of the type checking -- which is what
 ;;;   the CALLEE argument is for --; thus, the design is tuned for
 ;;;   avoiding redundant type checks.
-(define %smallest-length
-  (letrec ((loop (lambda ((vector-list : :list) length)
-                   (if (null? vector-list)
-                       length
-                       (loop (cdr vector-list)
-                             (min (vector-length (: (car vector-list) :vector)) length))))))
-    loop))
+(def (%smallest-length (vector-list : :list) default-length)
+  (if (null? vector-list)
+    default-length
+    (%smallest-length (cdr vector-list)
+                      (min (vector-length (: (car vector-list) :vector)) default-length))))
 
-;;; (%VECTOR-FOLD1 <kons> <knil> <vector>) -> knil'
+;;; (%VECTOR-FOLD1 <start> <kons> <knil> <vector>) -> knil'
 ;;;     (KONS <index> <knil> <elt>) -> knil'
-(define %vector-fold1
-  (letrec ((loop (lambda (kons knil len vec i)
-                   (if (= i len)
-                       knil
-                       (loop kons
-                             (kons i knil (vector-ref vec i))
-                             len vec (+ i 1))))))
-    (lambda (kons knil len vec)
-      (loop kons knil len vec 0))))
+(def (%vector-fold1 (i : :fixnum) (kons : :procedure) knil (len : :fixnum) (vec : :vector))
+  (if (= i len)
+    knil
+    (%vector-fold1 (fx+ i 1)
+                   kons (kons i knil (vector-ref vec i))
+                   len vec)))
 
-;;; (%VECTOR-FOLD2+ <kons> <knil> <vector> ...) -> knil'
+;;; (%VECTOR-FOLD2+ <start> <kons> <knil> <vectors>) -> knil'
 ;;;     (KONS <index> <knil> <elt> ...) -> knil'
-(define %vector-fold2+
-  (letrec ((loop (lambda (kons knil len vectors i)
-                   (if (= i len)
-                       knil
-                       (loop kons
-                             (apply kons i knil
-                                    (vectors-ref vectors i))
-                             len vectors (+ i 1))))))
-    (lambda (kons knil len vectors)
-      (loop kons knil len vectors 0))))
+(def (%vector-fold2+ (i : :fixnum) (kons : :procedure) knil (len : :fixnum) (vectors : :list))
+  (if (= i len)
+    knil
+    (%vector-fold2+ (fx+ i 1)
+                    kons (apply kons i knil (vectors-ref vectors i))
+                    len vectors)))
 
 ;;; (%VECTOR-MAP! <f> <target> <length> <vector>) -> target
 ;;;     (F <index> <elt>) -> elt'
-(define %vector-map1!
-  (letrec ((loop (lambda (f target vec i)
-                   (if (zero? i)
-                       target
-                       (let ((j (- i 1)))
-                         (vector-set! target j
-                                      (f j (vector-ref vec j)))
-                         (loop f target vec j))))))
-    (lambda (f target vec len)
-      (loop f target vec len))))
+(def (%vector-map1! (f : :procedure) (target : :vector) (vec : :vector) (i : :fixnum))
+  (if (zero? i)
+    target
+    (let (j (fx- i 1))
+      (vector-set! target j (f j (vector-ref vec j)))
+      (%vector-map1! f target vec j))))
 
 ;;; (%VECTOR-MAP2+! <f> <target> <vectors> <len>) -> target
 ;;;     (F <index> <elt> ...) -> elt'
-(define %vector-map2+!
-  (letrec ((loop (lambda (f target vectors i)
-                   (if (zero? i)
-                       target
-                       (let ((j (- i 1)))
-                         (vector-set! target j
-                           (apply f j (vectors-ref vectors j)))
-                         (loop f target vectors j))))))
-    (lambda (f target vectors len)
-      (loop f target vectors len))))
+(def (%vector-map2+! (f : :procedure) (target : :vector) (vectors : :list) (i : :fixnum))
+  (if (zero? i)
+    target
+    (let (j (fx- i 1))
+      (vector-set! target j (apply f j (vectors-ref vectors j)))
+      (%vector-map2+! f target vectors j))))
 
 ;;; (VECTOR-FOLD <kons> <initial-knil> <vector> ...) -> knil
 ;;;     (KONS <knil> <elt> ...) -> knil' ; N vectors -> N+1 args
@@ -192,8 +176,8 @@
 ;;;     (KONS (... (KONS (KONS KNIL E_1) E_2) ... E_N-1) E_N)
 (def (vector-fold/index (kons : :procedure) knil (vec : :vector) . vectors)
   (if (null? vectors)
-    (%vector-fold1 kons knil (vector-length vec) vec)
-    (%vector-fold2+ kons knil
+    (%vector-fold1 0 kons knil (vector-length vec) vec)
+    (%vector-fold2+ 0 kons knil
                     (%smallest-length vectors (vector-length vec))
                     (cons vec vectors))))
 
@@ -210,27 +194,19 @@
 ;;; Not implemented in terms of a more primitive operations that might
 ;;; called %VECTOR-FOLD-RIGHT due to the fact that it wouldn't be very
 ;;; useful elsewhere.
-(define vector-fold-right/index
-  (letrec ((loop1 (lambda (kons knil vec i)
-                    (if (negative? i)
-                        knil
-                        (loop1 kons (kons i knil (vector-ref vec i))
-                               vec
-                               (- i 1)))))
-           (loop2+ (lambda (kons knil vectors i)
-                     (if (negative? i)
-                         knil
-                         (loop2+ kons
-                                 (apply kons i knil
-                                        (vectors-ref vectors i))
-                                 vectors
-                                 (- i 1))))))
-    (lambda ((kons : :procedure) knil (vec : :vector) . vectors)
-      (if (null? vectors)
-        (loop1  kons knil vec (- (vector-length vec) 1))
-        (loop2+ kons knil (cons vec vectors)
-                (- (%smallest-length vectors (vector-length vec))
-                   1))))))
+(def (vector-fold-right/index (kons : :procedure) knil (vec : :vector) . vectors)
+  (if (null? vectors)
+    (let lp1 ((i (fx- (vector-length vec) 1))
+              (acc knil))
+      (if (negative? i)
+        acc
+        (lp1 (fx- i 1) (kons i acc (vector-ref vec i)))))
+    (let ((vectors (cons vec vectors)))
+      (let lp2+ ((i (fx- (%smallest-length vectors (vector-length vec)) 1))
+                 (acc knil))
+        (if (negative? i)
+          acc
+          (lp2+ (fx- i 1) (apply kons i acc (vectors-ref vectors i))))))))
 
 ;;; (VECTOR-MAP <f> <vector> ...) -> vector
 ;;;     (F <elt> ...) -> value ; N vectors -> N args
@@ -293,14 +269,16 @@
 ;;;   true value is produced by PREDICATE?.  This count is returned.
 (def (vector-count/index (pred? : :procedure) (vec : :vector) . vectors)
   (if (null? vectors)
-    (%vector-fold1 (lambda (index count elt)
+    (%vector-fold1 0
+                   (lambda (index count elt)
                      (if (pred? index elt)
                        (+ count 1)
                        count))
                    0
                    (vector-length vec)
                    vec)
-    (%vector-fold2+ (lambda (index count . elts)
+    (%vector-fold2+ 0
+                    (lambda (index count . elts)
                       (if (apply pred? index elts)
                         (+ count 1)
                         count))

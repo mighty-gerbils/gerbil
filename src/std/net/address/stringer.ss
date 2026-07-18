@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; address string conversions
 (import :std/interface
+        :std/encoding/hex
         :std/string/stringer
         :std/format/ascii
         ./types)
@@ -62,10 +63,6 @@
               (lp rest (cons (string (hex b0h) (hex b0l) (hex b1h) (hex b1l)) hexes))))))
         (else
          (concat (reverse! hexes)))))))
-
-(def (hex (x : :fixnum))
-  => :char
-  (integer->char (u8vector-ref __alphabet-hex x)))
 
 (def (inet-address->string (addr : InetAddress))
   => :string
