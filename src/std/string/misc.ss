@@ -43,7 +43,7 @@
                 (if (char-whitespace? (##string-ref str right-i))
                   (loop right-i)
                   (substring str left right))
-                ""))))
+                (substring str left right)))))
         ""))))
 
 ;; If the string starts with given prefix, return the end of the string after the prefix.

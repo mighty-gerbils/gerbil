@@ -96,6 +96,128 @@
     (test-case "test as-string<?"
       (check (as-string<? '(foo: 1 bar) #(f #\o "o1" baz)) => #t)
       (check (as-string<? 'foo "foo") => #f))
+    (test-case "string-trim"
+      (check-function string-trim
+        ""          => ""
+        "   "       => ""
+        "abc"       => "abc"
+        " abc"      => "abc"
+        "abc "      => "abc"
+        " abc "     => "abc"
+        "\t foo \n" => "foo"
+        "a"         => "a"   ; single non-whitespace char — tests right-scan edge case
+        " a"        => "a"
+        "a "        => "a"))
+
+    (test-case "string-trim-prefix / string-split-prefix"
+      (check-function string-trim-prefix
+        "foo" "foobar" => "bar"
+        "foo" "foo"    => ""
+        "foo" "bar"    => "bar"
+        "foo" ""       => ""
+        ""    "abc"    => "abc")
+      (check-function string-split-prefix
+        "foo" "foobar" => (values "bar" "foo")
+        "foo" "foo"    => (values ""    "foo")
+        "foo" "bar"    => (values "bar" "")))
+
+    (test-case "string-null?"
+      (check-function string-null?
+        ""  => #t
+        "a" => #f
+        " " => #f))
+
+    (test-case "string-reverse"
+      (check-function string-reverse
+        ""      => ""
+        "a"     => "a"
+        "abc"   => "cba"
+        "abcde" 1 4 => "dcb"))   ; reverses s[1..4) = "bcd"
+
+    (test-case "string-reverse!"
+      (let (s (string-copy "abcde"))
+        (string-reverse! s)
+        (check s => "edcba"))
+      (let (s (string-copy "abcde"))
+        (string-reverse! s 1 4)   ; reverses s[1..4) = "bcd" → "dcb"
+        (check s => "adcbe")))
+
+    (test-case "string-compare"
+      (def (cmp s1 s2) (string-compare s1 s2 (lambda _ 'lt) (lambda _ 'eq) (lambda _ 'gt)))
+      (check (cmp "abc" "abc") => 'eq)
+      (check (cmp "abc" "abd") => 'lt)
+      (check (cmp "abd" "abc") => 'gt)
+      (check (cmp "ab"  "abc") => 'lt)
+      (check (cmp "abc" "ab")  => 'gt)
+      ; index passed to proc is the mismatch position in s1
+      (check (string-compare "abc" "axc" values (lambda _ #f) (lambda _ #f)) => 1))
+
+    (test-case "string-compare-ci"
+      (def (cmp s1 s2) (string-compare-ci s1 s2 (lambda _ 'lt) (lambda _ 'eq) (lambda _ 'gt)))
+      (check (cmp "ABC" "abc") => 'eq)
+      (check (cmp "ABC" "ABD") => 'lt)
+      (check (cmp "ABD" "abc") => 'gt))
+
+    (test-case "string= string<> string< string> string<= string>="
+      (check (and (string= "abc" "abc") #t) => #t)
+      (check (string= "abc" "abd")          => #f)
+      (check (string= "abc" "ab")           => #f)   ; different lengths
+      (check (and (string<> "abc" "abd") #t) => #t)
+      (check (string<> "abc" "abc")          => #f)
+      (check (and (string< "abc" "abd") #t) => #t)
+      (check (string< "abc" "abc")          => #f)
+      (check (string< "abd" "abc")          => #f)
+      (check (and (string> "abd" "abc") #t) => #t)
+      (check (string> "abc" "abc")          => #f)
+      (check (and (string<= "abc" "abc") #t) => #t)
+      (check (and (string<= "abc" "abd") #t) => #t)
+      (check (string<= "abd" "abc")          => #f)
+      (check (and (string>= "abc" "abc") #t) => #t)
+      (check (and (string>= "abd" "abc") #t) => #t)
+      (check (string>= "abc" "abd")          => #f)
+      ; with start/end substrings
+      (check (and (string= "xabcy" "abc" 1 4 0 3) #t) => #t)
+      (check (string= "xabcy" "abc" 1 3 0 3)          => #f))
+
+    (test-case "string-ci= string-ci<> string-ci< string-ci> string-ci<= string-ci>="
+      (check (and (string-ci= "ABC" "abc") #t) => #t)
+      (check (string-ci= "ABC" "abd")          => #f)
+      (check (and (string-ci<> "ABC" "abd") #t) => #t)
+      (check (string-ci<> "ABC" "abc")          => #f)
+      (check (and (string-ci< "abc" "ABD") #t) => #t)
+      (check (string-ci< "ABC" "abc")           => #f)
+      (check (and (string-ci> "ABD" "abc") #t) => #t)
+      (check (string-ci> "ABC" "abc")           => #f)
+      (check (and (string-ci<= "ABC" "abc") #t) => #t)
+      (check (and (string-ci<= "ABC" "ABD") #t) => #t)
+      (check (string-ci<= "ABD" "abc")           => #f)
+      (check (and (string-ci>= "ABC" "abc") #t) => #t)
+      (check (and (string-ci>= "ABD" "abc") #t) => #t)
+      (check (string-ci>= "ABC" "abd")           => #f))
+
+    (test-case "string-prefix-length string-suffix-length"
+      (check-function string-prefix-length
+        "abc" "abcdef" => 3
+        "abc" "abd"    => 2
+        ""    "abc"    => 0
+        "xyz" "abc"    => 0
+        "abc" "abc"    => 3)
+      (check-function string-suffix-length
+        "def" "abcdef" => 3
+        "bc"  "abc"    => 2
+        ""    "abc"    => 0
+        "xyz" "abc"    => 0))
+
+    (test-case "string-prefix-length-ci string-suffix-length-ci"
+      (check-function string-prefix-length-ci
+        "ABC" "abcdef" => 3
+        "ABC" "ABD"    => 2
+        "xyz" "abc"    => 0)
+      (check-function string-suffix-length-ci
+        "DEF" "abcdef" => 3
+        "BC"  "abc"    => 2
+        "xyz" "abc"    => 0))
+
     (test-case "string-index-right"
       (check-function string-index-right
         "abcde" #\c => 2
