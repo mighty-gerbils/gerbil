@@ -237,7 +237,6 @@
     "db"
 
     "encoding/multibase"
-    "encoding/base58"
 
     "ensemble/interface/ucan"
     "ensemble/interface/message"
