@@ -6,6 +6,7 @@
         :std/net/ssl/libssl
         :std/crypto/libcrypto
         :std/crypto/pkey
+        :std/ffi
         ./interface
         ./ucan/did)
 (export #t)
@@ -13,7 +14,8 @@
 (def (make-tls-context (host : :string)
                        (pkey : PrivKey))
   => :foreign
-  (make-self-signed-tls-context pkey.key host))
+  (check-pointer make-tls-context
+                 (make-self-signed-tls-context pkey.key host)))
 
 (def (tls-certificate->host-id (cert :~ X509?))
   => HostID

@@ -438,8 +438,8 @@ static SSL_CTX *ffi_self_signed_tls_ctx(EVP_PKEY *pkey, char *hostname)
  }
 
  r = SSL_CTX_set_min_proto_version(ctx, TLS1_3_VERSION);
-  if (r <= 0) {
-   goto error;
+ if (r <= 0) {
+  goto error;
  }
 
  x509 = X509_new();
@@ -463,7 +463,7 @@ static SSL_CTX *ffi_self_signed_tls_ctx(EVP_PKEY *pkey, char *hostname)
                            (unsigned char *)"Internet", -1, -1, 0);
  X509_set_issuer_name(x509, name);
 
- X509_sign(x509, pkey, EVP_sha256());
+ X509_sign(x509, pkey, NULL);
 
  r = SSL_CTX_use_certificate(ctx, x509);
  if (r <= 0) {
