@@ -9,15 +9,11 @@
            command flag option argument optional-argument rest-arguments)
   (only-in :std/cli/print-exit begin-print-exit)
   (only-in :std/cli/shell easy-shell-character?)
-  (only-in :std/format format)
-  (only-in :std/iter for/collect)
-  (only-in :std/misc/hash hash->list/sort)
-  (only-in :std/misc/list flatten)
-  (only-in :std/misc/number nat?)
-  (only-in :std/misc/string as-string<?)
-  (only-in :std/sort sort)
-  (only-in :std/srfi/13 string-filter)
-  (only-in :std/sugar defrule with-id))
+  :std/format
+  :std/iter
+  (only-in :std/hash/misc hash->list/sort)
+  (only-in :std/list/list flatten)
+  (only-in :std/string/misc as-string<? string-filter))
 
 (def current-program (make-parameter []))
 (def entry-points (make-hash-table))
@@ -67,7 +63,7 @@
 (define-entry-point (meta)
   (help: "Print meta-information for completion purposes"
    getopt: [])
-  (displayln (string-join (sort (map as-string (hash-keys entry-points)) string<?) " ")))
+  (displayln (string-join (list-sort string<? (map as-string (hash-keys entry-points))) " ")))
 
 ;; TODO: add a flag for shortening the layer names?
 (define-entry-point (version all?: (all? #f) layer: (layer #f))
@@ -81,7 +77,7 @@
 
 (def (call-entry-point/internal command args)
   (match (hash-get entry-points (make-symbol command))
-    (#f (raise (format "Unknown command ~s. Try command help.\n" command)))
+    (#f (raise (format "Unknown command %s. Try command help.\n" command)))
     ((entry-point _name fun _help getopt)
      (parameterize ((current-program (cons command (current-program))))
        (call-with-processed-command-line getopt args fun)))))
@@ -95,3 +91,4 @@
 (defrules define-multicall-main ()
   ((_ ctx) (with-id ctx (main) (define main call-entry-point)))
   ((d) (d d)))
+>

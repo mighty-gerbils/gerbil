@@ -4,7 +4,6 @@
 
 (import
   :std/error
-  :std/sugar
   :std/format
   (for-syntax (only-in :gerbil/expander core-bound-identifier?)))
 (export assert! assertion-failed?)
@@ -57,6 +56,6 @@
     (assert!/fail message condition-expr extras)))
 
 (def (assert!/fail message condition-expr extras)
-  (def hd (format "Assertion failed ~a: ~s" message condition-expr))
-  (def str (apply string-append hd (map (match <> ((cons k v) (format "\n  ~s => ~r" k v))) extras)))
+  (def hd (format "Assertion failed %a: %w" message condition-expr))
+  (def str (apply string-append hd (map (match <> ((cons k v) (format "\n  %w => %w" k v))) extras)))
   (raise-assertion-failed str))

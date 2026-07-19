@@ -4,14 +4,11 @@
 (export #t)
 
 (import
-  :gerbil/gambit
   :std/error
-  :std/misc/list
-  :std/misc/ports
-  :std/misc/repr
-  :std/sugar)
+  :std/list/list
+  :std/misc/ports)
 
-(def value-printer (make-parameter prn))
+(def value-printer (make-parameter write))
 
 (def (print-values . vs)
   (unless (equal? vs [(void)])

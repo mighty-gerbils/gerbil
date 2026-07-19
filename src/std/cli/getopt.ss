@@ -2,6 +2,7 @@
 ;;; (C) vyzo
 ;;; Command-line option and command argument parsing
 (import :std/error
+        :std/format
         :std/iter
         :std/hash/misc
         :std/list/list
@@ -22,7 +23,9 @@
         rest-arguments
         call-with-getopt
         getopt-parse->function-arguments
-        call-with-getopt-parse)
+        call-with-getopt-parse
+        call-with-processed-command-line
+        ->getopt-spec)
 
 (def current-getopt-parser
   (make-parameter #f))
@@ -432,3 +435,17 @@
 
 (def (call-with-getopt-parse gopt hash fun)
   (apply fun (getopt-parse->function-arguments gopt hash)))
+
+(def (call-with-processed-command-line processor command-line function)
+  (cond
+   ((!getopt? processor)
+    (call-with-getopt-parse processor (getopt-parse processor command-line) function))
+   ((list? processor)
+    (call-with-processed-command-line (apply getopt processor) command-line function))))
+
+(def (->getopt-spec spec)
+  (cond
+   ((list? spec) (flatten spec))
+   ((fixnum? spec) (for/collect ((i (in-range 1 (1+ spec)))) (argument (format "arg%d" i))))
+   ((not spec) (rest-arguments "rest"))
+   (else (error "Bad getopt spec"))))

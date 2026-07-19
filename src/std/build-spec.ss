@@ -9,6 +9,7 @@
     "error"
     "interface"
     "deprecation"
+    "assert"
 
     "list/list-builder"
     "list/list"
@@ -31,8 +32,9 @@
 
     "struct/queue"
 
-    "sync/completion"
+    "sync/atom"
     "sync/channel"
+    "sync/completion"
     "sync/barrier"
     "sync/wg"
 
@@ -55,6 +57,9 @@
     "string/misc"
 
     "cli/getopt"
+    "cli/multicall"
+    "cli/print-exit"
+    "cli/shell"
 
     "text/pregexp"
     "text/parser/char-set"
@@ -244,6 +249,8 @@
     "net/http/server/api"
     "net/http/server"
 
+    ;;"net/json-rpc"
+
     "db/interface"
     "db/db"
     "db/query"
@@ -259,19 +266,11 @@
 #;(def (build-spec . _)
   `(
     "metaclass"
-    "hash-table"
-    "interactive"
     "ssi"
     "foreign"
     ;; tests for :std/foreign
     "foreign-test-support"
     "deprecation"
-    "format"
-    "pregexp"
-    "sort"
-    "sugar"
-    "values"
-    "assert"
 
     "build-script"
     (gxc: "error" ,@(include-gambit-sharp))
@@ -294,11 +293,6 @@
     "contract"
     (gxc: "interface" ,@(include-gambit-sharp))
     "instance"
-    ;; cli
-    "cli/getopt"
-    "cli/shell"
-    "cli/print-exit"
-    "cli/multicall"
     ;; debugging
     "debug/DBG"
     (gxc: "debug/heap" ,@(include-gambit-sharp))
@@ -431,7 +425,6 @@
 
     "net/uri"
     "net/request"
-    "net/json-rpc"
     "net/s3"
     "net/s3/interface"
     "net/s3/api"

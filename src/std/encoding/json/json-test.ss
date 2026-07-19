@@ -59,7 +59,7 @@
 ;; check-pretty: verify encoding AND that the result decodes back to the same object.
 ;; Use string-keyed walists (= default decode representation) so equal? works on round-trip.
 (defrule (check-pretty (option ...) checks ...)
-  (check-function (cut pretty-json <> out: #f option ...) checks ...))
+  (check-function (cut pretty-json #f <> option ...) checks ...))
 
 ;;;
 ;;; Test suite

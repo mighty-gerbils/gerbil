@@ -1,13 +1,12 @@
 ;;; -*- Gerbil -*-
 ;;; std/net/json-rpc unit-test
 
-(import :std/iter
-        :std/net/httpd
+(import :std/encoding/json
+        :std/iter
+        :std/net/http/server
         :std/net/request
         :std/net/json-rpc
-        :std/sugar
-        :std/test
-        :std/text/json)
+        :std/test)
 (export json-rpc-test)
 
 (def server-address

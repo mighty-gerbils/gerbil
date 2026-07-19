@@ -27,18 +27,20 @@
   decode-json-rpc-response)
 
 (import
+  :std/encoding/json
+  :std/encoding/json/util
+  :std/interface
+  :std/net/http/server/interface
+  :std/net/http/server/status
+  :std/net/http/server/request
   (only-in :std/error raise-bad-argument deferror-class IOError Error raise/context)
-  (only-in :std/misc/atom atomic-counter)
-  (only-in :std/net/httpd http-response-write http-response-write-condition
-           http-request-body http-request-params http-request-method
-           Bad-Request Internal-Server-Error)
-  (only-in :std/net/request http-post http-get request-response-bytes)
+  (only-in :std/sync/atom atomic-counter)
+  (only-in :std/net/request http-post http-get Request-content)
+  (only-in :std/net/http/client/request Request-content)
   (only-in :std/net/ssl default-client-ssl-context)
   (only-in :std/net/uri form-url-decode uri-decode)
-  (only-in :std/sugar try catch hash)
-  (only-in :std/text/base64 u8vector->base64-string base64-string->u8vector)
-  (only-in :std/text/json trivial-json-object->class JSON read-json-key-as-symbol?
-           bytes->json-object json-object->bytes json-object->string))
+  (only-in :std/net/url URL-with-query as-url)
+  (only-in :std/encoding/base64 base64-encode base64-decode))
 
 (deferror-class (JSON-RPCError IOError)
   (code                                 ; SInt16
@@ -62,25 +64,24 @@
   (lambda (self)
     (hash ("code" (@ self code)) ("message" (@ self message)) ("data" (@ self data)))))
 (def (json->json-rpc-error json)
-  (trivial-json-object->class JSON-RPCError::t json))
+  (trivial-json->object JSON-RPCError::t json))
 
 (def json-rpc-version "2.0")
 
-(defclass (json-rpc-request JSON)
+(defclass (json-rpc-request)
   (jsonrpc   ;; String, must be the same as json-rpc-version ("2.0"), can undefined for version 1.0
    method    ;; String
    params    ;; Json, array (arguments by position) or object (arguments by name)
    id)       ;; Json, MUST be an number, a string, or JSON null aka Scheme (void). SHOULD be an integer if a number. (void) if no response is required.
   transparent: #t)
 
-(defclass (json-rpc-response JSON)
+(defclass (json-rpc-response)
   ;; Note: a 2.0 server MUST include only one of result or error.
   ;; But a 1.0 or 1.1 server may leave the other null.
   (jsonrpc   ;; String, must be the same as json-rpc-version ("2.0")
    result    ;; Json, JSON null (Scheme void) if there is an error
    error     ;; Json, JSON null (Scheme void) if there is no error
    id)       ;; Json, MUST be the same as provided in the request.
-  transparent: #t
   constructor: :init!)
 
 (defmethod {:init! json-rpc-response}
@@ -116,20 +117,19 @@
 (def (transport-error m (e (void)))
   (json-rpc-error code: -32300 message: m data: e))
 
-(deferror-class (MalformedRequest JSON Error) (method params message)
+(deferror-class (MalformedRequest Error) (method params message)
   malformed-request?
   class-instance-init!)
-(deferror-class (MalformedResponse JSON Error) (request-id response message)
+(deferror-class (MalformedResponse Error) (request-id response message)
   malformed-response?
   class-instance-init!)
 
-(def (bytes->json b) ;; Don't intern JSON keys, using strings
-  (parameterize ((read-json-key-as-symbol? #f)) (bytes->json-object b)))
+(def (bytes->json b) (u8vector->json b default-json-read-options))
+(def (json->bytes j) (json->u8vector j default-json-write-options))
 
 ;;; Client code
 ;; TODO: implement timeouts, with semi-asynchronous shutdown of the http-post thread itself.
 (def (json-rpc server-url method (params (void))
-               auth: (auth #f)
                headers: (headers #f)
                cookies: (cookies #f)
                ssl-context: (ssl-context (default-client-ssl-context))
@@ -142,11 +142,11 @@
   (when log
     (log [json-rpc: server-url method: method params: encoded-params id: id]))
   (def response-bytes
-    (request-response-bytes
+    (Request-content
      (case http-method
        ((POST) ;; POST is the recommended http-method, and the only one supported by many servers.
-        (let (data
-              (try (json-object->bytes
+        (let (body
+              (try (json->bytes
                     (json-rpc-request jsonrpc: json-rpc-version
                                       method: method params: encoded-params id: id))
                    (catch (e)
@@ -154,11 +154,9 @@
                       (MalformedRequest method: method params: encoded-params
                                         message: (error-message e))))))
           (http-post server-url
-                     auth: auth
                      headers: headers
                      ssl-context: ssl-context
-                     cookies: cookies
-                     data: data)))
+                     body: body)))
        ;; NB: the GET http-method is strongly disrecommended:
        ;; It is only supported by few servers,
        ;; only appropriate for calls to safe and idempotent methods
@@ -168,7 +166,7 @@
        ((GET)
         (set! id (number->string id)) ;; GET method wants string id.
         (let* ((base64-params
-                (try (u8vector->base64-string (json-object->bytes encoded-params))
+                (try (base64-encode (json->bytes encoded-params))
                      (catch (e)
                        (raise/context (MalformedRequest
                                        method: method params: params
@@ -177,13 +175,13 @@
                 `(("jsonrpc" .,json-rpc-version)
                   ("method" .,method)
                   ("params" .,base64-params)
-                  ("id" .,id))))
-          (http-get server-url
-                    auth: auth
+                  ("id" .,id)))
+               (url (URL-with-query
+                     (as-url server-url)
+                     uri-params)))
+          (http-get url
                     headers: headers
-                    params: uri-params
-                    ssl-context: ssl-context
-                    cookies: cookies)))
+                    ssl-context: ssl-context)))
        (else (raise-bad-argument json-rpc "http method: invalid" http-method)))))
   (def response-json
     (try
@@ -204,7 +202,7 @@
     (raise/context
      (MalformedResponse request-id: request-id response: response-json
                         message: (error-message e))))
-  (def response (with-catch mal! (cut trivial-json-object->class json-rpc-response::t response-json)))
+  (def response (with-catch mal! (cut trivial-json->object json-rpc-response::t response-json)))
   (def jsonrpc (@ response jsonrpc))
   (def result (@ response result))
   (def error (@ response error))
@@ -223,46 +221,59 @@
 
 ;;; Server code
 
+(defstruct JSONRPCRequestHandler
+  ((processor : :procedure)
+   log)
+)
+
+(implement RequestHandler JSONRPCRequestHandler
+  (handle-request!
+   (lambda (self req res)
+     (json-rpc-handler req res self.processor self.log))))
+
 ;; http handler for json-rpc
 ;; NB: This will catch any exception raised and convert it into an error notified to the client.
 ;; TODO: have an optional parameter to specify a logging facility for those errors we find.
-(def (json-rpc-handler processor log: (log #f))
-  (lambda (req res)
-    ;; NB: the JSON RPC over HTTP says that the client MUST specify
-    ;; application/json-rpc (preferably) or else application/json or application/jsonrequest
-    ;; in a Content-Type header, and MUST specify and Accept header with one (or many) of them
-    ;; and that a Content-Length header MUST be present... but frankly, no one bothers,
-    ;; and enforcing any of it would make the server needlessly incompatible with clients,
-    ;; so we don't bother either.
-    (def http-method (http-request-method req))
-    (case http-method
-      ((POST) (json-rpc-handler/POST req res processor log)) ;; preferred method
-      ((GET) (json-rpc-handler/GET req res processor log)) ;; mostly for testing
-      (else
-       (when log (log [json-rpc-handler: 'BAD-HTTP-METHOD http-method]))
-       (http-response-write-condition res Bad-Request)))))
+(def (json-rpc-handler (req : Request) (res : ResponseHandler)
+                       (processor : :procedure) (log :? :procedure := #f))
+  ;; NB: the JSON RPC over HTTP says that the client MUST specify
+  ;; application/json-rpc (preferably) or else application/json or application/jsonrequest
+  ;; in a Content-Type header, and MUST specify an Accept header with one (or many) of them
+  ;; and that a Content-Length header MUST be present... but frankly, no one bothers,
+  ;; and enforcing any of it would make the server needlessly incompatible with clients,
+  ;; so we don't bother either.
+  (def http-method req.method)
+  (case http-method
+    ((POST) (json-rpc-handler/POST req res processor log)) ;; preferred method
+    ((GET) (json-rpc-handler/GET req res processor log)) ;; mostly for testing
+    (else
+     (when log (log [json-rpc-handler: 'BAD-HTTP-METHOD http-method]))
+     (using (handler Bad-Request : RequestHandler)
+       (handler.handle-request! req res)))))
 
-(def (json-rpc-handler/POST req res processor log)
+(def (json-rpc-handler/POST (req : Request) (res : ResponseHandler)
+                            (processor : :procedure) (log :? :procedure))
   (let/cc return
     (def request-json
       (try
-       (bytes->json (http-request-body req))
+       (bytes->json req.body)
        (catch (_)
          (json-rpc-handler/response
-          res log 'BAD-POST
+          req res log 'BAD-POST
           (hash ("jsonrpc" json-rpc-version) ("error" (parser-error))))
          (return))))
     (json-rpc-handler/JSON res processor log request-json)))
 
-(def (json-rpc-handler/GET req res processor log)
+(def (json-rpc-handler/GET (req : Request) (res : ResponseHandler)
+                           (processor : :procedure) (log :? :procedure))
   (let/cc return
     (def request-json
       (try
-       (def url-params (form-url-decode (http-request-params req)))
+       (def url-params (form-url-decode req.url.query))
        (def method (aget "method" url-params (void)))
        (unless method (raise 'parser-error))
        (def params (bytes->json
-                    (base64-string->u8vector
+                    (base64-decode
                      (uri-decode (aget "params" url-params)))))
        (def json (hash ("method" method) ("params" params)))
        (alet (jsonrpc (aget "jsonrpc" url-params))
@@ -272,12 +283,12 @@
        json
        (catch (_)
          (json-rpc-handler/response
-          res log 'BAD-GET (hash ("jsonrpc" json-rpc-version) ("error" (parser-error))))
+          req res log 'BAD-GET (hash ("jsonrpc" json-rpc-version) ("error" (parser-error))))
          (return))))
     (json-rpc-handler/JSON res processor log request-json)))
 
-(def (json-rpc-handler/JSON res processor log request-json)
-  (json-rpc-handler/response res log request-json (serve-json-rpc processor request-json)))
+(def (json-rpc-handler/JSON req res processor log request-json)
+  (json-rpc-handler/response req res log request-json (serve-json-rpc processor request-json)))
 
 ;; The processor either returns a JSON object, or raise a json-rpc-error
 ;; Any other error raised will cause an internal error.
@@ -304,14 +315,20 @@
      (if notification? (void) (hash ("jsonrpc" jsonrpc) ("id" id) ("result" result)))
      (catch (e) (return-error (if (json-rpc-error? e) e (internal-error (error-message e))))))))
 
-(def (json-rpc-handler/response res log request-json response-json)
+(def (json-rpc-handler/response
+      (req : Request)
+      (res : ResponseHandler)
+      log
+      request-json
+      response-json)
   (let/cc return
     (def response-text
       (try
-       (json-object->string response-json)
+       (json->u8vector response-json)
        (catch (_)
          (when log (log [json-rpc-handler: request-json 'BAD-JSON-RESPONSE]))
-         (http-response-write-condition res Internal-Server-Error)
+         (using (handler Internal-Server-Error : RequestHandler)
+           (handler.handle-request! req res))
          (return))))
     (when log (log [json-rpc-handler: request-json response-json]))
-    (http-response-write res 200 `(("Content-Type" . "text/json-rpc")) response-text)))
+    (res.write! OK `(("Content-Type" . "text/json-rpc")) response-text)))

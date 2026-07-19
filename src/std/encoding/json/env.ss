@@ -18,11 +18,11 @@
   => JSONReadOptions
   (JSONReadOptions key-as-symbol array-as-vector object-as-hash))
 
-(def __default-json-read-options
+(def default-json-read-options
   (JSONReadOptions #f #f #f))
 
 (def current-json-read-options
-  (make-parameter __default-json-read-options))
+  (make-parameter default-json-read-options))
 
 ;;; Writer options: control Scheme → JSON encoding
 (defstruct JSONWriteOptions
@@ -38,11 +38,11 @@
   => JSONWriteOptions
   (JSONWriteOptions sort-keys pretty indent))
 
-(def __default-json-write-options
+(def default-json-write-options
   (JSONWriteOptions #f #f 2))
 
 (def current-json-write-options
-  (make-parameter __default-json-write-options))
+  (make-parameter default-json-write-options))
 
 ;;; Write context: bundles writer options + optional cycle detection + mutable indent level
 (defclass JSONWriteContext

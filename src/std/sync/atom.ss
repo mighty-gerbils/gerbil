@@ -11,8 +11,7 @@
 ;;   but only one set of functions for atoms.
 ;; - Also export atom-increment! and atomic-counter for the common case.
 
-(import :std/error
-        :std/sugar)
+(import :std/error)
 
 (export atom
         (rename: Atom-value atom-deref)
@@ -30,7 +29,7 @@
 
 (defstruct Atom
   (mutex value validator watchers)
-  final: #t )
+  final: #t)
 
 (def (atom (initial-value (void)) validator: (validator #f))
   (Atom (make-mutex 'atom) initial-value validator (hash)))
@@ -107,12 +106,12 @@
 (def (atom-increment! atom (increment 1))
   (swap! atom + increment))
 
-(def (atomic-counter (initial-value -1))
-  (let (a (atom initial-value))
-    (lambda ()
-      (let (mx (&Atom-mutex a))
-        (mutex-lock! mx)
-        (let (new (1+ (&Atom-value a)))
-          (set! (&Atom-value a) new)
-          (mutex-unlock! mx)
-          new)))))
+(def (atomic-counter (initial-value : :fixnum := 0))
+  (let (v (vector initial-value))
+    (lambda ((increment : :fixnum := 1))
+      (let retry ()
+        (let* ((oldval (vector-ref v 0))
+               (newval (fx+ oldval increment)))
+          (if (##fx= (##vector-cas! v 0 newval oldval) oldval)
+            oldval
+            (retry)))))))

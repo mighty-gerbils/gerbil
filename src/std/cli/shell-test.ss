@@ -2,9 +2,10 @@
 
 (import
   :std/error
-  :std/misc/string :std/srfi/13
+  :std/format
+  :std/string/misc
   :std/test
-  :std/pregexp :std/misc/repr :std/sugar :std/format
+  :std/text/pregexp
   :std/cli/shell)
 
 (def shell-test

@@ -10,6 +10,13 @@
         :std/io/bio/api
         ./env)
 (export write-json-object
+        write-json-string
+        write-json-number
+        write-json-float
+        write-json-list
+        write-json-vector
+        write-json-alist
+        json-simple?
         json-key-string
         json-sort-alist)
 (declare (not safe))
@@ -336,3 +343,4 @@
           (else wr)))
       (writer.write-rbrace)
       wr)))
+

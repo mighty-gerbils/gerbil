@@ -1,10 +1,10 @@
 ;;; -*- Gerbil -*-
 ;;; :std/misc/atom test
 
-(import :std/misc/atom
-        :std/misc/list
+(import :std/list/list
+        :std/iter
         :std/test
-        :std/iter)
+        :std/sync/atom)
 (export atom-test)
 
 (def atom-test
@@ -37,10 +37,10 @@
       (def my-counter (atomic-counter))
       (check-equal? (my-counter) 0)
       (check-equal? (my-counter) 1)
-      (check-equal? (my-counter) 2)
-      (check-equal? (my-counter) 3)
-      (check-equal? (my-counter) 4)
+      (check-equal? (my-counter 4) 2)
+      (check-equal? (my-counter) 6)
+      (check-equal? (my-counter -1) 7)
       (def other-counter (atomic-counter 42))
+      (check-equal? (other-counter) 42)
       (check-equal? (other-counter) 43)
-      (check-equal? (other-counter) 44)
       )))

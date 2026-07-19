@@ -1,7 +1,7 @@
 (export assert-test)
 (import :std/test
         :std/assert
-        :std/pregexp)
+        :std/text/pregexp)
 
 (def assert-test
   (test-suite "test :std/assert"

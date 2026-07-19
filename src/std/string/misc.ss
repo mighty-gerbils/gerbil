@@ -2,31 +2,40 @@
 ;;;; String utilities
 
 (export
+  string-drop
+  string-drop-right
   string-trim
-  string-split-prefix
   string-trim-prefix
-  string-split-suffix
   string-trim-suffix
-  string-split-eol
+  string-split-prefix
+  string-split-suffix
+  +cr+ +lf+ +crlf+
   string-trim-eol
+  string-split-eol
   string-subst
   string-substitute-char
   string-substitute-char-if
   string-whitespace?
-  string-index-right
+  random-word-char
   random-string
-  +cr+ +lf+ +crlf+
   as-string<?
   ;; Imports from srfi-13:
+  string-index-right
   string-compare string-compare-ci
   string=    string<    string>    string<=    string>=    string<>
   string-ci= string-ci< string-ci> string-ci<= string-ci>= string-ci<>
   string-prefix-length string-prefix-length-ci string-suffix-length string-suffix-length-ci
-  string-null? string-reverse string-reverse!
+  string-null? string-reverse string-reverse! string-every string-fold string-filter string-delete
   )
 
 (import :std/error
         :std/iter)
+
+(def (string-drop (s : :string) (count : :fixnum)) => :string
+  (substring s count (string-length s)))
+
+(def (string-drop-right (s : :string) (count : :fixnum)) => :string
+  (substring s 0 (fx- (string-length s) count)))
 
 (def (string-trim (str : :string))
   => :string
@@ -53,8 +62,12 @@
     (string-drop string (string-length prefix))
     string))
 
-(def (string-drop (s : :string) (count : :fixnum)) => :string
-  (substring s count (string-length s)))
+;; If the string ends with given suffix, return the beginning of the string up to the suffix.
+;; Otherwise, return the entire string. NB: Only remove the suffix once.
+(def (string-trim-suffix (suffix : :string) (string : :string)) => :string
+  (if (string-suffix? suffix string)
+    (string-drop-right string (string-length suffix))
+    string))
 
 ;; Split a string based on the given prefix, if present.
 ;; Return two values:
@@ -64,17 +77,6 @@
   (let ((trimmed (string-trim-prefix prefix string)))
     (if (eq? trimmed string) (values string "") (values trimmed prefix))))
 
-
-;; If the string ends with given suffix, return the beginning of the string up to the suffix.
-;; Otherwise, return the entire string. NB: Only remove the suffix once.
-(def (string-trim-suffix (suffix : :string) (string : :string)) => :string
-  (if (string-suffix? suffix string)
-    (string-drop-right string (string-length suffix))
-    string))
-
-(def (string-drop-right (s : :string) (count : :fixnum)) => :string
-  (substring s 0 (fx- (string-length s) count)))
-
 ;; Split a string based on the given suffix, if present.
 ;; Return two values:
 ;; - the trimmed string,
@@ -83,16 +85,16 @@
   (let ((trimmed (string-trim-suffix suffix string)))
     (if (eq? trimmed string) (values string "") (values trimmed suffix))))
 
-
 ;; Line endings
 (define +cr+ "\r")
 (define +lf+ "\n")
 (define +crlf+ "\r\n")
 
-;; TODO: do we want a parameter to list the allowed line endings in the current context?
-;; a function to add the default line-ending, which would be the first in that list,
+;; Do we want a parameter to list the allowed line endings in the current context?
+;; And a function to add the default line-ending, which would be the first in that list,
 ;; or maybe a separate parameter? Indeed, we can't just iterate through such a list
 ;; to find the longest suffix if +lf+ is in front of +crlf+ -- longer must be tested first.
+;; sounds overkill. Let's not do that unless we really find a need.
 
 ;; Trim any single end-of-line marker CR, LF or CRLF at the end of the string.
 ;; NB: This function will only remove one end-of-line marker,
@@ -103,7 +105,6 @@
     ((_ eol fallback) (let ((trimmed (string-trim-suffix eol string)))
                         (if (eq? trimmed string) fallback trimmed))))
   (try +crlf+ (try +lf+ (try +cr+ string)))) ;; NB: note how we try the longer +crlf+ *before* +lf+.
-
 
 ;; Split a string based on any end-of-line marker CR, LF or CRLF at the end of the string.
 ;; Return two values:
@@ -205,94 +206,6 @@
        (str-empty? str)
        (else       (subst-helper-nonempty-old str old new count))))))
 
-;; Returns true when the string s consists only of whitespace characters.
-;;
-;;   " "   space
-;;   "\n"  line feed
-;;   "\t"  horizontal tab
-;;   "\r"  carriage return
-;;   "\f"  form feed
-;;   "\v"  vertical tab
-;;
-;; Example:
-;;  (string-whitespace? " \n\r \t") => #t
-(def (string-whitespace? (s : :string)) => :boolean
-  (string-every char-whitespace? s))
-
-(def (string-every (pred : :procedure) (s : :string)) => :boolean
-  (let (len (string-length s))
-    (let loop ((i 0 :- :fixnum)) => :boolean
-      (if (fx< i len)
-        (let (next (string-ref s i))
-          (if (pred next)
-            (loop (fx+ i 1))
-            #f))
-        #t))))
-
-(def (random-word-char) => :char
-  (declare (not safe) (fixnum))
-  (def n (random-integer 63))
-  (integer->char
-   (+ n (cond
-	 ((< n 10) 48) ; 0-9
-	 ((< n 36) 55) ; A-Z
-	 ((< n 62) 61) ; a-z
-	 (else 33))))) ; _
-
-
-;; random-string returns a string consisting of regex word-boundary
-;; characters [a-zA-Z0-9_]. Throws an error if len is not a fixnum.
-;;
-;; Example:
-;;  (random-string) => "5CfMyYd2Ob"
-(def (random-string (len : :fixnum := 10)) => :string
-  (declare (not safe) (fixnum))
-  (unless (fixnum? len)
-    (raise-bad-argument random-string "fixnum" len))
-  (if (> len 0)
-    (let (str (make-string len))
-      (do ((i 0 (1+ i)))
-	  ((= i len))
-	(string-set! str i (random-word-char)))
-      str)
-    ""))
-
-;; str converts all of its arguments into a single string.
-;; When called without an argument an empty string is returned.
-;;
-;; Examples:
-;;  (str 2.0)               => "2.0"
-;;  (str "hello" ", world") => "hello, world"
-;; (def* str
-;;   ((v) (if (string? v) v
-;;            (format (str-format v) v)))
-;;   (xs (if (andmap string? xs)
-;;         (string-concatenate xs)
-;;         (call-with-output-string
-;;          (lambda (port)
-;;            (let loop ((rest xs))
-;;              (match rest
-;;                ([v . rest]
-;;                 (if (string? v)
-;;                   (write-string v port)
-;;                   (fprintf port (str-format v) v))
-;;                 (loop rest))
-;;                (else (void)))))))))
-
-;; str-format takes any value and returns a formatting string, which can be
-;; used by the :std/format family of procedures. Considers the :pr method
-;; from :std/misc/repr.
-;;
-;; Examples:
-;;  (str-format 5.0)   => "~f"
-;;  (str-format [1 2]) => "~r"
-;; (def (str-format v)
-;;   (def (obj-pr? v) (method-ref v ':pr))
-;;   (cond
-;;    ((? (and number? inexact?) v) "~f")
-;;    ((? (or list? hash-table? vector? ##values? obj-pr?) v) "~r")
-;;    (else "~a")))
-
 ;; Like CL SUBSTITUTE-IF but specialized for strings and chars. Mind the argument order.
 (def (string-substitute-char-if
       (string : :string) (newchar : :char) (predicate : :procedure)
@@ -341,12 +254,60 @@
      string newchar predicate
      start: start end: end count: count from-end: from-end? in-place: in-place?)))
 
+;; Returns true when the string s consists only of whitespace characters.
+;;
+;;   " "   space
+;;   "\n"  line feed
+;;   "\t"  horizontal tab
+;;   "\r"  carriage return
+;;   "\f"  form feed
+;;   "\v"  vertical tab
+;;
+;; Example:
+;;  (string-whitespace? " \n\r \t") => #t
+(def (string-whitespace? (s : :string)) => :boolean
+  (string-every char-whitespace? s))
+
+(def (random-word-char) => :char
+  (declare (not safe) (fixnum))
+  (def n (random-integer 63))
+  (integer->char
+   (+ n (cond
+	 ((< n 10) 48) ; 0-9
+	 ((< n 36) 55) ; A-Z
+	 ((< n 62) 61) ; a-z
+	 (else 33))))) ; _
+
+;; random-string returns a string consisting of regex word-boundary
+;; characters [a-zA-Z0-9_]. Throws an error if len is not a fixnum.
+;;
+;; Example:
+;;  (random-string) => "5CfMyYd2Ob"
+(def (random-string (len : :fixnum := 10)) => :string
+  (declare (not safe) (fixnum))
+  (unless (fixnum? len)
+    (raise-bad-argument random-string "fixnum" len))
+  (if (> len 0)
+    (let (str (make-string len))
+      (do ((i 0 (1+ i)))
+	  ((= i len))
+	(string-set! str i (random-word-char)))
+      str)
+    ""))
+
 (def (as-string<? x y) => :boolean
   (string<? (as-string x) (as-string y)))
 
+;;;;; SRFI-13 compatibility
+
+(def (char-predicate criterion) => :procedure
+  (cond
+   ((procedure? criterion) criterion)
+   ((char? criterion) (lambda (c) (eq? c criterion)))
+   (else (raise-bad-argument char-predicate "predicate or char" criterion))))
 
 (def (string-index-right (str : :string) criterion (start 0 : :fixnum) (end :? :fixnum := #f))
-  (string-rindex str criterion (fx- (or end (string-length str)) 1) start))
+  (string-rindex str (char-predicate criterion) (fx- (or end (string-length str)) 1) start))
 
 ;;;; Comparison functions taken from srfi-13, until we get them from Gambit.
 
@@ -626,5 +587,59 @@
     (let ((ci (string-ref s i)))
       (string-set! s i (string-ref s j))
       (string-set! s j ci))))
+
+(def (string-every criterion
+                   (s : :string)
+                   (start : :fixnum := 0)
+                   (end : :fixnum := (string-length s)))
+                   => :boolean
+  (check-argument (<= 0 start (string-length s)) "string index" [start s])
+  (check-argument (<= 0 end (string-length s)) "string index" [end s])
+  (let ((pred (char-predicate criterion)))
+    (let loop ((i start :- :fixnum)) => :boolean
+      (or (fx< i end)
+          (and (pred (string-ref s i))
+               (loop (fx+ i 1)))))))
+
+(def (string-fold (kons : :procedure) knil
+                  (s : :string) (start 0 : :fixnum) (end (string-length s) : :fixnum))
+  (let lp ((v knil) (i start))
+    (if (fx< i end)
+      (lp (kons (string-ref s i) v) (fx+ i 1))
+      v)))
+
+;;; Filtering strings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; string-delete char/pred string [start end]
+;;; string-filter char/pred string [start end]
+
+(def (string-delete criterion
+                    (s : :string)
+                    (start 0 : :fixnum)
+                    (end (string-length s) : :fixnum)) => :string
+  (let* ((pred (char-predicate criterion))
+         (slen (- end start))
+	 (temp (make-string slen))
+	 (ans-len (string-fold (lambda ((c :- :char) (i :- :fixnum))
+                                 (if (criterion c) i
+                                     (begin (string-set! temp i c)
+                                            (fx+ i 1))))
+                               0 s start end)))
+    (if (= ans-len slen) temp (substring temp 0 ans-len))))
+
+(def (string-filter criterion
+                    (s : :string)
+                    (start 0 : :fixnum)
+                    (end (string-length s) : :fixnum)) => :string
+  (let* ((pred (char-predicate criterion))
+         (slen (- end start))
+	 (temp (make-string slen))
+	 (ans-len (string-fold (lambda ((c :- :char) (i :- :fixnum))
+                                 (if (criterion c)
+                                   (begin (string-set! temp i c)
+                                          (fx+ i 1))
+                                   i))
+                               0 s start end)))
+    (if (= ans-len slen) temp (substring temp 0 ans-len))))
 
 ;;;; End of extract from srfi-13
