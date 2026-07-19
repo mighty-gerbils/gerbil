@@ -144,13 +144,16 @@
 ;; What character (we assume ASCII) for the given digit in the given base (up to 36)?
 ;; Return #f if N isn't a digit number that has a corresponding character in the given base.
 ;; : Integer (Optional Integer 10) (Optional Bool #f) -> (Or Char #f)
-(def (digit-char n (base : :fixnum := 10) (upper-case? : :boolean := #f))
+(def (digit-char n (base 10) (upper-case? #f))
   (and (exact-integer? n) (exact-integer? base)
        (<= 2 base 36) (< -1 n base)
-       (integer->char (+ n (cond
-                            ((< n 10) 48) ;; ASCII 0-9
-                            (upper-case? 55) ;; ASCII A-Z
-                            (else 87)))))) ;; ASCII a-z
+       (integer->char (unsafe-digit-char-integer n (and upper-case? #t)))))
+
+(def (unsafe-digit-char-integer (n :- :fixnum) (upper-case? :- :boolean)) => :fixnum
+  (fx+ n (cond
+          ((fx< n 10) 48)  ;; ASCII 0-9
+          (upper-case? 55) ;; ASCII A-Z
+          (else 87))))     ;; ASCII a-z
 
 ;; Is the result from read-char or peek-char from a Port or Reader a line terminator?
 ;; : Any -> Bool
