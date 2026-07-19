@@ -6,7 +6,7 @@
         :std/serde/serialize
         :std/serde/interned
         :std/iter
-        :std/number/misc
+        (only-in :std/number/writer write-integer integer-write-length)
         ./ascii
 	./env)
 (export #t)
@@ -259,179 +259,104 @@
     (writer.write-raw-keyword/quote key)))
 
 
-(defsyntax-case do-write-sign ()
-  ((_ writer int sign? negative?)
-   (with-identifiers ((writer.write-minus #'writer #'writer ".write-minus")
-                      (writer.write-plus  #'writer #'writer ".write-plus"))
-     #'(if sign?
-         (if (negative? int)
-           (writer.write-minus)
-           (writer.write-plus))
-         (if (negative? int)
-           (writer.write-minus)
-           0)))))
-
-(defsyntax-case do-write-int-digits ()
-  ((_ writer int alphabet gits <? // %%)
-   (with-identifiers ((writer.write-u8    #'writer #'writer ".write-u8")
-                      (writer.write-zeros #'writer #'writer ".write-zeros"))
-     #'(let (base (u8vector-length alphabet))
-         (do-write (wr 0)
-           (if (fx> gits 1)
-             (let* ((width (integer-digit-count int base))
-                    (lead  (fx% width gits)))
-               (if (fx> lead 0)
-                 (writer.write-zeros (fx- gits lead))
-                 0))
-             0)
-           (let loop ((x int))
-             => :fixnum
-             (if (<? x base)
-               (writer.write-u8 (##u8vector-ref alphabet x))
-               (let* ((q (// x base))
-                      (r (%% x base)))
-                 (do-write (wr 0)
-                   (loop q)
-                   (writer.write-u8 (##u8vector-ref alphabet r))
-                   wr))))
-           wr)))))
-
-(defwriter-ext (write-fixnum writer
-                             (int      : :fixnum)
-                             (alphabet : :u8vector)
-                             (gits     : :fixnum)
-                             (sign?    : :boolean))
-  (do-write (wr 0)
-    (do-write-sign writer int sign? fxnegative?)
-    (do-write-int-digits  writer (fxabs int) alphabet gits fx< fx/ fx%)
-    wr))
-
 (defwriter-ext (write-fixnum-binary writer (int : :fixnum))
-  (writer.write-fixnum int __alphabet-binary 1 #f))
+  (write-integer writer int base: 2))
 
 (defwriter-ext (write-fixnum-octal writer (int : :fixnum))
-  (writer.write-fixnum int __alphabet-octal 3 #f))
+  (write-integer writer int base: 8))
 
 (defwriter-ext (write-fixnum-decimal writer (int : :fixnum))
-  (writer.write-fixnum int __alphabet-decimal 1 #f))
+  (write-integer writer int))
 
 (defwriter-ext (write-fixnum-hex writer (int : :fixnum))
-  (writer.write-fixnum int __alphabet-hex 2 #f))
+  (write-integer writer int base: 16))
 
 (defwriter-ext (write-fixnum-HEX writer (int : :fixnum))
-  (writer.write-fixnum int __alphabet-HEX 2 #f))
+  (write-integer writer int base: 16 upper-case?: #t))
 
-(defwriter-ext (write-bignum writer
-                             (int        : :bignum)
-                             (alphabet   : :u8vector)
-                             (gits       : :fixnum)
-                             (sign?      : :boolean))
-  (do-write (wr 0)
-    (do-write-sign writer int sign? negative?)
-    (do-write-int-digits  writer (abs int) alphabet gits < quotient remainder)
-    wr))
-
+;; Format an integer with explicit options — flags, width, precision (min-digits), base, upper-case?.
+;; Flags: #\- left-align, #\0 zero-pad, #\+ always-sign, #\# Scheme prefix (#x/#o/#b).
+;; precision suppresses #\0 zero-pad (C rule): %.6x 42→ "00002a"; suppresses #\0 zero-pad flag.
 (defsyntax-case do-write-integer ()
-  ((_ writer int opt write-method)
-   (with-identifiers ((opt.flags            #'opt #'opt ".flags")
-                      (opt.width            #'opt #'opt ".width")
-                      (opt.integer-prefix   #'opt #'opt ".integer-prefix")
-                      (opt.integer-alphabet #'opt #'opt ".integer-alphabet")
-                      (opt.integer-gits     #'opt #'opt ".integer-gits")
-                      (writer.write-minus   #'writer #'writer ".write-minus")
-                      (writer.write-sharp   #'writer #'writer ".write-sharp")
-                      (writer.write-zeros   #'writer #'writer ".write-zeros")
-                      (writer.write-spaces  #'writer #'writer ".write-spaces")
-                      (writer.write-u8      #'writer #'writer ".write-u8")
-                      (writer.write-method  #'writer #'writer "." #'write-method))
+  ((_ writer int flags width precision base upper-case?)
+   (with-identifiers ((writer.write-sharp         #'writer #'writer ".write-sharp")
+                      (writer.write-u8             #'writer #'writer ".write-u8")
+                      (writer.write-spaces         #'writer #'writer ".write-spaces")
+                      (writer.write-fixnum-decimal #'writer #'writer ".write-fixnum-decimal")
+                      (writer.write-string-utf8    #'writer #'writer ".write-string-utf8"))
      #'(let-syntax ((getflag
                      (syntax-rules ()
-                       ((_ c) (and opt.flags (memq c opt.flags))))))
-         (let ((left-align  (getflag #\-))
-               (zero-pad    (getflag #\0))
-               (always-sign (and (getflag #\+) #t)))
+                       ((_ c) (and flags (memq c flags))))))
+         (if (and (not flags) (not width) (not precision)
+                  (fx= base 10))
+           ;; Fast path: plain decimal, no flags/width/precision
+           (if (##fixnum? int)
+             (writer.write-fixnum-decimal int)
+             (writer.write-string-utf8 (number->string int)))
+           ;; General path: flags, width, precision, or non-decimal base
+           (let* ((left-align  (getflag #\-))
+                  (always-sign (and (getflag #\+) #t))
+                  ;; #\# flag: Scheme-style prefix (#x/#o/#b); no prefix for decimal
+                  (prefix-char (and (getflag #\#)
+                                    (case base
+                                      ((2)  (char->integer #\b))
+                                      ((8)  (char->integer #\o))
+                                      ((16) (char->integer #\x))
+                                      (else #f))))
+                  ;; C rule: precision (min-digits) suppresses the zero-pad flag
+                  (zero-pad    (and (getflag #\0) (not precision))))
 
-           (defrule (write-prefix)
-             (do-write (wr 0)
-               (writer.write-sharp)
-               (writer.write-u8 opt.integer-prefix)
-               wr))
+             ;; Write Scheme prefix (#x/#o/#b); contributes 0 if no # flag or decimal.
+             (def (write-prefix!)
+               (if prefix-char
+                 (begin (writer.write-sharp) (writer.write-u8 prefix-char) 2)
+                 0))
 
-           (defrule (write-int int)
-             (writer.write-method int
-                                  opt.integer-alphabet
-                                  opt.integer-gits
-                                  always-sign))
+             (def (write-int-bare)
+               (write-integer writer int
+                              base:        base
+                              sign?:       always-sign
+                              upper-case?: upper-case?
+                              min-digits:  precision))
 
-           (defrule (write-int-pad int pad)
-             (do-write (wr 0)
-               (writer.write-zeros pad)
-               (write-int int)
-               wr))
+             (if width
+               (let* ((content     (integer-write-length int
+                                                         base:        base
+                                                         sign?:       always-sign
+                                                         min-digits:  precision))
+                      (prefix-size (if prefix-char 2 0))
+                      (total       (fx+ content prefix-size))
+                      (pad         (fxmax 0 (fx- width total))))
+                 (cond
+                  (zero-pad
+                   ;; prefix first (if any), then sign + zeros + digits
+                   (do-write (wr 0)
+                     (write-prefix!)
+                     (write-integer writer int
+                                    base:        base
+                                    width:       (fx- width prefix-size)
+                                    sign?:       always-sign
+                                    pad:         #\0
+                                    upper-case?: upper-case?
+                                    min-digits:  precision)
+                     wr))
+                  (left-align
+                   ;; prefix + sign + digits, then trailing spaces
+                   (do-write (wr 0)
+                     (write-prefix!)
+                     (write-int-bare)
+                     (writer.write-spaces pad)
+                     wr))
+                  (else
+                   ;; leading spaces, then prefix + sign + digits
+                   (do-write (wr 0)
+                     (writer.write-spaces pad)
+                     (write-prefix!)
+                     (write-int-bare)
+                     wr))))
+               (do-write (wr 0)
+                 (write-prefix!)
+                 (write-int-bare)
+                 wr))))))))
 
-           (defrule (write-int-negative-pad int pad)
-             (do-write (wr 0)
-               (writer.write-minus)
-               (writer.write-zeros pad)
-               (write-int (- int))
-               wr))
 
-           (defrule (do-format-int int expr)
-             (do-format-style write-method opt
-               (if opt.integer-prefix
-                 (do-write (wr 0)
-                   (write-prefix)
-                   expr
-                   wr)
-                 expr)
-               expr))
-
-           (defrule (format-int int)
-             (do-format-int int (write-int int)))
-
-           (defrule (count-digits)
-             (format-integer-length int
-                                    opt.integer-alphabet
-                                    opt.integer-gits
-                                    always-sign))
-           (if opt.width
-             (let* ((digits (count-digits))
-                    (digits (if opt.integer-prefix
-                              (do-format-style write-method opt
-                                (fx+ digits 2)
-                                digits)
-                              digits)))
-               (if (fx< digits opt.width)
-                 (let (pad (fx- opt.width digits))
-                   (cond
-                    (zero-pad
-                     (if (negative? int)
-                       (do-format-int int (write-int-negative-pad int pad))
-                       (do-format-int int (write-int-pad int pad))))
-                    (left-align
-                     (do-write (wr 0)
-                       (format-int int)
-                       (writer.write-spaces pad)
-                       wr))
-                    (else
-                     (do-write (wr 0)
-                       (writer.write-spaces pad)
-                       (format-int int)
-                       wr))))
-                 (format-int int)))
-             (format-int int)))))))
-
-(def (format-integer-length (int : :integer) (alphabet : :u8vector) (gits : :fixnum) (sign? : :boolean))
-  => :fixnum
-  (let* ((base  (u8vector-length alphabet))
-         (width (integer-digit-count (abs int) base))
-         (width (if (fx> gits 1)
-                  (let (lead (fx% width gits))
-                    (if (fx> lead 0)
-                      (fx+ width (fx- gits lead))
-                      width))
-                  width))
-         (width (if (or sign? (negative? int))
-                  (fx+ width 1)
-                  width)))
-    width))

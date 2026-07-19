@@ -50,7 +50,7 @@
       (let loop-inner ((i i) (flags [next]))
         (with-next i next
                    (case next
-                     ((#\0 #\- #\space #\+)
+                     ((#\0 #\- #\space #\+ #\#)
                       (if (memq next flags)
                         (folder.error! "duplicate specifier flag" next)
                         (loop-inner i (cons next flags))))
@@ -59,7 +59,7 @@
                      ((#\.)
                       (loop-precision i rest result  (reverse! flags) #f))
                      ((#\b #\B #\o #\O #\d #\x #\X)
-                      (loop-int next i rest result   (reverse! flags) #f))
+                      (loop-int next i rest result   (reverse! flags) #f #f))
                      ((#\e #\E #\f #\F #\g #\G)
                       (loop-float next i rest result (reverse! flags) #f #f))
                      (else
@@ -83,7 +83,7 @@
                      ((#\.)
                       (loop-precision i rest result flags (digits->int digits)))
                      ((#\b #\B #\o #\O #\d #\x #\X)
-                      (loop-int next i rest result flags (digits->int digits)))
+                      (loop-int next i rest result flags (digits->int digits) #f))
                      ((#\e #\E #\f #\F #\g #\G)
                       (loop-float next i rest result flags (digits->int digits) #f))
                      (else
@@ -95,16 +95,18 @@
                    (case next
                      ((#\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9)
                       (loop-inner i (cons next digits)))
+                     ((#\b #\B #\o #\O #\d #\x #\X)
+                      (loop-int next i rest result flags width (digits->int digits)))
                      ((#\e #\E #\f #\F #\g #\G)
                       (loop-float next i rest result flags width (digits->int digits)))
                      (else
                       (folder.error! "unexpected format specifier" next))))))
 
-    (def (loop-int next i rest result flags width)
+    (def (loop-int next i rest result flags width precision)
       (with-argument ([arg . rest] rest)
                      (loop (fx+ i 1)
                            rest
-                           (folder.fold-int arg next flags width result))))
+                           (folder.fold-int arg next flags width precision result))))
 
     (def (loop-float next i rest result flags width precision)
       (with-argument ([arg . rest] rest)
@@ -196,14 +198,14 @@
 
                           ;; integer
                           ((#\b #\B #\o #\O #\d #\x #\X)
-                           (loop-int next i rest result #f #f))
+                           (loop-int next i rest result #f #f #f))
 
                           ;; floating point format
                           ((#\e #\E #\f #\F #\g #\G)
                            (loop-float next i rest result #f #f #f))
 
                           ;; object format
-                          ((#\a #\s #\q)
+                          ((#\a #\s #\q #\w)
                            (loop-object next i rest result))
 
                           ;; self escape

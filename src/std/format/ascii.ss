@@ -126,17 +126,6 @@
   (#\}     #f      #f         #t         #f       #\}      #f        #f       #f)
   )
 
-(def __alphabet-binary
-  '#u8(#x30 #x31))
-(def __alphabet-octal
-  '#u8(#x30 #x31 #x32 #x33 #x34 #x35 #x36 #x37))
-(def __alphabet-decimal
-  '#u8(#x30 #x31 #x32 #x33 #x34 #x35 #x36 #x37 #x38 #x39))
-(def __alphabet-hex
-  '#u8(#x30 #x31 #x32 #x33 #x34 #x35 #x36 #x37 #x38 #x39 #x61 #x62 #x63 #x64 #x65 #x66))
-(def __alphabet-HEX
-  '#u8(#x30 #x31 #x32 #x33 #x34 #x35 #x36 #x37 #x38 #x39 #x41 #x42 #x43 #x44 #x45 #x46))
-
 (defrule (defascii-encoding name (char int) ...)
   (def name
     (let (vec (make-vector 128 #f))

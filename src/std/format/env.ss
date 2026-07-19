@@ -31,44 +31,17 @@
 (defrule (format-compression?)
   (one-of ,FORMAT-NO-COMPRESSION ,FORMAT-STD-COMPRESSION))
 
-(defrule (format-flonum-conversion?)
-  (one-of #\e #\E #\f #\F #\g #\G))
-
-(defrule (format-integer-conversion?)
-  (one-of #\b #\B #\o #\O #\d #\x #\X))
-
 (defrule (format-char-ascii-names?)
   (one-of ,FORMAT-CHAR-SCHEME-NAMES ,FORMAT-CHAR-STD-NAMES))
 
-(defrule (format-optional-fixnum?)
-  (? (or not nonnegative-fixnum?)))
-
-(defrule (format-flags?)
-  (list-of? (one-of #\0 #\- #\+ #\space #\#)))
-
-(defrule (format-optional-flags?)
-  (lambda (o)
-    (or (not o)
-        ((format-flags?) o))))
-
-;; format environment
+;; format environment — settings that propagate through recursive serialization
 (defclass FormatOpt
-  ( ;; format style
+  ( ;; format style: write / display / debug
    (style            :- :fixnum)
    ;; cycle treatment
    (cycles           :- :fixnum)
    ;; write compression mode
    (compress         :- :fixnum)
-   ;; number format
-   (flags            :- :list) ; #\0 #\- #\space #\+ #\#
-   (width            :- :fixnum)
-   (precision        :- :fixnum)
-   ;; flonums
-   (flonum-repr      :- :fixnum)
-   ;; integers
-   (integer-prefix   :- :fixnum)
-   (integer-gits     :- :fixnum)
-   (integer-alphabet :- :u8vector)
    ;; max sequence elements to display
    (max-elements     :- :fixnum)
    ;; char ascii name set
@@ -84,51 +57,29 @@
   final: #t)
 
 (defmethod {:init! FormatOpt}
-  (lambda (self style:              (style              :~ (format-style?)              := FORMAT-DEBUG)
-           cycles:             (cycles             :~ (format-cycles?)             := FORMAT-ALLOW-CYCLES)
-           compress:           (compress           :~ (format-compression?)        := FORMAT-NO-COMPRESSION)
-           flags:              (flags              :~ (format-optional-flags?)     := #f)
-           width:              (width              :~ (format-optional-fixnum?)    := #f)
-           precision:          (precision          :~ (format-optional-fixnum?)    := #f)
-           flonum-conversion:  (flonum-conversion  :~ (format-flonum-conversion?)  := #\g)
-           integer-conversion: (integer-conversion :~ (format-integer-conversion?) := #\d)
-           max-elements:       (max-elements       :~ (format-optional-fixnum?)     := #f)
-           char-ascii-names:   (char-ascii-names   :~ (format-char-ascii-names?)    := FORMAT-CHAR-SCHEME-NAMES)
-	   allow-class?:        (allow-class?      :  :procedure := (lambda (klass) #t)))
+  (lambda (self style:            (style            :~ (format-style?)           := FORMAT-DEBUG)
+           cycles:           (cycles           :~ (format-cycles?)          := FORMAT-ALLOW-CYCLES)
+           compress:         (compress         :~ (format-compression?)     := FORMAT-NO-COMPRESSION)
+           max-elements:     (max-elements     :- :t                        := #f)
+           char-ascii-names: (char-ascii-names :~ (format-char-ascii-names?) := FORMAT-CHAR-SCHEME-NAMES)
+	   allow-class?:      (allow-class?     :  :procedure              := (lambda (klass) #t)))
+    (set! self.style style)
     (set! self.cycles cycles)
     (set! self.compress compress)
-    (set! self.style style)
-    (set! self.flags flags)
-    (set! self.width width)
-    (set! self.precision precision)
-    (__set-flonum-conversion! self flonum-conversion)
-    (__set-integer-conversion! self integer-conversion)
     (set! self.max-elements max-elements)
     (set! self.char-ascii-names char-ascii-names)
     (set! self.allow-class? allow-class?)))
 
-(def (__set-flonum-conversion! (opt :- FormatOpt) (conversion :- :char))
-  (set! opt.flonum-repr (char->integer conversion)))
-
-(def (__set-integer-conversion! (opt :- FormatOpt) (base :- :char))
-  (cond
-   ((agetq base __integer-conversions)
-    => (lambda (lst)
-         (with ([prefix-char alphabet width] lst)
-           (set! opt.integer-prefix   (and prefix-char (char->integer prefix-char)))
-           (set! opt.integer-alphabet alphabet)
-           (set! opt.integer-gits     width))))
-   (else
-    (raise-contract-violation set-integer-conversion! "integer base" base: base))))
-
+;; Integer conversion table: specifier → [base upper-case?]
+;; Used by the format call paths (format.ss, api.ss), not stored in FormatOpt.
 (def __integer-conversions
-  [[#\b #\b __alphabet-binary  1]
-   [#\B #f  __alphabet-binary  1]
-   [#\o #\o __alphabet-octal   3]
-   [#\O #f  __alphabet-octal   3]
-   [#\d #f  __alphabet-decimal 1]
-   [#\x #\x __alphabet-hex     2]
-   [#\X #f  __alphabet-HEX     2]])
+  [[#\b  2 #f]   ; binary
+   [#\B  2 #f]   ; binary (Gerbil extension)
+   [#\o  8 #f]   ; octal
+   [#\O  8 #f]   ; octal (Gerbil extension)
+   [#\d 10 #f]   ; decimal
+   [#\x 16 #f]   ; hex lowercase
+   [#\X 16 #t]]) ; hex uppercase
 
 (defsyntax-case do-format-option ()
   ((_ where opt slot option ...)
@@ -191,17 +142,12 @@
 (def __default-format-opt
   (delay-atomic
    (FormatOpt
-    style:              FORMAT-WRITE
-    cycles:             FORMAT-ALLOW-CYCLES
-    compress:           FORMAT-NO-COMPRESSION
-    flags:              #f
-    width:              #f
-    precision:          #f
-    flonum-conversion:  #\g
-    integer-conversion: #\d
-    max-elements:       #f
-    char-ascii-names:   FORMAT-CHAR-SCHEME-NAMES
-    allow-class?:       (lambda (klass) #t))))
+    style:            FORMAT-WRITE
+    cycles:           FORMAT-ALLOW-CYCLES
+    compress:         FORMAT-NO-COMPRESSION
+    max-elements:     #f
+    char-ascii-names: FORMAT-CHAR-SCHEME-NAMES
+    allow-class?:     (lambda (klass) #t))))
 
 (def (format-options (opt (current-format-opt))) => FormatOpt
   (: (or opt (force __default-format-opt)) FormatOpt))
@@ -250,21 +196,11 @@
                           ((style:)
                            '(format-style?              &FormatOpt-style-set!))
                           ((cycles:)
-                           '(format-cycles?             &FormetOpt-cycles-set!))
+                           '(format-cycles?             &FormatOpt-cycles-set!))
                           ((compress:)
                            '(format-compression?        &FormatOpt-compress-set!))
-                          ((flags:)
-                           '(format-optional-flags?     &FormatOpt-flags-set!))
-                          ((width:)
-                           '(format-optional-fixnum?    &FormatOpt-width-set!))
-                          ((precision:)
-                           '(format-optional-fixnum?    &FormatOpt-precision-set!))
-                          ((flonum-conversion:)
-                           '(format-flonum-conversion?  __set-flonum-conversion!))
-                          ((integer-conversion:)
-                           '(format-integer-conversion? __set-integer-conversion!))
                           ((max-elements:)
-                           '(format-optional-fixnum?     &FormatOpt-max-elements-set!))
+                           '(:t                          &FormatOpt-max-elements-set!))
                           ((char-ascii-names:)
                            '(format-char-ascii-names?    &FormatOpt-char-ascii-names-set!))
                           (else
@@ -276,12 +212,6 @@
               #'(value ...))))
      #'(@derive-format-env ctx (slot safe-value set-it!) ...))))
 
-(def (format-flag-set flag flags)
-  (if flags
-    (if (memq flag flags)
-      flags
-      (cons flag flags))
-    [flag]))
 
 ;; reader environment
 (defclass ReaderOpt

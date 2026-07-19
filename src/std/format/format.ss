@@ -59,31 +59,29 @@
              (result :- :fixnum))
            (fx+ result (writer.write-char-utf8 char))))
         (fold-int
-         (lambda (arg how flags width result)
-           (using (ctx (@format-env fmt.env
-                                    (flags: flags)
-                                    (width: width)
-                                    (integer-conversion: how))
-                       : WriteContext)
-             (fx+ result (ctx.methods.write-integer writer (: arg :integer) ctx)))))
+         (lambda (arg how flags width precision result)
+           (cond
+            ((agetq how __integer-conversions)
+             => (lambda (conv)
+                  (with ([base upper-case?] conv)
+                    (fx+ result
+                         (do-write-integer writer (: arg :integer)
+                                           flags width precision base upper-case?)))))
+            (else
+             (raise-bad-argument format "integer format specifier" how)))))
         (fold-float
          (lambda (arg how flags width precision result)
-           (using (ctx (@format-env fmt.env
-                                    (flags: flags)
-                                    (width: width)
-                                    (precision: precision)
-                                    (flonum-conversion: how))
-                       : WriteContext)
-             (fx+ result (write-flonum-c-style writer (: arg :flonum) ctx)))))
+           (fx+ result (write-flonum-c-style writer (: arg :flonum)
+                                             flags width precision how))))
         (fold-object
          (lambda (arg how result)
            (fx+ result
                 (case how
                   ((#\a) (format-display writer arg fmt.env))
-                  ((#\s) (format-write   writer arg fmt.env))
+                  ((#\s #\w) (format-write   writer arg fmt.env))
                   ((#\q) (format-debug   writer arg fmt.env))
                   (else
-                   (raise-bad-argument format "object format specifier: %a, %s, or %q" how))))))
+                   (raise-bad-argument format "object format specifier: %a, %s, %w, or %q" how))))))
         (error!
          (lambda (msg . args)
            (raise-bad-argument format msg format: fmt.fmt args: args))))

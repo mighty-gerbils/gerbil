@@ -35,37 +35,37 @@
              (u8vector-set! buf i (fx+ #x30 r))
              (fx+ i 1))))))
 
-   (def (buffer-cache-get-float-format-buffer (opt : FormatOpt) (num : :flonum)) => :u8vector
+   (def (buffer-cache-get-float-format-buffer flags width precision (flonum-repr :- :fixnum)) => :u8vector
      (let (buf (buffer-cache.get 32))
        (u8vector-set! buf 0 (@char->int #\%))
-       (let* ((i (if opt.flags
-                   (for/fold (i 1) (flag (in-list opt.flags) : :char)
+       (let* ((i (if flags
+                   (for/fold (i 1) (flag (in-list flags) : :char)
                      (u8vector-set! buf i (char->integer flag))
                      (fx+ i 1))
                    1))
-              (i (if opt.width
-                   (buffer-write-digits buf i opt.width)
+              (i (if width
+                   (buffer-write-digits buf i width)
                    i))
-              (i (if opt.precision
+              (i (if precision
                    (begin
                      (u8vector-set! buf i (@char->int #\.))
-                     (buffer-write-digits buf (fx+ i 1) opt.precision))
+                     (buffer-write-digits buf (fx+ i 1) precision))
                    i)))
-         (u8vector-set! buf i opt.flonum-repr)
+         (u8vector-set! buf i flonum-repr)
          (u8vector-set! buf (fx+ i 1) 0)
          buf)))
 
-   (def (buffer-cache-get-float-output-buffer (opt : FormatOpt)) => :u8vector
+   (def (buffer-cache-get-float-output-buffer flags width precision (flonum-repr :- :fixnum)) => :u8vector
      (let* (;; %f/%F output can have up to 309 integer digits for IEEE double max (~1e308)
             ;; plus sign and decimal point; %g/%e stay compact regardless of magnitude.
             (int-part-reserve
-             (if (or (fx= opt.flonum-repr (@char->int #\f))
-                     (fx= opt.flonum-repr (@char->int #\F)))
+             (if (or (fx= flonum-repr (@char->int #\f))
+                     (fx= flonum-repr (@char->int #\F)))
                313 0))
             (buflen
              (fxmax
-              (fx+ (or opt.width 6)
-                   (if opt.precision (fx+ opt.precision 1) 6)
+              (fx+ (or width 6)
+                   (if precision (fx+ precision 1) 6)
                    int-part-reserve
                    4)
               32))
@@ -79,9 +79,9 @@
      => :fixnum
      "snprintf((char*)___arg1, ___U8VECTORSIZE(___ARG1), (char*) ___arg2, ___arg3)")
 
-   (defwriter-ext (format-float writer (num : :flonum) (opt : FormatOpt))
-     (let* ((fmt-buf (buffer-cache-get-float-format-buffer opt num))
-            (str-buf (buffer-cache-get-float-output-buffer opt))
+   (defwriter-ext (format-float writer (num : :flonum) flags width precision (flonum-repr :- :fixnum))
+     (let* ((fmt-buf (buffer-cache-get-float-format-buffer flags width precision flonum-repr))
+            (str-buf (buffer-cache-get-float-output-buffer flags width precision flonum-repr))
             (wr      (__print-float str-buf fmt-buf num))
             (buflen  (u8vector-length str-buf)))
        (cond
@@ -106,12 +106,13 @@
   (else
    (syntax-error "unsupported target")))
 
-;; C-style float output for explicit %g/%f/%e: delegate entirely to snprintf.
+;; C-style float output for explicit %g/%f/%e: delegate to snprintf.
+;; flags/width/precision/conversion are call-local — not stored in any context.
 ;; inf/nan get C representations ("inf", "-inf", "nan"), not Gerbil's "+inf.0" etc.
-(def (write-flonum-c-style (writer : BufferedWriter) (num : :flonum) (ctx : WriteContext))
+(def (write-flonum-c-style (writer : BufferedWriter) (num : :flonum)
+                           flags width precision (conversion :- :char))
   => :fixnum
-  (using (env (interface-instance-object ctx.methods) : FormatEnv)
-    (writer.format-float num env.opt)))
+  (writer.format-float num flags width precision (char->integer conversion)))
 
 (def __hvector-prefixes
   (vector
@@ -235,9 +236,7 @@
        wr)))
   (write-integer
    (lambda (self writer int ctx)
-     (if (fixnum? int)
-       (do-write-integer writer int self.opt write-fixnum)
-       (do-write-integer writer int self.opt write-bignum))))
+     (do-write-integer writer int #f #f #f 10 #f)))
   (write-flonum
    (lambda (self writer num ctx)
      (cond
@@ -276,12 +275,11 @@
              (writer.write-u8 (@char->int #\i))
              wr))
           (else
-           (let (ctx (@format-env ctx (flags: (format-flag-set #\+ self.opt.flags))))
-
-	     (do-write (wr 0)
-	       (writer.serialize imag ctx)
-	       (writer.write-u8 (@char->int #\i))
-	       wr))))
+           (do-write (wr 0)
+             (if (not (negative? imag)) (writer.write-plus) 0)
+             (writer.serialize imag ctx)
+             (writer.write-u8 (@char->int #\i))
+             wr)))
 	 wr))))
   (write-symbol
    (lambda (self writer sym ctx)
