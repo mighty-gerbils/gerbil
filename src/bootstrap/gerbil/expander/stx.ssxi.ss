@@ -1358,4 +1358,63 @@ package: gerbil/expander
       unchecked:
       #f
       origin:
+      gerbil/expander/stx))))
+  (declare-type
+   gx#stx-plist-assq__%
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/stx)))
+  (declare-type
+   gx#stx-plist-assq__0
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/stx)))
+  (declare-type
+   gx#stx-plist-assq
+   (@case-lambda
+    (2
+     gx#stx-plist-assq__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/stx))
+    (3
+     gx#stx-plist-assq__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
       gerbil/expander/stx)))))

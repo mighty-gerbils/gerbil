@@ -30,6 +30,12 @@ namespace: gx
           core-expand-define-runtime%
           gx#core-expand-define-runtime%)
          (%#define-runtime
+          core-expand-bind-runtime-properties%
+          gx#core-expand-bind-runtime-properties%)
+         (%#define-runtime
+          core-bind-runtime-properties!
+          gx#core-bind-runtime-properties!)
+         (%#define-runtime
           core-expand-define-syntax%
           gx#core-expand-define-syntax%)
          (%#define-runtime
@@ -99,15 +105,6 @@ namespace: gx
          (%#define-runtime core-expand-ref% gx#core-expand-ref%)
          (%#define-runtime core-expand-setq% gx#core-expand-setq%)
          (%#define-runtime macro-expand-extern gx#macro-expand-extern)
-         (%#define-runtime
-          macro-expand-define-values
-          gx#macro-expand-define-values)
-         (%#define-runtime
-          macro-expand-define-syntax
-          gx#macro-expand-define-syntax)
-         (%#define-runtime
-          macro-expand-define-alias
-          gx#macro-expand-define-alias)
          (%#define-runtime macro-expand-lambda% gx#macro-expand-lambda%)
          (%#define-runtime
           macro-expand-case-lambda

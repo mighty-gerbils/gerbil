@@ -388,15 +388,15 @@ We can make all this concrete with a working example: an httpd server
 ensemble, that supports dynamic handler registration.
 
 The source code for the tutorial is available in the gerbil source distribution, in
-[src/tutorial/ensemble](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble).
-You can build it using the [build script](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/build.ss):
+[src/tutorial/ensemble](https://git.cons.io/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble).
+You can build it using the [build script](https://git.cons.io/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/build.ss):
 ```
 $ cd gerbil/src/tutorial/ensemble
 $ gerbil build
 ...
 ```
 
-First let's look at the server implementation in [src/tutorial/ensemble/server.ss](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/server.ss):
+First let's look at the server implementation in [src/tutorial/ensemble/server.ss](https://git.cons.io/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/server.ss):
 ```scheme
 (import :gerbil/gambit/threads
         :std/net/httpd
@@ -416,7 +416,7 @@ default mux, and it is initially empty; there are no handlers, so
 everything will 404.
 
 We also have a server wrapper for running the server as a service with `gxensemble run`.
-This is the code for the wrapper (see [src/tutorial/ensemble/httpd-svc.ss](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/httpd-svc.ss)):
+This is the code for the wrapper (see [src/tutorial/ensemble/httpd-svc.ss](https://git.cons.io/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/httpd-svc.ss)):
 ```scheme
 (import ./server)
 (export main)
@@ -477,7 +477,7 @@ Content-Length: 0
 ```
 
 At the next step, we can load some code that implements handlers for our httpds;
-the code with the handlers lives in [src/tutorial/ensemble/handler.ss](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/handler.ss):
+the code with the handlers lives in [src/tutorial/ensemble/handler.ss](https://git.cons.io/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/handler.ss):
 ```scheme
 (import :std/net/httpd)
 (export #t)
@@ -557,7 +557,7 @@ compiled for servers; otherwise it is very much likely that some
 essential bindings will be missing, causing your server to crash when
 trying to load code.
 
-Here is an example binary executable running our httpd; the code is at [src/tutorial/ensemble/httpd-exe.ss](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/httpd-exe.ss):
+Here is an example binary executable running our httpd; the code is at [src/tutorial/ensemble/httpd-exe.ss](https://git.cons.io/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/httpd-exe.ss):
 ```scheme
 (import :std/actor
         ./server)
@@ -938,7 +938,7 @@ ensemble/server/httpd/tls/server.key
 Now are ready to ship our servers and demonstrate ensemble actor TLS capabilities.
 
 First, let's build the binaries for our servers, using the docker
-[Makefile](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/Makefile)
+[Makefile](https://git.cons.io/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/Makefile)
 to build fully static binaries:
 ```
 $ gerbil clean
@@ -946,7 +946,7 @@ $ make
 ...
 ```
 
-This gives us the [`httpd-prod-exe`](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/httpd-prod-exe.ss) and [`registry-prod-exe`](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/registry-prod-exe.ss) binaries in `.gerbil`.
+This gives us the [`httpd-prod-exe`](https://git.cons.io/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/httpd-prod-exe.ss) and [`registry-prod-exe`](https://git.cons.io/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/registry-prod-exe.ss) binaries in `.gerbil`.
 
 Next, we need to ship the code and ensemble environment and run the
 servers.  I set up two ephemeral linodes for this demonstration, you

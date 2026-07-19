@@ -1,16 +1,12 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; Command-line option and command argument parsing
-
-(import (only-in :std/error deferror-class Error:::init! exit-on-error? exit-with-error)
-        (only-in :std/generic defgeneric)
-        (only-in :std/iter for/collect in-iota)
-        (only-in :std/misc/hash hash->list/sort)
-        (only-in :std/misc/list when/list flatten)
-        (only-in :std/misc/string as-string<?)
-        (only-in :std/sugar try catch)
-        (only-in :std/format format fprintf)
-        (only-in :std/misc/list-builder with-list-builder))
+(import :std/error
+        :std/iter
+        :std/hash/misc
+        :std/list/list
+        :std/string/misc
+        :std/list/list-builder)
 (export getopt
         (rename: !getopt? getopt?)
         (rename: !top? getopt-object?)
@@ -26,9 +22,8 @@
         rest-arguments
         call-with-getopt
         getopt-parse->function-arguments
-        call-with-getopt-parse
-        call-with-processed-command-line
-        ->getopt-spec)
+        call-with-getopt-parse)
+
 (def current-getopt-parser
   (make-parameter #f))
 
@@ -255,13 +250,14 @@
    ((!command? obj)
     (display-help-command obj program port))
    ((getopt-error? obj)
-    (fprintf port "Error: ~a~n" (error-message obj))
-    (unless (null? (error-irritants obj))
-      (display "Irritants:" port)
-      (for-each (lambda(x) (display " " port) (display x port))
-                (error-irritants obj))
+    (parameterize ((current-output-port port))
+      (displayln "Error: " (error-message obj))
+      (unless (null? (error-irritants obj))
+        (display "Irritants:")
+        (for-each (lambda(x) (display* " " x))
+                  (error-irritants obj))
+        (newline))
       (newline))
-    (newline)
     (getopt-display-help (getopt-error-e obj) program port))
    (else
     (error "Unexpected object; expected a getopt, getopt-error, or command" obj))))
@@ -277,93 +273,93 @@
        (getopt-display-help gopt program port)))))
 
 (def (display-help-getopt obj program port)
-  (with ((!getopt opts cmds args help) obj)
-    (when help
-      (fprintf port "~a: ~a~n~n" program help))
-    (if (null? cmds)
-      (begin
-        (fprintf port "Usage: ~a ~a"
-                 program
-                 (if (null? opts) "" "[option ...]"))
-        (display-args args port)
-        (unless (null? opts)
-          (fprintf port "~nOptions:~n")
-          (display-option-help opts port))
-        (unless (null? args)
-          (fprintf port "~nArguments:~n")
-          (display-arg-help args port)))
-      (begin
-        (fprintf port "Usage: ~a ~a <command> command-arg ...~n"
-                 program
-                 (if (null? opts) "" "[option ...]"))
-        (unless (null? opts)
-          (fprintf port "~nOptions:~n")
-          (display-option-help opts port))
-        (fprintf port "~nCommands:~n")
-        (for-each (match <>
-                    ((!command key help)
-                     (fprintf port " ~a ~a ~a~n"
-                              key
-                              (tabs key)
-                              (or help "?"))))
-                  cmds)))))
+  (parameterize ((current-output-port port))
+    (with ((!getopt opts cmds args help) obj)
+      (when help
+        (displayln program ": " help)
+        (newline))
+      (if (null? cmds)
+        (begin
+          (displayln "Usage: " program (if (null? opts) "" "[option ...]"))
+          (display-args args port)
+          (unless (null? opts)
+            (newline)
+            (displayln "Options:")
+            (display-option-help opts port))
+          (unless (null? args)
+            (newline)
+            (displayln "Arguments:")
+            (display-arg-help args port)))
+        (begin
+          (displayln "Usage: " program (if (null? opts) "" "[option ...]")
+                     "<command> command-arg ...")
+          (unless (null? opts)
+            (newline)
+            (displayln "Options:")
+            (display-option-help opts port))
+          (newline)
+          (displayln "Commands:")
+          (for-each (match <>
+                      ((!command key help)
+                       (displayln " " key " " (tabs key) " " (or help "?"))))
+                    cmds))))))
 
 (def (display-help-command obj program port)
-  (with ((!command key help opts args) obj)
-    (fprintf port "Usage: ~a ~a~a"
-             program key
-             (if (null? opts) "" " [command-option ...]"))
-    (display-args args port)
-    (fprintf port "       ~a~n" help)
-    (unless (null? opts)
-      (fprintf port "~nCommand Options:~n")
-      (display-option-help opts port))
-    (unless (null? args)
-      (fprintf port "~nArguments:~n")
-      (display-arg-help args port))))
+  (parameterize ((current-output-port port))
+    (with ((!command key help opts args) obj)
+      (displayln "Usage: " program " " key
+                 (if (null? opts) "" " [command-option ...]"))
+      (display-args args port)
+      (displayln "       " help)
+      (unless (null? opts)
+        (newline)
+        (displayln "Command Options:")
+        (display-option-help opts port))
+      (unless (null? args)
+        (newline)
+        (displayln "Arguments:")
+        (display-arg-help args port)))))
 
 (def (display-args args port)
-  (for-each (match <>
-              ((!reqarg key)
-               (fprintf port " <~a>" key))
-              ((!optarg key)
-               (fprintf port " [<~a>]" key))
-              ((!rest key)
-               (fprintf port " <~a> ..." key)))
-            args)
-  (newline port))
+  (parameterize ((current-output-port port))
+    (for-each (match <>
+                ((!reqarg key)
+                 (display* " <" key ">"))
+                ((!optarg key)
+                 (display* " [<" key ">]"))
+                ((!rest key)
+                 (display* " <" key "> ...")))
+              args)
+    (newline)))
 
 (def (display-option-help opts port)
-  (for-each (match <>
-              ((!option id help short long _ default)
-               (fprintf port " ~a ~a <~a> ~a ~a [default: ~a]~n"
-                        (or short "")
-                        (or long "")
-                        id
-                        (tabs (or short "") " " (or long "") " <" (symbol->string id) ">")
-                        (or help "?")
-                        default))
-              ((!flag _ help short long)
-               (fprintf port " ~a ~a ~a ~a~n"
-                        (or short "")
-                        (or long "")
-                        (tabs (or short "") " " (or long ""))
-                        (or help "?"))))
-            opts))
+  (parameterize ((current-output-port port))
+    (for-each (match <>
+                ((!option id help short long _ default)
+                 (displayln " " (or short "")
+                            " " (or long "")
+                            " <" id ">"
+                            " " (tabs (or short "") " " (or long "") " <" (symbol->string id) ">")
+                            " " (or help "?")
+                            " [default: " default "]"))
+                ((!flag _ help short long)
+                 (displayln " " (or short "")
+                            " " (or long "")
+                            " " (tabs (or short "") " " (or long ""))
+                            " " (or help "?"))))
+              opts)))
 
 (def (display-arg-help args port)
-  (for-each (match <>
-              ((!reqarg key help)
-               (fprintf port " ~a ~a ~a~n"
-                        key (tabs key) (or help "?")))
-              ((!optarg key help _ default)
-               (fprintf port " ~a ~a ~a [default: ~a]~n"
-                        key (tabs key) (or help "?")
-                        default))
-              ((!rest key help)
-               (fprintf port " ~a ~a ~a~n"
-                        key (tabs key) (or help "?"))))
-            args))
+  (parameterize ((current-output-port port))
+    (for-each (match <>
+                ((!reqarg key help)
+                 (displayln " " key " " (tabs key) " " (or help "?")))
+                ((!optarg key help _ default)
+                 (displayln " " key " " (tabs key) " " (or help "?")
+                            " [default: " default "]"))
+                ((!rest key help)
+                 (displayln " " key " " (tabs key) " " (or help "?"))))
+              args)))
 
 (def (tabs . strs)
   (def tablen 31)
@@ -436,19 +432,3 @@
 
 (def (call-with-getopt-parse gopt hash fun)
   (apply fun (getopt-parse->function-arguments gopt hash)))
-
-(defgeneric call-with-processed-command-line
-  (lambda (processor command-line function)
-    (cond
-     ((!getopt? processor)
-      (call-with-getopt-parse processor (getopt-parse processor command-line) function))
-     ((list? processor)
-      (call-with-processed-command-line (apply getopt processor) command-line function)))))
-
-(defgeneric ->getopt-spec
-  (lambda (spec)
-    (cond
-     ((list? spec) (flatten spec))
-     ((fixnum? spec) (for/collect ((i (in-iota spec 1))) (argument (format "arg~d" i))))
-     ((not spec) (rest-arguments "rest"))
-     (else (error "Bad getopt spec")))))

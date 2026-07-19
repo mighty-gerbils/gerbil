@@ -36,21 +36,6 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   file-newer?
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             (string::t string::t)
-             unchecked:
-             __file-newer?
-             origin:
-             gerbil/runtime/util)))
-  (declare-type
    __file-newer?
    (@lambda 2
             #f
@@ -66,64 +51,20 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   create-directory*__%
+   file-newer?
    (@lambda 2
             #f
             signature:
             (return:
-             void::t
+             boolean::t
              effect:
              #f
              arguments:
-             (string::t fixnum::t)
+             (string::t string::t)
              unchecked:
-             __create-directory*
+             __file-newer?
              origin:
              gerbil/runtime/util)))
-  (declare-type
-   create-directory*__0
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             void::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/util)))
-  (declare-type
-   create-directory*
-   (@case-lambda
-    (1
-     create-directory*__0
-     signature:
-     (return:
-      void::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/util))
-    (2
-     create-directory*__%
-     signature:
-     (return:
-      void::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/util))))
   (declare-type
    __create-directory*__%
    (@lambda 2
@@ -184,22 +125,7 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))))
   (declare-type
-   move-file__%
-   (@lambda 3
-            #f
-            signature:
-            (return:
-             void::t
-             effect:
-             #f
-             arguments:
-             (string::t string::t boolean::t)
-             unchecked:
-             __move-file
-             origin:
-             gerbil/runtime/util)))
-  (declare-type
-   move-file__0
+   create-directory*__%
    (@lambda 2
             #f
             signature:
@@ -208,16 +134,31 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
+             (string::t fixnum::t)
+             unchecked:
+             __create-directory*
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   create-directory*__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
              #f
              unchecked:
              #f
              origin:
              gerbil/runtime/util)))
   (declare-type
-   move-file
+   create-directory*
    (@case-lambda
-    (2
-     move-file__0
+    (1
+     create-directory*__0
      signature:
      (return:
       void::t
@@ -229,8 +170,8 @@ package: gerbil/runtime
       #f
       origin:
       gerbil/runtime/util))
-    (3
-     move-file__%
+    (2
+     create-directory*__%
      signature:
      (return:
       void::t
@@ -290,6 +231,65 @@ package: gerbil/runtime
       gerbil/runtime/util))
     (3
      __move-file__%
+     signature:
+     (return:
+      void::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))))
+  (declare-type
+   move-file__%
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             (string::t string::t boolean::t)
+             unchecked:
+             __move-file
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   move-file__0
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   move-file
+   (@case-lambda
+    (2
+     move-file__0
+     signature:
+     (return:
+      void::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))
+    (3
+     move-file__%
      signature:
      (return:
       void::t
@@ -540,21 +540,6 @@ package: gerbil/runtime
         (($values (make-symbol (gensym '__values))))
         #'(%#let-values ((($values) expr)) (%#call recur (%#ref $values))))))))
   (declare-type
-   values-ref
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             (t::t fixnum::t)
-             unchecked:
-             __values-ref
-             origin:
-             gerbil/runtime/util)))
-  (declare-type
    __values-ref
    (@lambda 2
             #f
@@ -567,6 +552,21 @@ package: gerbil/runtime
              #f
              unchecked:
              #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   values-ref
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t fixnum::t)
+             unchecked:
+             __values-ref
              origin:
              gerbil/runtime/util)))
   (declare-type
@@ -599,6 +599,21 @@ package: gerbil/runtime
         (($values (make-symbol (gensym '__values))))
         #'(%#let-values ((($values) expr)) (%#call recur (%#ref $values))))))))
   (declare-type
+   __foldl1
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
    foldl1
    (@lambda 3
             #f
@@ -614,8 +629,8 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   __foldl1
-   (@lambda 3
+   __foldl2
+   (@lambda 4
             #f
             signature:
             (return:
@@ -644,7 +659,22 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   __foldl2
+   foldl__0
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   foldl__1
    (@lambda 4
             #f
             signature:
@@ -662,7 +692,7 @@ package: gerbil/runtime
    foldl
    (@case-lambda
     (3
-     foldl1
+     foldl__0
      signature:
      (return:
       t::t
@@ -675,7 +705,7 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))
     (4
-     foldl2
+     foldl__1
      signature:
      (return:
       t::t
@@ -701,6 +731,21 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))))
   (declare-type
+   __foldl*
+   (@lambda (2)
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
    foldl*
    (@lambda (2)
             #f
@@ -716,8 +761,8 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   __foldl*
-   (@lambda (2)
+   __foldr1
+   (@lambda 3
             #f
             signature:
             (return:
@@ -746,8 +791,8 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   __foldr1
-   (@lambda 3
+   __foldr2
+   (@lambda 4
             #f
             signature:
             (return:
@@ -776,7 +821,22 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   __foldr2
+   foldr__0
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   foldr__1
    (@lambda 4
             #f
             signature:
@@ -794,7 +854,7 @@ package: gerbil/runtime
    foldr
    (@case-lambda
     (3
-     foldr1
+     foldr__0
      signature:
      (return:
       t::t
@@ -807,7 +867,7 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))
     (4
-     foldr2
+     foldr__1
      signature:
      (return:
       t::t
@@ -833,21 +893,6 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))))
   (declare-type
-   foldr*
-   (@lambda (2)
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             (procedure::t t::t . t::t)
-             unchecked:
-             __foldr*
-             origin:
-             gerbil/runtime/util)))
-  (declare-type
    __foldr*
    (@lambda (2)
             #f
@@ -860,6 +905,21 @@ package: gerbil/runtime
              #f
              unchecked:
              #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   foldr*
+   (@lambda (2)
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (procedure::t t::t . t::t)
+             unchecked:
+             __foldr*
              origin:
              gerbil/runtime/util)))
   (declare-type
@@ -893,6 +953,21 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
+   __append-reverse-until
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             values::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
    append-reverse-until
    (@lambda 3
             #f
@@ -908,12 +983,12 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   __append-reverse-until
-   (@lambda 3
+   __andmap1
+   (@lambda 2
             #f
             signature:
             (return:
-             values::t
+             boolean::t
              effect:
              #f
              arguments:
@@ -938,8 +1013,8 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   __andmap1
-   (@lambda 2
+   __andmap2
+   (@lambda 3
             #f
             signature:
             (return:
@@ -968,7 +1043,22 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   __andmap2
+   andmap__0
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   andmap__1
    (@lambda 3
             #f
             signature:
@@ -986,7 +1076,7 @@ package: gerbil/runtime
    andmap
    (@case-lambda
     (2
-     andmap1
+     andmap__0
      signature:
      (return:
       boolean::t
@@ -999,7 +1089,7 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))
     (3
-     andmap2
+     andmap__1
      signature:
      (return:
       boolean::t
@@ -1025,6 +1115,21 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))))
   (declare-type
+   __andmap*
+   (@lambda (1)
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
    andmap*
    (@lambda (1)
             #f
@@ -1040,12 +1145,12 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   __andmap*
-   (@lambda (1)
+   __ormap1
+   (@lambda 2
             #f
             signature:
             (return:
-             boolean::t
+             t::t
              effect:
              #f
              arguments:
@@ -1070,8 +1175,8 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   __ormap1
-   (@lambda 2
+   __ormap2
+   (@lambda 3
             #f
             signature:
             (return:
@@ -1100,7 +1205,22 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   __ormap2
+   ormap__0
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   ormap__1
    (@lambda 3
             #f
             signature:
@@ -1118,7 +1238,7 @@ package: gerbil/runtime
    ormap
    (@case-lambda
     (2
-     ormap1
+     ormap__0
      signature:
      (return:
       t::t
@@ -1131,7 +1251,7 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))
     (3
-     ormap2
+     ormap__1
      signature:
      (return:
       t::t
@@ -1157,6 +1277,21 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))))
   (declare-type
+   __ormap*
+   (@lambda (1)
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
    ormap*
    (@lambda (1)
             #f
@@ -1172,12 +1307,12 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   __ormap*
-   (@lambda (1)
+   __filter-map1
+   (@lambda 2
             #f
             signature:
             (return:
-             t::t
+             list::t
              effect:
              #f
              arguments:
@@ -1202,8 +1337,8 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   __filter-map1
-   (@lambda 2
+   __filter-map2
+   (@lambda 3
             #f
             signature:
             (return:
@@ -1232,7 +1367,22 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   __filter-map2
+   filter-map__0
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             list::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   filter-map__1
    (@lambda 3
             #f
             signature:
@@ -1250,7 +1400,7 @@ package: gerbil/runtime
    filter-map
    (@case-lambda
     (2
-     filter-map1
+     filter-map__0
      signature:
      (return:
       list::t
@@ -1263,7 +1413,7 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))
     (3
-     filter-map2
+     filter-map__1
      signature:
      (return:
       list::t
@@ -1289,21 +1439,6 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))))
   (declare-type
-   filter-map*
-   (@lambda (1)
-            #f
-            signature:
-            (return:
-             list::t
-             effect:
-             #f
-             arguments:
-             (procedure::t . t::t)
-             unchecked:
-             __filter-map*
-             origin:
-             gerbil/runtime/util)))
-  (declare-type
    __filter-map*
    (@lambda (1)
             #f
@@ -1316,6 +1451,21 @@ package: gerbil/runtime
              #f
              unchecked:
              #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   filter-map*
+   (@lambda (1)
+            #f
+            signature:
+            (return:
+             list::t
+             effect:
+             #f
+             arguments:
+             (procedure::t . t::t)
+             unchecked:
+             __filter-map*
              origin:
              gerbil/runtime/util)))
   (declare-type
@@ -1760,6 +1910,21 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))))
   (declare-type
+   __find
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
    find
    (@lambda 2
             #f
@@ -1775,7 +1940,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   __find
+   __memf
    (@lambda 2
             #f
             signature:
@@ -1802,21 +1967,6 @@ package: gerbil/runtime
              (procedure::t t::t)
              unchecked:
              __memf
-             origin:
-             gerbil/runtime/util)))
-  (declare-type
-   __memf
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
              origin:
              gerbil/runtime/util)))
   (declare-type
@@ -1865,6 +2015,21 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
+   __remf
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
    remf
    (@lambda 2
             #f
@@ -1880,12 +2045,12 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   __remf
-   (@lambda 2
+   __1+
+   (@lambda 1
             #f
             signature:
             (return:
-             t::t
+             number::t
              effect:
              #f
              arguments:
@@ -1909,39 +2074,9 @@ package: gerbil/runtime
              __1+
              origin:
              gerbil/runtime/util)))
-  (declare-type
-   __1+
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             number::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/util)))
   (declare-inline-rule!
    1+
    (ast-rules (%#call) ((%#call _ arg) (%#call (%#ref +) arg (%#quote 1)))))
-  (declare-type
-   1-
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             number::t
-             effect:
-             #f
-             arguments:
-             (number::t)
-             unchecked:
-             __1-
-             origin:
-             gerbil/runtime/util)))
   (declare-type
    __1-
    (@lambda 1
@@ -1957,24 +2092,24 @@ package: gerbil/runtime
              #f
              origin:
              gerbil/runtime/util)))
-  (declare-inline-rule!
-   1-
-   (ast-rules (%#call) ((%#call _ arg) (%#call (%#ref -) arg (%#quote 1)))))
   (declare-type
-   fx1+
+   1-
    (@lambda 1
             #f
             signature:
             (return:
-             fixnum::t
+             number::t
              effect:
              #f
              arguments:
-             (fixnum::t)
+             (number::t)
              unchecked:
-             __fx1+
+             __1-
              origin:
              gerbil/runtime/util)))
+  (declare-inline-rule!
+   1-
+   (ast-rules (%#call) ((%#call _ arg) (%#call (%#ref -) arg (%#quote 1)))))
   (declare-type
    __fx1+
    (@lambda 1
@@ -1990,11 +2125,8 @@ package: gerbil/runtime
              #f
              origin:
              gerbil/runtime/util)))
-  (declare-inline-rule!
-   fx1+
-   (ast-rules (%#call) ((%#call _ arg) (%#call (%#ref fx+) arg (%#quote 1)))))
   (declare-type
-   fx1-
+   fx1+
    (@lambda 1
             #f
             signature:
@@ -2005,9 +2137,12 @@ package: gerbil/runtime
              arguments:
              (fixnum::t)
              unchecked:
-             __fx1-
+             __fx1+
              origin:
              gerbil/runtime/util)))
+  (declare-inline-rule!
+   fx1+
+   (ast-rules (%#call) ((%#call _ arg) (%#call (%#ref fx+) arg (%#quote 1)))))
   (declare-type
    __fx1-
    (@lambda 1
@@ -2021,6 +2156,21 @@ package: gerbil/runtime
              #f
              unchecked:
              #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   fx1-
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             fixnum::t
+             effect:
+             #f
+             arguments:
+             (fixnum::t)
+             unchecked:
+             __fx1-
              origin:
              gerbil/runtime/util)))
   (declare-inline-rule!
@@ -2054,6 +2204,21 @@ package: gerbil/runtime
              (fixnum::t fixnum::t)
              unchecked:
              ##fxquotient
+             origin:
+             builtin)))
+  (declare-type
+   fx%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             fixnum::t
+             effect:
+             (pure)
+             arguments:
+             (fixnum::t fixnum::t)
+             unchecked:
+             ##fxremainder
              origin:
              builtin)))
   (declare-type
@@ -2147,21 +2312,6 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   display-as-string
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             void::t
-             effect:
-             #f
-             arguments:
-             (t::t t::t)
-             unchecked:
-             __display-as-string
-             origin:
-             gerbil/runtime/util)))
-  (declare-type
    __display-as-string
    (@lambda 2
             #f
@@ -2174,6 +2324,21 @@ package: gerbil/runtime
              #f
              unchecked:
              #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   display-as-string
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t)
+             unchecked:
+             __display-as-string
              origin:
              gerbil/runtime/util)))
   (declare-type
@@ -2369,6 +2534,21 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
+   __symbol->keyword
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             keyword::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
    symbol->keyword
    (@lambda 1
             #f
@@ -2384,12 +2564,12 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   __symbol->keyword
+   __keyword->symbol
    (@lambda 1
             #f
             signature:
             (return:
-             keyword::t
+             symbol::t
              effect:
              #f
              arguments:
@@ -2413,80 +2593,6 @@ package: gerbil/runtime
              __keyword->symbol
              origin:
              gerbil/runtime/util)))
-  (declare-type
-   __keyword->symbol
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             symbol::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/util)))
-  (declare-type
-   bytes->string__%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             string::t
-             effect:
-             #f
-             arguments:
-             (u8vector::t symbol::t)
-             unchecked:
-             __bytes->string
-             origin:
-             gerbil/runtime/util)))
-  (declare-type
-   bytes->string__0
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             string::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/util)))
-  (declare-type
-   bytes->string
-   (@case-lambda
-    (1
-     bytes->string__0
-     signature:
-     (return:
-      string::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/util))
-    (2
-     bytes->string__%
-     signature:
-     (return:
-      string::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/util))))
   (declare-type
    __bytes->string__%
    (@lambda 2
@@ -2547,27 +2653,27 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))))
   (declare-type
-   string->bytes__%
+   bytes->string__%
    (@lambda 2
             #f
             signature:
             (return:
-             u8vector::t
+             string::t
              effect:
              #f
              arguments:
-             (string::t symbol::t)
+             (u8vector::t symbol::t)
              unchecked:
-             __string->bytes
+             __bytes->string
              origin:
              gerbil/runtime/util)))
   (declare-type
-   string->bytes__0
+   bytes->string__0
    (@lambda 1
             #f
             signature:
             (return:
-             u8vector::t
+             string::t
              effect:
              #f
              arguments:
@@ -2577,13 +2683,13 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   string->bytes
+   bytes->string
    (@case-lambda
     (1
-     string->bytes__0
+     bytes->string__0
      signature:
      (return:
-      u8vector::t
+      string::t
       effect:
       #f
       arguments:
@@ -2593,10 +2699,10 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))
     (2
-     string->bytes__%
+     bytes->string__%
      signature:
      (return:
-      u8vector::t
+      string::t
       effect:
       #f
       arguments:
@@ -2665,8 +2771,8 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))))
   (declare-type
-   substring->bytes__%
-   (@lambda 4
+   string->bytes__%
+   (@lambda 2
             #f
             signature:
             (return:
@@ -2674,14 +2780,14 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (string::t t::t t::t t::t)
+             (string::t symbol::t)
              unchecked:
-             __substring->bytes
+             __string->bytes
              origin:
              gerbil/runtime/util)))
   (declare-type
-   substring->bytes__0
-   (@lambda 3
+   string->bytes__0
+   (@lambda 1
             #f
             signature:
             (return:
@@ -2695,10 +2801,10 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   substring->bytes
+   string->bytes
    (@case-lambda
-    (3
-     substring->bytes__0
+    (1
+     string->bytes__0
      signature:
      (return:
       u8vector::t
@@ -2710,8 +2816,8 @@ package: gerbil/runtime
       #f
       origin:
       gerbil/runtime/util))
-    (4
-     substring->bytes__%
+    (2
+     string->bytes__%
      signature:
      (return:
       u8vector::t
@@ -2783,20 +2889,64 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))))
   (declare-type
-   string-empty?
-   (@lambda 1
+   substring->bytes__%
+   (@lambda 4
             #f
             signature:
             (return:
-             boolean::t
+             u8vector::t
              effect:
              #f
              arguments:
-             (string::t)
+             (string::t t::t t::t t::t)
              unchecked:
-             __string-empty?
+             __substring->bytes
              origin:
              gerbil/runtime/util)))
+  (declare-type
+   substring->bytes__0
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             u8vector::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   substring->bytes
+   (@case-lambda
+    (3
+     substring->bytes__0
+     signature:
+     (return:
+      u8vector::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))
+    (4
+     substring->bytes__%
+     signature:
+     (return:
+      u8vector::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))))
   (declare-type
    __string-empty?
    (@lambda 1
@@ -2813,67 +2963,23 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   string-index__%
-   (@lambda 3
+   string-empty?
+   (@lambda 1
             #f
             signature:
             (return:
-             t::t
+             boolean::t
              effect:
              #f
              arguments:
-             (string::t char::t t::t)
+             (string::t)
              unchecked:
-             __string-index
+             __string-empty?
              origin:
              gerbil/runtime/util)))
-  (declare-type
-   string-index__0
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/util)))
-  (declare-type
-   string-index
-   (@case-lambda
-    (2
-     string-index__0
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/util))
-    (3
-     string-index__%
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/util))))
   (declare-type
    __string-index__%
-   (@lambda 3
+   (@lambda 4
             #f
             signature:
             (return:
@@ -2889,6 +2995,21 @@ package: gerbil/runtime
   (declare-type
    __string-index__0
    (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   __string-index__1
+   (@lambda 3
             #f
             signature:
             (return:
@@ -2918,6 +3039,19 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))
     (3
+     __string-index__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))
+    (4
      __string-index__%
      signature:
      (return:
@@ -2931,8 +3065,8 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))))
   (declare-type
-   string-rindex__%
-   (@lambda 3
+   string-index__%
+   (@lambda 4
             #f
             signature:
             (return:
@@ -2940,13 +3074,13 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (string::t char::t t::t)
+             (string::t t::t t::t #f)
              unchecked:
-             __string-rindex
+             __string-index
              origin:
              gerbil/runtime/util)))
   (declare-type
-   string-rindex__0
+   string-index__0
    (@lambda 2
             #f
             signature:
@@ -2961,10 +3095,25 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   string-rindex
+   string-index__1
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   string-index
    (@case-lambda
     (2
-     string-rindex__0
+     string-index__0
      signature:
      (return:
       t::t
@@ -2977,7 +3126,20 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))
     (3
-     string-rindex__%
+     string-index__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))
+    (4
+     string-index__%
      signature:
      (return:
       t::t
@@ -2990,8 +3152,68 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))))
   (declare-type
+   ____string-index/char
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   __string-index/char
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             ____string-index/char
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   ____string-index/pred
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   __string-index/pred
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             ____string-index/pred
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
    __string-rindex__%
-   (@lambda 3
+   (@lambda 4
             #f
             signature:
             (return:
@@ -3007,6 +3229,21 @@ package: gerbil/runtime
   (declare-type
    __string-rindex__0
    (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   __string-rindex__1
+   (@lambda 3
             #f
             signature:
             (return:
@@ -3036,6 +3273,19 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))
     (3
+     __string-rindex__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))
+    (4
      __string-rindex__%
      signature:
      (return:
@@ -3049,18 +3299,150 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))))
   (declare-type
-   string-split
+   string-rindex__%
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (string::t t::t fixnum::t fixnum::t)
+             unchecked:
+             __string-rindex
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   string-rindex__0
    (@lambda 2
             #f
             signature:
             (return:
-             list::t
+             t::t
              effect:
              #f
              arguments:
-             (string::t char::t)
+             #f
              unchecked:
-             __string-split
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   string-rindex__1
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   string-rindex
+   (@case-lambda
+    (2
+     string-rindex__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))
+    (3
+     string-rindex__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))
+    (4
+     string-rindex__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))))
+  (declare-type
+   ____string-rindex/char
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   __string-rindex/char
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             ____string-rindex/char
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   ____string-rindex/pred
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   __string-rindex/pred
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             ____string-rindex/pred
              origin:
              gerbil/runtime/util)))
   (declare-type
@@ -3079,6 +3461,21 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
+   string-split
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             list::t
+             effect:
+             #f
+             arguments:
+             (string::t char::t)
+             unchecked:
+             __string-split
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
    string-join
    (@lambda 2
             #f
@@ -3093,93 +3490,6 @@ package: gerbil/runtime
              #f
              origin:
              gerbil/runtime/util)))
-  (declare-type
-   read-u8vector__%
-   (@lambda 4
-            #f
-            signature:
-            (return:
-             fixnum::t
-             effect:
-             #f
-             arguments:
-             (u8vector::t t::t t::t t::t)
-             unchecked:
-             __read-u8vector
-             origin:
-             gerbil/runtime/util)))
-  (declare-type
-   read-u8vector__0
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             fixnum::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/util)))
-  (declare-type
-   read-u8vector__1
-   (@lambda 3
-            #f
-            signature:
-            (return:
-             fixnum::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/util)))
-  (declare-type
-   read-u8vector
-   (@case-lambda
-    (2
-     read-u8vector__0
-     signature:
-     (return:
-      fixnum::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/util))
-    (3
-     read-u8vector__1
-     signature:
-     (return:
-      fixnum::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/util))
-    (4
-     read-u8vector__%
-     signature:
-     (return:
-      fixnum::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/util))))
   (declare-type
    __read-u8vector__%
    (@lambda 4
@@ -3268,27 +3578,27 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))))
   (declare-type
-   write-u8vector__%
+   read-u8vector__%
    (@lambda 4
             #f
             signature:
             (return:
-             void::t
+             fixnum::t
              effect:
              #f
              arguments:
              (u8vector::t t::t t::t t::t)
              unchecked:
-             __write-u8vector
+             __read-u8vector
              origin:
              gerbil/runtime/util)))
   (declare-type
-   write-u8vector__0
+   read-u8vector__0
    (@lambda 2
             #f
             signature:
             (return:
-             void::t
+             fixnum::t
              effect:
              #f
              arguments:
@@ -3298,12 +3608,12 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   write-u8vector__1
+   read-u8vector__1
    (@lambda 3
             #f
             signature:
             (return:
-             void::t
+             fixnum::t
              effect:
              #f
              arguments:
@@ -3313,13 +3623,13 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/util)))
   (declare-type
-   write-u8vector
+   read-u8vector
    (@case-lambda
     (2
-     write-u8vector__0
+     read-u8vector__0
      signature:
      (return:
-      void::t
+      fixnum::t
       effect:
       #f
       arguments:
@@ -3329,10 +3639,10 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))
     (3
-     write-u8vector__1
+     read-u8vector__1
      signature:
      (return:
-      void::t
+      fixnum::t
       effect:
       #f
       arguments:
@@ -3342,10 +3652,10 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))
     (4
-     write-u8vector__%
+     read-u8vector__%
      signature:
      (return:
-      void::t
+      fixnum::t
       effect:
       #f
       arguments:
@@ -3430,6 +3740,93 @@ package: gerbil/runtime
       gerbil/runtime/util))
     (4
      __write-u8vector__%
+     signature:
+     (return:
+      void::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))))
+  (declare-type
+   write-u8vector__%
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             (u8vector::t t::t t::t t::t)
+             unchecked:
+             __write-u8vector
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   write-u8vector__0
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   write-u8vector__1
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   write-u8vector
+   (@case-lambda
+    (2
+     write-u8vector__0
+     signature:
+     (return:
+      void::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))
+    (3
+     write-u8vector__1
+     signature:
+     (return:
+      void::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))
+    (4
+     write-u8vector__%
      signature:
      (return:
       void::t

@@ -4,22 +4,28 @@ Gerbil is a growing open source project, your contributions are welcome and appr
 
 ## Getting Started
 
-To get started contributing to Gerbil, follow the [Installation
-Guide](https://cons.io/guide/#installation) to acquire the source code, install
-dependencies, and compile the system. You'll need [git](https://git-scm.com/).
+To get started contributing to Gerbil, follow the
+[Installation Guide](https://cons.io/guide/#installation)
+to acquire the source code, install dependencies, and compile the system.
+You'll need [git](https://git-scm.com/).
 
 You may also install Gerbil from your package manager of choice, but the source code and
 dependencies to modify and later test changes are still required.
 
-Gerbil development is manged using [GitHub](https://github.com/mighty-gerbils/gerbil)
-and pull requests (or "PRs") are the primary way to submit changes. Start by forking the
-repository, make your changes, then [submit a pull
-request.](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork)
+Gerbil development is managed using
+[git.cons.io](https://git.cons.io/mighty-gerbils/gerbil),
+our own self-hosted [gitea](https://about.gitea.com/) server.
+Pull requests (or "PRs") are the primary way to submit changes.
+Start by forking the repository, and make your changes, then
+[submit a pull request](https://docs.gitea.com/usage/pull-request).
+You may have to register a new account, and
+ask on our [gitter](https://gitter.im/gerbil-scheme/community)
+for it to be given suitable privileges,
+before you may submit your first PR.
 
-If you don't wish to
-use GitHub, patches may be accepted via the
-[gerbil-users](https://groups.google.com/a/hackzen.org/g/gerbil-users) mailing list as
-well.
+If you don't wish to use our gitea server, patches may be accepted via
+the [gerbil-users](https://groups.google.com/a/hackzen.org/g/gerbil-users) mailing list
+as well.
 
 ### Branching
 
@@ -36,20 +42,21 @@ branches:
 
 Documentation work is a fantastic way to get started with contributing to Gerbil! If you
 don't know where to start, there may be [issues marked with the `documentation`
-label](https://github.com/mighty-gerbils/gerbil/issues?q=is%3Aissue+is%3Aopen+doc+label%3Adocumentation)
+label](https://git.cons.io/mighty-gerbils/gerbil/issues?q=is%3Aissue+is%3Aopen+doc+label%3Adocumentation)
 that could be a good place to look. As of now, there are many areas of the Gerbil
 codebase that do not have adequate documentation. The Gerbil Core team is actively
 working to improve this, but help is always appreciated.
 
 Documentation generally lives on the projects main site, [cons.io](https://cons.io).
 
-Code documentation is stored in the [`doc/`
-folder](https://github.com/mighty-gerbils/gerbil/tree/master/doc) as markdown. If you're
-unfamiliar with Markdown, the [Markdown Guide](https://www.markdownguide.org/) is a
-helpful reference. We use [VuePress](https://vuepress.vuejs.org/) to process the
-markdown into HTML, follow [their guide](https://vuepress.vuejs.org/guide/#how-it-works)
-for additional information. Of most interest is likely the [Markdown
-Extensions](https://vuepress.vuejs.org/guide/markdown.html) section.
+Code documentation is stored in the
+[`doc/` folder](https://git.cons.io/mighty-gerbils/gerbil/tree/master/doc) as markdown.
+If you're unfamiliar with Markdown,
+the [Markdown Guide](https://www.markdownguide.org/) is a helpful reference.
+We use [VuePress](https://vuepress.vuejs.org/) to process the markdown into HTML,
+follow [their guide](https://vuepress.vuejs.org/guide/#how-it-works)
+for additional information. Of most interest is likely
+the [Markdown Extensions](https://vuepress.vuejs.org/guide/markdown.html) section.
 
 ### Organization of Gerbil Documentation
 
@@ -72,9 +79,8 @@ Tutorials are stored under `doc/tutorials` and focus on providing learning-orien
 examples that hackers new to Gerbil can use to get familiar with the ins-and-outs of the
 language and standard library.
 
-Some examples include the [Key-Value Store
-Server](https://cons.io/tutorials/kvstore.html) and [Web programming with the Gerbil
-HTTP server](https://cons.io/tutorials/httpd.html).
+Some examples include the [Key-Value Store Server](https://cons.io/tutorials/kvstore.html)
+and [Web programming with the Gerbil HTTP server](https://cons.io/tutorials/httpd.html).
 
 
 #### Reference
@@ -126,7 +132,7 @@ not every new feature/module may get included. If there are questions, please re
 in the [Matrix room](https://matrix.to/#/#gerbil-scheme-core:gitter.im) or [mailing
 list](https://groups.google.com/a/hackzen.org/g/gerbil-users) for guidance or feedback.
 Most often, if a module or package is decided to not be included in the stdlib, it will
-be added to the [directory](https://github.com/mighty-gerbils/gerbil-directory) instead.
+be added to the [directory](https://git.cons.io/mighty-gerbils/gerbil-directory) instead.
 Do not let this discourage from making contributions! The Gerbil ecosystem benefits
 greatly from community library support!
 
@@ -140,7 +146,7 @@ The standard library is located under `src/std`.
 
 The `:std/make` build tool is used to compile the standard library, therefore new
 modules must be included in the top level
-[`build-spec.ss`](https://github.com/mighty-gerbils/gerbil/blob/master/src/std/build-spec.ss)
+[`build-spec.ss`](https://git.cons.io/mighty-gerbils/gerbil/blob/master/src/std/build-spec.ss)
 for the stdlib, located at `src/std/build-spec.ss`.
 
 Modules that provide types and an interface generally follow the following convention:
@@ -159,9 +165,9 @@ generally not be imported by other modules.
 
 An example of this structure can be observed with the S3 module:
 
-- Module reexport: [`s3.ss`](https://github.com/mighty-gerbils/gerbil/blob/master/src/std/net/s3.ss)
-- API: [`api.ss`](https://github.com/mighty-gerbils/gerbil/blob/master/src/std/net/s3/api.ss)
-- Interface: [`interface.ss`](https://github.com/mighty-gerbils/gerbil/blob/master/src/std/net/s3/interface.ss)
+- Module reexport: [`s3.ss`](https://git.cons.io/mighty-gerbils/gerbil/blob/master/src/std/net/s3.ss)
+- API: [`api.ss`](https://git.cons.io/mighty-gerbils/gerbil/blob/master/src/std/net/s3/api.ss)
+- Interface: [`interface.ss`](https://git.cons.io/mighty-gerbils/gerbil/blob/master/src/std/net/s3/interface.ss)
 
 ### Testing
 

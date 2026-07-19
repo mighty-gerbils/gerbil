@@ -1,32 +1,74 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; buffer types
+(import ../interface)
 (export #t)
 
-;; input-buffer
-;; - reader is an instance of Reader
-;; - buf is the buffer itself, as a u8vector
+(defstruct basic-buffer
+  ((buf     :- :u8vector)  ;; the current buffer
+   (closed? :- :boolean)   ;; is the buffer closed?
+   (cached? :- :boolean))) ;; is the buffer owned by the buffer cache?
+
+;; basic-input-buffer
 ;; - rlo is the read cursor (where the user reads)
 ;; - rhi is the write cursor (where the reader pumps)
-(defstruct input-buffer (reader buf rlo rhi closed?)
-  final: #t )
+(defstruct (basic-input-buffer basic-buffer)
+  ((rlo     :- :fixnum)
+   (rhi     :- :fixnum)))
 
-;; delimited-input-buffer
-;; - in is an input-buffer or another delimited-input-buffer
+;; basic-output-buffer
+;; - whi is the writer cursor
+(defstruct (basic-output-buffer basic-buffer)
+  ((whi     :- :fixnum)))
+
+;; memory buffers
+(defstruct (memory-input-buffer basic-input-buffer) ()
+  final: #t)
+
+(defstruct (memory-output-buffer basic-output-buffer) ()
+  final: #t)
+
+;; sources and sinks
+(defstruct (reader-input-buffer basic-input-buffer)
+  ((reader  :- Reader)))
+
+(defstruct (source-input-buffer reader-input-buffer) ()
+  final: #t)
+
+(defstruct (writer-output-buffer basic-output-buffer)
+  ((writer  :- Writer)))
+
+(defstruct (sink-output-buffer writer-output-buffer) ()
+  final: #t)
+
+;; messge buffers
+(defstruct (message-input-buffer reader-input-buffer) ()
+  final: #t)
+
+(defstruct (message-output-buffer writer-output-buffer) ()
+  final: #t)
+
+;; delimited input buffered readers
+;; - in is an implementation of BufferedReader
 ;; - reamining is the number of bytes that remain to be read
 ;; - limit is the input limit
-(defstruct delimited-input-buffer (in remaining limit)
-  final: #t )
+(defstruct delimited-input-buffer
+  ((input     :- :t)
+   (remaining :- :integer)
+   (limit     :- :integer)
+   (closed?   :- :boolean))
+  final: #t)
 
-;; output-buffer
-;; - writer is an instance of Writer
-;; - buf is the buffer itself, as a u8vector
-;; - whi is the write cursor
-(defstruct output-buffer (writer buf whi closed?)
-  final: #t )
+;; port buffers
+(defstruct basic-port-buffer
+  ((port    :- :port)
+   (closed? :- :boolean)))
 
-;; chunked-output-buffer
-;; - chunks is the list of current pending chunks.
-;; - output is the final output if the buffer is closed.
-(defstruct chunked-output-buffer (chunks output)
-  final: #t )
+(defstruct (port-input-buffer basic-port-buffer)
+  ((putback :- :u8vector)
+   (rlo     :- :fixnum)
+   (rhi     :- :fixnum))
+  final: #t)
+
+(defstruct (port-output-buffer basic-port-buffer) ()
+  final: #t)

@@ -182,7 +182,8 @@ namespace: gxc
     (apply-collect-top-level-declarations stx)
     ;; optimize special constructs (match, syntax-case)
     (let (stx (apply-optimize-annotated stx))
-      ;; type-check and optimize procedure applications
+      ;; TODO apply-optimize-abstract-eval
+      ;; final type-check and optimize procedure applications
       (apply-optimize-call stx))))
 
 ;; method to generate the ssxi optimizer meta module

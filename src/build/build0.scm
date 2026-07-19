@@ -2,5 +2,9 @@
 
 (parallel-build
  (call-with-input-file ".build.stage0" read-all-as-lines)
- (compiler '("-e" "(include \"~~lib/_gambit#.scm\")"))
+ (let ((options
+        (if (getenv "GERBIL_DEBUG" #f)
+          '("-debug-source" "-track-scheme" "-cc-options" "-g" "-e" "(include \"~~lib/_gambit#.scm\")")
+          '("-e" "(include \"~~lib/_gambit#.scm\")"))))
+   (compiler options))
  false)

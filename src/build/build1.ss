@@ -1,8 +1,6 @@
 ;; -*- Gerbil -*-
 (import :gerbil/compiler)
 
-;;(include "../gerbil/runtime/build-lib.scm") ;; Do everything serially for now.
-
 (def gerbil-modules-runtime
   '("gerbil/runtime/gambit.ss"
     "gerbil/runtime/util.ss"
@@ -63,8 +61,8 @@
     "gerbil/core/contract.ss"
     "gerbil/core.ss"))
 
-(def gerbil-prelude-gambit
-  '("gerbil/gambit.ss"))
+(def gerbil-modules-base
+  '("gerbil/base.ss"))
 
 (def gerbil-libdir
   (path-expand "lib" (getenv "GERBIL_BUILD_PREFIX")))
@@ -78,10 +76,7 @@
                         parallel: #t
                         gsc-options: ["-e" "(include \"~~lib/_gambit#.scm\")"]]))
 
-(def (compile-group group . options) ;; TODO: parallelize this?
-  ;; TODO: parallelize, but with the correct dependencies -- instead of "false",
-  ;; the on-success function will queue those modules whose dependencies are done.
-  ;;(parallel-build group (lambda (x) (apply compile1 x options)) false)
+(def (compile-group group . options)
   (for-each (lambda (x) (apply compile1 x options)) group))
 
 (displayln "building gerbil in " gerbil-libdir)
@@ -98,8 +93,8 @@
 (compile-group gerbil-modules-expander)
 ;; compile compiler
 (compile-group gerbil-modules-compiler)
-;; compile gambit prelude (TODO: obsolete, it is just an empty shim now)
-(compile-group gerbil-prelude-gambit)
+;; compile base lang
+(compile-group gerbil-modules-base)
 
 ;; run the compile jobs to complete the build
 (execute-pending-compile-jobs!)

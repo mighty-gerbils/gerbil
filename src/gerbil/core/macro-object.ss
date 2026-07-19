@@ -10,7 +10,7 @@ package: gerbil/core
 (export #t)
 
 (defclass macro-object (macro)
-  id: gerbil.core#macro-object::t)
+  id: gerbil/core#macro-object::t)
 
 (defmethod {apply-macro-expander macro-object}
   (lambda (self stx)

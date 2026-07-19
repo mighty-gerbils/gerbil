@@ -1,10 +1,9 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; SSL errors
-(export #t check-ptr)
+(export #t)
 (import :std/error
         :std/os/error
-        :std/sugar
         :std/crypto/libcrypto
         ./libssl)
 

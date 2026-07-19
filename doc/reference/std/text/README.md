@@ -12,4 +12,4 @@ The following libraries are provided for text encoding and decoding tasks:
 - [:std/text/zlib](zlib.md)
 
 External Packages:
-- [:clan/text/yaml](https://github.com/mighty-gerbils/gerbil-libyaml)
+- [:clan/text/yaml](https://git.cons.io/mighty-gerbils/gerbil-libyaml)

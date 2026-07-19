@@ -24,13 +24,15 @@ ahead of time compilation and compiled macros.
 
 # Installation
 
-The source code for Gerbil is hosted on [GitHub](https://github.com/mighty-gerbils/gerbil),
-with the latest release available in [releases](https://github.com/mighty-gerbils/gerbil/releases).
+The source code for Gerbil is hosted on [git.cons.io](https://git.cons.io/mighty-gerbils/gerbil),
+our self-hosted [gitea](https://about.gitea.com/) server,
+with the latest release available in [releases](https://git.cons.io/mighty-gerbils/gerbil/releases)
+(formerly [on GitHub](https://github.com/mighty-gerbils/gerbil/releases)).
 
 **If you are on Linux** installation from source is straightforward:
 
 ```shell
-$ git clone git@github.com:mighty-gerbils/gerbil.git
+$ git clone https://git.cons.io/mighty-gerbils/gerbil.git
 $ cd gerbil
 $ ./configure
 $ make -j4
@@ -50,7 +52,7 @@ You can install them in ubuntu with:
 $ sudo apt install libssl-dev zlib1g-dev libsqlite3-dev
 ```
 
-**Note** If you want to install the latest release (v0.18), you can also use the precompiled binary packages for Ubuntu, Debian, Fedora, and CentOS. They are available in the [v0.18 release](https://github.com/mighty-gerbils/gerbil/releases/tag/v0.18) page.
+**Note** If you want to install the latest release (v0.18.2), you can also use the precompiled binary packages for Ubuntu, Debian, Fedora, and CentOS. They are available in the [v0.18.2 release](https://github.com/mighty-gerbils/gerbil/releases/tag/v0.18.2) page.
 
 **If you are on MacOS** you can install Gerbil using our [brew formula](https://github.com/mighty-gerbils/homebrew-gerbil):
 
@@ -123,7 +125,7 @@ bothered and polluted everything with more than a (C) vyzo, would read
 like this:
 
 ```
-© 2007-2023 Dimitris Vyzovitis and contributors
+© 2007-2026 Dimitris Vyzovitis and contributors
 Gerbil is Free Software, distributed under the GNU LGPLv2.1 or later
 and the Apache 2.0 license.
 ```

@@ -13,13 +13,16 @@ namespace: gx
 ;; ASTs -- syntactic context
 (defstruct (identifier-wrap AST) (marks)
   name:  syntax
-  final: #t)
+  final: #t
+  print: ())
 (defstruct (syntax-wrap AST) (mark)
   name:  syntax
-  final: #t)
+  final: #t
+  print: ())
 (defstruct (syntax-quote AST) (context marks)
   name:  syntax
-  final: #t)
+  final: #t
+  print: ())
 
 ;; primitive operations
 (def (identifier? stx)
@@ -289,12 +292,13 @@ namespace: gx
     (else #f)))
 
 (def (genident (e 'g) (src #f))
-  (stx-wrap-source
-   (gensym (let (e (stx-e e)) (if (interned-symbol? e) e 'g)))
-   (or (stx-source e) src)))
+  (datum->syntax (and (identifier? src) src)
+    (make-symbol "$%"
+                 (gensym (let (e (stx-e e)) (if (symbol? e) e 'g))))
+    src))
 
 (def (gentemps stx-lst)
-  (stx-map genident stx-lst))
+  (stx-map (lambda (x) (genident x x)) stx-lst))
 
 ;; foldings
 (def (syntax->list stx)
@@ -466,5 +470,16 @@ namespace: gx
        (match (syntax-e rest)
          ([val . rest]
           (if (key=? hd key) val
+              (lp rest)))))
+      (else #f))))
+
+(def (stx-plist-assq key stx (key=? stx-eq?))
+  (check-procedure key=?)
+  (let lp ((rest stx))
+    (match (syntax-e rest)
+      ([hd . rest]
+       (match (syntax-e rest)
+         ([val . rest]
+          (if (key=? hd key) [hd . val]
               (lp rest)))))
       (else #f))))

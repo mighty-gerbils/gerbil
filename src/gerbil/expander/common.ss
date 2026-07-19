@@ -127,3 +127,11 @@ namespace: gx
                     (body (generate #'$e (syntax->list #'kws) #'clauses)))
        #'(let (($e expr))
            body)))))
+
+(def __DEBUG-EXPANDER
+  (and (string? __DEBUG)
+       (string-contains __DEBUG "expansion")))
+
+(def __DEBUG-VERBOSE
+  (and (string? __DEBUG)
+       (string-contains __DEBUG "verbose")))

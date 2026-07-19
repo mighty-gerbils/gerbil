@@ -10,226 +10,211 @@ namespace: gerbil/core/contract
           :gerbil/core/sugar
           (spec:
            (:gerbil/core/mop)
-           (0 MOP-3 0 MOP-3)
-           (0 MOP-2 0 MOP-2)
            (0 MOP-4 0 MOP-4)
-           (0 MOP-1 0 MOP-1)
+           (0 MOP-2 0 MOP-2)
+           (0 MOP-3 0 MOP-3)
            (0 MOP-5 0 MOP-5)
-           (0 defstruct-type 0 defstruct-type)
+           (0 MOP-system-classes 0 MOP-system-classes)
+           (0 MOP-1 0 MOP-1)
            (0 defclass-type 0 defclass-type)
+           (0 defstruct-type 0 defstruct-type)
            (1 module-type-id 1 module-type-id)
            (1 make-class-type-id 1 make-class-type-id)
-           (0 defstruct 0 defstruct)
-           (0 defclass 0 defclass)
-           (0 define-class 0 define-class)
-           (0 @-set! 0 @-set!)
            (0 @ 0 @)
            (0 define-struct 0 define-struct)
+           (0 define-class 0 define-class)
+           (0 defclass 0 defclass)
+           (0 defstruct 0 defstruct)
+           (0 @-set! 0 @-set!)
            (0 defmethod 0 defmethod)
-           (0 :object 0 :object)
-           (0 class 0 class)
-           (0 :keyword 0 :keyword)
-           (0 :ratnum 0 :ratnum)
-           (0 :condvar 0 :condvar)
-           (0 :continuation 0 :continuation)
-           (0 :promise 0 :promise)
-           (0 defsystem-class-info 0 defsystem-class-info)
-           (0 :u8vector 0 :u8vector)
-           (0 :sequence 0 :sequence)
-           (0 :mutex 0 :mutex)
-           (0 :thread 0 :thread)
-           (0 :procedure 0 :procedure)
-           (0 :atom 0 :atom)
-           (0 :null 0 :null)
-           (0 :directory-port 0 :directory-port)
-           (0 :s64vector 0 :s64vector)
-           (0 :udp-port 0 :udp-port)
-           (0 :readtable 0 :readtable)
-           (0 :socket-info 0 :socket-info)
-           (0 :real 0 :real)
-           (0 :class 0 :class)
-           (0 :string 0 :string)
-           (0 :event-queue-port 0 :event-queue-port)
-           (0 :foreign 0 :foreign)
-           (0 :flonum 0 :flonum)
-           (0 :frame 0 :frame)
-           (0 :u8vector-port 0 :u8vector-port)
-           (0 :character-port 0 :character-port)
-           (0 :s16vector 0 :s16vector)
-           (0 :address-info 0 :address-info)
            (0 :time 0 :time)
-           (0 :vector 0 :vector)
-           (0 :char 0 :char)
-           (0 :s32vector 0 :s32vector)
-           (0 :device-port 0 :device-port)
-           (0 :hvector 0 :hvector)
-           (0 :string-port 0 :string-port)
-           (0 :byte-port 0 :byte-port)
-           (0 :number 0 :number)
-           (0 :false 0 :false)
-           (0 :s8vector 0 :s8vector)
-           (0 :file-info 0 :file-info)
-           (0 :t 0 :t)
-           (0 :vm 0 :vm)
-           (0 :processor 0 :processor)
-           (0 :box 0 :box)
-           (0 :u16vector 0 :u16vector)
-           (0 :writeenv 0 :writeenv)
-           (0 :f64vector 0 :f64vector)
-           (0 :table 0 :table)
-           (0 :thread-group 0 :thread-group)
-           (0 :vector-port 0 :vector-port)
-           (0 :symbol 0 :symbol)
-           (0 :u32vector 0 :u32vector)
-           (0 :tcp-server-port 0 :tcp-server-port)
-           (0 :pair 0 :pair)
-           (0 :object-port 0 :object-port)
-           (0 :u64vector 0 :u64vector)
-           (0 :values 0 :values)
-           (0 :symbolic 0 :symbolic)
-           (0 :true 0 :true)
-           (0 :readenv 0 :readenv)
-           (0 :cpxnum 0 :cpxnum)
-           (0 :integer 0 :integer)
-           (0 :void 0 :void)
-           (0 :fixnum 0 :fixnum)
-           (0 :raw-device-port 0 :raw-device-port)
-           (0 :port 0 :port)
-           (0 :f32vector 0 :f32vector)
-           (0 :weak 0 :weak)
-           (0 :eof 0 :eof)
-           (0 :boolean 0 :boolean)
-           (0 :bignum 0 :bignum)
-           (0 :immediate 0 :immediate)
-           (0 :special 0 :special)
+           (0 class 0 class)
+           (0 :readtable 0 :readtable)
            (0 :list 0 :list)
-           (1 defstruct-type 1 defstruct-type)
+           (0 :device-port 0 :device-port)
+           (0 :class 0 :class)
+           (0 :weak 0 :weak)
+           (0 :s8vector 0 :s8vector)
+           (0 :mutex 0 :mutex)
+           (0 :null 0 :null)
+           (0 :cpxnum 0 :cpxnum)
+           (0 :fixnum 0 :fixnum)
+           (0 :false 0 :false)
+           (0 :bignum 0 :bignum)
+           (0 :s16vector 0 :s16vector)
+           (0 :flonum 0 :flonum)
+           (0 :writeenv 0 :writeenv)
+           (0 :directory-port 0 :directory-port)
+           (0 :foreign 0 :foreign)
+           (0 :immediate 0 :immediate)
+           (0 :event-queue-port 0 :event-queue-port)
+           (0 :promise 0 :promise)
+           (0 :box 0 :box)
+           (0 :sequence 0 :sequence)
+           (0 :void 0 :void)
+           (0 :atom 0 :atom)
+           (0 :absent 0 :absent)
+           (0 :hvector 0 :hvector)
+           (0 :table 0 :table)
+           (0 :symbolic 0 :symbolic)
+           (0 :string-port 0 :string-port)
+           (0 :f64vector 0 :f64vector)
+           (0 :return 0 :return)
+           (0 :readenv 0 :readenv)
+           (0 :haflonum 0 :haflonum)
+           (0 :number 0 :number)
+           (0 :object-port 0 :object-port)
+           (0 :raw-device-port 0 :raw-device-port)
+           (0 :socket-info 0 :socket-info)
+           (0 :unbound2 0 :unbound2)
+           (0 :file-info 0 :file-info)
+           (0 :condvar 0 :condvar)
+           (0 :processor 0 :processor)
+           (0 :u64vector 0 :u64vector)
+           (0 :thread 0 :thread)
+           (0 :vector-port 0 :vector-port)
+           (0 :thread-group 0 :thread-group)
+           (0 :u16vector 0 :u16vector)
+           (0 :builtin 0 :builtin)
+           (0 :boolean 0 :boolean)
+           (0 :deleted 0 :deleted)
+           (0 :stflonum 0 :stflonum)
+           (0 :keyword 0 :keyword)
+           (0 :structure 0 :structure)
+           (0 :unbound 0 :unbound)
+           (0 :values 0 :values)
+           (0 :dssl-rest 0 :dssl-rest)
+           (0 :procedure 0 :procedure)
+           (0 :t 0 :t)
+           (0 :unused 0 :unused)
+           (0 :u8vector-port 0 :u8vector-port)
+           (0 :subtyped 0 :subtyped)
+           (0 :u8vector 0 :u8vector)
+           (0 :vector 0 :vector)
+           (0 :byte-port 0 :byte-port)
+           (0 :f32vector 0 :f32vector)
+           (0 :integer 0 :integer)
+           (0 :address-info 0 :address-info)
+           (0 :real 0 :real)
+           (0 :dssl-optional 0 :dssl-optional)
+           (0 :udp-port 0 :udp-port)
+           (0 :symbol 0 :symbol)
+           (0 :vm 0 :vm)
+           (0 :frame 0 :frame)
+           (0 :special 0 :special)
+           (0 :s64vector 0 :s64vector)
+           (0 :pair 0 :pair)
+           (0 :ratnum 0 :ratnum)
+           (0 :dssl-key 0 :dssl-key)
+           (0 :string 0 :string)
+           (0 :tcp-server-port 0 :tcp-server-port)
+           (0 :eof 0 :eof)
+           (0 :object 0 :object)
+           (0 :character-port 0 :character-port)
+           (0 :s32vector 0 :s32vector)
+           (0 :port 0 :port)
+           (0 :char 0 :char)
+           (0 :continuation 0 :continuation)
+           (0 :dssl-token 0 :dssl-token)
+           (0 :true 0 :true)
+           (0 :u32vector 0 :u32vector)
            (1 defclass-type 1 defclass-type)
+           (1 defstruct-type 1 defstruct-type)
            (2 module-type-id 2 module-type-id)
            (2 make-class-type-id 2 make-class-type-id)
-           (1 &!class-type-system?-set! 1 &!class-type-system?-set!)
-           (1
-            !class-type-unchecked-mutators-set!
-            1
-            !class-type-unchecked-mutators-set!)
-           (1 !class-type-super 1 !class-type-super)
-           (1 !class-type-descriptor-set! 1 !class-type-descriptor-set!)
-           (1 !class-type-predicate 1 !class-type-predicate)
-           (1
-            class-type-info::apply-macro-expander
-            1
-            class-type-info::apply-macro-expander)
-           (1
-            &!class-type-constructor-method
-            1
-            &!class-type-constructor-method)
-           (1 !class-type-final? 1 !class-type-final?)
-           (1 &!class-type-ordered-slots 1 &!class-type-ordered-slots)
-           (1 !class-type-slot-types-set! 1 !class-type-slot-types-set!)
-           (1 !class-type-struct? 1 !class-type-struct?)
-           (1 !class-type-mutators 1 !class-type-mutators)
-           (1 !class-type-descriptor 1 !class-type-descriptor)
-           (1 &!class-type-slots-set! 1 &!class-type-slots-set!)
-           (1 &!class-type-mutators 1 &!class-type-mutators)
-           (1 &!class-type-metaclass 1 &!class-type-metaclass)
-           (1 &!class-type-slot-contracts 1 &!class-type-slot-contracts)
-           (1 &!class-type-system? 1 &!class-type-system?)
-           (1 !class-type-metaclass-set! 1 !class-type-metaclass-set!)
-           (1
-            &!class-type-unchecked-mutators-set!
-            1
-            &!class-type-unchecked-mutators-set!)
-           (1 &!class-type-mutators-set! 1 &!class-type-mutators-set!)
-           (1 &!class-type-descriptor-set! 1 &!class-type-descriptor-set!)
-           (1 &!class-type-final?-set! 1 &!class-type-final?-set!)
-           (1 &!class-type-struct?-set! 1 &!class-type-struct?-set!)
-           (1
-            &!class-type-precedence-list-set!
-            1
-            &!class-type-precedence-list-set!)
+           (1 &!class-type-methods-set! 1 &!class-type-methods-set!)
            (1
             &!class-type-unchecked-accessors
             1
             &!class-type-unchecked-accessors)
-           (1 !class-type-name-set! 1 !class-type-name-set!)
-           (1 !class-type-accessors 1 !class-type-accessors)
+           (1
+            syntax-local-runtime-type-info?
+            1
+            syntax-local-runtime-type-info?)
            (1 &!class-type-final? 1 &!class-type-final?)
-           (1 &!class-type-slot-types 1 &!class-type-slot-types)
-           (1
-            &!class-type-unchecked-mutators
-            1
-            &!class-type-unchecked-mutators)
-           (1 &!class-type-constructor 1 &!class-type-constructor)
-           (1
-            !class-type-slot-contracts-set!
-            1
-            !class-type-slot-contracts-set!)
-           (1 &!class-type-descriptor 1 &!class-type-descriptor)
-           (1 &!class-type-struct? 1 &!class-type-struct?)
+           (1 !class-type-methods-set! 1 !class-type-methods-set!)
+           (1 &!class-type-mutators-set! 1 &!class-type-mutators-set!)
+           (1 &!class-type-metaclass-set! 1 &!class-type-metaclass-set!)
+           (1 &!class-type-metaclass 1 &!class-type-metaclass)
+           (1 !class-type-accessors-set! 1 !class-type-accessors-set!)
+           (1 !class-type-mutators 1 !class-type-mutators)
            (1 &!class-type-precedence-list 1 &!class-type-precedence-list)
-           (1 &!class-type-name 1 &!class-type-name)
-           (1 !class-type-mutators-set! 1 !class-type-mutators-set!)
            (1 !class-type-slot-defaults 1 !class-type-slot-defaults)
-           (1 !class-type-slots 1 !class-type-slots)
-           (1 !class-type-final?-set! 1 !class-type-final?-set!)
-           (1 !class-type-slots-set! 1 !class-type-slots-set!)
-           (1 !class-type-slot-contracts 1 !class-type-slot-contracts)
-           (1 !class-type-constructor-method 1 !class-type-constructor-method)
-           (1 make-class-type-info 1 make-class-type-info)
+           (1 make-meta-object 1 make-meta-object)
+           (1 &!runtime-type-id-set! 1 &!runtime-type-id-set!)
+           (1 &!class-type-slot-types 1 &!class-type-slot-types)
+           (1 &!class-type-slot-offsets 1 &!class-type-slot-offsets)
+           (1 !class-type-super 1 !class-type-super)
+           (1 !class-type-system?-set! 1 !class-type-system?-set!)
+           (1 &!class-type-constructor-set! 1 &!class-type-constructor-set!)
+           (1 &!class-type-system? 1 &!class-type-system?)
+           (1 !class-type-precedence-list 1 !class-type-precedence-list)
+           (1 !class-type-slot-types-set! 1 !class-type-slot-types-set!)
+           (1 &!class-type-accessors-set! 1 &!class-type-accessors-set!)
            (1
             &!class-type-unchecked-accessors-set!
             1
             &!class-type-unchecked-accessors-set!)
-           (1 &!class-type-accessors 1 &!class-type-accessors)
-           (1 !class-type-super-set! 1 !class-type-super-set!)
-           (1 &!class-type-metaclass-set! 1 &!class-type-metaclass-set!)
-           (1 &!class-type-slot-defaults 1 &!class-type-slot-defaults)
-           (1 &!class-type-id 1 &!class-type-id)
-           (1 !class-type-constructor 1 !class-type-constructor)
-           (1 !class-type-ordered-slots 1 !class-type-ordered-slots)
-           (1 class-type-info? 1 class-type-info?)
-           (1
-            &!class-type-ordered-slots-set!
-            1
-            &!class-type-ordered-slots-set!)
-           (1
-            &!class-type-slot-contracts-set!
-            1
-            &!class-type-slot-contracts-set!)
-           (1 &!class-type-accessors-set! 1 &!class-type-accessors-set!)
-           (1 !class-type-ordered-slots-set! 1 !class-type-ordered-slots-set!)
-           (1 !class-type-id 1 !class-type-id)
-           (1 !class-type-slot-types 1 !class-type-slot-types)
-           (1 !class-type-metaclass 1 !class-type-metaclass)
-           (1 syntax-local-class-type-info? 1 syntax-local-class-type-info?)
-           (1 &!class-type-predicate 1 &!class-type-predicate)
-           (1 !class-type-slot-defaults-set! 1 !class-type-slot-defaults-set!)
-           (1 !class-type-predicate-set! 1 !class-type-predicate-set!)
            (1 !class-type-constructor-set! 1 !class-type-constructor-set!)
-           (1 &!class-type-predicate-set! 1 &!class-type-predicate-set!)
-           (1
-            !class-type-unchecked-accessors
-            1
-            !class-type-unchecked-accessors)
-           (1 !class-type-accessors-set! 1 !class-type-accessors-set!)
+           (1 !class-type-final? 1 !class-type-final?)
            (1 !class-type-system? 1 !class-type-system?)
-           (1 &!class-type-slot-types-set! 1 &!class-type-slot-types-set!)
-           (1 &!class-type-constructor-set! 1 &!class-type-constructor-set!)
+           (1 !class-type-constructor-method 1 !class-type-constructor-method)
            (1 &!class-type-super-set! 1 &!class-type-super-set!)
-           (1 &!class-type-super 1 &!class-type-super)
-           (1 !class-type-name 1 !class-type-name)
            (1
-            !class-type-constructor-method-set!
+            &!class-type-precedence-list-set!
             1
-            !class-type-constructor-method-set!)
+            &!class-type-precedence-list-set!)
+           (1 !class-type-slot-types 1 !class-type-slot-types)
+           (1 &!class-type-predicate 1 &!class-type-predicate)
+           (1 &!class-type-final?-set! 1 &!class-type-final?-set!)
+           (1 !runtime-type-id 1 !runtime-type-id)
+           (1 !class-type-slot-offsets 1 !class-type-slot-offsets)
+           (1 class-type-info::t 1 class-type-info::t)
+           (1 &!runtime-type-id 1 &!runtime-type-id)
+           (1 &!class-type-slot-contracts 1 &!class-type-slot-contracts)
+           (1 &!class-type-id-set! 1 &!class-type-id-set!)
+           (1 !class-type-id-set! 1 !class-type-id-set!)
+           (1 !runtime-type-id-set! 1 !runtime-type-id-set!)
+           (1 &!class-type-descriptor 1 &!class-type-descriptor)
+           (1 class-type-info? 1 class-type-info?)
+           (1 !class-type-id 1 !class-type-id)
+           (1 &!class-type-slots-set! 1 &!class-type-slots-set!)
            (1
             !class-type-precedence-list-set!
             1
             !class-type-precedence-list-set!)
-           (1 &!class-type-name-set! 1 &!class-type-name-set!)
+           (1 !runtime-type-name-set! 1 !runtime-type-name-set!)
+           (1 !runtime-type-descriptor 1 !runtime-type-descriptor)
+           (1 &!runtime-type-name-set! 1 &!runtime-type-name-set!)
+           (1
+            &!class-type-slot-contracts-set!
+            1
+            &!class-type-slot-contracts-set!)
+           (1 !class-type-super-set! 1 !class-type-super-set!)
+           (1 runtime-type-info::t 1 runtime-type-info::t)
+           (1 meta-object-methods 1 meta-object-methods)
+           (1 !class-type-descriptor-set! 1 !class-type-descriptor-set!)
+           (1 &!class-type-descriptor-set! 1 &!class-type-descriptor-set!)
+           (1 &!class-type-predicate-set! 1 &!class-type-predicate-set!)
+           (1 &!class-type-struct?-set! 1 &!class-type-struct?-set!)
+           (1
+            &!class-type-ordered-slots-set!
+            1
+            &!class-type-ordered-slots-set!)
            (1 !class-type-struct?-set! 1 !class-type-struct?-set!)
-           (1 !class-type-id-set! 1 !class-type-id-set!)
-           (1 !class-type-system?-set! 1 !class-type-system?-set!)
+           (1 !class-type-methods 1 !class-type-methods)
+           (1 !class-type-ordered-slots 1 !class-type-ordered-slots)
+           (1 !class-type-constructor 1 !class-type-constructor)
+           (1
+            !class-type-slot-contracts-set!
+            1
+            !class-type-slot-contracts-set!)
+           (1 !class-type-slots 1 !class-type-slots)
+           (1 &!runtime-type-descriptor 1 &!runtime-type-descriptor)
+           (1 &!class-type-constructor 1 &!class-type-constructor)
+           (1 !class-type-struct? 1 !class-type-struct?)
+           (1 &!class-type-name-set! 1 &!class-type-name-set!)
+           (1 !class-type-descriptor 1 !class-type-descriptor)
            (1
             !class-type-unchecked-accessors-set!
             1
@@ -238,326 +223,391 @@ namespace: gerbil/core/contract
             &!class-type-slot-defaults-set!
             1
             &!class-type-slot-defaults-set!)
-           (1 class-type-info::t 1 class-type-info::t)
+           (1 !class-type-name 1 !class-type-name)
+           (1 &!class-type-ordered-slots 1 &!class-type-ordered-slots)
+           (1 &!class-type-slots 1 &!class-type-slots)
+           (1 !class-type-unchecked-mutators 1 !class-type-unchecked-mutators)
+           (1 &!class-type-slot-offsets-set! 1 &!class-type-slot-offsets-set!)
+           (1 !class-type-slots-set! 1 !class-type-slots-set!)
+           (1 !class-type-metaclass 1 !class-type-metaclass)
+           (1 !class-type-slot-defaults-set! 1 !class-type-slot-defaults-set!)
+           (1 meta-object-methods-set! 1 meta-object-methods-set!)
+           (1 !class-type-name-set! 1 !class-type-name-set!)
+           (1
+            &!class-type-unchecked-mutators
+            1
+            &!class-type-unchecked-mutators)
+           (1
+            &!class-type-unchecked-mutators-set!
+            1
+            &!class-type-unchecked-mutators-set!)
+           (1 !class-type-metaclass-set! 1 !class-type-metaclass-set!)
+           (1 !class-type-final?-set! 1 !class-type-final?-set!)
+           (1 !class-type-slot-contracts 1 !class-type-slot-contracts)
+           (1 &!class-type-system?-set! 1 &!class-type-system?-set!)
+           (1
+            !class-type-unchecked-accessors
+            1
+            !class-type-unchecked-accessors)
+           (1 &!runtime-type-descriptor-set! 1 &!runtime-type-descriptor-set!)
+           (1 runtime-type-info? 1 runtime-type-info?)
+           (1 !runtime-type-descriptor-set! 1 !runtime-type-descriptor-set!)
+           (1 &!class-type-accessors 1 &!class-type-accessors)
+           (1 !class-type-accessors 1 !class-type-accessors)
+           (1 !runtime-type-name 1 !runtime-type-name)
+           (1 meta-object::t 1 meta-object::t)
+           (1 !class-type-predicate 1 !class-type-predicate)
+           (1 syntax-local-class-type-info? 1 syntax-local-class-type-info?)
+           (1 &!class-type-slot-types-set! 1 &!class-type-slot-types-set!)
+           (1 &!class-type-slot-defaults 1 &!class-type-slot-defaults)
            (1
             &!class-type-constructor-method-set!
             1
             &!class-type-constructor-method-set!)
-           (1 !class-type-precedence-list 1 !class-type-precedence-list)
-           (1 &!class-type-id-set! 1 &!class-type-id-set!)
-           (1 &!class-type-slots 1 &!class-type-slots)
-           (1 !class-type-unchecked-mutators 1 !class-type-unchecked-mutators)
+           (1
+            &!class-type-constructor-method
+            1
+            &!class-type-constructor-method)
+           (1 !class-type-slot-offsets-set! 1 !class-type-slot-offsets-set!)
+           (1 make-runtime-type-info 1 make-runtime-type-info)
+           (1 !class-type-predicate-set! 1 !class-type-predicate-set!)
+           (1 &!class-type-name 1 &!class-type-name)
+           (1 &!class-type-super 1 &!class-type-super)
+           (1 &meta-object-methods 1 &meta-object-methods)
+           (1 &!class-type-struct? 1 &!class-type-struct?)
+           (1
+            !class-type-constructor-method-set!
+            1
+            !class-type-constructor-method-set!)
+           (1 !class-type-mutators-set! 1 !class-type-mutators-set!)
+           (1 make-class-type-info 1 make-class-type-info)
+           (1 &!class-type-methods 1 &!class-type-methods)
+           (1 &meta-object-methods-set! 1 &meta-object-methods-set!)
+           (1 &!runtime-type-name 1 &!runtime-type-name)
+           (1 &!class-type-id 1 &!class-type-id)
+           (1 meta-object? 1 meta-object?)
+           (1 !class-type-ordered-slots-set! 1 !class-type-ordered-slots-set!)
+           (1
+            !class-type-unchecked-mutators-set!
+            1
+            !class-type-unchecked-mutators-set!)
+           (1
+            class-type-info::apply-macro-expander
+            1
+            class-type-info::apply-macro-expander)
+           (1 &!class-type-mutators 1 &!class-type-mutators)
+           (1 meta-object 1 meta-object)
+           (1 runtime-type-info 1 runtime-type-info)
            (1 class-type-info 1 class-type-info)
-           (1 defstruct 1 defstruct)
-           (1 defclass 1 defclass)
-           (1 define-class 1 define-class)
-           (1 @-set! 1 @-set!)
            (1 @ 1 @)
            (1 define-struct 1 define-struct)
+           (1 define-class 1 define-class)
+           (1 defclass 1 defclass)
+           (1 defstruct 1 defstruct)
+           (1 @-set! 1 @-set!)
            (1 defmethod 1 defmethod)
-           (1 :object 1 :object)
-           (1 class 1 class)
-           (1 :keyword 1 :keyword)
-           (1 :ratnum 1 :ratnum)
-           (1 :condvar 1 :condvar)
-           (1 :continuation 1 :continuation)
-           (1 :promise 1 :promise)
-           (1 defsystem-class-info 1 defsystem-class-info)
-           (1 :u8vector 1 :u8vector)
-           (1 :sequence 1 :sequence)
-           (1 :mutex 1 :mutex)
-           (1 :thread 1 :thread)
-           (1 :procedure 1 :procedure)
-           (1 :atom 1 :atom)
-           (1 :null 1 :null)
-           (1 :directory-port 1 :directory-port)
-           (1 :s64vector 1 :s64vector)
-           (1 :udp-port 1 :udp-port)
-           (1 :readtable 1 :readtable)
-           (1 :socket-info 1 :socket-info)
-           (1 :real 1 :real)
-           (1 :class 1 :class)
-           (1 :string 1 :string)
-           (1 :event-queue-port 1 :event-queue-port)
-           (1 :foreign 1 :foreign)
-           (1 :flonum 1 :flonum)
-           (1 :frame 1 :frame)
-           (1 :u8vector-port 1 :u8vector-port)
-           (1 :character-port 1 :character-port)
-           (1 :s16vector 1 :s16vector)
-           (1 :address-info 1 :address-info)
            (1 :time 1 :time)
-           (1 :vector 1 :vector)
-           (1 :char 1 :char)
-           (1 :s32vector 1 :s32vector)
+           (1 class 1 class)
+           (1 :readtable 1 :readtable)
+           (1 :list 1 :list)
            (1 :device-port 1 :device-port)
-           (1 :hvector 1 :hvector)
-           (1 :string-port 1 :string-port)
-           (1 :byte-port 1 :byte-port)
-           (1 :number 1 :number)
-           (1 :false 1 :false)
-           (1 :s8vector 1 :s8vector)
-           (1 :file-info 1 :file-info)
-           (1 :t 1 :t)
-           (1 :vm 1 :vm)
-           (1 :processor 1 :processor)
-           (1 :box 1 :box)
-           (1 :u16vector 1 :u16vector)
-           (1 :writeenv 1 :writeenv)
-           (1 :f64vector 1 :f64vector)
-           (1 :table 1 :table)
-           (1 :thread-group 1 :thread-group)
-           (1 :vector-port 1 :vector-port)
-           (1 :symbol 1 :symbol)
-           (1 :u32vector 1 :u32vector)
-           (1 :tcp-server-port 1 :tcp-server-port)
-           (1 :pair 1 :pair)
-           (1 :object-port 1 :object-port)
-           (1 :u64vector 1 :u64vector)
-           (1 :values 1 :values)
-           (1 :symbolic 1 :symbolic)
-           (1 :true 1 :true)
-           (1 :readenv 1 :readenv)
-           (1 :cpxnum 1 :cpxnum)
-           (1 :integer 1 :integer)
-           (1 :void 1 :void)
-           (1 :fixnum 1 :fixnum)
-           (1 :raw-device-port 1 :raw-device-port)
-           (1 :port 1 :port)
-           (1 :f32vector 1 :f32vector)
+           (1 :class 1 :class)
            (1 :weak 1 :weak)
-           (1 :eof 1 :eof)
-           (1 :boolean 1 :boolean)
+           (1 :s8vector 1 :s8vector)
+           (1 :mutex 1 :mutex)
+           (1 :null 1 :null)
+           (1 :cpxnum 1 :cpxnum)
+           (1 :fixnum 1 :fixnum)
+           (1 :false 1 :false)
            (1 :bignum 1 :bignum)
+           (1 :s16vector 1 :s16vector)
+           (1 :flonum 1 :flonum)
+           (1 :writeenv 1 :writeenv)
+           (1 :directory-port 1 :directory-port)
+           (1 :foreign 1 :foreign)
            (1 :immediate 1 :immediate)
+           (1 :event-queue-port 1 :event-queue-port)
+           (1 :promise 1 :promise)
+           (1 :box 1 :box)
+           (1 :sequence 1 :sequence)
+           (1 :void 1 :void)
+           (1 :atom 1 :atom)
+           (1 :absent 1 :absent)
+           (1 :hvector 1 :hvector)
+           (1 :table 1 :table)
+           (1 :symbolic 1 :symbolic)
+           (1 :string-port 1 :string-port)
+           (1 :f64vector 1 :f64vector)
+           (1 :return 1 :return)
+           (1 :readenv 1 :readenv)
+           (1 :haflonum 1 :haflonum)
+           (1 :number 1 :number)
+           (1 :object-port 1 :object-port)
+           (1 :raw-device-port 1 :raw-device-port)
+           (1 :socket-info 1 :socket-info)
+           (1 :unbound2 1 :unbound2)
+           (1 :file-info 1 :file-info)
+           (1 :condvar 1 :condvar)
+           (1 :processor 1 :processor)
+           (1 :u64vector 1 :u64vector)
+           (1 :thread 1 :thread)
+           (1 :vector-port 1 :vector-port)
+           (1 :thread-group 1 :thread-group)
+           (1 :u16vector 1 :u16vector)
+           (1 :builtin 1 :builtin)
+           (1 :boolean 1 :boolean)
+           (1 :deleted 1 :deleted)
+           (1 :stflonum 1 :stflonum)
+           (1 :keyword 1 :keyword)
+           (1 :structure 1 :structure)
+           (1 :unbound 1 :unbound)
+           (1 :values 1 :values)
+           (1 :dssl-rest 1 :dssl-rest)
+           (1 :procedure 1 :procedure)
+           (1 :t 1 :t)
+           (1 :unused 1 :unused)
+           (1 :u8vector-port 1 :u8vector-port)
+           (1 :subtyped 1 :subtyped)
+           (1 :u8vector 1 :u8vector)
+           (1 :vector 1 :vector)
+           (1 :byte-port 1 :byte-port)
+           (1 :f32vector 1 :f32vector)
+           (1 :integer 1 :integer)
+           (1 :address-info 1 :address-info)
+           (1 :real 1 :real)
+           (1 :dssl-optional 1 :dssl-optional)
+           (1 :udp-port 1 :udp-port)
+           (1 :symbol 1 :symbol)
+           (1 :vm 1 :vm)
+           (1 :frame 1 :frame)
            (1 :special 1 :special)
-           (1 :list 1 :list))
+           (1 :s64vector 1 :s64vector)
+           (1 :pair 1 :pair)
+           (1 :ratnum 1 :ratnum)
+           (1 :dssl-key 1 :dssl-key)
+           (1 :string 1 :string)
+           (1 :tcp-server-port 1 :tcp-server-port)
+           (1 :eof 1 :eof)
+           (1 :object 1 :object)
+           (1 :character-port 1 :character-port)
+           (1 :s32vector 1 :s32vector)
+           (1 :port 1 :port)
+           (1 :char 1 :char)
+           (1 :continuation 1 :continuation)
+           (1 :dssl-token 1 :dssl-token)
+           (1 :true 1 :true)
+           (1 :u32vector 1 :u32vector))
           :gerbil/core/match
           :gerbil/core/more-sugar
           (phi: 1 :gerbil/core/runtime)
           (phi: 1 :gerbil/core/sugar)
           (spec:
            (:gerbil/core/mop)
-           (1 MOP-3 0 MOP-3)
-           (1 MOP-2 0 MOP-2)
            (1 MOP-4 0 MOP-4)
-           (1 MOP-1 0 MOP-1)
+           (1 MOP-2 0 MOP-2)
+           (1 MOP-3 0 MOP-3)
            (1 MOP-5 0 MOP-5)
-           (1 defstruct-type 0 defstruct-type)
+           (1 MOP-system-classes 0 MOP-system-classes)
+           (1 MOP-1 0 MOP-1)
            (1 defclass-type 0 defclass-type)
+           (1 defstruct-type 0 defstruct-type)
            (2 module-type-id 1 module-type-id)
            (2 make-class-type-id 1 make-class-type-id)
-           (1 defstruct 0 defstruct)
-           (1 defclass 0 defclass)
-           (1 define-class 0 define-class)
-           (1 @-set! 0 @-set!)
            (1 @ 0 @)
            (1 define-struct 0 define-struct)
+           (1 define-class 0 define-class)
+           (1 defclass 0 defclass)
+           (1 defstruct 0 defstruct)
+           (1 @-set! 0 @-set!)
            (1 defmethod 0 defmethod)
-           (1 :object 0 :object)
-           (1 class 0 class)
-           (1 :keyword 0 :keyword)
-           (1 :ratnum 0 :ratnum)
-           (1 :condvar 0 :condvar)
-           (1 :continuation 0 :continuation)
-           (1 :promise 0 :promise)
-           (1 defsystem-class-info 0 defsystem-class-info)
-           (1 :u8vector 0 :u8vector)
-           (1 :sequence 0 :sequence)
-           (1 :mutex 0 :mutex)
-           (1 :thread 0 :thread)
-           (1 :procedure 0 :procedure)
-           (1 :atom 0 :atom)
-           (1 :null 0 :null)
-           (1 :directory-port 0 :directory-port)
-           (1 :s64vector 0 :s64vector)
-           (1 :udp-port 0 :udp-port)
-           (1 :readtable 0 :readtable)
-           (1 :socket-info 0 :socket-info)
-           (1 :real 0 :real)
-           (1 :class 0 :class)
-           (1 :string 0 :string)
-           (1 :event-queue-port 0 :event-queue-port)
-           (1 :foreign 0 :foreign)
-           (1 :flonum 0 :flonum)
-           (1 :frame 0 :frame)
-           (1 :u8vector-port 0 :u8vector-port)
-           (1 :character-port 0 :character-port)
-           (1 :s16vector 0 :s16vector)
-           (1 :address-info 0 :address-info)
            (1 :time 0 :time)
-           (1 :vector 0 :vector)
-           (1 :char 0 :char)
-           (1 :s32vector 0 :s32vector)
-           (1 :device-port 0 :device-port)
-           (1 :hvector 0 :hvector)
-           (1 :string-port 0 :string-port)
-           (1 :byte-port 0 :byte-port)
-           (1 :number 0 :number)
-           (1 :false 0 :false)
-           (1 :s8vector 0 :s8vector)
-           (1 :file-info 0 :file-info)
-           (1 :t 0 :t)
-           (1 :vm 0 :vm)
-           (1 :processor 0 :processor)
-           (1 :box 0 :box)
-           (1 :u16vector 0 :u16vector)
-           (1 :writeenv 0 :writeenv)
-           (1 :f64vector 0 :f64vector)
-           (1 :table 0 :table)
-           (1 :thread-group 0 :thread-group)
-           (1 :vector-port 0 :vector-port)
-           (1 :symbol 0 :symbol)
-           (1 :u32vector 0 :u32vector)
-           (1 :tcp-server-port 0 :tcp-server-port)
-           (1 :pair 0 :pair)
-           (1 :object-port 0 :object-port)
-           (1 :u64vector 0 :u64vector)
-           (1 :values 0 :values)
-           (1 :symbolic 0 :symbolic)
-           (1 :true 0 :true)
-           (1 :readenv 0 :readenv)
-           (1 :cpxnum 0 :cpxnum)
-           (1 :integer 0 :integer)
-           (1 :void 0 :void)
-           (1 :fixnum 0 :fixnum)
-           (1 :raw-device-port 0 :raw-device-port)
-           (1 :port 0 :port)
-           (1 :f32vector 0 :f32vector)
-           (1 :weak 0 :weak)
-           (1 :eof 0 :eof)
-           (1 :boolean 0 :boolean)
-           (1 :bignum 0 :bignum)
-           (1 :immediate 0 :immediate)
-           (1 :special 0 :special)
+           (1 class 0 class)
+           (1 :readtable 0 :readtable)
            (1 :list 0 :list)
-           (2 defstruct-type 1 defstruct-type)
+           (1 :device-port 0 :device-port)
+           (1 :class 0 :class)
+           (1 :weak 0 :weak)
+           (1 :s8vector 0 :s8vector)
+           (1 :mutex 0 :mutex)
+           (1 :null 0 :null)
+           (1 :cpxnum 0 :cpxnum)
+           (1 :fixnum 0 :fixnum)
+           (1 :false 0 :false)
+           (1 :bignum 0 :bignum)
+           (1 :s16vector 0 :s16vector)
+           (1 :flonum 0 :flonum)
+           (1 :writeenv 0 :writeenv)
+           (1 :directory-port 0 :directory-port)
+           (1 :foreign 0 :foreign)
+           (1 :immediate 0 :immediate)
+           (1 :event-queue-port 0 :event-queue-port)
+           (1 :promise 0 :promise)
+           (1 :box 0 :box)
+           (1 :sequence 0 :sequence)
+           (1 :void 0 :void)
+           (1 :atom 0 :atom)
+           (1 :absent 0 :absent)
+           (1 :hvector 0 :hvector)
+           (1 :table 0 :table)
+           (1 :symbolic 0 :symbolic)
+           (1 :string-port 0 :string-port)
+           (1 :f64vector 0 :f64vector)
+           (1 :return 0 :return)
+           (1 :readenv 0 :readenv)
+           (1 :haflonum 0 :haflonum)
+           (1 :number 0 :number)
+           (1 :object-port 0 :object-port)
+           (1 :raw-device-port 0 :raw-device-port)
+           (1 :socket-info 0 :socket-info)
+           (1 :unbound2 0 :unbound2)
+           (1 :file-info 0 :file-info)
+           (1 :condvar 0 :condvar)
+           (1 :processor 0 :processor)
+           (1 :u64vector 0 :u64vector)
+           (1 :thread 0 :thread)
+           (1 :vector-port 0 :vector-port)
+           (1 :thread-group 0 :thread-group)
+           (1 :u16vector 0 :u16vector)
+           (1 :builtin 0 :builtin)
+           (1 :boolean 0 :boolean)
+           (1 :deleted 0 :deleted)
+           (1 :stflonum 0 :stflonum)
+           (1 :keyword 0 :keyword)
+           (1 :structure 0 :structure)
+           (1 :unbound 0 :unbound)
+           (1 :values 0 :values)
+           (1 :dssl-rest 0 :dssl-rest)
+           (1 :procedure 0 :procedure)
+           (1 :t 0 :t)
+           (1 :unused 0 :unused)
+           (1 :u8vector-port 0 :u8vector-port)
+           (1 :subtyped 0 :subtyped)
+           (1 :u8vector 0 :u8vector)
+           (1 :vector 0 :vector)
+           (1 :byte-port 0 :byte-port)
+           (1 :f32vector 0 :f32vector)
+           (1 :integer 0 :integer)
+           (1 :address-info 0 :address-info)
+           (1 :real 0 :real)
+           (1 :dssl-optional 0 :dssl-optional)
+           (1 :udp-port 0 :udp-port)
+           (1 :symbol 0 :symbol)
+           (1 :vm 0 :vm)
+           (1 :frame 0 :frame)
+           (1 :special 0 :special)
+           (1 :s64vector 0 :s64vector)
+           (1 :pair 0 :pair)
+           (1 :ratnum 0 :ratnum)
+           (1 :dssl-key 0 :dssl-key)
+           (1 :string 0 :string)
+           (1 :tcp-server-port 0 :tcp-server-port)
+           (1 :eof 0 :eof)
+           (1 :object 0 :object)
+           (1 :character-port 0 :character-port)
+           (1 :s32vector 0 :s32vector)
+           (1 :port 0 :port)
+           (1 :char 0 :char)
+           (1 :continuation 0 :continuation)
+           (1 :dssl-token 0 :dssl-token)
+           (1 :true 0 :true)
+           (1 :u32vector 0 :u32vector)
            (2 defclass-type 1 defclass-type)
+           (2 defstruct-type 1 defstruct-type)
            (3 module-type-id 2 module-type-id)
            (3 make-class-type-id 2 make-class-type-id)
-           (2 &!class-type-system?-set! 1 &!class-type-system?-set!)
-           (2
-            !class-type-unchecked-mutators-set!
-            1
-            !class-type-unchecked-mutators-set!)
-           (2 !class-type-super 1 !class-type-super)
-           (2 !class-type-descriptor-set! 1 !class-type-descriptor-set!)
-           (2 !class-type-predicate 1 !class-type-predicate)
-           (2
-            class-type-info::apply-macro-expander
-            1
-            class-type-info::apply-macro-expander)
-           (2
-            &!class-type-constructor-method
-            1
-            &!class-type-constructor-method)
-           (2 !class-type-final? 1 !class-type-final?)
-           (2 &!class-type-ordered-slots 1 &!class-type-ordered-slots)
-           (2 !class-type-slot-types-set! 1 !class-type-slot-types-set!)
-           (2 !class-type-struct? 1 !class-type-struct?)
-           (2 !class-type-mutators 1 !class-type-mutators)
-           (2 !class-type-descriptor 1 !class-type-descriptor)
-           (2 &!class-type-slots-set! 1 &!class-type-slots-set!)
-           (2 &!class-type-mutators 1 &!class-type-mutators)
-           (2 &!class-type-metaclass 1 &!class-type-metaclass)
-           (2 &!class-type-slot-contracts 1 &!class-type-slot-contracts)
-           (2 &!class-type-system? 1 &!class-type-system?)
-           (2 !class-type-metaclass-set! 1 !class-type-metaclass-set!)
-           (2
-            &!class-type-unchecked-mutators-set!
-            1
-            &!class-type-unchecked-mutators-set!)
-           (2 &!class-type-mutators-set! 1 &!class-type-mutators-set!)
-           (2 &!class-type-descriptor-set! 1 &!class-type-descriptor-set!)
-           (2 &!class-type-final?-set! 1 &!class-type-final?-set!)
-           (2 &!class-type-struct?-set! 1 &!class-type-struct?-set!)
-           (2
-            &!class-type-precedence-list-set!
-            1
-            &!class-type-precedence-list-set!)
+           (2 &!class-type-methods-set! 1 &!class-type-methods-set!)
            (2
             &!class-type-unchecked-accessors
             1
             &!class-type-unchecked-accessors)
-           (2 !class-type-name-set! 1 !class-type-name-set!)
-           (2 !class-type-accessors 1 !class-type-accessors)
+           (2
+            syntax-local-runtime-type-info?
+            1
+            syntax-local-runtime-type-info?)
            (2 &!class-type-final? 1 &!class-type-final?)
-           (2 &!class-type-slot-types 1 &!class-type-slot-types)
-           (2
-            &!class-type-unchecked-mutators
-            1
-            &!class-type-unchecked-mutators)
-           (2 &!class-type-constructor 1 &!class-type-constructor)
-           (2
-            !class-type-slot-contracts-set!
-            1
-            !class-type-slot-contracts-set!)
-           (2 &!class-type-descriptor 1 &!class-type-descriptor)
-           (2 &!class-type-struct? 1 &!class-type-struct?)
+           (2 !class-type-methods-set! 1 !class-type-methods-set!)
+           (2 &!class-type-mutators-set! 1 &!class-type-mutators-set!)
+           (2 &!class-type-metaclass-set! 1 &!class-type-metaclass-set!)
+           (2 &!class-type-metaclass 1 &!class-type-metaclass)
+           (2 !class-type-accessors-set! 1 !class-type-accessors-set!)
+           (2 !class-type-mutators 1 !class-type-mutators)
            (2 &!class-type-precedence-list 1 &!class-type-precedence-list)
-           (2 &!class-type-name 1 &!class-type-name)
-           (2 !class-type-mutators-set! 1 !class-type-mutators-set!)
            (2 !class-type-slot-defaults 1 !class-type-slot-defaults)
-           (2 !class-type-slots 1 !class-type-slots)
-           (2 !class-type-final?-set! 1 !class-type-final?-set!)
-           (2 !class-type-slots-set! 1 !class-type-slots-set!)
-           (2 !class-type-slot-contracts 1 !class-type-slot-contracts)
-           (2 !class-type-constructor-method 1 !class-type-constructor-method)
-           (2 make-class-type-info 1 make-class-type-info)
+           (2 make-meta-object 1 make-meta-object)
+           (2 &!runtime-type-id-set! 1 &!runtime-type-id-set!)
+           (2 &!class-type-slot-types 1 &!class-type-slot-types)
+           (2 &!class-type-slot-offsets 1 &!class-type-slot-offsets)
+           (2 !class-type-super 1 !class-type-super)
+           (2 !class-type-system?-set! 1 !class-type-system?-set!)
+           (2 &!class-type-constructor-set! 1 &!class-type-constructor-set!)
+           (2 &!class-type-system? 1 &!class-type-system?)
+           (2 !class-type-precedence-list 1 !class-type-precedence-list)
+           (2 !class-type-slot-types-set! 1 !class-type-slot-types-set!)
+           (2 &!class-type-accessors-set! 1 &!class-type-accessors-set!)
            (2
             &!class-type-unchecked-accessors-set!
             1
             &!class-type-unchecked-accessors-set!)
-           (2 &!class-type-accessors 1 &!class-type-accessors)
-           (2 !class-type-super-set! 1 !class-type-super-set!)
-           (2 &!class-type-metaclass-set! 1 &!class-type-metaclass-set!)
-           (2 &!class-type-slot-defaults 1 &!class-type-slot-defaults)
-           (2 &!class-type-id 1 &!class-type-id)
-           (2 !class-type-constructor 1 !class-type-constructor)
-           (2 !class-type-ordered-slots 1 !class-type-ordered-slots)
-           (2 class-type-info? 1 class-type-info?)
-           (2
-            &!class-type-ordered-slots-set!
-            1
-            &!class-type-ordered-slots-set!)
-           (2
-            &!class-type-slot-contracts-set!
-            1
-            &!class-type-slot-contracts-set!)
-           (2 &!class-type-accessors-set! 1 &!class-type-accessors-set!)
-           (2 !class-type-ordered-slots-set! 1 !class-type-ordered-slots-set!)
-           (2 !class-type-id 1 !class-type-id)
-           (2 !class-type-slot-types 1 !class-type-slot-types)
-           (2 !class-type-metaclass 1 !class-type-metaclass)
-           (2 syntax-local-class-type-info? 1 syntax-local-class-type-info?)
-           (2 &!class-type-predicate 1 &!class-type-predicate)
-           (2 !class-type-slot-defaults-set! 1 !class-type-slot-defaults-set!)
-           (2 !class-type-predicate-set! 1 !class-type-predicate-set!)
            (2 !class-type-constructor-set! 1 !class-type-constructor-set!)
-           (2 &!class-type-predicate-set! 1 &!class-type-predicate-set!)
-           (2
-            !class-type-unchecked-accessors
-            1
-            !class-type-unchecked-accessors)
-           (2 !class-type-accessors-set! 1 !class-type-accessors-set!)
+           (2 !class-type-final? 1 !class-type-final?)
            (2 !class-type-system? 1 !class-type-system?)
-           (2 &!class-type-slot-types-set! 1 &!class-type-slot-types-set!)
-           (2 &!class-type-constructor-set! 1 &!class-type-constructor-set!)
+           (2 !class-type-constructor-method 1 !class-type-constructor-method)
            (2 &!class-type-super-set! 1 &!class-type-super-set!)
-           (2 &!class-type-super 1 &!class-type-super)
-           (2 !class-type-name 1 !class-type-name)
            (2
-            !class-type-constructor-method-set!
+            &!class-type-precedence-list-set!
             1
-            !class-type-constructor-method-set!)
+            &!class-type-precedence-list-set!)
+           (2 !class-type-slot-types 1 !class-type-slot-types)
+           (2 &!class-type-predicate 1 &!class-type-predicate)
+           (2 &!class-type-final?-set! 1 &!class-type-final?-set!)
+           (2 !runtime-type-id 1 !runtime-type-id)
+           (2 !class-type-slot-offsets 1 !class-type-slot-offsets)
+           (2 class-type-info::t 1 class-type-info::t)
+           (2 &!runtime-type-id 1 &!runtime-type-id)
+           (2 &!class-type-slot-contracts 1 &!class-type-slot-contracts)
+           (2 &!class-type-id-set! 1 &!class-type-id-set!)
+           (2 !class-type-id-set! 1 !class-type-id-set!)
+           (2 !runtime-type-id-set! 1 !runtime-type-id-set!)
+           (2 &!class-type-descriptor 1 &!class-type-descriptor)
+           (2 class-type-info? 1 class-type-info?)
+           (2 !class-type-id 1 !class-type-id)
+           (2 &!class-type-slots-set! 1 &!class-type-slots-set!)
            (2
             !class-type-precedence-list-set!
             1
             !class-type-precedence-list-set!)
-           (2 &!class-type-name-set! 1 &!class-type-name-set!)
+           (2 !runtime-type-name-set! 1 !runtime-type-name-set!)
+           (2 !runtime-type-descriptor 1 !runtime-type-descriptor)
+           (2 &!runtime-type-name-set! 1 &!runtime-type-name-set!)
+           (2
+            &!class-type-slot-contracts-set!
+            1
+            &!class-type-slot-contracts-set!)
+           (2 !class-type-super-set! 1 !class-type-super-set!)
+           (2 runtime-type-info::t 1 runtime-type-info::t)
+           (2 meta-object-methods 1 meta-object-methods)
+           (2 !class-type-descriptor-set! 1 !class-type-descriptor-set!)
+           (2 &!class-type-descriptor-set! 1 &!class-type-descriptor-set!)
+           (2 &!class-type-predicate-set! 1 &!class-type-predicate-set!)
+           (2 &!class-type-struct?-set! 1 &!class-type-struct?-set!)
+           (2
+            &!class-type-ordered-slots-set!
+            1
+            &!class-type-ordered-slots-set!)
            (2 !class-type-struct?-set! 1 !class-type-struct?-set!)
-           (2 !class-type-id-set! 1 !class-type-id-set!)
-           (2 !class-type-system?-set! 1 !class-type-system?-set!)
+           (2 !class-type-methods 1 !class-type-methods)
+           (2 !class-type-ordered-slots 1 !class-type-ordered-slots)
+           (2 !class-type-constructor 1 !class-type-constructor)
+           (2
+            !class-type-slot-contracts-set!
+            1
+            !class-type-slot-contracts-set!)
+           (2 !class-type-slots 1 !class-type-slots)
+           (2 &!runtime-type-descriptor 1 &!runtime-type-descriptor)
+           (2 &!class-type-constructor 1 &!class-type-constructor)
+           (2 !class-type-struct? 1 !class-type-struct?)
+           (2 &!class-type-name-set! 1 &!class-type-name-set!)
+           (2 !class-type-descriptor 1 !class-type-descriptor)
            (2
             !class-type-unchecked-accessors-set!
             1
@@ -566,100 +616,180 @@ namespace: gerbil/core/contract
             &!class-type-slot-defaults-set!
             1
             &!class-type-slot-defaults-set!)
-           (2 class-type-info::t 1 class-type-info::t)
+           (2 !class-type-name 1 !class-type-name)
+           (2 &!class-type-ordered-slots 1 &!class-type-ordered-slots)
+           (2 &!class-type-slots 1 &!class-type-slots)
+           (2 !class-type-unchecked-mutators 1 !class-type-unchecked-mutators)
+           (2 &!class-type-slot-offsets-set! 1 &!class-type-slot-offsets-set!)
+           (2 !class-type-slots-set! 1 !class-type-slots-set!)
+           (2 !class-type-metaclass 1 !class-type-metaclass)
+           (2 !class-type-slot-defaults-set! 1 !class-type-slot-defaults-set!)
+           (2 meta-object-methods-set! 1 meta-object-methods-set!)
+           (2 !class-type-name-set! 1 !class-type-name-set!)
+           (2
+            &!class-type-unchecked-mutators
+            1
+            &!class-type-unchecked-mutators)
+           (2
+            &!class-type-unchecked-mutators-set!
+            1
+            &!class-type-unchecked-mutators-set!)
+           (2 !class-type-metaclass-set! 1 !class-type-metaclass-set!)
+           (2 !class-type-final?-set! 1 !class-type-final?-set!)
+           (2 !class-type-slot-contracts 1 !class-type-slot-contracts)
+           (2 &!class-type-system?-set! 1 &!class-type-system?-set!)
+           (2
+            !class-type-unchecked-accessors
+            1
+            !class-type-unchecked-accessors)
+           (2 &!runtime-type-descriptor-set! 1 &!runtime-type-descriptor-set!)
+           (2 runtime-type-info? 1 runtime-type-info?)
+           (2 !runtime-type-descriptor-set! 1 !runtime-type-descriptor-set!)
+           (2 &!class-type-accessors 1 &!class-type-accessors)
+           (2 !class-type-accessors 1 !class-type-accessors)
+           (2 !runtime-type-name 1 !runtime-type-name)
+           (2 meta-object::t 1 meta-object::t)
+           (2 !class-type-predicate 1 !class-type-predicate)
+           (2 syntax-local-class-type-info? 1 syntax-local-class-type-info?)
+           (2 &!class-type-slot-types-set! 1 &!class-type-slot-types-set!)
+           (2 &!class-type-slot-defaults 1 &!class-type-slot-defaults)
            (2
             &!class-type-constructor-method-set!
             1
             &!class-type-constructor-method-set!)
-           (2 !class-type-precedence-list 1 !class-type-precedence-list)
-           (2 &!class-type-id-set! 1 &!class-type-id-set!)
-           (2 &!class-type-slots 1 &!class-type-slots)
-           (2 !class-type-unchecked-mutators 1 !class-type-unchecked-mutators)
+           (2
+            &!class-type-constructor-method
+            1
+            &!class-type-constructor-method)
+           (2 !class-type-slot-offsets-set! 1 !class-type-slot-offsets-set!)
+           (2 make-runtime-type-info 1 make-runtime-type-info)
+           (2 !class-type-predicate-set! 1 !class-type-predicate-set!)
+           (2 &!class-type-name 1 &!class-type-name)
+           (2 &!class-type-super 1 &!class-type-super)
+           (2 &meta-object-methods 1 &meta-object-methods)
+           (2 &!class-type-struct? 1 &!class-type-struct?)
+           (2
+            !class-type-constructor-method-set!
+            1
+            !class-type-constructor-method-set!)
+           (2 !class-type-mutators-set! 1 !class-type-mutators-set!)
+           (2 make-class-type-info 1 make-class-type-info)
+           (2 &!class-type-methods 1 &!class-type-methods)
+           (2 &meta-object-methods-set! 1 &meta-object-methods-set!)
+           (2 &!runtime-type-name 1 &!runtime-type-name)
+           (2 &!class-type-id 1 &!class-type-id)
+           (2 meta-object? 1 meta-object?)
+           (2 !class-type-ordered-slots-set! 1 !class-type-ordered-slots-set!)
+           (2
+            !class-type-unchecked-mutators-set!
+            1
+            !class-type-unchecked-mutators-set!)
+           (2
+            class-type-info::apply-macro-expander
+            1
+            class-type-info::apply-macro-expander)
+           (2 &!class-type-mutators 1 &!class-type-mutators)
+           (2 meta-object 1 meta-object)
+           (2 runtime-type-info 1 runtime-type-info)
            (2 class-type-info 1 class-type-info)
-           (2 defstruct 1 defstruct)
-           (2 defclass 1 defclass)
-           (2 define-class 1 define-class)
-           (2 @-set! 1 @-set!)
            (2 @ 1 @)
            (2 define-struct 1 define-struct)
+           (2 define-class 1 define-class)
+           (2 defclass 1 defclass)
+           (2 defstruct 1 defstruct)
+           (2 @-set! 1 @-set!)
            (2 defmethod 1 defmethod)
-           (2 :object 1 :object)
-           (2 class 1 class)
-           (2 :keyword 1 :keyword)
-           (2 :ratnum 1 :ratnum)
-           (2 :condvar 1 :condvar)
-           (2 :continuation 1 :continuation)
-           (2 :promise 1 :promise)
-           (2 defsystem-class-info 1 defsystem-class-info)
-           (2 :u8vector 1 :u8vector)
-           (2 :sequence 1 :sequence)
-           (2 :mutex 1 :mutex)
-           (2 :thread 1 :thread)
-           (2 :procedure 1 :procedure)
-           (2 :atom 1 :atom)
-           (2 :null 1 :null)
-           (2 :directory-port 1 :directory-port)
-           (2 :s64vector 1 :s64vector)
-           (2 :udp-port 1 :udp-port)
-           (2 :readtable 1 :readtable)
-           (2 :socket-info 1 :socket-info)
-           (2 :real 1 :real)
-           (2 :class 1 :class)
-           (2 :string 1 :string)
-           (2 :event-queue-port 1 :event-queue-port)
-           (2 :foreign 1 :foreign)
-           (2 :flonum 1 :flonum)
-           (2 :frame 1 :frame)
-           (2 :u8vector-port 1 :u8vector-port)
-           (2 :character-port 1 :character-port)
-           (2 :s16vector 1 :s16vector)
-           (2 :address-info 1 :address-info)
            (2 :time 1 :time)
-           (2 :vector 1 :vector)
-           (2 :char 1 :char)
-           (2 :s32vector 1 :s32vector)
+           (2 class 1 class)
+           (2 :readtable 1 :readtable)
+           (2 :list 1 :list)
            (2 :device-port 1 :device-port)
-           (2 :hvector 1 :hvector)
-           (2 :string-port 1 :string-port)
-           (2 :byte-port 1 :byte-port)
-           (2 :number 1 :number)
-           (2 :false 1 :false)
-           (2 :s8vector 1 :s8vector)
-           (2 :file-info 1 :file-info)
-           (2 :t 1 :t)
-           (2 :vm 1 :vm)
-           (2 :processor 1 :processor)
-           (2 :box 1 :box)
-           (2 :u16vector 1 :u16vector)
-           (2 :writeenv 1 :writeenv)
-           (2 :f64vector 1 :f64vector)
-           (2 :table 1 :table)
-           (2 :thread-group 1 :thread-group)
-           (2 :vector-port 1 :vector-port)
-           (2 :symbol 1 :symbol)
-           (2 :u32vector 1 :u32vector)
-           (2 :tcp-server-port 1 :tcp-server-port)
-           (2 :pair 1 :pair)
-           (2 :object-port 1 :object-port)
-           (2 :u64vector 1 :u64vector)
-           (2 :values 1 :values)
-           (2 :symbolic 1 :symbolic)
-           (2 :true 1 :true)
-           (2 :readenv 1 :readenv)
-           (2 :cpxnum 1 :cpxnum)
-           (2 :integer 1 :integer)
-           (2 :void 1 :void)
-           (2 :fixnum 1 :fixnum)
-           (2 :raw-device-port 1 :raw-device-port)
-           (2 :port 1 :port)
-           (2 :f32vector 1 :f32vector)
+           (2 :class 1 :class)
            (2 :weak 1 :weak)
-           (2 :eof 1 :eof)
-           (2 :boolean 1 :boolean)
+           (2 :s8vector 1 :s8vector)
+           (2 :mutex 1 :mutex)
+           (2 :null 1 :null)
+           (2 :cpxnum 1 :cpxnum)
+           (2 :fixnum 1 :fixnum)
+           (2 :false 1 :false)
            (2 :bignum 1 :bignum)
+           (2 :s16vector 1 :s16vector)
+           (2 :flonum 1 :flonum)
+           (2 :writeenv 1 :writeenv)
+           (2 :directory-port 1 :directory-port)
+           (2 :foreign 1 :foreign)
            (2 :immediate 1 :immediate)
+           (2 :event-queue-port 1 :event-queue-port)
+           (2 :promise 1 :promise)
+           (2 :box 1 :box)
+           (2 :sequence 1 :sequence)
+           (2 :void 1 :void)
+           (2 :atom 1 :atom)
+           (2 :absent 1 :absent)
+           (2 :hvector 1 :hvector)
+           (2 :table 1 :table)
+           (2 :symbolic 1 :symbolic)
+           (2 :string-port 1 :string-port)
+           (2 :f64vector 1 :f64vector)
+           (2 :return 1 :return)
+           (2 :readenv 1 :readenv)
+           (2 :haflonum 1 :haflonum)
+           (2 :number 1 :number)
+           (2 :object-port 1 :object-port)
+           (2 :raw-device-port 1 :raw-device-port)
+           (2 :socket-info 1 :socket-info)
+           (2 :unbound2 1 :unbound2)
+           (2 :file-info 1 :file-info)
+           (2 :condvar 1 :condvar)
+           (2 :processor 1 :processor)
+           (2 :u64vector 1 :u64vector)
+           (2 :thread 1 :thread)
+           (2 :vector-port 1 :vector-port)
+           (2 :thread-group 1 :thread-group)
+           (2 :u16vector 1 :u16vector)
+           (2 :builtin 1 :builtin)
+           (2 :boolean 1 :boolean)
+           (2 :deleted 1 :deleted)
+           (2 :stflonum 1 :stflonum)
+           (2 :keyword 1 :keyword)
+           (2 :structure 1 :structure)
+           (2 :unbound 1 :unbound)
+           (2 :values 1 :values)
+           (2 :dssl-rest 1 :dssl-rest)
+           (2 :procedure 1 :procedure)
+           (2 :t 1 :t)
+           (2 :unused 1 :unused)
+           (2 :u8vector-port 1 :u8vector-port)
+           (2 :subtyped 1 :subtyped)
+           (2 :u8vector 1 :u8vector)
+           (2 :vector 1 :vector)
+           (2 :byte-port 1 :byte-port)
+           (2 :f32vector 1 :f32vector)
+           (2 :integer 1 :integer)
+           (2 :address-info 1 :address-info)
+           (2 :real 1 :real)
+           (2 :dssl-optional 1 :dssl-optional)
+           (2 :udp-port 1 :udp-port)
+           (2 :symbol 1 :symbol)
+           (2 :vm 1 :vm)
+           (2 :frame 1 :frame)
            (2 :special 1 :special)
-           (2 :list 1 :list))
+           (2 :s64vector 1 :s64vector)
+           (2 :pair 1 :pair)
+           (2 :ratnum 1 :ratnum)
+           (2 :dssl-key 1 :dssl-key)
+           (2 :string 1 :string)
+           (2 :tcp-server-port 1 :tcp-server-port)
+           (2 :eof 1 :eof)
+           (2 :object 1 :object)
+           (2 :character-port 1 :character-port)
+           (2 :s32vector 1 :s32vector)
+           (2 :port 1 :port)
+           (2 :char 1 :char)
+           (2 :continuation 1 :continuation)
+           (2 :dssl-token 1 :dssl-token)
+           (2 :true 1 :true)
+           (2 :u32vector 1 :u32vector))
           (phi: 1 :gerbil/core/match)
           (phi: 1 :gerbil/core/more-sugar)
           (phi: 1 :gerbil/core/expander)
@@ -682,10 +812,9 @@ namespace: gerbil/core/contract
           InterfaceInfo
           (%#begin (%#import
                     :gerbil/core/expander
-                    (spec:
-                     (:gerbil/core/mop)
-                     (0 @method 0 @method)
-                     (1 @method 1 @method)))
+                    :gerbil/core/mop
+                    (in: :gerbil/core/mop MOP-2)
+                    (in: :gerbil/core/mop MOP-3))
                    (%#export #t)
                    (%#define-runtime
                     interface-info::t
@@ -696,9 +825,6 @@ namespace: gerbil/core/contract
                    (%#define-runtime
                     make-interface-info
                     gerbil/core/contract~InterfaceInfo#make-interface-info)
-                   (%#define-runtime
-                    interface-info-name
-                    gerbil/core/contract~InterfaceInfo#interface-info-name)
                    (%#define-runtime
                     interface-info-namespace
                     gerbil/core/contract~InterfaceInfo#interface-info-namespace)
@@ -714,9 +840,6 @@ namespace: gerbil/core/contract
                    (%#define-runtime
                     interface-info-interface-descriptor
                     gerbil/core/contract~InterfaceInfo#interface-info-interface-descriptor)
-                   (%#define-runtime
-                    interface-info-instance-type
-                    gerbil/core/contract~InterfaceInfo#interface-info-instance-type)
                    (%#define-runtime
                     interface-info-instance-constructor
                     gerbil/core/contract~InterfaceInfo#interface-info-instance-constructor)
@@ -736,8 +859,20 @@ namespace: gerbil/core/contract
                     interface-info-unchecked-implementation-methods
                     gerbil/core/contract~InterfaceInfo#interface-info-unchecked-implementation-methods)
                    (%#define-runtime
-                    interface-info-name-set!
-                    gerbil/core/contract~InterfaceInfo#interface-info-name-set!)
+                    interface-info-implementation-macros
+                    gerbil/core/contract~InterfaceInfo#interface-info-implementation-macros)
+                   (%#define-runtime
+                    interface-info-unchecked-implementation-macros
+                    gerbil/core/contract~InterfaceInfo#interface-info-unchecked-implementation-macros)
+                   (%#define-runtime
+                    interface-info-id
+                    gerbil/core/contract~InterfaceInfo#interface-info-id)
+                   (%#define-runtime
+                    interface-info-name
+                    gerbil/core/contract~InterfaceInfo#interface-info-name)
+                   (%#define-runtime
+                    interface-info-type-descriptor
+                    gerbil/core/contract~InterfaceInfo#interface-info-type-descriptor)
                    (%#define-runtime
                     interface-info-namespace-set!
                     gerbil/core/contract~InterfaceInfo#interface-info-namespace-set!)
@@ -753,9 +888,6 @@ namespace: gerbil/core/contract
                    (%#define-runtime
                     interface-info-interface-descriptor-set!
                     gerbil/core/contract~InterfaceInfo#interface-info-interface-descriptor-set!)
-                   (%#define-runtime
-                    interface-info-instance-type-set!
-                    gerbil/core/contract~InterfaceInfo#interface-info-instance-type-set!)
                    (%#define-runtime
                     interface-info-instance-constructor-set!
                     gerbil/core/contract~InterfaceInfo#interface-info-instance-constructor-set!)
@@ -775,8 +907,20 @@ namespace: gerbil/core/contract
                     interface-info-unchecked-implementation-methods-set!
                     gerbil/core/contract~InterfaceInfo#interface-info-unchecked-implementation-methods-set!)
                    (%#define-runtime
-                    &interface-info-name
-                    gerbil/core/contract~InterfaceInfo#&interface-info-name)
+                    interface-info-implementation-macros-set!
+                    gerbil/core/contract~InterfaceInfo#interface-info-implementation-macros-set!)
+                   (%#define-runtime
+                    interface-info-unchecked-implementation-macros-set!
+                    gerbil/core/contract~InterfaceInfo#interface-info-unchecked-implementation-macros-set!)
+                   (%#define-runtime
+                    interface-info-id-set!
+                    gerbil/core/contract~InterfaceInfo#interface-info-id-set!)
+                   (%#define-runtime
+                    interface-info-name-set!
+                    gerbil/core/contract~InterfaceInfo#interface-info-name-set!)
+                   (%#define-runtime
+                    interface-info-type-descriptor-set!
+                    gerbil/core/contract~InterfaceInfo#interface-info-type-descriptor-set!)
                    (%#define-runtime
                     &interface-info-namespace
                     gerbil/core/contract~InterfaceInfo#&interface-info-namespace)
@@ -792,9 +936,6 @@ namespace: gerbil/core/contract
                    (%#define-runtime
                     &interface-info-interface-descriptor
                     gerbil/core/contract~InterfaceInfo#&interface-info-interface-descriptor)
-                   (%#define-runtime
-                    &interface-info-instance-type
-                    gerbil/core/contract~InterfaceInfo#&interface-info-instance-type)
                    (%#define-runtime
                     &interface-info-instance-constructor
                     gerbil/core/contract~InterfaceInfo#&interface-info-instance-constructor)
@@ -814,8 +955,20 @@ namespace: gerbil/core/contract
                     &interface-info-unchecked-implementation-methods
                     gerbil/core/contract~InterfaceInfo#&interface-info-unchecked-implementation-methods)
                    (%#define-runtime
-                    &interface-info-name-set!
-                    gerbil/core/contract~InterfaceInfo#&interface-info-name-set!)
+                    &interface-info-implementation-macros
+                    gerbil/core/contract~InterfaceInfo#&interface-info-implementation-macros)
+                   (%#define-runtime
+                    &interface-info-unchecked-implementation-macros
+                    gerbil/core/contract~InterfaceInfo#&interface-info-unchecked-implementation-macros)
+                   (%#define-runtime
+                    &interface-info-id
+                    gerbil/core/contract~InterfaceInfo#&interface-info-id)
+                   (%#define-runtime
+                    &interface-info-name
+                    gerbil/core/contract~InterfaceInfo#&interface-info-name)
+                   (%#define-runtime
+                    &interface-info-type-descriptor
+                    gerbil/core/contract~InterfaceInfo#&interface-info-type-descriptor)
                    (%#define-runtime
                     &interface-info-namespace-set!
                     gerbil/core/contract~InterfaceInfo#&interface-info-namespace-set!)
@@ -831,9 +984,6 @@ namespace: gerbil/core/contract
                    (%#define-runtime
                     &interface-info-interface-descriptor-set!
                     gerbil/core/contract~InterfaceInfo#&interface-info-interface-descriptor-set!)
-                   (%#define-runtime
-                    &interface-info-instance-type-set!
-                    gerbil/core/contract~InterfaceInfo#&interface-info-instance-type-set!)
                    (%#define-runtime
                     &interface-info-instance-constructor-set!
                     gerbil/core/contract~InterfaceInfo#&interface-info-instance-constructor-set!)
@@ -852,6 +1002,21 @@ namespace: gerbil/core/contract
                    (%#define-runtime
                     &interface-info-unchecked-implementation-methods-set!
                     gerbil/core/contract~InterfaceInfo#&interface-info-unchecked-implementation-methods-set!)
+                   (%#define-runtime
+                    &interface-info-implementation-macros-set!
+                    gerbil/core/contract~InterfaceInfo#&interface-info-implementation-macros-set!)
+                   (%#define-runtime
+                    &interface-info-unchecked-implementation-macros-set!
+                    gerbil/core/contract~InterfaceInfo#&interface-info-unchecked-implementation-macros-set!)
+                   (%#define-runtime
+                    &interface-info-id-set!
+                    gerbil/core/contract~InterfaceInfo#&interface-info-id-set!)
+                   (%#define-runtime
+                    &interface-info-name-set!
+                    gerbil/core/contract~InterfaceInfo#&interface-info-name-set!)
+                   (%#define-runtime
+                    &interface-info-type-descriptor-set!
+                    gerbil/core/contract~InterfaceInfo#&interface-info-type-descriptor-set!)
                    (%#begin (%#begin-syntax
                              (%#call (%#ref load-module)
                                      (%#quote "gerbil/core/contract~1")))
@@ -870,6 +1035,9 @@ namespace: gerbil/core/contract
                    (%#define-runtime
                     interface-info-method-signature
                     gerbil/core/contract~InterfaceInfo#interface-info-method-signature)
+                   (%#define-runtime
+                    interface-info-method-offset
+                    gerbil/core/contract~InterfaceInfo#interface-info-method-offset)
                    (%#begin (%#define-runtime
                              syntax-local-interface-info?__%
                              gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__%)
@@ -944,6 +1112,9 @@ namespace: gerbil/core/contract
                              |gerbil/core/contract~TypeCast[:0:]#:|))
                    (%#define-syntax :? |gerbil/core/contract~TypeCast[:0:]#:?|)
                    (%#define-syntax :- |gerbil/core/contract~TypeCast[:0:]#:-|)
+                   (%#define-syntax
+                    do-with-lock
+                    |gerbil/core/contract~TypeCast[:0:]#do-with-lock|)
                    (%#define-syntax :~ |gerbil/core/contract~TypeCast[:0:]#:~|)
                    (%#define-syntax
                     ::-
@@ -955,6 +1126,9 @@ namespace: gerbil/core/contract
                    (%#define-syntax
                     contract-violation!
                     |gerbil/core/contract~TypeCast[:0:]#contract-violation!|)
+                   (%#define-syntax
+                    runtime-contract-violation!
+                    |gerbil/core/contract~TypeCast[:0:]#runtime-contract-violation!|)
                    (%#define-syntax
                     nil-dereference!
                     |gerbil/core/contract~TypeCast[:0:]#nil-dereference!|)
@@ -1113,17 +1287,48 @@ namespace: gerbil/core/contract
                     |gerbil/core/contract~ContractRules[:0:]#in-range-inclusive?|)
                    (%#define-syntax
                     list-of?
-                    |gerbil/core/contract~ContractRules[:0:]#list-of?|)))
+                    |gerbil/core/contract~ContractRules[:0:]#list-of?|)
+                   (%#define-syntax
+                    one-of
+                    |gerbil/core/contract~ContractRules[:0:]#one-of|)))
          (%#module
           ClassMeta
           (%#begin (%#export #t)
                    (%#import
                     :gerbil/core/expander
+                    :gerbil/core/mop
                     (in: :gerbil/core/mop MOP-2)
-                    (phi: -1 (in: #f TypeCast)))
+                    (in: :gerbil/core/mop MOP-3))
                    (%#define-runtime
                     !class-precedence-list
-                    gerbil/core/contract~ClassMeta#!class-precedence-list))
+                    gerbil/core/contract~ClassMeta#!class-precedence-list)
+                   (%#define-runtime
+                    class-type-info::precedence-list
+                    gerbil/core/contract~ClassMeta#class-type-info::precedence-list)
+                   (%#begin-syntax
+                    (%#call (%#ref load-module)
+                            (%#quote "gerbil/core/contract~8"))
+                    (%#define-runtime
+                     meta-object-methods!
+                     |gerbil/core/contract~ClassMeta[1]#meta-object-methods!|))
+                   (%#define-runtime
+                    meta-object-method-ref
+                    gerbil/core/contract~ClassMeta#meta-object-method-ref)
+                   (%#define-runtime
+                    get-meta-object-method
+                    gerbil/core/contract~ClassMeta#get-meta-object-method)
+                   (%#define-runtime
+                    get-meta-object-method-mixin
+                    gerbil/core/contract~ClassMeta#get-meta-object-method-mixin)
+                   (%#define-runtime
+                    call-meta-object
+                    gerbil/core/contract~ClassMeta#call-meta-object)
+                   (%#define-syntax
+                    @call-meta-object
+                    |gerbil/core/contract~ClassMeta[:0:]#@call-meta-object|)
+                   (%#define-syntax
+                    defmethod-for-meta
+                    |gerbil/core/contract~ClassMeta[:0:]#defmethod-for-meta|))
           (%#call (%#ref load-module)
                   (%#quote "gerbil/core/contract~ClassMeta~0")))
          (%#module
@@ -1138,7 +1343,7 @@ namespace: gerbil/core/contract
                    (%#export #t (phi: 1 #t))
                    (%#begin-syntax
                     (%#call (%#ref load-module)
-                            (%#quote "gerbil/core/contract~8"))
+                            (%#quote "gerbil/core/contract~9"))
                     (%#begin (%#define-runtime
                               check-signature!__%
                               |gerbil/core/contract~Interface[1]#check-signature!__%|)
@@ -1221,14 +1426,26 @@ namespace: gerbil/core/contract
                     definterface-method
                     |gerbil/core/contract~Interface[:0:]#definterface-method|)
                    (%#define-syntax
-                    with-interface-method
-                    |gerbil/core/contract~Interface[:0:]#with-interface-method|)
+                    interface-dispatch-method
+                    |gerbil/core/contract~Interface[:0:]#interface-dispatch-method|)
                    (%#define-syntax
-                    with-interface-checked-method
-                    |gerbil/core/contract~Interface[:0:]#with-interface-checked-method|)
+                    defdispatch-rule
+                    |gerbil/core/contract~Interface[:0:]#defdispatch-rule|)
                    (%#define-syntax
-                    with-interface-unchecked-method
-                    |gerbil/core/contract~Interface[:0:]#with-interface-unchecked-method|)
+                    with-dispatch-arguments
+                    |gerbil/core/contract~Interface[:0:]#with-dispatch-arguments|)
+                   (%#define-syntax
+                    definterface-extension-method
+                    |gerbil/core/contract~Interface[:0:]#definterface-extension-method|)
+                   (%#define-syntax
+                    with-interface-method-signature
+                    |gerbil/core/contract~Interface[:0:]#with-interface-method-signature|)
+                   (%#define-syntax
+                    with-interface-checked-method-signature
+                    |gerbil/core/contract~Interface[:0:]#with-interface-checked-method-signature|)
+                   (%#define-syntax
+                    with-interface-unchecked-method-signature
+                    |gerbil/core/contract~Interface[:0:]#with-interface-unchecked-method-signature|)
                    (%#define-syntax
                     interface-out
                     |gerbil/core/contract~Interface[:0:]#interface-out|)))
@@ -1250,13 +1467,16 @@ namespace: gerbil/core/contract
                    (%#export #t (phi: 1 #t))
                    (%#begin-syntax
                     (%#call (%#ref load-module)
-                            (%#quote "gerbil/core/contract~9"))
+                            (%#quote "gerbil/core/contract~10"))
                     (%#define-runtime
                      is-signature?
                      |gerbil/core/contract~TypedDefinitions[1]#is-signature?|))
                    (%#define-syntax
                     def/c
                     |gerbil/core/contract~TypedDefinitions[:0:]#def/c|)
+                   (%#define-syntax
+                    definline
+                    |gerbil/core/contract~TypedDefinitions[:0:]#definline|)
                    (%#define-syntax
                     with-procedure-signature
                     |gerbil/core/contract~TypedDefinitions[:0:]#with-procedure-signature|)

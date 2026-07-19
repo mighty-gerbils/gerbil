@@ -12,6 +12,8 @@
         insecure-client-ssl-context
         make-client-ssl-context
         make-server-ssl-context
+        make-actor-tls-context
+        SSL_CTX?
         ssl-connect
         ssl-listen
         ssl-client-upgrade

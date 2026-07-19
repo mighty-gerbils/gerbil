@@ -106,7 +106,7 @@ safe)` declarations in the relevant module so that you get an
 exception with a stack trace instead.
 
 If you determine that such a crash occurs because of some low level
-Gerbil or Gambit bug, please file an [Issue](https://github.com/mighty-gerbils/gerbil/issues)
+Gerbil or Gambit bug, please file an [Issue](https://git.cons.io/mighty-gerbils/gerbil/issues)
 and/or get in touch with the Gerbil development team on
 [gitter](https://gitter.im/gerbil-scheme/community).
 :::

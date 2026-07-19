@@ -29,19 +29,21 @@ package: gerbil/core
 
 (module InterfaceInfo
   (import "expander"
-          (only-in "mop" @method))
+          "mop"
+          MOP-2 MOP-3)
   (export #t)
-  (defclass interface-info (name
-                            namespace
-                            interface-mixin
-                            interface-methods
-                            interface-precedence-list
-                            interface-descriptor
-                            instance-type
-                            instance-constructor instance-try-constructor
-                            instance-predicate instance-satisfies-predicate
-                            implementation-methods
-                            unchecked-implementation-methods))
+  (defclass (interface-info runtime-type-info)
+    (namespace
+     interface-mixin
+     interface-methods
+     interface-precedence-list
+     interface-descriptor
+     instance-constructor instance-try-constructor
+     instance-predicate instance-satisfies-predicate
+     implementation-methods
+     unchecked-implementation-methods
+     implementation-macros
+     unchecked-implementation-macros))
 
   (defmethod {apply-macro-expander interface-info}
     (with-syntax ((cast (quote-syntax cast))
@@ -49,11 +51,10 @@ package: gerbil/core
       (lambda (self stx)
         (syntax-case stx ()
           ((_ obj)
-           (with-syntax ((klass (interface-info-instance-type self))
-                         (descriptor (interface-info-interface-descriptor self))
-                         (instance-type (interface-info-instance-type self)))
+           (with-syntax ((klass (!runtime-type-descriptor self))
+                         (descriptor (interface-info-interface-descriptor self)))
              #'(let ($obj obj)
-                 (begin-annotation (@type instance-type)
+                 (begin-annotation (@type klass)
                    (if (immediate-instance-of? klass $obj)
                      $obj
                      (cast descriptor $obj))))))
@@ -69,13 +70,24 @@ package: gerbil/core
           (c4-linearize [] lst
                         get-precedence-list: interface-identifier->precedence-list
                         struct: false
-                        eq: free-identifier=?))
+                        eq: free-identifier=?
+                        get-name: stx-e))
       linearized))
 
   (def (interface-info-method-signature info method)
     (alet (sig (find (lambda (sig) (eq? method (car sig)))
                      (interface-info-interface-methods info)))
       (cdr sig)))
+
+  (def (interface-info-method-offset info method)
+    (let (methods (interface-info-interface-methods info))
+     (let loop ((rest methods) (index 2))
+       (match rest
+         ([method-sig . rest]
+          (if (eq? method (car method-sig))
+            index
+            (loop rest (fx+ index 1))))
+         (else #f)))))
 
   (def (syntax-local-interface-info? stx (is? true))
     (and (identifier? stx)
@@ -128,7 +140,7 @@ package: gerbil/core
          ((class-type-info? t)
           (!class-type-descriptor t))
          ((interface-info? t)
-          (interface-info-instance-type t))
+          (!runtime-type-descriptor t))
          (else
           (raise-syntax-error #f "unexpected type; expected class, interface or type reference" stx id t))))))
 
@@ -160,9 +172,32 @@ package: gerbil/core
                  (let (val expr)
                    (if (predicate val)
                      val
-                     (error "bad cast" klass val)))))))
+                     (contract-violation! expr (predicate val) val)))))))
           ((interface-info? meta)
-           (with-syntax ((klass (interface-info-instance-type meta))
+           (with-syntax ((klass (!runtime-type-descriptor meta))
+                         (cast-it (resolve-type->identifier stx #'type)))
+             #'(begin-annotation (@type klass)
+                 (cast-it expr))))
+          (else
+           (raise-syntax-error #f "not a class type or interface" stx #'type)))))
+      ((_ expr runtime: type)
+       (identifier? #'type)
+       (let (meta (resolve-type stx #'type))
+         (cond
+          ((class-type-info? meta)
+           (with-syntax ((klass (!class-type-descriptor meta))
+                         (predicate (!class-type-predicate meta)))
+             (if (memq (!class-type-id meta)
+                       ;; everything is t, void we don't need to check.
+                       '(t void))
+               #'(begin-annotation (@type klass) expr)
+               #'(begin-annotation (@type klass)
+                 (let (val expr)
+                   (if (predicate val)
+                     val
+                     (runtime-contract-violation! expr (predicate val) val)))))))
+          ((interface-info? meta)
+           (with-syntax ((klass (!runtime-type-descriptor meta))
                          (cast-it (resolve-type->identifier stx #'type)))
              #'(begin-annotation (@type klass)
                  (cast-it expr))))
@@ -187,16 +222,15 @@ package: gerbil/core
                    (let (val expr)
                      (if (or (not val) (predicate val))
                        val
-                       (contract-violation! "bad cast" expr predicate val)))))))
+                       (contract-violation! expr (predicate val) val)))))))
           ((interface-info? meta)
-           (with-syntax ((klass (interface-info-instance-type meta))
+           (with-syntax ((klass (!runtime-type-descriptor meta))
                          (cast-it (resolve-type->identifier stx #'type)))
              #'(begin-annotation (@type klass)
                  (let (val expr)
                    (and val (cast-it val))))))
           (else
            (raise-syntax-error #f "not a class type or interface" stx #'type)))))))
-
 
   ;; type assertion (unchecked cast)
   (defsyntax (:- stx)
@@ -206,7 +240,17 @@ package: gerbil/core
        (with-syntax ((klass (resolve-type->type-descriptor stx #'type)))
          #'(begin-annotation (@type klass) expr)))))
 
-  ;; predicate contract check
+  (defrules do-with-lock (:- :)
+    ((_ lock :- type body rest ...)
+     (:- (do-with-lock lock body rest ...)
+         type))
+    ((_ lock : type body rest ...)
+     (: (do-with-lock lock body rest ...)
+         type))
+    ((_ lock body rest ...)
+     (with-lock lock (lambda () body rest ...))))
+
+    ;; predicate contract check
   (defrules :~ (:-)
     ((_ expr predicate)
      (let (val expr)
@@ -228,6 +272,25 @@ package: gerbil/core
      (or expr (nil-dereference! expr))))
 
   (defsyntax (contract-violation! stx)
+    (syntax-case stx ()
+      ((macro ctx contract-expr value)
+       (with-syntax ((src-ctx
+                      (cond
+                       ((or (stx-source #'ctx)
+                            (stx-source stx)
+                            (stx-source #'macro))
+                        => (lambda (locat)
+                             (call-with-output-string ""
+                               (cut ##display-locat locat #t <>))))
+                       (else
+                        (expander-context-id (core-context-top))))))
+         #'(begin-annotation (@contract-violation src-ctx contract-expr value)
+             (abort!
+              (raise-contract-violation-error
+               "contract violation"
+               context: 'src-ctx contract: 'contract-expr value: value)))))))
+
+  (defsyntax (runtime-contract-violation! stx)
     (syntax-case stx ()
       ((macro ctx contract-expr value)
        (with-syntax ((src-ctx
@@ -442,10 +505,17 @@ package: gerbil/core
     (def (get-slot-accessor stx klass-or-id slot)
       (let* ((klass (if (identifier? klass-or-id)
                       (resolve-type stx klass-or-id)
-                      klass-or-id))
-             (accessors (!class-type-unchecked-accessors klass)))
+                      klass-or-id)))
         (cond
-         ((agetq slot accessors))
+         ((agetq slot (!class-type-unchecked-accessors klass)))
+         ((agetq slot (or (!class-type-slot-offsets klass) []))
+          => (lambda (offset)
+               (with-syntax ((rtd (!runtime-type-descriptor klass))
+                             (slot slot)
+                             (offset offset))
+                 (syntax/loc stx
+                   (lambda ($obj)
+                     (##unchecked-structure-ref $obj offset rtd 'slot))))))
          (else
           (raise-syntax-error #f "no accessor for slot" stx klass slot)))))
 
@@ -458,6 +528,14 @@ package: gerbil/core
                          (!class-type-unchecked-mutators klass))))
         (cond
          ((agetq slot mutators))
+         ((agetq slot (or (!class-type-slot-offsets klass) []))
+          => (lambda (offset)
+               (with-syntax ((rtd (!runtime-type-descriptor klass))
+                             (slot slot)
+                             (offset offset))
+                 (syntax/loc stx
+                   (lambda ($obj $val)
+                     (##unchecked-structure-set! $obj $val offset rtd 'slot))))))
          (else
           (raise-syntax-error #f "no mutator for slot" stx klass slot))))))
 
@@ -516,7 +594,7 @@ package: gerbil/core
       (let (type (resolve-type stx Interface))
         (with-syntax ((@@type (syntax-local-introduce '@@type))
                       (type type)
-                      (Instance::t (interface-info-instance-type type))
+                      (Instance::t (!runtime-type-descriptor type))
                       (var var)
                       (checked? checked?)
                       (cte (current-type-env))
@@ -614,7 +692,7 @@ package: gerbil/core
                                           (!class-slot-checked-method-contract? type part)
                                           #f))))
                             (else
-                             (raise-syntax-error #f "unresolved dotted reference; unknown type for slot" stx #'id part)))))
+                             (raise-syntax-error #f "unresolved dotted reference value; unknown type for slot" stx #'id part)))))
                         ((interface-info? type)
                          (if (null? rest)
                            (with-syntax ((object
@@ -685,7 +763,7 @@ package: gerbil/core
                           (else
                            (raise-syntax-error #f "unresolved dotted reference; unknown type for slot" stx #'id part)))))
                       ((interface-info? type)
-                       (raise-syntax-error #f "illegal dotted reference; interface has no slots"))
+                       (raise-syntax-error #f "illegal dotted reference; interface has no slots" stx #'id))
                       (else
                        (raise-syntax-error #f "unexpected type" stx type))))
                     (else object)))))
@@ -733,21 +811,21 @@ package: gerbil/core
                              #'(mutator (check-nil! object) value)
                              #'(mutator object value))))
                         ((!class-slot-type type part)
-                         => (lambda (type)
-                              (let (type (resolve-type stx type))
+                         => (lambda (next-type)
+                              (let (next-type (resolve-type stx next-type))
                                 (with-syntax ((object
                                                (if nil-check?
                                                  `(check-nil! ,object)
                                                  object))
                                               (accessor (get-slot-accessor stx type part)))
-                                  (loop rest type
+                                  (loop rest next-type
                                           #'(accessor object)
                                           (!class-slot-checked-mutator-contract? type part)
                                           #f)))))
                         (else
-                         (raise-syntax-error #f "unresolved dotted reference; unknown type for slot" stx #'id part))))
+                         (raise-syntax-error #f "unresolved dotted setter; unknown type for slot" stx #'id part))))
                       ((interface-info? type)
-                       (raise-syntax-error #f "illegal dotted reference; interface has no slots"))
+                       (raise-syntax-error #f "illegal dotted setter; interface has no slots" stx #'id))
                       (else
                        (raise-syntax-error #f "unexpected type" stx type))))))))
           (else
@@ -776,12 +854,15 @@ package: gerbil/core
   (defrule (list-of? pred)
     (lambda (o)
       (and (list? o)
-           (andmap pred o)))))
+           (andmap pred o))))
+
+  (defrule (one-of val ...)
+    (lambda (o)
+      (or (eq? o `val) ...))))
 
 (module ClassMeta
   (export #t)
-  (import "expander" MOP-2
-          (for-template TypeCast))
+  (import "expander" "mop" MOP-2 MOP-3)
   (def (!class-precedence-list klass)
     (cond
      ((!class-type-precedence-list klass))
@@ -794,7 +875,8 @@ package: gerbil/core
                             struct:
                             (lambda (klass-id)
                               (!class-type-struct? (syntax-local-value klass-id)))
-                            eq: free-identifier=?))
+                            eq: free-identifier=?
+                            get-name: stx-e))
              (precedence-list
               (cond
                ((memq (!class-type-id klass) '(t object class))
@@ -817,7 +899,69 @@ package: gerbil/core
                                   (core-quote-syntax ':t)]
                             head))))))))
         (set! (!class-type-precedence-list klass) precedence-list)
-        precedence-list)))))
+        precedence-list))))
+
+  (defmethod {precedence-list class-type-info}
+    !class-precedence-list)
+
+  (begin-syntax
+    (def (meta-object-methods! meta)
+      (cond
+       ((meta-object-methods meta))
+       (else
+        (let (tab (make-hash-table-eq))
+          (set! (meta-object-methods meta) tab)
+          tab)))))
+
+  (def (meta-object-method-ref meta method)
+    (alet (tab (meta-object-methods meta))
+      (hash-get tab method)))
+
+  (def (get-meta-object-method meta method)
+    (or (meta-object-method-ref meta method)
+        (get-meta-object-method-mixin meta method)))
+
+  (def (get-meta-object-method-mixin meta method)
+    (cond
+     ((method-ref meta 'precedence-list)
+      => (lambda (get-precedence-list)
+           (let loop ((rest (get-precedence-list meta)))
+             (match rest
+               ([klass . rest]
+                (let (meta (syntax-local-value klass))
+                  (or (and (meta-object? meta)
+                           (meta-object-method-ref meta method))
+                      (loop rest))))
+               (else #f)))))
+     (else #f)))
+
+  (def (call-meta-object meta method . args)
+    (cond
+     ((get-meta-object-method meta method)
+      => (lambda (proc)
+           (apply proc meta args)))
+     (else
+      (error "missing meta object method" meta-object: meta method: 'method))))
+
+  ;; meta object method dispatch
+  (defsyntax-case @call-meta-object ()
+    ((_ klass (method arg ...))
+     (identifier? #'method)
+     (let (meta (syntax-local-value #'klass false))
+       (unless (meta-object? meta)
+         (raise-syntax-error #f "not a meta-object" stx #'klass meta))
+       #'(let (meta (syntax-local-value #'klass))
+           (call-meta-object meta 'method arg ...)))))
+
+  (defsyntax-case defmethod-for-meta ()
+    ((_ klass (method arg ...) body rest ...)
+     (identifier? #'method)
+     (let (meta (syntax-local-value #'klass false))
+       (unless (meta-object? meta)
+         (raise-syntax-error #f "not a meta-object" stx #'klass meta))
+       #'(begin-syntax
+           (let (tab (meta-object-methods! (syntax-local-value #'klass)))
+             (hash-put! tab 'method (lambda (arg ...) body rest ...))))))))
 
 (module Interface
   (import TypeCast TypeReference Using
@@ -871,6 +1015,23 @@ package: gerbil/core
             ((find (cut bound-identifier=? <> #'id) ids)
              (raise-syntax-error #f "invalid signature; duplicate identifier" stx signature #'id))
             (else
+             (lp #'rest #t (cons #'id ids) kws))))
+          (((id default . contract) . rest)
+           (and (identifier? #'id)
+                (signature-contract? #'contract))
+           (cond
+            ((not optionals-allowed?)
+             (raise-syntax-error #f "invalid signature; optionals not allowed" stx signature))
+            ((not (null? kws))
+             (raise-syntax-error #f "invalid signature; positional arguments must precede keyword arguments"))
+            ((find (cut bound-identifier=? <> #'id) ids)
+             (raise-syntax-error #f "invalid signature; duplicate identifier" stx signature #'id))
+            (else
+             (syntax-case #'contract (:=)
+               ((_ ... := default)
+                (raise-syntax-error #f "invalid signature; duplicate default" stx signature))
+               (_ (void)))
+             (check-signature-contract-types! stx #'contract)
              (lp #'rest #t (cons #'id ids) kws))))
           (((id . contract) . rest)
            (and (identifier? #'id)
@@ -996,6 +1157,10 @@ package: gerbil/core
           (((id default) . rest)
            (identifier? #'id)
            (loop #'rest (cons #'(id default) result)))
+          (((id default . contract) . rest)
+           (and (identifier? #'id)
+                (signature-contract? #'contract))
+           (loop #'rest (cons #'(id default) result)))
           (((id . contract) . rest)
            (and (identifier? #'id)
                 (signature-contract? #'contract))
@@ -1008,6 +1173,11 @@ package: gerbil/core
            (loop #'rest (cons* #'id #'kw result)))
           ((kw (id default) . rest)
            (and (stx-keyword? #'kw) (identifier? #'id))
+           (loop #'rest (cons* #'(id default) #'kw result)))
+          ((kw (id default . contract) . rest)
+           (and (stx-keyword? #'kw)
+                (identifier? #'id)
+                (signature-contract? #'contract))
            (loop #'rest (cons* #'(id default) #'kw result)))
           ((kw (id . contract) . rest)
            (and (stx-keyword? #'kw)
@@ -1028,6 +1198,10 @@ package: gerbil/core
            (loop #'rest  (cons #'id result)))
           (((id _) . rest)
            (identifier? #'id)
+           (loop #'rest  (cons #'id result)))
+          (((id default . contract) . rest)
+           (and (identifier? #'id)
+                (signature-contract? #'contract))
            (loop #'rest  (cons #'id result)))
           (((id . contract) . rest)
            (and (identifier? #'id)
@@ -1057,6 +1231,10 @@ package: gerbil/core
           (((id default) . rest)
            (identifier? #'id)
            (loop #'rest))
+          (((id default . contract) . rest)
+           (and (identifier? #'id)
+                (signature-contract? #'contract))
+           (loop #'rest))
           (((id . contract) . rest)
            (and (identifier? #'id)
                 (signature-contract? #'contract))
@@ -1066,6 +1244,11 @@ package: gerbil/core
            #t)
           ((kw (id default) . rest)
            (and (stx-keyword? #'kw) (identifier? #'id))
+           #t)
+          ((kw (id default . contract) . rest)
+           (and (stx-keyword? #'kw)
+                (identifier? #'id)
+                (signature-contract? #'contract))
            #t)
           ((kw (id . contract) . rest)
            (and (stx-keyword? #'kw)
@@ -1110,9 +1293,13 @@ package: gerbil/core
           ((id . rest)
            (identifier? #'id)
            (loop #'rest #f (cons (core-quote-syntax 't::t) result)))
-          (((id _) . rest)
+          (((id default) . rest)
            (identifier? #'id)
            (loop #'rest #f (cons (core-quote-syntax 't::t) result)))
+          (((id default . contract) . rest)
+           (and (identifier? #'id)
+                (signature-contract? #'contract))
+           (loop #'rest #f (cons (type-e #'contract) result)))
           (((id . contract) . rest)
            (and (identifier? #'id)
                 (signature-contract? #'contract))
@@ -1189,9 +1376,13 @@ package: gerbil/core
           ((id . rest)
            (identifier? #'id)
            (loop #'rest result))
-          (((id _) . rest)
+          (((id default) . rest)
            (identifier? #'id)
            (loop #'rest result))
+          (((id default . contract) . rest)
+           (and (identifier? #'id)
+                (signature-contract? #'contract))
+           (loop #'rest (cons (contract-e #'id #'contract) result)))
           (((id . contract) . rest)
            (and (identifier? #'id)
                 (signature-contract? #'contract))
@@ -1202,6 +1393,11 @@ package: gerbil/core
           ((kw (id _) . rest)
            (and (stx-keyword? #'kw) (identifier? #'id))
            (loop #'rest result))
+          ((kw (id default . contract) . rest)
+           (and (stx-keyword? #'kw)
+                (identifier? #'id)
+                (signature-contract? #'contract))
+           (loop #'rest (cons (contract-e #'id #'contract) result)))
           ((kw (id . contract) . rest)
            (and (stx-keyword? #'kw)
                 (identifier? #'id)
@@ -1487,7 +1683,7 @@ package: gerbil/core
     (def (fold-methods mixin specs)
       (let* ((methods (fold-specs specs))
              (methods (fold-mixins mixin methods)))
-        ;; processing:
+        ;; processinng:
         ;; - verify method compatibility
         ;; - remove duplicates from mixins
         ;; - sort lexicographically
@@ -1537,27 +1733,13 @@ package: gerbil/core
           (bad (raise-syntax-error #f "invalid interface specification" stx #'bad)))))
 
     (def (make-method-defs Interface)
-      (lambda (method offset)
+      (lambda (method)
         (let (signature (stx-car (stx-cdr method)))
           (with-syntax ((Interface Interface)
                         (method method)
-                        (method-name (stx-car method))
-                        (self (syntax-local-introduce 'self))
-                        (offset offset)
-                        ((out ...) (signature-arguments-out signature)))
-            (if (stx-list? signature)
-              (syntax/loc stx
-                (definterface-method Interface method
-                  (declare (not safe))
-                  (let ((obj (##unchecked-structure-ref self 1 #f 'method-name))
-                        (f   (##unchecked-structure-ref self offset #f 'method-name)))
-                    (f obj out ...))))
-              (syntax/loc stx
-                (definterface-method Interface method
-                  (declare (not safe))
-                  (let ((obj (##unchecked-structure-ref self 1 #f 'method-name))
-                        (f   (##unchecked-structure-ref self offset #f 'method-name)))
-                    (##apply f obj out ...)))))))))
+                        (method-name (stx-car method)))
+            (syntax/loc stx
+              (definterface-method Interface method))))))
 
     (def (make-interface-namespace name)
       (if (module-context? (current-expander-context))
@@ -1611,16 +1793,27 @@ package: gerbil/core
                        (map stx-cdr #'(method ...)))
                       ((method-impl-name ...)
                        (map (lambda (method-name)
-                              (stx-identifier #'name #'name "-" method-name))
+                              (stx-identifier #'name "::" #'name "-" method-name))
                             #'(method-name ...)))
                       ((unchecked-method-impl-name ...)
+                       (map (lambda (method-name)
+                              (stx-identifier #'name "__" #'name "-" method-name))
+                            #'(method-name ...)))
+                      ((macro-impl-name ...)
+                       (map (lambda (method-name)
+                              (stx-identifier #'name #'name "-" method-name))
+                            #'(method-name ...)))
+                      ((unchecked-macro-impl-name ...)
                        (map (lambda (method-name)
                               (stx-identifier #'name "&" #'name "-" method-name))
                             #'(method-name ...)))
                       ((defmethod-impl ...)
                        (map (make-method-defs #'name)
-                            #'(method ...)
-                            (iota (length #'(method-name ...)) 2)))
+                            #'(method ...)))
+                      (defdescriptor
+                        #'(def descriptor
+                            (begin-annotation (@interface klass-quoted (method-name ...))
+                              (make-interface-descriptor klass '(method-name-spec ...))))) ; constructor (none)
                       (defklass
                         #'(def klass
                             (begin-annotation (@mop.class klass-type-id
@@ -1632,11 +1825,9 @@ package: gerbil/core
                                                [interface-instance::t] ; super
                                                '(method-name ...) ; direct slots
                                                '((final: . #t) (struct: . #t)) ; plist
-                                               #f)))) ; constructor (none)
-                      (defdescriptor
-                        #'(def descriptor
-                            (begin-annotation (@interface klass-quoted (method-name ...))
-                              (make-interface-descriptor klass '(method-name-spec ...)))))
+                                               #f))))
+                      (putdesc
+                       #'(class-type-properties-put! klass interface-descriptor: descriptor))
                       (defmake
                         #'(def (make obj)
                             (begin-annotation (@type.signature return: klass-quoted
@@ -1665,144 +1856,435 @@ package: gerbil/core
                         #'(defsyntax name
                             (make-interface-info
                              name: 'name
+                             type-descriptor: (quote-syntax klass)
+                             id: 'klass-type-id
                              namespace: 'namespace
                              interface-mixin: [(quote-syntax mixin) ...]
                              interface-precedence-list: [(quote-syntax mixin-precedence-list) ...]
                              interface-methods: '(method ...)
-                             instance-type: (quote-syntax klass)
                              interface-descriptor: (quote-syntax descriptor)
                              instance-constructor: (quote-syntax make)
                              instance-try-constructor: (quote-syntax try-make)
                              instance-predicate: (quote-syntax predicate)
                              instance-satisfies-predicate: (quote-syntax instance-predicate)
                              implementation-methods: [(quote-syntax method-impl-name) ...]
-                             unchecked-implementation-methods: [(quote-syntax unchecked-method-impl-name) ...]))))
-         #'(begin defklass defdescriptor defmake deftry-make defpred defpred-instance definfo
+                             unchecked-implementation-methods: [(quote-syntax unchecked-method-impl-name) ...]
+                             implementation-macros: [(quote-syntax macro-impl-name) ...]
+                             unchecked-implementation-macros: [(quote-syntax unchecked-macro-impl-name) ...]))))
+         #'(begin defklass defdescriptor putdesc defmake deftry-make defpred defpred-instance definfo
                   defmethod-impl ...)))))
 
   ;; syntax for defining interface (extension) methods
   (defsyntax (definterface-method stx)
-    (def (emit-raw-method? return)
-      (let (return-type (syntax-local-value return))
-        (if (and (class-type-info? return-type)
-                 (memq (!class-type-id return-type) '(t void)))
-          ;; no need for the raw method stub if we don't have to check the return type
-          #f
-          #t)))
-
-    (def (make-checked-method-def Interface method-name raw-method-name unchecked-method-name signature return)
-      (with-syntax ((Interface Interface)
-                    (method method-name)
-                    (target-method
-                     (if (emit-raw-method? return)
-                       raw-method-name
-                       unchecked-method-name))
-                    (self (syntax-local-introduce 'self))
-                    (in (signature-arguments-in signature))
-                    ((out ...) (signature-arguments-out signature))
-                    (signature signature)
-                    (return return))
-        (if (stx-list? #'signature)
-          (syntax/loc stx
-            (def (method self . in)
-              (with-interface-checked-method self (Interface signature return target-method)
-                (:- (target-method self out ...) return))))
-          (syntax/loc stx
-            (def (method self . in)
-              (with-interface-checked-method self (Interface signature return target-method)
-                (:- (##apply target-method self out ...) return)))))))
-
-    (def (make-raw-method-def Interface raw-method-name unchecked-method-name signature return)
-      (if (emit-raw-method? return)
-        (with-syntax ((Interface Interface)
-                      (raw-method raw-method-name)
+    (def (make-unchecked-macro Interface unchecked-macro-name unchecked-method-name method signature return)
+      (let (info (syntax-local-value Interface))
+        (with-syntax ((Interface       Interface)
+                      (unchecked-macro  unchecked-macro-name)
                       (unchecked-method unchecked-method-name)
-                      (self (syntax-local-introduce 'self))
-                      (in (signature-arguments-in signature))
-                      ((out ...) (signature-arguments-out signature))
-                      (signature signature)
-                      (return return))
-          (if (stx-list? #'signature)
+                      (method           method)
+                      (return           return)
+                      ($self           (syntax-local-temp 'self))
+                      ((in ... . tail) (signature-arguments-in signature))
+                      ((out ...)       (signature-arguments-out signature)))
+          (if (stx-null? #'tail)
             (syntax/loc stx
-              (def (raw-method self . in)
-                (with-interface-unchecked-method self (Interface signature return)
-                  (: (unchecked-method self out ...) return))))
-            (syntax/loc stx
-              (def (raw-method self . in)
-                (with-interface-unchecked-method self (Interface signature return)
-                  (: (##apply unchecked-method self out ...) return))))))
-        '(begin)))
+              (defdispatch-rule (unchecked-macro $self in ...)
+                  lift: unchecked-method
+                  (:- (interface-dispatch-method Interface method ($self out ...))
+                      return)))
+            (with-syntax (((out ... tail-out) #'(out ...)))
+              (syntax/loc stx
+                (defdispatch-rule (unchecked-macro $self in ... . tail)
+                    lift: unchecked-method
+                    (:- (interface-dispatch-method Interface method ($self out ... :: tail-out))
+                        return))))))))
 
-    (def (make-unchecked-method-def Interface unchecked-method-name signature return body)
+    (def (make-checked-macro Interface macro-name checked-method-name method signature return)
+      (let (info   (syntax-local-value Interface))
+        (with-syntax* ((Interface        Interface)
+                       (macro            macro-name)
+                       (method           method)
+                       (checked-method   checked-method-name)
+                       (return           return)
+                       ($self            (syntax-local-temp 'self))
+                       ((in ... . tail)  (signature-arguments-in signature))
+                       ((out ...)        (signature-arguments-out signature))
+                       (contract         (make-interface-method-contract stx #'$self #'Interface signature #t)))
+          (if (stx-null? #'tail)
+            (syntax/loc stx
+              (defdispatch-rule (macro $self in ...)
+                lift: checked-method
+                (using contract
+                  (if __DEBUG
+                    (: (interface-dispatch-method Interface method ($self out ...)) return)
+                    (:- (interface-dispatch-method Interface method ($self out ...)) return)))))
+            (with-syntax (((out ... tail-out) #'(out ...)))
+              (syntax/loc stx
+                (defdispatch-rule (macro $self in ... . tail)
+                  lift: checked-method
+                  (using contract
+                    (if __DEBUG
+                      (: (interface-dispatch-method Interface method ($self out ... :: tail-out)) return)
+                      (:- (interface-dispatch-method Interface method ($self out ... :: tail-out)) return))))))))))
+
+    (def (make-unchecked-method-def Interface unchecked-method-name unchecked-macro-name method signature return)
       (with-syntax ((Interface Interface)
                     (unchecked-method unchecked-method-name)
-                    (self (syntax-local-introduce 'self))
-                    (in (signature-arguments-in signature))
-                    (signature signature)
-                    (return return)
-                    ((body ...) body))
-        (syntax/loc stx
-          (def (unchecked-method self . in)
-            (with-interface-unchecked-method self (Interface signature return)
-              (:- (let () body ...) return))))))
+                    (unchecked-macro  unchecked-macro-name)
+                    (method           method)
+                    (return           return)
+                    (signature        signature)
+                    ($self            (syntax-local-temp 'self))
+                    ((in ... . tail)  (signature-arguments-in signature))
+                    ((out ...)        (signature-arguments-out signature)))
+        (if (stx-null? #'tail)
+          (syntax/loc stx
+            (define-values (unchecked-method)
+              (lambda ($self in ...)
+                (with-interface-unchecked-method-signature $self (Interface signature return)
+                  (:- (interface-dispatch-method Interface method ($self out ...))
+                      return)))
+              macro: unchecked-macro))
+          (with-syntax (((out ... tail-out) #'(out ...)))
+            (syntax/loc stx
+              (define-values (unchecked-method)
+                (lambda ($self in ... . tail)
+                  (with-interface-unchecked-method-signature $self (Interface signature return)
+                    (:- (interface-dispatch-method Interface method ($self out ... :: tail-out))
+                        return)))
+                macro: unchecked-macro))))))
+
+    (def (make-checked-method-def Interface checked-method-name checked-macro-name unchecked-method-name method signature return)
+      (with-syntax ((Interface Interface)
+                    (checked-method   checked-method-name)
+                    (checked-macro    checked-macro-name)
+                    (unchecked-method unchecked-method-name)
+                    (method           method)
+                    (signature        signature)
+                    (return           return)
+                    ($self            (syntax-local-temp 'self))
+                    ((in ... . tail)  (signature-arguments-in signature))
+                    ((out ...)        (signature-arguments-out signature)))
+        (if (stx-null? #'tail)
+          (syntax/loc stx
+            (define-values (checked-method)
+              (lambda ($self in ...)
+                (with-interface-checked-method-signature $self (Interface signature return unchecked-method)
+                  (if __DEBUG
+                    (: (interface-dispatch-method Interface method ($self out ...)) return)
+                    (:- (interface-dispatch-method Interface method ($self out ...)) return))))
+              macro: checked-macro))
+          (with-syntax (((out ... tail-out) #'(out ...)))
+            (syntax/loc stx
+              (define-values (checked-method)
+                (lambda ($self in ... . tail)
+                  (with-interface-checked-method-signature $self (Interface signature return unchecked-method)
+                    (if __DEBUG
+                      (: (interface-dispatch-method Interface method ($self out ... :: tail-out)) return)
+                      (:- (interface-dispatch-method Interface method ($self out ... :: tail-out)) return))))
+                macro: checked-macro))))))
+
+      (syntax-case stx ()
+        ((_ Interface (method signature return))
+         (and (syntax-local-interface-info? #'Interface)
+              (identifier? #'method))
+         (let* ((info (syntax-local-value #'Interface))
+                (interface-name (interface-info-name info))
+                (method-name
+                 (stx-identifier #'method interface-name "-" #'method))
+                (checked-macro-name method-name)
+                (unchecked-macro-name
+                 (stx-identifier #'method "&"  method-name))
+                (checked-method-name
+                 (stx-identifier #'method "::" method-name))
+                (unchecked-method-name
+                 (stx-identifier #'method "__" method-name))
+                (method (stx-e #'method)))
+           (check-signature! stx #'signature #'return)
+           (with-syntax ((defunchecked-macro
+                           (make-unchecked-macro
+                            #'Interface
+                            unchecked-macro-name
+                            unchecked-method-name
+                            method
+                            #'signature
+                            #'return))
+                         (defchecked-macro
+                           (make-checked-macro
+                            #'Interface
+                            checked-macro-name
+                            checked-method-name
+                            method
+                            #'signature
+                            #'return))
+                         (defunchecked-method
+                           (make-unchecked-method-def
+                            #'Interface
+                            unchecked-method-name
+                            unchecked-macro-name
+                            method
+                            #'signature
+                            #'return))
+                         (defchecked-method
+                           (make-checked-method-def
+                            #'Interface
+                            checked-method-name
+                            checked-macro-name
+                            unchecked-method-name
+                            method
+                            #'signature
+                            #'return)))
+             #'(begin defunchecked-macro defchecked-macro
+                      defunchecked-method defchecked-method))))))
+
+  (defsyntax-case interface-dispatch-method ()
+    ((_ Interface method (self arg ... :: rest))
+     (and (syntax-local-interface-info? #'Interface)
+          (identifier? #'method))
+     (let* ((info (syntax-local-value #'Interface))
+            (offset (or (interface-info-method-offset info (stx-e #'method))
+                        (raise-syntax-error #f "unknown interface method"
+                                            #'Interface #'method))))
+       (with-syntax ((instance::t (!runtime-type-descriptor info))
+                     (self-quoted (core-quote-syntax #'self))
+                     ($object      (syntax-local-temp 'object))
+                     ($method      (syntax-local-temp 'method))
+                     (offset       offset))
+         #'(begin-annotation (@interface-dispatch instance::t method self-quoted)
+             (let ()
+               (declare (not safe))
+               (let (($object (##unchecked-structure-ref self 1 #f 'method))
+                     ($method (##unchecked-structure-ref self offset #f 'method)))
+                 (##apply $method $object arg ... rest)))))))
+    ((_ Interface method (self arg ...))
+     (and (syntax-local-interface-info? #'Interface)
+          (identifier? #'method))
+     (let* ((info (syntax-local-value #'Interface))
+            (offset (or (interface-info-method-offset info (stx-e #'method))
+                        (raise-syntax-error #f "unknown interface method"
+                                            #'Interface #'method))))
+       (with-syntax ((instance::t (!runtime-type-descriptor info))
+                     (self-quoted (core-quote-syntax #'self))
+                     ($object     (syntax-local-temp 'object))
+                     ($method     (syntax-local-temp 'method))
+                     (offset       offset))
+         #'(begin-annotation (@interface-dispatch instance::t method self-quoted)
+             (let ()
+               (declare (not safe))
+               (let (($object (##unchecked-structure-ref self 1 #f 'method))
+                     ($method (##unchecked-structure-ref self offset #f 'method)))
+                 ($method $object arg ...))))))))
+
+  (defrule (defdispatch-rule (macro . in) lift: proc body rest ...)
+    (defrules macro ()
+      ((_ arg (... ...))
+       (with-dispatch-arguments (in (arg (... ...))) body rest ...))
+      (id (identifier? #'id) proc)))
+
+  (defsyntax (with-dispatch-arguments stx)
+    (def (explode sig)
+      (let loop ((rest sig) (required []) (optional []) (keywords []))
+        (syntax-case rest ()
+          ((key spec . rest)
+           (stx-keyword? #'key)
+           (let (key (stx-e #'key))
+             (if (memq key keywords)
+               (raise-syntax-error #f "bad signature: duplicate keyword" stx key)
+               (loop #'rest required optional (cons* #'spec key keywords)))))
+          (((id default) . rest)
+           (identifier? #'id)
+           (if (null? keywords)
+             (loop #'rest required (cons [#'id #'default] optional) keywords)
+             (raise-syntax-error #f "bad signature: optional after keyword" stx #'id)))
+          ((id . rest)
+           (identifier? #'id)
+           (if (null? optional)
+             (loop #'rest (cons #'id required) optional keywords)
+             (raise-syntax-error #f "bad signature: required argument after optionals" stx #'id)))
+          (tail
+           (let (tail
+                 (cond
+                  ((identifier? #'tail) #'tail)
+                  ((stx-null? #'tail)  [])
+                  (else
+                   (raise-syntax-error #f "bad signature: invalid tail" stx #'tail))))
+             (values
+              (reverse! required)
+              (reverse! optional)
+              (reverse! keywords)
+              tail))))))
 
     (syntax-case stx ()
-      ((_ Interface (method signature return) body ...)
-       (and (syntax-local-interface-info? #'Interface)
-            (identifier? #'method))
-       (let* ((info (syntax-local-value #'Interface))
-              (interface-name (interface-info-name info))
-              (method-name
-               (stx-identifier #'Interface interface-name "-" #'method))
-              (raw-method-name
-               (stx-identifier #'Interface "__" method-name))
-              (unchecked-method-name
-               (stx-identifier #'Interface "&" method-name)))
-         (check-signature! stx #'signature #'return)
-         (with-syntax ((defchecked
-                         (make-checked-method-def
-                          #'Interface
-                          method-name
-                          raw-method-name
-                          unchecked-method-name
-                          #'signature
-                          #'return))
-                       (defraw
-                         (make-raw-method-def
-                          #'Interface
-                          raw-method-name
-                          unchecked-method-name
-                          #'signature
-                          #'return))
-                       (defunchecked
-                         (make-unchecked-method-def
-                          #'Interface
-                          unchecked-method-name
-                          #'signature
-                          #'return
-                          #'(body ...))))
-           #'(begin defchecked defraw defunchecked))))))
+      ((_ (sig (arg ...)) body rest ...)
+       (let ((values required optional keywords tail)
+             (explode #'sig))
 
-  (defsyntax (with-interface-method stx)
-    (syntax-case stx ()
-      ((_ self (Interface signature return unchecked-proc) body ...)
-       (let (checked? (and (stx-e #'unchecked-proc) #t))
-         (with-syntax ((lambda-signature
-                        (make-interface-method-lambda-signature stx
-                          #'self #'Interface #'signature #'return #'unchecked-proc))
-                       (contract
-                        (make-interface-method-contract stx
-                          #'self #'Interface #'signature checked?)))
-           #'(begin-annotation (@type.signature . lambda-signature)
-               (using contract body ...)))))))
+         (def (implode bindings)
+           (with-syntax ((bind (reverse! bindings)))
+             #'(let* bind body rest ...)))
 
-  (defrule (with-interface-checked-method self (Interface signature return raw-method)
+         (def (pack-tail bindings rest)
+           (if (null? tail)
+             (if (null? rest)
+               bindings
+               (raise-syntax-error #f "unexpected arguments" stx rest))
+             (if (null? rest)
+               (cons [tail '(quote ())] bindings)
+               (cons [tail (cons 'list rest)] bindings))))
+
+         (def (implode-tail bindings rest)
+           (implode (pack-tail bindings rest)))
+
+         (def (implode-keywords-tail bindings fullfilled rest)
+           (let loop ((keywords-rest keywords) (bindings bindings))
+             (match keywords-rest
+               ([key spec . keywords-rest]
+                (if (memq key fullfilled)
+                  (loop keywords-rest bindings)
+                  (if (stx-list? spec)
+                    (loop keywords-rest (cons spec bindings))
+                    (raise-syntax-error #f "missing value for required keyword" stx key))))
+               (else
+                (implode-tail bindings rest)))))
+
+         (def (implode-keywords bindings args-rest)
+           (let loop ((args-rest args-rest)
+                      (fullfilled [])
+                      (bindings bindings))
+             (match args-rest
+               ([first . rest]
+                (if (stx-keyword? first)
+                  (let (key (stx-e first))
+                    (cond
+                     ((memq key fullfilled)
+                      (raise-syntax-error #f "duplicate keyword" stx first))
+                     ((pgetq key keywords)
+                      => (lambda (spec)
+                           (match rest
+                             ([arg . args-rest]
+                              (let* ((id (if (stx-list? spec) (stx-car spec) spec))
+                                     (bindings (cons [id arg] bindings)))
+                                (loop args-rest (cons key fullfilled) bindings)))
+                             (else
+                              (raise-syntax-error #f "missing value for keyword argument" stx first)))))
+                     (else
+                      (raise-syntax-error #f "unexpected keyword" stx first))))
+                  ;; no more keyword call args
+                  (implode-keywords-tail bindings fullfilled args-rest)))
+               (else
+                ;; no more call args
+                (implode-keywords-tail bindings fullfilled [])))))
+
+         ;; process positionals first
+         (let loop ((required-rest required)
+                    (args-rest    #'(arg ...))
+                    (bindings    []))
+           (match required-rest
+             ([id . required-rest]
+              (match args-rest
+                ([arg . args-rest]
+                 (if (and (stx-keyword? arg) (not (null? keywords)))
+                   (raise-syntax-error #f "keyword argument instead of positional argument" stx arg id)
+                   (let (bindings (cons [id arg] bindings))
+                     (loop required-rest args-rest bindings))))
+                (else
+                 (raise-syntax-error #f "missing required argument" stx id))))
+             (else
+              ;; no more required arguments, process optionals
+              (let loop ((args-rest args-rest) (optional-rest optional) (bindings bindings))
+                (match optional-rest
+                  ;; we have more optionals
+                  ([next . rest]
+                   (match args-rest
+                     ([arg . args-rest*]
+                      (if (stx-keyword? arg)
+                        ;; keyword arguments start
+                        (let (bindings (fold cons bindings optional-rest))
+                          (implode-keywords bindings args-rest))
+                        ;; an optional argument
+                        (let (bindings (cons [(car next) arg] bindings))
+                          (loop args-rest* rest bindings))))
+                     (else
+                      ;; no more call arguments
+                      (let (bindings (fold cons bindings optional-rest))
+                        (implode-keywords bindings [])))))
+                  ;; we don't expect any more optionals, process keywords
+                  (else
+                   (implode-keywords bindings args-rest)))))))))))
+
+  (defsyntax-case definterface-extension-method (=>)
+    ((_ Interface (method self . signature) => return body ...)
+     (and (syntax-local-interface-info? #'Interface)
+          (syntax-local-runtime-type-info? #'return))
+     (let* ((info           (syntax-local-value #'Interface))
+            (interface-name (interface-info-name info)))
+       (with-identifiers ((method-name      #'method interface-name "-" #'method)
+                          (unchecked-macro  #'method "&"  #'method-name)
+                          (checked-method   #'method "::" #'method-name)
+                          (unchecked-method #'method "__" #'method-name))
+         (with-syntax (((in ... . tail)    (signature-arguments-in #'signature))
+                       ((out ...)          (signature-arguments-out #'signature))
+                       (checked-contract   (make-interface-method-contract stx #'self #'Interface #'signature #t))
+                       (unchecked-contract (make-interface-method-contract stx #'self #'Interface #'signature #f))
+                       (checked-macro       #'method-name))
+           (if (stx-null? #'tail)
+             #'(begin
+                 (defdispatch-rule (unchecked-macro self in ...)
+                   lift: unchecked-method
+                   (using unchecked-contract
+                     (unchecked-method self out ...)))
+                 (defdispatch-rule (checked-macro self in ...)
+                   lift: checked-method
+                   (using checked-contract
+                     (unchecked-method self out ...)))
+                 (def (unchecked-method self in ...)
+                   (with-interface-unchecked-method-signature self (Interface signature return)
+                     body ...))
+                 (def checked-method
+                   (lambda (self in ...)
+                     (with-interface-checked-method-signature self (Interface signature return unchecked-method)
+                       body ...))
+                   macro: checked-macro))
+             (with-syntax (((out ... tail-out) #'(out ...)))
+               #'(begin
+                   (defdispatch-rule (unchecked-macro self in ... tail (... ...))
+                     lift: unchecked-method
+                     (using unchecked-contract
+                       (unchecked-method self out ... tail-out (... ...))))
+                   (defdispatch-rule (checked-macro self in ... tail (... ...))
+                     lift: checked-method
+                     (using checked-contract
+                       (unchecked-method self out ... tail (... ...))))
+                   (def (unchecked-method self in ... . tail)
+                     (with-interface-unchecked-method-signature self (Interface signature return)
+                       body ...))
+                   (define-values (checked-method)
+                     (lambda (self in ... . tail)
+                       (with-interface-checked-method-signature self (Interface signature return unchecked-method)
+                         body ...)
+                       macro: unchecked-macro)))))))))
+    ((_ Interface (method self . signature) body ...)
+     #'(definterface-extension-method Interface (method self . signature) => :t body ...)))
+
+  (defsyntax-case with-interface-method-signature ()
+    ((_ self (Interface signature return unchecked-proc) body ...)
+     (let (checked? (and (stx-e #'unchecked-proc) #t))
+       (with-syntax ((lambda-signature
+                      (make-interface-method-lambda-signature stx
+                        #'self #'Interface #'signature #'return #'unchecked-proc))
+                     (contract
+                      (make-interface-method-contract stx
+                        #'self #'Interface #'signature checked?)))
+         #'(begin-annotation (@type.signature . lambda-signature)
+             (using contract body ...))))))
+
+  (defrule (with-interface-checked-method-signature self (Interface signature return unchecked-method)
              body ...)
-    (with-interface-method self (Interface signature return raw-method) body ...))
+    (with-interface-method-signature self (Interface signature return unchecked-method) body ...))
 
-  (defrule (with-interface-unchecked-method self (Interface signature return)
+  (defrule (with-interface-unchecked-method-signature self (Interface signature return)
              body ...)
-    (with-interface-method self (Interface signature return #f) body ...))
+    (with-interface-method-signature self (Interface signature return #f) body ...))
 
   (defsyntax-for-export (interface-out stx)
     (def (expand body unchecked?)
@@ -1815,16 +2297,18 @@ package: gerbil/core
               (let (info (syntax-local-value #'id false))
                 (unless (interface-info? info)
                   (raise-syntax-error #f "not an interface type" stx #'id))
-                (with ((interface-info instance-type: type
+                (with ((interface-info type-descriptor: type
                                        interface-descriptor: descriptor
                                        instance-constructor: constructor
                                        instance-try-constructor: try-constructor
                                        instance-predicate: predicate
                                        instance-satisfies-predicate: satisfies-predicate
                                        implementation-methods: method-impl
-                                       unchecked-implementation-methods: unchecked-impl)
+                                       unchecked-implementation-methods: unchecked-impl
+                                       implementation-macros: macro-impl
+                                       unchecked-implementation-macros: unchecked-macro-impl)
                        info)
-                  (lp #'rest [#'id type descriptor constructor try-constructor predicate satisfies-predicate method-impl ... (if unchecked? unchecked-impl []) ... ids ...]))))
+                  (lp #'rest [#'id type descriptor constructor try-constructor predicate satisfies-predicate method-impl ... (if unchecked? unchecked-impl []) macro-impl ... (if unchecked? unchecked-macro-impl []) ... ids ...]))))
              (_ (cons begin: ids)))))))
 
     (syntax-case stx ()
@@ -1868,62 +2352,95 @@ package: gerbil/core
   (defsyntax (def/c stx)
     (def (make-definition id args return body)
       (check-signature! stx args return)
-      (if (signature-has-keywords? args)
-        (make-keyword-def id args return body)
-        (let (unchecked-id (stx-identifier id "__" id))
-          (with-syntax ((defchecked (make-checked-def id unchecked-id args return))
-                        (defunchecked (make-unchecked-def unchecked-id args return body)))
-            #'(begin defchecked defunchecked)))))
+      (let ((values macro body)
+            (definition-body body))
+        (with-identifier (unchecked-proc  id "__" id)
+          (with-syntax*
+              ((checked-macro
+                (if macro
+                  macro
+                  (stx-identifier id "@" id)))
+               (defchecked-macro
+                 (if macro
+                   '(begin)
+                   (make-checked-macro #'checked-macro id #'unchecked-proc
+                                       args return)))
+               (defunchecked-proc
+                 (make-unchecked-proc #'unchecked-proc
+                                      args return body))
+               (defchecked-proc
+                 (make-checked-proc id #'unchecked-proc #'checked-macro
+                                    args return)))
+            #'(begin defchecked-macro defunchecked-proc defchecked-proc)))))
 
-    (def (make-keyword-def id signature return body)
-      (with-syntax ((id id)
-                    (in (signature-arguments-in signature))
-                    (signature signature)
-                    (return return)
-                    (return-type (resolve-type->type-descriptor stx return))
-                    ((body ...) body))
+    (def (definition-body body)
+      (syntax-case body ()
+        ((macro: macro body rest ...)
+         (values #'macro #'(body rest ...)))
+        (_
+         (values #f body))))
+
+    (def (make-unchecked-proc unchecked-proc signature return body)
+      (with-syntax ((unchecked-proc  unchecked-proc)
+                    (signature       signature)
+                    (return          return)
+                    (return-type     (resolve-type->type-descriptor stx return))
+                    (in              (signature-arguments-in signature))
+                    ((body ...)       body))
         (syntax/loc stx
-          (def (id . in)
-            (with-procedure-signature (signature return #f)
-              (begin-annotation (@type return-type)
-                (with-procedure-contract signature
-                  body ...)))))))
-
-    (def (make-checked-def id unchecked-id signature return)
-      (with-syntax ((id id)
-                    (unchecked-id unchecked-id)
-                    (in (signature-arguments-in signature))
-                    ((out ...) (signature-arguments-out signature))
-                    (signature signature)
-                    (return return)
-                    (return-type (resolve-type->type-descriptor stx return)))
-        (if (stx-list? #'signature)
-          (syntax/loc stx
-            (def (id . in)
-              (with-procedure-signature (signature return unchecked-id)
+          (define-values (unchecked-proc)
+            (lambda in
+              (with-procedure-signature (#f return #f)
                 (begin-annotation (@type return-type)
-                  (with-procedure-contract signature
-                    (unchecked-id out ...))))))
+                  (with-procedure-unchecked-contract signature body ...))))))))
+
+    (def (make-checked-proc checked-proc unchecked-proc checked-macro signature return)
+      (with-syntax ((checked-proc   checked-proc)
+                    (unchecked-proc unchecked-proc)
+                    (checked-macro  checked-macro)
+                    (signature      signature)
+                    (return         return)
+                    (return-type    (resolve-type->type-descriptor stx return))
+                    (in             (signature-arguments-in signature))
+                    ((out ...)      (signature-arguments-out signature)))
+        (if (stx-list? #'in)
           (syntax/loc stx
-            (def (id . in)
-              (with-procedure-signature (signature return unchecked-id)
-                (begin-annotation (@type return-type)
-                  (with-procedure-contract signature
-                    (##apply unchecked-id out ...)))))))))
+            (define-values (checked-proc)
+              (lambda in
+                (with-procedure-signature (signature return unchecked-proc)
+                  (begin-annotation (@type return-type)
+                    (with-procedure-contract signature
+                      (unchecked-proc out ...)))))
+              macro: checked-macro))
+          (syntax/loc stx
+            (define-values (checked-proc)
+              (lambda in
+                (with-procedure-signature (signature return unchecked-proc)
+                  (begin-annotation (@type return-type)
+                    (with-procedure-contract signature
+                      (##apply unchecked-proc out ...)))))
+              macro: checked-macro)))))
 
-    (def (make-unchecked-def unchecked-id signature return body)
-      (with-syntax ((unchecked-id unchecked-id)
-                    (in (signature-arguments-in signature))
-                    (signature signature)
-                    (return return)
-                    ((body ...) body))
-        (syntax/loc stx
-          (def (unchecked-id . in)
-            (with-procedure-signature (#f return #f)
-              (with-procedure-unchecked-contract signature
-                                                 body ...))))))
+    (def (make-checked-macro checked-macro checked-proc unchecked-proc signature return)
+      (with-syntax ((checked-macro  checked-macro)
+                    (checked-proc   checked-proc)
+                    (unchecked-proc unchecked-proc)
+                    (in             (signature-arguments-in signature))
+                    ((out ...)      (signature-arguments-out signature))
+                    (contract       (make-procedure-contract stx signature #t)))
+        (if (stx-list? #'in)
+          (syntax/loc stx
+            (defdispatch-rule (checked-macro . in)
+              lift: checked-proc
+              (using contract
+                (unchecked-proc out ...))))
+          (syntax/loc stx
+            (defdispatch-rule (checked-macro . in)
+              lift: checked-proc
+              (using contract
+                (##apply unchecked-proc out ...)))))))
 
-    (syntax-case stx (=>)
+    (syntax-case stx (=> lambda/c)
       ((_ (id . args) => return body ...)
        (identifier? #'id)
        (if (is-signature? #'args)
@@ -1940,32 +2457,56 @@ package: gerbil/core
       ((_ ((head . rest) . args) body ...)
        #'(def/c (head . rest)
            (lambda/c args body ...)))
+      ((_ id (lambda/c hd body ...))
+       (identifier? #'id)
+       #'(def/c (id . hd) body ...))
       ((_ id expr)
        (identifier? #'id)
        #'(def id expr))))
 
-  (defsyntax (with-procedure-signature stx)
-    (syntax-case stx ()
-      ((_ (#f return #f) body ...)
-       (with-syntax ((return-type (resolve-type->type-descriptor stx #'return)))
-         #'(begin-annotation (@type.signature return: return-type)
-             (let () body ...))))
-      ((_ (signature return unchecked) body ...)
-       (with-syntax ((lambda-signature (make-procedure-lambda-signature stx #'signature #'return #'unchecked)))
-         #'(begin-annotation (@type.signature . lambda-signature)
-             (let () body ...))))))
+  (defsyntax-case definline ()
+    ((_ (proc . signature) => return body rest ...)
+     (and (identifier? #'proc)
+          (is-signature? #'signature)
+          (syntax-local-runtime-type-info? #'return))
+     (with-identifier (macro #'proc "@" #'proc)
+       (with-syntax ((in        (signature-arguments-in #'signature))
+                     ((out ...) (signature-arguments-out #'signature))
+                     (contract  (make-procedure-contract stx #'signature #t)))
+         #'(begin
+             (defdispatch-rule (macro . in)
+               lift: proc
+               (: (using contract
+                    body rest ...)
+                  return))
+             (def/c (proc . signature)
+               => return
+               macro: macro
+               body rest ...)))))
+    ((_ (proc . signature) body rest ...)
+     (and (identifier? #'proc)
+          (is-signature? #'signature))
+     #'(definline (proc . signature) => :t body rest ...)))
 
-  (defsyntax (with-procedure-contract stx)
-    (syntax-case stx ()
-      ((_ signature body ...)
-       (with-syntax ((contract (make-procedure-contract stx #'signature #t)))
-         #'(using contract body ...)))))
+  (defsyntax-case with-procedure-signature ()
+    ((_ (#f return #f) body ...)
+     (with-syntax ((return-type (resolve-type->type-descriptor stx #'return)))
+       #'(begin-annotation (@type.signature return: return-type)
+           (let () body ...))))
+    ((_ (signature return unchecked) body ...)
+     (with-syntax ((lambda-signature (make-procedure-lambda-signature stx #'signature #'return #'unchecked)))
+       #'(begin-annotation (@type.signature . lambda-signature)
+           (let () body ...)))))
 
-  (defsyntax (with-procedure-unchecked-contract stx)
-    (syntax-case stx ()
-      ((_ signature body ...)
-       (with-syntax ((contract (make-procedure-contract stx #'signature #f)))
-         #'(using contract body ...)))))
+  (defsyntax-case with-procedure-contract ()
+    ((_ signature body ...)
+     (with-syntax ((contract (make-procedure-contract stx #'signature #t)))
+       #'(using contract body ...))))
+
+  (defsyntax-case with-procedure-unchecked-contract ()
+    ((_ signature body ...)
+     (with-syntax ((contract (make-procedure-contract stx #'signature #f)))
+       #'(using contract body ...))))
 
   (defsyntax (lambda/c stx)
     (def (make-lambda signature return body)
@@ -2074,7 +2615,7 @@ package: gerbil/core
                (method-name (stx-e method-id))
                (method-sig  (interface-info-method-signature info method-name)))
           (unless method-sig
-            (raise-syntax-error #f "uknown interface method" stx #'Interface method-id))
+            (raise-syntax-error #f "unknown interface method" stx #'Interface method-id))
           (with-syntax ((interface-method-name
                          (generate-interface-method-name info method-id))
                         (method-implementation
@@ -2093,7 +2634,7 @@ package: gerbil/core
               (or (free-identifier=? #'form #'lambda/c)
                   (free-identifier=? #'form #'lambda))
               (method-receiver? #'self))
-	     (with-syntax* (((receiver . head)
+             (with-syntax* (((receiver . head)
                          (generate-interface-lambda-head #'self #'args type-id method-id (car method-sig)))
                         (return-type
                          (syntax-local-introduce (cadr method-sig)))
@@ -2320,20 +2861,12 @@ package: gerbil/core
       ((_ {method Type} impl rest ...)
        (and (identifier? #'method)
             (identifier? #'Type))
-       (if (syntax-local-class-type-info? #'Type)
-         (if (interface-declaration? #'(rest ...))
-           (generate-interface-method #'method #'Type #'impl #'(rest ...))
-           (generate-class-method #'method #'Type #'impl #'(rest ...)))
-         (raise-syntax-error #f "not defined as class" stx #'Type)))
-
-      ((_ (wtf method Type) . _)
-       (cond
-        ((resolve-identifier #'wtf)
-         => (lambda (b)
-              (raise-syntax-error #f "booooo!" stx (binding-id b))))
-        (else
-         (raise-syntax-error #f "booooo!" stx))))
-        ))
+       (let (klass (syntax-local-value #'Type))
+         (if (runtime-type-info? klass)
+           (if (interface-declaration? #'(rest ...))
+             (generate-interface-method #'method #'Type #'impl #'(rest ...))
+             (generate-class-method #'method #'Type #'impl #'(rest ...)))
+          (raise-syntax-error #f "not a valid class type" stx #'Type klass))))))
 
   (defsyntax (with-receiver stx)
     (syntax-case stx ()
@@ -2345,15 +2878,27 @@ package: gerbil/core
 
   (defsyntax (let/c stx)
     (syntax-case stx (=>)
-      ((_ id ((var init) ...) => return body ...)
+      ((_ id ((var init contract ...) ...) => return body ...)
        (identifier? #'id)
-       (with-syntax ((proc (syntax/loc stx (lambda/c (var ...) => return body ...))))
-         #'((letrec ((id proc)) id)
-            init ...)))
-      ((_ id ((var init) ...) body ...)
+       (with-syntax ((proc
+                      (let loop ((rest #'((var contract ...) ...)) (formals []))
+                        (syntax-case rest ()
+                          (((id) . rest)
+                           (identifier? #'id)
+                           (loop #'rest (cons #'id formals)))
+                          (((id contract ...) . rest)
+                           (loop #'rest (cons #'(id contract ...) formals)))
+                          (tail
+                           (with-syntax (((formal ...) (reverse! formals)))
+                             (syntax/loc stx
+                               (lambda/c (formal ... . tail) => return body ...))))))))
+         #'(begin-annotation @loop
+             ((letrec ((id proc)) id)
+              init ...))))
+      ((_ id ((var init contract ...) ...) body ...)
        (and (identifier? #'id)
-            (is-signature? #'(var ...)))
-       #'(let/c id ((var init) ...) => :t body ...))
+            (is-signature? #'((var contract ...) ...)))
+       #'(let/c id ((var init contract ...) ...) => :t body ...))
       ((_ . body)
        #'(let . body))))
 
@@ -2372,7 +2917,7 @@ package: gerbil/core
     (def (check-typedef-body! body)
       (def (body-opt? key)
         (memq (stx-e key)
-              '(id: struct: name: constructor: transparent: final: print: equal: metaclass:)))
+              '(id: struct: name: constructor: transparent: final: print: equal: metaclass: acyclic:)))
       (unless (stx-plist? body body-opt?)
         (raise-syntax-error #f "invalid defclass body" stx body)))
 
@@ -2548,7 +3093,7 @@ package: gerbil/core
                           (hash-put! tab slot slot-type)
                           (loop-inner rest-slots result)))))))
                  (else
-                  (loop (foldr cons rest (!class-type-super klass)) result))))))
+                  (loop (append (!class-type-super klass) rest) result))))))
           (else (values (reverse! result) tab)))))
 
     (def (get-slot-table slots mixin-slots super contract-e getf mixf)
@@ -2698,7 +3243,8 @@ package: gerbil/core
                             struct:
                             (lambda (klass-id)
                               (!class-type-struct? (syntax-local-value/context klass-id)))
-                            eq: free-identifier=?))
+                            eq: free-identifier=?
+                            get-name: stx-e))
              (base-fields
               (if base-struct
                 (let (klass (syntax-local-value base-struct))
@@ -2843,22 +3389,24 @@ package: gerbil/core
                             []))
                        ((values properties)
                         (let* ((properties
-                                (if (stx-e (stx-getq transparent: body))
-                                  [[transparent: . #t]]
-                                  []))
+                                (cond
+                                 ((stx-plist-assq transparent: body)
+                                  => (lambda (a) [a]))
+                                 (else [])))
                                (properties
                                 (cond
-                                 ((stx-e (stx-getq print: body))
-                                  => (lambda (print)
-                                       (let (print (if (eq? print #t) #'(slot ...) print))
-                                         (cons [print: . print] properties))))
+                                 ((stx-plist-assq print: body)
+                                  => (lambda (a) [a . properties]))
                                  (else properties)))
                                (properties
                                 (cond
-                                 ((stx-e (stx-getq equal: body))
-                                  => (lambda (equal)
-                                       (let (equal (if (eq? equal #t) #'(slot ...) equal))
-                                         (cons [equal: . equal] properties))))
+                                 ((stx-plist-assq equal: body)
+                                  => (lambda (a) [a . properties]))
+                                 (else properties)))
+                               (properties
+                                (cond
+                                 ((stx-plist-assq acyclic: body)
+                                  => (lambda (a) [a . properties]))
                                  (else properties))))
                           properties))
                        ((values type-properties)

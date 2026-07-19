@@ -12,6 +12,5 @@
     (load-module "gerbil/core/contract~Using")
     (load-module "gerbil/core/contract~ContractRules")
     (load-module "gerbil/core/contract~Interface")
-    (load-module "gerbil/core/contract~TypedDefinitions")
-    (load-module "gerbil/core/mop"))
+    (load-module "gerbil/core/contract~TypedDefinitions"))
   (begin))

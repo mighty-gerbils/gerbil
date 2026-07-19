@@ -11,43 +11,54 @@ namespace: #f
 ;; predefine this so that we can raise it before it is defined (bootstrap)
 ;; it also needs to be a runtime binding, so we don't defmutable
 (def raise-contract-violation-error error)
-(set! raise-contract-violation-error raise-contract-violation-error )
+(set! raise-contract-violation-error raise-contract-violation-error)
 
 (defrules declare-inline ()
   ((_ proc inline-rules)
    (begin-annotation (@inline proc) 'inline-rules)))
 
 ;;; low level locks
-(cond-expand
-  (gerbil-smp
-   (defrules __lock-inline! ()
-     ((_ mx)
-      (let ()
-        (declare (not interrupts-enabled))
-        (let again ((spin 0))
-          (cond
-           ((##fx= (##vector-cas! mx 0 1 0) 0))
-           ((##fx< spin 100)
-            (again (##fx+ spin 1)))
-           (else
-            (##thread-yield!)
-            (again 0))))))))
-  (else
-   (defrules __lock-inline! ()
-     ((_ mx)
-      (let ()
-        (declare (not interrupts-enabled))
-        (let again ()
-          (unless (##fx= (##vector-cas! mx 0 1 0) 0)
-            (##thread-yield!)
-            (again))))))))
+(defrules __make-inline-lock ()
+  ((_) (vector 0 #f)))
+
+(defrules __lock-inline! ()
+  ((_ mx max-spin)
+   (let ()
+     (declare (not interrupts-enabled))
+     (let again ((spin 0))
+       (cond
+        ((##fx= (##vector-cas! mx 0 1 0) 0)
+         (##vector-set! mx 1 (current-thread)))
+        ((##fx< spin max-spin)
+         (cond-expand
+           ((not gerbil-smp)
+            (##thread-yield!)))
+         (again (##fx+ spin 1)))
+        (else
+         (let (owner (##vector-ref mx 1))
+           (cond
+            ((eq? owner (macro-current-thread))
+             (##thread-deadlock-action!))
+            ((not (macro-thread-end-condvar owner))
+             (##thread-deadlock-action!))
+            (else
+             (##thread-yield!)
+             (again 0)))))))))
+  ((_ mx)
+   (__lock-inline! mx 10)))
 
 (defrules __unlock-inline! ()
   ((_ mx)
-   (##vector-cas! mx 0 0 1)))
+   (let ()
+     (declare (not interrupts-enabled))
+     (##vector-set! mx 1 #f)
+     (##vector-cas! mx 0 0 1))))
 
-(defrules __make-inline-lock ()
-  ((_) (vector 0)))
+(defrule (__do-inline-lock! lock expr)
+  (begin
+    (__lock-inline! lock)
+    (begin0 expr
+      (__unlock-inline! lock))))
 
 ;;;
 
@@ -78,7 +89,8 @@ namespace: #f
     (cond
      ((file-exists? path)
       (unless (eq? (file-type path) 'directory)
-        (error "Path component is not a directory" path)))
+        (abort! (raise-contract-violation-error "Path component is not a directory"
+                                                value: path))))
      (perms
       (create-directory [path: path permissions: perms]))
      (else
@@ -202,8 +214,7 @@ namespace: #f
 
 (def (immediate? obj)
   => :boolean
-  (let (t (:- (##type obj) :fixnum))
-    (fxzero? (fxand t #b1))))
+  (not (##mem-allocated? obj)))
 
 (def (nonnegative-fixnum? obj)
   => :boolean
@@ -326,18 +337,16 @@ namespace: #f
 
 ;; Destructively remove the empty lists from a list of lists, returns the list.
 ;; : (List (List X)) -> (List (NonEmptyList X))
-(def (remove-nulls! l)
-  (match l
-    ([[] . r]
-     (remove-nulls! r))
-    ([_ . r]
-     (let loop ((l l) (r r))
-       (match r
-         ([[] . rr] (set-cdr! (:- l :pair) (remove-nulls! rr)))
-         ([_ . rr] (loop r rr))
-         (_ (void))))
-     l)
-    (_ l))) ;; []
+(def (remove-nulls! lists)
+  (def (process-tails! previous-cell rest)
+    (match rest
+      ([[] . r] (set-cdr! (:- previous-cell :pair) (remove-nulls! r)))
+      ([_ . r] (process-tails! rest r))
+      (_ (void))))
+  (match lists
+    ([[] . r] (remove-nulls! r))
+    ([_ . r] (process-tails! lists r) lists)
+    (_ lists))) ;; []
 
 ;; : (List X) X -> (NonEmptyList X)
 (def (append1! l x)
@@ -586,6 +595,8 @@ namespace: #f
   fxarithmetic-shift)
 (def fx/
   fxquotient)
+(def fx%
+  fxremainder)
 (def (fx>=0? x) => :boolean
   (and (fixnum? x) (##fx>= x 0)))
 (def (fx>0? x) => :boolean
@@ -615,7 +626,8 @@ namespace: #f
    ((or (null? x) (void? x) (eof-object? x) (boolean? x))
     (void))
    (else
-    (abort! (error "cannot convert as string" x)))))
+    (abort! (raise-contract-violation-error "cannot convert as string"
+                                            value: x)))))
 
 (def* as-string
   ((x)
@@ -691,28 +703,93 @@ namespace: #f
   => :boolean
   (fxzero? (string-length str)))
 
+;; start is inclusive, end is exclusive, start < end, as per SRFI-13
+;; Like in SRFI-13, criterion can be a character or predicate,
+;; but it cannot be a "char-set" (no such notion here yet).
 (def (string-index (str : :string)
-                   (char : :char)
-                   (start :~ nonnegative-fixnum? :- :fixnum :=  0))
-  (let ((len (string-length str)))
-    (let lp ((k start))
-      (using (k :- :fixnum)
-        (and (fx< k len)
-             (if (eq? char (##string-ref str k))
-               k
-               (lp (fx+ k 1))))))))
+                   criterion
+                   (start :~ nonnegative-fixnum? :- :fixnum :=  0)
+                   (end :? :fixnum := #f))
+  (let (end (or end (string-length str)))
+    (cond
+     ((< start 0)
+      (abort! (raise-contract-violation-error "invalid start for string-index"
+                                              value: [str start])))
+     ((> end (string-length str))
+      (abort! (raise-contract-violation-error "invalid end for string-index"
+                                              value: [str end])))
+     ((char? criterion)
+      (__string-index/char str criterion start end))
+     ((procedure? criterion)
+      (__string-index/pred str criterion start end))
+     (else
+      (abort! (raise-contract-violation-error "string-index criterion must be char or procedure"
+                                              value: criterion))))))
 
+(def (__string-index/char (str :- :string)
+                          (char :- :char)
+                          (start :- :fixnum)
+                          (end :- :fixnum))
+  (let lp ((k start))
+    (using (k :- :fixnum)
+      (and (fx< k end)
+           (if (eq? char (##string-ref str k))
+             k
+             (lp (fx+ k 1)))))))
+
+(def (__string-index/pred (str :- :string)
+                          (pred? :- :procedure)
+                          (start :- :fixnum)
+                          (end :- :fixnum))
+  (let lp ((k start))
+    (using (k :- :fixnum)
+      (and (fx< k end)
+           (if (pred? (##string-ref str k))
+             k
+             (lp (fx+ k 1)))))))
+
+;; NB: API different from string-index or SRFI-13's string-index-right
+;; start and end are both inclusive, start >= end, and #f not accepted for the start or end
 (def (string-rindex (str : :string)
-                       (char : :char)
-                       (start #f))
-  (let* ((len (string-length str))
-         (start (if (fixnum? start) start (fx- len 1))))
-    (let lp ((k start))
-      (using (k :- :fixnum)
-        (and (fx>= k 0)
-             (if (eq? char (##string-ref str k))
-               k
-               (lp (fx- k 1))))))))
+                    criterion
+                    (start : :fixnum := (fx- (string-length str) 1))
+                    (end : :fixnum := 0))
+  (cond
+   ((>= start (string-length str))
+    (abort! (raise-contract-violation-error "invalid start for string-rindex"
+                                            value: [str start])))
+   ((< end 0)
+    (abort! (raise-contract-violation-error "invalid end for string-rindex"
+                                            value: [str end])))
+   ((char? criterion)
+    (__string-rindex/char str criterion start end))
+   ((procedure? criterion)
+    (__string-rindex/pred str criterion start end))
+   (else
+    (abort! (raise-contract-violation-error "string-rindex criterion must be char or procedure"
+                                            value: criterion)))))
+
+(def (__string-rindex/char (str :- :string)
+                           (char :- :char)
+                           (start :- :fixnum)
+                           (end :- :fixnum))
+  (let lp ((k start))
+    (using (k :- :fixnum)
+      (and (fx>= k end)
+           (if (eq? char (##string-ref str k))
+             k
+             (lp (fx- k 1)))))))
+
+(def (__string-rindex/pred (str :- :string)
+                           (pred? :- :procedure)
+                           (start :- :fixnum)
+                           (end :- :fixnum))
+  (let lp ((k start))
+    (using (k :- :fixnum)
+      (and (fx>= k end)
+           (if (pred? (##string-ref str k))
+             k
+             (lp (fx- k 1)))))))
 
 (def (string-split (str : :string) (char : :char))
   => :list
@@ -745,7 +822,8 @@ namespace: #f
                           jlen len))
                  (fx+ (string-length hd)
                       len)))
-             (error "expected string" hd)))
+             (abort! (raise-contract-violation-error "expected string"
+                                                     value: hd))))
           (else 0)))))
 
   (let* ((join
@@ -755,7 +833,8 @@ namespace: #f
                ((string? join)
                 join)
                (else
-                (error "expected string or char" join)))
+                (abort! (raise-contract-violation-error "expected string or char"
+                                                        value: join))))
               :string))
           (jlen (string-length join))
           (olen (:- (join-length strs jlen) :fixnum))
@@ -838,8 +917,8 @@ namespace: #f
        (n (lambda () (newline e)))
        (v (lambda (l) (for-each (lambda (x) (d " ") (w x)) l) (n)))
        (x (lambda (expr thunk)
-            (f) (d "  ") (w expr) (d " =>")
-            (call-with-values thunk (lambda x (v x) (f) (apply values x))))))
+            (call-with-values thunk
+              (lambda x (f) (d "  ") (w expr) (d " =>") (v x) (f) (apply values x))))))
     (if tag
       (begin
         (unless (void? tag) (f) (d tag) (n))

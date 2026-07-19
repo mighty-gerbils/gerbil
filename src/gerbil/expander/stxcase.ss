@@ -76,7 +76,7 @@ namespace: gx
                       (fold-in (gentemps args))
                       (fold-out (genident))
                       (lambda-args
-                       (foldr cons [fold-out] fold-in))
+                       (append fold-in [fold-out]))
                       (lambda-body
                        (if (fx> depth 1)
                          (let ((r-args

@@ -4,6 +4,7 @@ namespace: gxc
 
 (%#begin (%#import :gerbil/core/expander :gerbil/expander)
          (%#export #t)
+         (%#define-runtime __DEBUG-COMPILE gxc#__DEBUG-COMPILE)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/compiler/base~1")))
@@ -47,6 +48,17 @@ namespace: gxc
          (%#define-runtime
           current-compile-parallel
           gxc#current-compile-parallel)
+         (%#define-runtime current-compile-lift gxc#current-compile-lift)
+         (%#define-runtime current-compile-marks gxc#current-compile-marks)
+         (%#define-runtime
+          current-compile-identifiers
+          gxc#current-compile-identifiers)
+         (%#define-runtime
+          current-compile-boolean-context
+          gxc#current-compile-boolean-context)
+         (%#define-runtime
+          make-bound-identifier-table
+          gxc#make-bound-identifier-table)
          (%#define-runtime
           current-compile-local-env
           gxc#current-compile-local-env)
@@ -106,8 +118,17 @@ namespace: gxc
                            (%#define-runtime
                             generate-runtime-gensym-reference
                             gxc#generate-runtime-gensym-reference)))
+         (%#define-runtime
+          generate-runtime-identifier
+          gxc#generate-runtime-identifier)
+         (%#define-runtime
+          generate-runtime-identifier-key
+          gxc#generate-runtime-identifier-key)
          (%#define-runtime runtime-identifier=? gxc#runtime-identifier=?)
          (%#define-runtime identifier-symbol gxc#identifier-symbol)
+         (%#define-runtime
+          runtime-identifier-properties
+          gxc#runtime-identifier-properties)
          (%#define-runtime __compile-jobs gxc#__compile-jobs)
          (%#define-runtime __available-cores gxc#__available-cores)
          (%#define-runtime __jobs-mx gxc#__jobs-mx)

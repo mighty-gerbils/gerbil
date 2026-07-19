@@ -27,7 +27,7 @@ For some more references see:
 - [Why does base64 encoding require padding if the input length is not divisible by 3?](http://stackoverflow.com/questions/4080988/why-does-base64-encoding-requires-padding-if-the-input-length-is-not-divisible-b)
 - [Why padding is used in Base64 encoding?](http://stackoverflow.com/questions/4322507/why-padding-is-used-in-base64-encoding)
 - [Remove trailing “=” when base64 encoding](http://stackoverflow.com/questions/4492426/remove-trailing-when-base64-encoding)
-- [URLEncoding padding is optional](https://github.com/golang/go/issues/4237)
+- [URLEncoding padding is optional](https://git.cons.io/golang/go/issues/4237)
 
 
 ::: tip To use the bindings from this module:

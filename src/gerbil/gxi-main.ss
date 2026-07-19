@@ -73,9 +73,12 @@
          (set! end-interactive? #f)
          (match rest
            ([expr . rest]
-            (let (expr (call-with-input-string expr read))
-              (eval expr)
-              (lp rest)))
+            (let (port (open-input-string expr))
+              (let loop ()
+                (let (expr (read port))
+                  (unless (eof-object? expr)
+                    (eval expr)
+                    (loop))))))
            (else
             (error "improperly placed eval option"))))
         ((member hd '("-"))

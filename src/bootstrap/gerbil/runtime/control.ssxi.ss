@@ -3,6 +3,21 @@ package: gerbil/runtime
 
 (begin
   (declare-type
+   __make-promise
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             promise::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/control)))
+  (declare-type
    make-promise
    (@lambda 1
             #f
@@ -18,7 +33,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/control)))
   (declare-type
-   __make-promise
+   __make-atomic-promise
    (@lambda 1
             #f
             signature:
@@ -45,21 +60,6 @@ package: gerbil/runtime
              (procedure::t)
              unchecked:
              __make-atomic-promise
-             origin:
-             gerbil/runtime/control)))
-  (declare-type
-   __make-atomic-promise
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             promise::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
              origin:
              gerbil/runtime/control)))
   (declare-type
@@ -150,21 +150,6 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/control))))
   (declare-type
-   with-unwind-protect
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             (procedure::t procedure::t)
-             unchecked:
-             __with-unwind-protect
-             origin:
-             gerbil/runtime/control)))
-  (declare-type
    __with-unwind-protect
    (@lambda 2
             #f
@@ -177,6 +162,21 @@ package: gerbil/runtime
              #f
              unchecked:
              #f
+             origin:
+             gerbil/runtime/control)))
+  (declare-type
+   with-unwind-protect
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (procedure::t procedure::t)
+             unchecked:
+             __with-unwind-protect
              origin:
              gerbil/runtime/control)))
   (declare-type

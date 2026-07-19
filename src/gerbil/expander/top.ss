@@ -28,23 +28,41 @@ namespace: gx
 ;;   else syntax is evaled to quoted compile-time value
 (def (core-expand-begin-syntax% stx)
   (def (expand-special hd K rest r)
-    (let (K (lambda (e) (K rest (cons e r))))
+    (let (K* (lambda (e) (K rest (cons e r))))
       (core-syntax-case hd (%#begin-syntax
                             %#define-values %#define-syntax %#define-alias
-                            %#define-runtime)
+                            %#define-runtime
+			    %#bind-runtime-properties!)
         ((%#begin-syntax . _)
-         (K (core-expand-begin-syntax% hd)))
+         (K* (core-expand-begin-syntax% hd)))
+	((%#define-values hd-bind expr . props)
+	 (and (core-bind-values? hd-bind)
+	      (stx-list? props)
+	      (not (stx-null? props)))
+	 (begin
+	   (core-bind-values! hd-bind)
+	   (K (cons (core-cons '%#bind-runtime-properties!
+		               [hd-bind props])
+		    rest)
+	      (cons (core-cons '%#define-values
+		               [hd-bind expr])
+		    r))))
         ((%#define-values hd-bind expr)
          (core-bind-values? hd-bind)
          (begin
            (core-bind-values! hd-bind)
-           (K hd)))
+           (K* hd)))
         ((%#define-syntax . _)
-         (K (core-expand-define-syntax% hd)))
+         (K* (core-expand-define-syntax% hd)))
         ((%#define-alias . _)
-         (K (core-expand-define-alias% hd)))
+         (K* (core-expand-define-alias% hd)))
         ((%#define-runtime . _)
-         (K (core-expand-define-runtime% hd))))))
+         (K* (core-expand-define-runtime% hd)))
+	;; TODO generalize for multi-value properties
+	((%#bind-runtime-properties! (id) props)
+	 (let (bind (resolve-identifier id))
+	   (core-bind-runtime-properties! bind props)
+	   (K rest r))))))
 
   (def (eval-body rbody)
     (let lp ((rest rbody) (body '()) (ebody '()))
@@ -118,7 +136,20 @@ namespace: gx
   (def (expand-internal-special hd K rest r)
     (core-syntax-case hd (%#define-values
                           %#define-syntax %#define-alias
+			  %#bind-runtime-properties!
                           %#declare)
+      ((%#define-values hd-bind expr . props)
+       (and (core-bind-values? hd-bind)
+	    (stx-list? props)
+	    (not (stx-null? props)))
+       (begin
+	 (core-bind-values! hd-bind)
+	 (K (cons (core-cons '%#bind-runtime-properties!
+		             [hd-bind props])
+		  rest)
+	    (cons (core-cons '%#define-values
+		             [hd-bind expr])
+		  r))))
       ((%#define-values hd-bind expr)
        (core-bind-values? hd-bind)
        (begin
@@ -132,6 +163,11 @@ namespace: gx
        (begin
          (core-expand-define-alias% hd)
          (K rest r)))
+      ;; TODO generalize for multi-value properties
+      ((%#bind-runtime-properties! (id) props)
+       (let (bind (resolve-identifier id))
+	 (core-bind-runtime-properties! bind props)
+	 (K rest r)))
       ((%#declare . _)
        (K rest (cons (core-expand-declare% hd) r)))))
 
@@ -183,13 +219,13 @@ namespace: gx
      (stx-list? body)
      (core-quote-syntax
       (core-cons '%#declare
-        (stx-map
-         (lambda (decl)
-           (core-syntax-case decl ()
-             ((head . args)
-              (stx-list? args)
-              (stx-map core-quote-syntax decl))))
-         body))
+                 (stx-map
+                  (lambda (decl)
+                    (core-syntax-case decl ()
+                      ((head . args)
+                       (stx-list? args)
+                       (stx-map core-quote-syntax decl))))
+                  body))
       (stx-source stx)))))
 
 ;;; definitions
@@ -215,6 +251,14 @@ namespace: gx
 ;; (%#define-values hd expr)
 (def (core-expand-define-values% stx)
   (core-syntax-case stx ()
+    ((_ hd expr . props)
+     (and (stx-list? props)
+	  (not (stx-null? props)))
+     (core-cons '%#begin
+                [(core-cons '%#define-values
+	                    [hd expr])
+	         (core-cons '%#bind-runtime-properties!
+	                    [hd props])]))
     ((_ hd expr)
      (core-bind-values? hd)
      (begin
@@ -228,14 +272,56 @@ namespace: gx
 ;; (%#define-runtime id binding-id)
 (def (core-expand-define-runtime% stx)
   (core-syntax-case stx ()
-    ((_ id binding-id)
-     (and (identifier? id) (identifier? binding-id))
-     (let (eid (stx-e binding-id))
-       (core-bind-runtime-reference! id eid)
+    ((_ id binding-id . props)
+     (and (identifier? id)
+          (identifier? binding-id)
+          (stx-list? props))
+     (let* ((eid (stx-e binding-id))
+            (bind (core-bind-runtime-reference! id eid)))
+       (core-bind-runtime-properties! bind props)
        (core-quote-syntax
         [(core-quote-syntax '%#define-runtime)
          (core-quote-syntax id)
          eid])))))
+
+(def (core-expand-bind-runtime-properties% stx)
+  ;; TODO generalize for multi-value properties
+  (core-syntax-case stx ()
+    ((_ (id) props)
+     (and (identifier? id)
+	  (stx-list? props))
+     (let (bind (resolve-identifier id))
+       (unless (runtime-binding? bind)
+	 (raise-syntax-error #f "Bad syntax; expected runtime binding" stx id bind))
+       (core-bind-runtime-properties! bind props)
+       (core-cons '%#begin [])))))
+
+(def (core-bind-runtime-properties! bind props)
+  (def (eval-prop prop)
+    (eval-expression+1 prop))
+
+  (let loop ((rest props) (props []))
+    (core-syntax-case rest ()
+      ((key prop . rest)
+       (stx-keyword? key)
+       (let (key (stx-e key))
+         (case key
+           ((macro:)
+            (runtime-binding-macro-set! bind
+                                        (if (identifier? prop)
+                                          (core-quote-syntax prop)
+                                          (eval-prop prop)))
+            (loop rest props))
+           ((type:)
+            (runtime-binding-type-set! bind
+                                       (eval-prop prop))
+            (loop rest props))
+           (else
+            (loop rest (cons* (eval-prop prop) key props))))))
+      (()
+       (unless (null? props)
+         (binding-properties-set! bind (reverse! props)))))))
+
 
 ;; (%#define-syntax id expr)
 (def (core-expand-define-syntax% stx)
@@ -284,15 +370,15 @@ namespace: gx
      (stx-list? clauses)
      (core-quote-syntax
       (core-cons  '%#case-lambda
-        (stx-map
-         (lambda (clause)
-           (core-expand-lambda%
-            (stx-wrap-source
-             (cons '%#case-lambda-clause clause)
-             (or (stx-source clause)
-                 (stx-source stx)))
-            #f))
-         clauses))
+                  (stx-map
+                   (lambda (clause)
+                     (core-expand-lambda%
+                      (stx-wrap-source
+                       (cons '%#case-lambda-clause clause)
+                       (or (stx-source clause)
+                           (stx-source stx)))
+                      #f))
+                   clauses))
       (stx-source stx)))))
 
 ;;; local bindings
@@ -404,14 +490,37 @@ namespace: gx
       (stx-source stx)))))
 
 (def (core-expand-call% stx)
+  (def (expand-runtime-call rator-expr args)
+    (core-quote-syntax
+     (core-cons* '%#call rator-expr
+                 (stx-map core-expand-expression args))
+     (stx-source stx)))
+
   (core-syntax-case stx ()
     ((_ rator . args)
      (stx-list? args)
-     (core-quote-syntax
-      (core-cons* '%#call
-        (core-expand-expression rator)
-        (stx-map core-expand-expression args))
-      (stx-source stx)))))
+     (let (rator-expr (core-expand-expression rator))
+       (core-syntax-case rator-expr (%#ref)
+         ((%#ref id)
+          (cond
+           ((resolve-identifier id)
+            => (lambda (bind)
+                 (let again ((bind bind))
+                   (cond
+                    ((and (runtime-binding? bind) (runtime-binding-macro bind))
+                     => (lambda (macro)
+			  (core-expand-expression
+                           (stx-wrap-source
+                            (cons macro args)
+                            (stx-source stx)))))
+                    ((import-binding? bind)
+                     (again (import-binding-e bind)))
+                    (else
+                     (expand-runtime-call rator-expr args))))))
+           (else
+            (expand-runtime-call rator-expr args))))
+         (else
+          (expand-runtime-call rator-expr args)))))))
 
 (def (core-expand-if% stx)
   (core-syntax-case stx ()
@@ -469,28 +578,7 @@ namespace: gx
     ((_ . body)
      (stx-list? body)
      (core-cons '%#extern
-       (generate body)))))
-
-(def (macro-expand-define-values stx)
-  (core-syntax-case stx ()
-    ((_ hd expr)
-     (stx-andmap identifier? hd)
-     [(core-quote-syntax '%#define-values)
-      (stx-map identity hd)
-      expr])))
-
-(def (macro-expand-define-syntax stx)
-  (core-syntax-case stx ()
-    ((_ hd expr)
-     (identifier? hd)
-     [(core-quote-syntax '%#define-syntax) hd expr])))
-
-(def (macro-expand-define-alias stx)
-  (core-syntax-case stx ()
-    ((_ id alias-id)
-     (and (identifier? id)
-          (identifier? alias-id))
-     [(core-quote-syntax '%#define-alias) id alias-id])))
+                (generate body)))))
 
 (def (macro-expand-lambda% stx)
   (core-syntax-case stx ()
@@ -499,8 +587,8 @@ namespace: gx
           (stx-list? body)
           (not (stx-null? body)))
      (core-cons* '%#lambda
-       (stx-map identity hd)
-       body))))
+                 (stx-map identity hd)
+                 body))))
 
 (def (macro-expand-case-lambda stx)
   (def (generate clause)
@@ -520,7 +608,7 @@ namespace: gx
     ((_ . clauses)
      (stx-list? clauses)
      (core-cons '%#case-lambda
-       (stx-map generate clauses)))))
+                (stx-map generate clauses)))))
 
 (def (macro-expand-let-values stx (form '%#let-values))
   (def (generate bind)
@@ -537,8 +625,8 @@ namespace: gx
           (stx-list? body)
           (not (stx-null? body)))
      (core-cons* form
-       (stx-map generate hd)
-       body))))
+                 (stx-map generate hd)
+                 body))))
 
 (def (macro-expand-letrec-values stx)
   (macro-expand-let-values stx '%#letrec-values))
@@ -689,19 +777,19 @@ namespace: gx
                         (phi (current-expander-phi))
                         (ctx (current-expander-context)))
   (bind-identifier! id
-    (make-extern-binding eid (core-identifier-key id) phi)
-    rebind? phi ctx))
+                    (make-extern-binding eid (core-identifier-key id) phi)
+                    rebind? phi ctx))
 
 (def (core-bind-syntax! id e
                         (rebind? #f)
                         (phi (current-expander-phi))
                         (ctx (current-expander-context)))
   (bind-identifier! id
-    (let ((key (core-identifier-key id))
-          (e (if (or (expander? e) (expander-context? e)) e
-                 (make-user-expander e ctx phi))))
-      (make-syntax-binding (make-binding-id key #t phi ctx) key phi e))
-    rebind? phi ctx))
+                    (let ((key (core-identifier-key id))
+                          (e (if (or (expander? e) (expander-context? e)) e
+                                 (make-user-expander e ctx phi))))
+                      (make-syntax-binding (make-binding-id key #t phi ctx) key phi e))
+                    rebind? phi ctx))
 
 (def (core-bind-root-syntax! id e (rebind? #f))
   (core-bind-syntax! id e rebind? 0 (core-context-root)))
@@ -711,10 +799,10 @@ namespace: gx
                        (phi (current-expander-phi))
                        (ctx (current-expander-context)))
   (bind-identifier! id
-    (let (key (core-identifier-key id))
-      (make-alias-binding (make-binding-id key #t phi ctx) key phi
-                          alias-id))
-    rebind? phi ctx))
+                    (let (key (core-identifier-key id))
+                      (make-alias-binding (make-binding-id key #t phi ctx) key phi
+                                          alias-id))
+                    rebind? phi ctx))
 
 (def (make-binding-id key
                       (syntax? #f)

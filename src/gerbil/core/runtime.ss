@@ -1169,6 +1169,7 @@ package: gerbil/core
     system-version-string
     table->list
     table-copy
+    table-new
     table-for-each
     table-length
     table-merge
@@ -1447,7 +1448,6 @@ package: gerbil/core
     values-count
     values-ref
     values->list
-    cons*
     foldl
     foldr
     andmap
@@ -1477,6 +1477,7 @@ package: gerbil/core
     fx1-
     fxshift
     fx/
+    fx%
     fx>=0?
     fx>0?
     fx=0?
@@ -1539,11 +1540,14 @@ package: gerbil/core
     gerbil-home
     gerbil-path
     gerbil-runtime-smp?
+    __DEBUG
 
     ;; :gerbil/runtime/c3
     c4-linearize
+    c4-linearize*
 
     ;; :gerbil/runtime/mop
+    class-type
     class-type?
     class-type=?
     class-type-final?
@@ -1560,6 +1564,7 @@ package: gerbil/core
     class-type-slot-vector
     class-type-slot-table
     class-type-properties
+    class-type-properties-put!
     class-type-constructor
     class-type-methods
     &class-type-id
@@ -1572,6 +1577,7 @@ package: gerbil/core
     &class-type-slot-table
     &class-type-properties
     &class-type-constructor
+    type-field-list
     class-type-slot-list
     class-type-field-count
     class-type-seal!
@@ -1589,7 +1595,7 @@ package: gerbil/core
     class-instance?
     make-object
     object?
-    object-type
+    object-class
     object-fill!
     new-instance
     make-instance
@@ -1622,15 +1628,27 @@ package: gerbil/core
     object::t
 
     ;; :gerbil/runtime/mop-system-classes
+    builtin::t
+    subtyped::t
+    structure::t
     immediate::t
+    special::t
     atom::t
     char::t
     boolean::t
     true::t
     false::t
-    void::t
     eof::t
-    special::t
+    void::t
+    unbound::t
+    unbound2::t
+    unused::t
+    deleted::t
+    absent::t
+    dssl-token::t
+    optional::t
+    key::t
+    rest::t
     number::t
     real::t
     integer::t
@@ -1638,6 +1656,8 @@ package: gerbil/core
     bignum::t
     ratnum::t
     flonum::t
+    stflonum::t
+    haflonum::t
     cpxnum::t
     symbolic::t
     symbol::t
@@ -1696,7 +1716,20 @@ package: gerbil/core
     socket-info::t
     address-info::t
 
-    special?
+    builtin-object?
+    builtin-subtyped?
+    builtin-structure?
+    atom?
+    special-object?
+    unbound-object?
+    unbound2-object?
+    unused-object?
+    deleted-object?
+    absent-object?
+    dssl-token?
+    dssl-optional?
+    dssl-rest?
+    dssl-key?
     sequence?
     hvector?
     weak?
@@ -1745,7 +1778,6 @@ package: gerbil/core
     cast try-cast satisfies?
     interface-cast-error?
 
-
     ;; :gerbil/runtime/hash
     raise-unbound-key-error
     unbound-key-error?
@@ -1791,6 +1823,7 @@ package: gerbil/core
     hash-keys
     hash-values
     hash-copy
+    hash-new
     hash-merge
     hash-merge-right
     hash-merge!

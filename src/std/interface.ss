@@ -1,10 +1,217 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; backwards compatibilty shim; will be removed for v0.19
-(import :gerbil/runtime/interface)
-(export interface
-        interface-out
-        cast try-cast satisfies?
-        interface-instance? interface-instance-object &interface-instance-object
-        interface-descriptor? interface-descriptor-type interface-descriptor-methods
-        interface-cast-error?)
+;;; interface utilities
+(export #t)
+
+(defsyntax-case @implement ()
+  ((_ Interface klass)
+   (and (syntax-local-interface-info? #'Interface)
+        (syntax-local-runtime-type-info? #'klass))
+   (let ((iface-info (syntax-local-value #'Interface))
+         (klass-info (syntax-local-value #'klass)))
+     (with-syntax ((descriptor     (interface-info-interface-descriptor iface-info))
+                   (instance-klass (!runtime-type-descriptor iface-info))
+                   (object-klass   (!runtime-type-descriptor klass-info)))
+       #'(create-prototype descriptor instance-klass object-klass))))
+  ((_ Interface klass rest ...)
+   #'(begin (@implement Interface klass)
+            (@implement Interface rest ...)))
+  ((_ Interface)
+   #'(begin)))
+
+(begin-syntax
+  (def (check-interface! stx Interface)
+    (unless (syntax-local-interface-info? Interface)
+      (raise-syntax-error #f "not defined as an interface" stx Interface)))
+  (def (check-type-info! stx klass)
+    (unless (syntax-local-runtime-type-info? klass)
+      (raise-syntax-error #f "not defined as a metatype" stx klass))))
+
+(defsyntax-case implement ()
+  ((_ Interface klass (method proc) ...)
+   (and (identifier? #'Interface)
+        (identifier? #'klass))
+   (begin
+     (check-interface! stx #'Interface)
+     (check-type-info! stx #'klass)
+     #'(begin
+       (defmethod {method klass}
+         proc
+         interface: Interface)
+       ...
+       (@implement Interface klass))))
+  ((_ (Interface (klass (method proc) ...) ...) ...)
+   (and (andmap identifier? #'(Interface ...))
+        (andmap (cut andmap identifier? <>)
+                #'((klass ...) ...)))
+   (begin
+     (for-each (cut check-interface! stx <>)
+               #'(Interface ...))
+     (for-each (cut for-each (cut check-type-info! stx <>) <>)
+               #'((klass ...) ...))
+     (with-syntax
+         (((methods ...)
+           (let loop ((rest #'((Interface (klass (method proc) ...) ...) ...))
+                      (methods []))
+             (syntax-case rest ()
+               (((Interface . klass-method-procs) . rest)
+                (loop #'rest
+                      (foldl
+                        (lambda (klass-method-procs methods)
+                          (with-syntax (((klass . method-procs) klass-method-procs))
+                            (foldl
+                              (lambda (method-proc methods)
+                                (with-syntax (((method proc) method-proc))
+                                  (cons #'(defmethod {method klass}
+                                            proc
+                                            interface: Interface)
+                                        methods)))
+                              methods #'method-procs)))
+                        methods #'klass-method-procs)))
+               (_ (reverse! methods))))))
+       #'(begin methods ... (@implement Interface klass ...) ...))))
+  ((_ Interface (klass (method proc) ...) ...)
+   (and (identifier? #'Interface)
+	(andmap identifier? #'(klass ...)))
+   #'(implement (Interface (klass (method proc) ...) ...))))
+
+(defsyntax-case @interface-descriptor ()
+  ((_ Interface)
+   (syntax-local-interface-info? #'Interface)
+   (let (info (syntax-local-value #'Interface))
+     (interface-info-interface-descriptor info))))
+
+(defsyntax-case @interface-method-offset ()
+  ((_ Interface method)
+   (and (syntax-local-interface-info? #'Interface)
+        (identifier? #'method))
+   (let ((method (stx-e #'method))
+         (info (syntax-local-value #'Interface)))
+     (cond
+      ((interface-info-method-offset info method))
+      (else
+       (raise-syntax-error #f "unknown interface method" stx #'Interface method))))))
+
+(defrule (@apply-prototype-method method-name method-offset arg ...)
+  (lambda (descriptor prototype receiver)
+    (if prototype
+      (let ()
+        (declare (not safe))
+        (let (method
+              (##unchecked-structure-ref
+               prototype
+               method-offset
+               #f 'method-name))
+          (method receiver arg ...)))
+      (abort!
+       (raise-cast-error 'apply-prototype-method "cannot create interface prototype"
+                         interface: descriptor
+                         object: receiver
+                         method: 'method-name)))))
+
+(defrule (@apply-prototype-method/fallback method-name method-offset fallback arg ...)
+  (lambda (descriptor prototype receiver)
+    (if prototype
+      (let ()
+        (declare (not safe))
+        (let (method
+              (##unchecked-structure-ref
+               prototype
+               method-offset
+               #f 'method-name))
+          (method receiver arg ...)))
+      (fallback receiver arg ...))))
+
+(defrule (@apply-prototype-method/object method-name method-offset arg ...)
+  (lambda (obj)
+    (declare (not safe))
+    (let* ((receiver (&interface-instance-object obj))
+           (method
+            (##unchecked-structure-ref
+             obj
+             method-offset
+             #f 'method-name)))
+      (method receiver arg ...))))
+
+;; TODO extract interface method signature and check/set argument contracts
+(defrule (@call-interface-method Interface method-name obj arg ...)
+  (with-prototype (@interface-descriptor Interface)
+    obj
+    (@apply-prototype-method
+     method
+     (@interface-method-offset Interface method)
+     arg ...)
+    (@apply-prototype-method/object
+     method
+     (@interface-method-offset Interface method)
+     arg ...)))
+
+;; TODO extract interface method signature and check/set argument contracts
+(defrules defcall-interface-method ()
+  ((_ Interface method (proc obj arg ...))
+   (def (proc obj arg ...)
+     (@cast (@interface-descriptor Interface)
+            obj create-prototype
+            (@apply-prototype-method
+             method
+             (@interface-method-offset Interface method)
+             arg ...)
+            (@apply-prototype-method/object
+             method
+             (@interface-method-offset Interface method)
+             arg ...))))
+  ((_ Interface method (proc obj arg ...) ~ Type)
+   (def (proc obj arg ...) => Type
+     (~ (@cast (@interface-descriptor Interface)
+               obj create-prototype
+               (@apply-prototype-method
+                method
+                (@interface-method-offset Interface method)
+                arg ...)
+               (@apply-prototype-method/object
+                method
+                (@interface-method-offset Interface method)
+                arg ...))
+        Type))))
+
+;; TODO extract interface method signature and check/set argument contracts
+(defrules defcall-interface-method/fallback ()
+  ((_ Interface method (proc obj arg ...) fallback)
+   (def (proc obj arg ...)
+     (@cast (@interface-descriptor Interface)
+            obj try-create-prototype
+            (@apply-prototype-method/fallback
+             method
+             (@interface-method-offset Interface method)
+             fallback arg ...)
+            (@apply-prototype-method/object
+             method
+             (@interface-method-offset Interface method)
+             arg ...))))
+  ((_ Interface method-name (proc obj arg ...) fallback ~ Type)
+   (def (proc obj arg ...) => Type
+     (~ (@cast (@interface-descriptor Interface)
+               obj try-create-prototype
+               (@apply-prototype-method/fallback
+                method
+                (@interface-method-offset Interface method)
+                fallback arg ...)
+               (@apply-prototype-method/object
+                method
+                (@interface-method-offset Interface method)
+                arg ...))
+        Type))))
+
+;; A "class interface" is a meta interface that applies on the class,
+;; meaning methods are invoked with a nil/#f receiver (the prototype
+;; has none).
+;; which in Gerbil's object system means "just grab the prototype"...
+;; USE WITH CARE.
+(def (class-interface-prototype (klass          : class)
+				(descriptor     : interface-descriptor)
+				(instance-class : class))
+  (let (tab (class-type-interface-table klass))
+    (cond
+     ((__prototype-table-get tab descriptor))
+     (else
+      (create-prototype descriptor instance-class klass)))))

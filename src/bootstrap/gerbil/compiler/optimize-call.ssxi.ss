@@ -213,6 +213,21 @@ package: gerbil/compiler
              origin:
              gerbil/compiler/optimize-call)))
   (declare-type
+   gxc#incompatible-type?
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-call)))
+  (declare-type
    gxc#check-expression-type!
    (@lambda 3
             #f
@@ -229,6 +244,21 @@ package: gerbil/compiler
              gerbil/compiler/optimize-call)))
   (declare-type
    gxc#!constructor::optimize-call
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-call)))
+  (declare-type
+   gxc#!accessor::check-arguments
    (@lambda 4
             #f
             signature:
@@ -409,6 +439,21 @@ package: gerbil/compiler
              gerbil/compiler/optimize-call)))
   (declare-type
    gxc#optimize-if%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-call)))
+  (declare-type
+   gxc#check-contract-violation!
    (@lambda 2
             #f
             signature:

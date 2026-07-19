@@ -9,11 +9,8 @@
   filter-with-process
   process-error?)
 
-(import
-  :gerbil/gambit
-  :std/error
-  :std/misc/ports
-  :std/sugar)
+(import :std/error
+        ./ports)
 
 ;; Error
 (deferror-class ProcessError () process-error?)

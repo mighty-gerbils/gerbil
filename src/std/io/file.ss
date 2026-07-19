@@ -2,39 +2,48 @@
 ;;; © vyzo
 ;;; file IO
 (import :std/error
-        :std/sugar
-        :std/os/fd
-        :std/os/fdio
+        :std/interface
+        :std/time/timeout
+        :std/os/device
+        :std/os/file
         :std/os/fcntl
-        :std/event
         ./interface)
 (export open-file-reader
         open-file-writer
+        call-with-file-reader
+        call-with-file-writer
         default-file-reader-flags
-        default-file-writer-flags)
+        default-file-writer-flags
+        (struct-out file-io
+                    input-file-io
+                    output-file-io
+                    input-output-file-io)
+        open-input-file-io
+        open-output-file-io
+        open-input-output-file-io)
 (declare (not safe))
 
-(defstruct file-io (fd closed?))
+(defstruct file-io
+  ((dev :- FileDevice))
+  transparent:  #f)
 
-(defstruct (input-file-io file-io) ()
-  final: #t)
-
-(defstruct (output-file-io file-io) ()
-  final: #t)
+(defclass (input-file-io file-io) ())
+(defclass (output-file-io file-io) ())
+(defclass (input-output-file-io input-file-io output-file-io) ())
 
 (defmethod {read input-file-io}
   (lambda (self output output-start output-end input-need)
-    (let (fd self.fd)
-      (let lp ((output-start output-start) (input-need input-need) ((result :- :fixnum) 0))
+    (do-check-device-input file-io-read self.dev
+      (let loop ((output-start output-start :- :fixnum)
+                 (input-need   input-need   :- :fixnum)
+                 (result       0            :- :fixnum))
         => :fixnum
-        (when self.closed?
-          (raise-io-closed file-io-read "file is closed"))
         (if (fx< output-start output-end)
-          (let (read (fdread fd output output-start output-end))
+          (let (read (device-read self.dev output output-start output-end))
             (cond
-             ((not read)
-              (&wait-io! (fd-io-in fd))
-              (lp output-start input-need result))
+             ((fx< read 0)
+              (device-wait-input! self.dev !NoTimeout)
+              (loop output-start input-need result))
              ((fx= read 0)
               (if (fx> input-need result)
                 (raise-premature-end-of-input file-io-read input-need)
@@ -42,46 +51,60 @@
              ((fx>= read input-need)
               (fx+ result read))
              (else
-              (lp (fx+ output-start read) (fx- input-need read) (fx+ result read)))))
+              (loop (fx+ output-start read) (fx- input-need read) (fx+ result read)))))
           result))))
   interface: Reader)
 
+(defmethod {close input-file-io}
+  (lambda (self)
+    (device-close self.dev DIRECTION-IN))
+  interface: Closer)
+
+(@implement Closer input-file-io)
+(@implement Reader input-file-io)
+
 (defmethod {write output-file-io}
   (lambda (self input input-start input-end)
-    (let (fd self.fd)
-      (let lp ((input-start input-start) ((result :- :fixnum) 0))
+    (do-check-device-output file-io-write self.dev
+      (let loop ((input-start input-start :- :fixnum)
+                 (result      0           :- :fixnum))
         => :fixnum
-        (when self.closed?
-          (raise-io-closed output-file-io "file is closed"))
         (if (fx< input-start input-end)
-          (let (wrote (fdwrite fd input input-start input-end))
+          (let (wrote (device-write self.dev input input-start input-end))
             (cond
-             ((not wrote)
-              (&wait-io! (fd-io-out fd))
-              (lp input-start result))
+             ((fx< wrote 0)
+              (device-wait-output! self.dev !NoTimeout)
+              (loop input-start result))
              (else
-              (lp (fx+ input-start wrote) (fx+ result wrote)))))
+              (loop (fx+ input-start wrote) (fx+ result wrote)))))
           result))))
   interface: Writer)
 
-(defmethod {close file-io}
+(defmethod {close output-file-io}
   (lambda (self)
-    (unless self.closed?
-      (set! self.closed? #t)
-      (close-port self.fd)))
+    (device-close self.dev DIRECTION-OUT))
   interface: Closer)
 
+(@implement Closer output-file-io)
+(@implement Writer output-file-io)
+
 (defmethod {seek file-io}
-  (lambda (self position from)
-    (when self.closed?
-      (raise-io-closed file-io "file is closed"))
-    (fdseek self.fd position from)
-    (void))
+  (lambda (self position whence)
+    (file-device-seek self.dev position whence))
   interface: Seeker)
 
+(@implement Seeker input-file-io)
+(@implement Seeker output-file-io)
+
+(defmethod {close input-output-file-io}
+  (lambda (self)
+    (device-close self.dev DIRECTION-INOUT))
+  interface: Closer)
+
+(@implement Closer input-output-file-io)
+
 (defrule (open-file-io path flags mode make)
-  (let (fd (open path flags mode))
-    (make fd #f)))
+  (make dev: (open-file-device path flags mode)))
 
 (def (open-input-file-io path flags mode)
   (open-file-io path flags mode make-input-file-io))
@@ -89,18 +112,44 @@
 (def (open-output-file-io path flags mode)
   (open-file-io path flags mode make-output-file-io))
 
-(def default-file-reader-flags
-  (or O_NOATIME 0))
+(def (open-input-output-file-io path flags mode)
+  (open-file-io path flags mode make-input-output-file-io))
 
-(def (open-file-reader path flags: (flags default-file-reader-flags))
+(def default-file-reader-flags O_NOATIME)
+
+(def (open-file-reader (path : :string)
+                       flags: (flags : :fixnum := default-file-reader-flags))
+  => Reader
   (let* ((flags (fxior flags O_RDONLY))
-         (io (open-input-file-io (path-expand path) flags 0)))
+         (io    (open-input-file-io (path-expand path) flags 0)))
     (Reader io)))
 
 (def default-file-writer-flags
   (fxior O_CREAT O_TRUNC))
 
-(def (open-file-writer path flags: (flags default-file-writer-flags) mode: (mode #o644))
+(def (open-file-writer (path : :string)
+                       flags: (flags : :fixnum := default-file-writer-flags)
+                       mode:  (mode  : :fixnum := #o644))
+  => Writer
   (let* ((flags (fxior flags O_WRONLY))
          (io (open-output-file-io (path-expand path) flags mode)))
     (Writer io)))
+
+(def (call-with-file-reader (path : :string)
+                            (proc : :procedure)
+                            flags: (flags : :fixnum := default-file-reader-flags))
+  (using (reader (open-file-reader path flags: flags)
+                 : Reader)
+    (unwind-protect
+      (proc reader)
+      (reader.close))))
+
+(def (call-with-file-writer (path : :string)
+                            (proc : :procedure)
+                            flags: (flags : :fixnum := default-file-writer-flags)
+                            mode:  (mode  : :fixnum := #o644))
+  (using (writer (open-file-writer path flags: flags mode: mode)
+                 : Writer)
+    (unwind-protect
+     (proc writer)
+     (writer.close))))

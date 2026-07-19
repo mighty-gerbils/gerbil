@@ -5,5 +5,5 @@
     (load-module "gerbil/core/sugar")
     (load-module "gerbil/core/mop~MOP-1")
     (load-module "gerbil/core/mop~MOP-4")
-    (load-module "gerbil/core/mop~MOP-5"))
+    (load-module "gerbil/core/mop~MOP-system-classes"))
   (begin))

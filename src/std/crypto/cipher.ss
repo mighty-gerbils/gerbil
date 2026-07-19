@@ -1,284 +1,305 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo at hackzen.org
-;;; libcrypto ciphers
-
+;;; © vyzo
+;;; libcrypto digests
 (import :std/error
-        :std/text/utf8
+        :std/ffi
+        :std/io
+        :std/io/bio/cache
         ./libcrypto
-        ./etc
-        (for-syntax :std/stxutil))
+        ./error)
+(export #t)
 
-(export
-  cipher make-cipher cipher? cipher-type cipher-ctx cipher-context
-  cipher-name cipher-block-size cipher-key-length cipher-iv-length
-  cipher-copy
-  encrypt encrypt-u8vector encrypt-u8vector!
-  encrypt-init!
-  encrypt-update!
-  encrypt-final!
-  decrypt decrypt-u8vector decrypt-u8vector!
-  decrypt-init!
-  decrypt-update!
-  decrypt-final!
-  )
+(defstruct Cipher
+  ((type :- :foreign)  ; EVP_CIPHER?
+   (ctx  :- :foreign)) ; EVP_CIPHER_CTX?
+  constructor: :init!
+  transparent: #f)
 
-(defstruct cipher (type ctx)
-  id: std/crypto#cipher::t
-  constructor: :init!)
-
-(defmethod {:init! cipher}
-  (lambda (self type)
-    (unless (EVP_CIPHER? type)
-      (error "Invalid cipher" type))
-    (let (ctx (EVP_CIPHER_CTX_create))
-      (unless ctx
-        (error "Failed to allocate cipher context"))
-      (struct-instance-init! self type ctx))))
+(defmethod {:init! Cipher}
+  (lambda (self (type :~ EVP_CIPHER? :- :foreign))
+    (let (ctx (check-pointer Cipher:::init! (EVP_CIPHER_CTX_create)))
+      (set! self.type type)
+      (set! self.ctx ctx))))
 
 (def (cipher-name cipher)
-  (if (EVP_CIPHER? cipher)
-    (EVP_CIPHER_name cipher)
-    (EVP_CIPHER_name (cipher-type cipher))))
+  => :string
+  (: (cond
+      ((Cipher? cipher)
+       (EVP_CIPHER_name (Cipher-type cipher)))
+      ((EVP_CIPHER? cipher)
+       (EVP_CIPHER_name cipher))
+      (else
+       (raise-bad-argument cipher-name "cipher or cipher context" cipher)))
+     :string))
 
 (def (cipher-block-size cipher)
-  (if (EVP_CIPHER? cipher)
-    (EVP_CIPHER_block_size cipher)
-    (EVP_CIPHER_block_size (cipher-type cipher))))
+  => :fixnum
+  (: (cond
+      ((Cipher? cipher)
+       (EVP_CIPHER_block_size (Cipher-type cipher)))
+      ((EVP_CIPHER? cipher)
+       (EVP_CIPHER_block_size cipher))
+      (else
+       (raise-bad-argument cipher-block-size "cipher or cipher context" cipher)))
+     :fixnum))
 
 (def (cipher-key-length cipher)
-  (if (EVP_CIPHER? cipher)
-    (EVP_CIPHER_key_length cipher)
-    (EVP_CIPHER_key_length (cipher-type cipher))))
+  => :fixnum
+  (: (cond
+      ((Cipher? cipher)
+       (EVP_CIPHER_key_length (Cipher-type cipher)))
+      ((EVP_CIPHER? cipher)
+       (EVP_CIPHER_key_length cipher))
+      (else
+       (raise-bad-argument cipher-key-length "cipher or cipher context" cipher)))
+     :fixnum))
 
 (def (cipher-iv-length cipher)
-  (if (EVP_CIPHER? cipher)
-    (EVP_CIPHER_iv_length cipher)
-    (EVP_CIPHER_iv_length (cipher-type cipher))))
+  => :fixnum
+  (: (cond
+      ((Cipher? cipher)
+       (EVP_CIPHER_iv_length (Cipher-type cipher)))
+      ((EVP_CIPHER? cipher)
+       (EVP_CIPHER_iv_length cipher))
+      (else
+       (raise-bad-argument cipher-iv-length "cipher or cipher context" cipher)))
+     :fixnum))
 
-(def (cipher-copy cipher)
+(def (cipher-copy (cipher : Cipher))
+  => Cipher
   (let* ((ctx (cipher-context cipher))
-         (copy (make-cipher (cipher-type cipher))))
-    (with-libcrypto-error (EVP_CIPHER_CTX_copy (cipher-ctx copy) ctx))
+         (copy (make-instance (object-class cipher))))
+    (with-libcrypto-error cipher-copy
+      (EVP_CIPHER_CTX_copy (Cipher-ctx copy) ctx))
     copy))
 
-(def (cipher-context cipher)
-  (or (cipher-ctx cipher)
-      (error "Cipher has been finalized" cipher)))
+(def (cipher-context (cipher : Cipher))
+  => :foreign
+  (cond
+   ((Cipher-ctx cipher))
+   (else
+    (raise-contract-violation cipher-context "finalized context" cipher))))
 
-(def (cipher-check-key+iv-length cipher key iv)
-  (unless (= (cipher-key-length (cipher-type cipher))
-             (u8vector-length key))
-    (error "Bad cipher key; key length mismatch"))
-  (unless (= (cipher-iv-length (cipher-type cipher))
-             (u8vector-length iv))
-    (error "Bad cipher iv; iv length mismatch")))
+(def (check-cipher-key+iv-length! (cipher : Cipher)
+                                  (key    : :u8vector)
+                                  (iv     : :u8vector))
+  => :void
+  (unless (fx= (cipher-key-length cipher)
+               (u8vector-length key))
+    (raise-bad-argument check-cipher-key+iv-length!  "key length mismatch" cipher key))
+  (unless (fx= (cipher-iv-length cipher)
+               (u8vector-length iv))
+    (raise-bad-argument check-cipher-key+iv-length! "iv length mismatch" cipher iv)))
 
-(def (cipher-init! cipher key iv EVP-init)
-  (cipher-check-key+iv-length cipher key iv)
-  (with-libcrypto-error
-   (EVP-init (cipher-context cipher)
-             (cipher-type cipher)
-             key iv)))
+(defrule (cipher-init! cipher key iv EVP-init)
+  (begin
+    (check-cipher-key+iv-length! cipher key iv)
+    (with-libcrypto-error cipher-init!
+      (EVP-init (cipher-context cipher) (Cipher-type cipher) key iv))))
 
-(def (cipher-update! ctx out out-start in start end EVP-update)
-  (let (r (EVP-update ctx out out-start in start end))
-    (if (not (##fxnegative? r)) r
-        (raise-libcrypto-error ctx))))  ; racey with multiple threads
+(defrule (cipher-update! cipher
+                         out out-start
+                         in in-start in-end
+                         EVP-update)
+  (: (with-libcrypto-error cipher-update!
+       (EVP-update (cipher-context cipher)
+                   out out-start
+                   in in-start in-end)
+       (? (not negative?)))
+     :fixnum))
 
-(def (cipher-final! ctx out out-start EVP-final)
-  (let (r (EVP-final ctx out out-start))
-    (if (not (##fxnegative? r)) r
-        (raise-libcrypto-error ctx))))  ; racey with multiple threads
+(defrule (cipher-final! cipher out out-start EVP-final)
+  (: (let* ((ctx (cipher-context cipher))
+            (result
+             (with-libcrypto-error cipher-final!
+               (EVP-final ctx out out-start)
+               (? (not negative?)))))
+       (set! (Cipher-ctx cipher) #f)
+       (foreign-release! ctx)
+       result)
+     :fixnum))
 
-;; encrypt/decrypt streaming interface
-(def (encrypt-init! cipher key iv)
-  (cipher-init! cipher key iv EVP_EncryptInit))
+(def (encrypt-init! (cipher   : Cipher)
+                    (key      : :u8vector)
+                    (iv       : :u8vector))
+  => :void
+  (cipher-init! cipher key iv
+                EVP_EncryptInit))
 
-(def (encrypt-update! cipher out out-start in start end)
-  (cipher-update! (cipher-context cipher) out out-start in start end EVP_EncryptUpdate))
+(def (encrypt-update! (cipher     : Cipher)
+                      (out        : :u8vector)
+                      (out-start  :~ (in-range? 0 (u8vector-length out))
+                                  :- :fixnum)
+                      (in         : :u8vector)
+                      (in-start   :~ (in-range? 0 (u8vector-length in))
+                                  :- :fixnum := 0)
+                      (in-end     :~ (in-range-inclusive? in-start (u8vector-length in))
+                                  :- :fixnum := (u8vector-length in)))
+  => :fixnum
+  (cipher-update! cipher out out-start in in-start in-end
+                  EVP_EncryptUpdate))
 
-(def (encrypt-final! cipher out (out-start 0))
-  (let (olen (cipher-final! (cipher-context cipher) out out-start EVP_EncryptFinal))
-    (set! (cipher-ctx cipher) #f)
-    olen))
+(def (encrypt-final! (cipher     : Cipher)
+                     (out        : :u8vector)
+                     (out-start  :~ (in-range? 0 (u8vector-length out))
+                                 :- :fixnum := 0))
+  => :fixnum
+  (cipher-final! cipher out out-start
+                 EVP_EncryptFinal))
 
-(def (decrypt-init! cipher key iv)
-  (cipher-init! cipher key iv EVP_DecryptInit))
+(def (decrypt-init! (cipher   : Cipher)
+                    (key      : :u8vector)
+                    (iv       : :u8vector))
+  => :void
+  (cipher-init! cipher key iv
+                EVP_DecryptInit))
 
-(def (decrypt-update! cipher out out-start in start end)
-  (cipher-update! (cipher-context cipher) out out-start in start end EVP_DecryptUpdate))
+(def (decrypt-update! (cipher     : Cipher)
+                      (out        : :u8vector)
+                      (out-start  :~ (in-range? 0 (u8vector-length out))
+                                  :- :fixnum)
+                      (in         : :u8vector)
+                      (in-start   :~ (in-range? 0 (u8vector-length in))
+                                  :- :fixnum := 0)
+                      (in-end     :~ (in-range-inclusive? in-start (u8vector-length in))
+                                  :- :fixnum := (u8vector-length in)))
+  => :fixnum
+  (cipher-update! cipher out out-start in in-start in-end
+                  EVP_DecryptUpdate))
 
-(def (decrypt-final! cipher out (out-start 0))
-  (let (olen (cipher-final! (cipher-context cipher) out out-start EVP_DecryptFinal))
-    (set! (cipher-ctx cipher) #f)
-    olen))
+(def (decrypt-final! (cipher     : Cipher)
+                     (out        : :u8vector)
+                     (out-start  :~ (in-range? 0 (u8vector-length out))
+                                 :- :fixnum := 0))
+  => :fixnum
+  (cipher-final! cipher out out-start
+                 EVP_DecryptFinal))
 
-;; high level API: encrypt/decrypt bytes or input-port
-(defrules cipher-port-encrypt/decrypt ()
-  ((_ cipher key iv inp
-      cipher-init!
-      cipher-update!
-      cipher-final!)
-   (let* ((bufsz 1024)
-          (buf (make-u8vector (##fx+ bufsz (cipher-block-size cipher))))
-          (outp (open-output-u8vector)))
-
-     (def (grow-buffer-if-needed ilen)
-       (let (max-olen (##fx+ ilen (cipher-block-size cipher)))
-         (when (##fx> max-olen (u8vector-length buf))
-           (set! buf (make-u8vector max-olen)))))
-
-     (cipher-init! cipher key iv)
-     (call-with-binary-input
-      (lambda (bytes start end)
-        (grow-buffer-if-needed (- end start))
-        (let (olen (cipher-update! cipher buf 0 bytes start end))
-          (write-subu8vector buf 0 olen outp)))
-      inp)
-     (let (olen (cipher-final! cipher buf))
-       (write-subu8vector buf 0 olen outp)
-       (get-output-u8vector outp)))))
-
-(defrules cipher-u8vector-encrypt/decrypt ()
-  ((_ cipher key iv bytes start end
-      cipher-init!
-      cipher-update!
-      cipher-final!)
-   (let* ((len (##fx- end start))
-          (buflen (##fx+ len (##fx* 2 (cipher-block-size cipher))))
+(defrule (do-cipher! cipher key iv
+                     bytes start end
+                     cipher-init!
+                     cipher-update!
+                     cipher-final!)
+   (let* ((len (fx- end start))
+          (buflen (fx+ len (fx* 2 (cipher-block-size cipher))))
           (buf (make-u8vector buflen)))
      (cipher-init! cipher key iv)
      (let* ((ulen (cipher-update! cipher buf 0 bytes start end))
             (flen (cipher-final! cipher buf ulen))
-            (olen (##fx+ ulen flen)))
-       (when (##fx< olen buflen)
+            (olen (fx+ ulen flen)))
+       (when (fx< olen buflen)
          (u8vector-shrink! buf olen))
-       buf))))
+       buf)))
 
-(def (encrypt cipher key iv in)
-  (cond
-   ((string? in)
-    (encrypt-u8vector cipher key iv (string->utf8 in)))
-   ((u8vector? in)
-    (encrypt-u8vector cipher key iv in))
-   ((input-port? in)
-    (encrypt-port cipher key iv in))
-   (else
-    (error "Bad input source" in))))
+(def (encrypt (cipher : Cipher)
+              (key    : :u8vector)
+              (iv     : :u8vector)
+              (in     : :u8vector))
+  => :u8vector
+  (do-cipher! cipher key iv in 0 (u8vector-length in)
+              encrypt-init!
+              encrypt-update!
+              encrypt-final!))
 
-(def (encrypt-u8vector cipher key iv in (start 0) (end (u8vector-length in)))
-  (cipher-u8vector-encrypt/decrypt cipher key iv in start end
-                                   encrypt-init!
-                                   encrypt-update!
-                                   encrypt-final!))
+(def (decrypt (cipher : Cipher)
+              (key    : :u8vector)
+              (iv     : :u8vector)
+              (in     : :u8vector))
+  => :u8vector
+  (do-cipher! cipher key iv in 0 (u8vector-length in)
+              decrypt-init!
+              decrypt-update!
+              decrypt-final!))
 
-(def (encrypt-u8vector! cipher key iv bytes start end buf)
-  (encrypt-init! cipher key iv)
-  (let* ((ulen (encrypt-update! cipher buf 0 bytes start end))
-         (flen (encrypt-final! cipher buf ulen))
-         (olen (##fx+ ulen flen)))
-    olen))
+(defrule (do-cipher-io! reader writer
+                        cipher key iv
+                        cipher-init!
+                        cipher-update!
+                        cipher-final!)
+  (begin
+    (cipher-init! cipher key iv)
+    (let ((input-buffer  (buffer-cache.get default-buffer-size))
+          (output-buffer (buffer-cache.get default-buffer-size))
+          (buffer-end    (fx- default-buffer-size (fx* 2 (cipher-block-size cipher)))))
+      (let loop ((count 0 :- :fixnum))
+        => :fixnum
+        (let (rd (Reader-read reader input-buffer 0 buffer-end))
+          (if (fx= rd 0)
+            (let (wr (cipher-final! cipher output-buffer 0))
+              (Writer-write writer output-buffer 0 wr)
+              (buffer-cache.put! input-buffer)
+              (buffer-cache.put! output-buffer)
+              (fx+ count wr))
+            (let (wr (cipher-update! cipher
+                                     output-buffer 0
+                                     input-buffer 0 rd))
+              (Writer-write writer output-buffer 0 wr)
+              (loop (fx+ count wr)))))))))
 
-(def (encrypt-port cipher key iv inp)
-  (cipher-port-encrypt/decrypt cipher key iv inp
-                               encrypt-init!
-                               encrypt-update!
-                               encrypt-final!))
+(def (io-encrypt! (reader : Reader)
+                  (writer : Writer)
+                  (cipher : Cipher)
+                  (key    : :u8vector)
+                  (iv     : :u8vector))
+  => :fixnum
+  (do-cipher-io! reader writer
+                 cipher key iv
+                 encrypt-init!
+                 encrypt-update!
+                 encrypt-final!))
 
-(def (decrypt cipher key iv in)
-  (cond
-   ((u8vector? in)
-    (decrypt-u8vector cipher key iv in))
-   ((input-port? in)
-    (decrypt-port cipher key iv in))
-   (else
-    (error "Bad input source" in))))
+(def (io-decrypt! (reader : Reader)
+                  (writer : Writer)
+                  (cipher : Cipher)
+                  (key    : :u8vector)
+                  (iv     : :u8vector))
+  => :fixnum
+  (do-cipher-io! reader writer
+                 cipher key iv
+                 decrypt-init!
+                 decrypt-update!
+                 decrypt-final!))
 
-(def (decrypt-u8vector cipher key iv in (start 0) (end (u8vector-length in)))
-  (cipher-u8vector-encrypt/decrypt cipher key iv in start end
-                                   decrypt-init!
-                                   decrypt-update!
-                                   decrypt-final!))
+(defsyntax-case defcipher ()
+  ((_ name len mode)
+   (let ((len  (stx-e #'len))
+         (mode (stx-e #'mode)))
+     (with-syntax ((evp-cipher
+                    (cond
+                     (len (stx-identifier #'name "EVP_" #'name "_" len "_" mode))
+                     (mode (stx-identifier #'name "EVP_" #'name "_" mode))
+                     (else
+                      (stx-identifier #'name "EVP_" #'name))))
+                   (klass
+                    (cond
+                     (len (stx-identifier #'name "Cipher::" #'name "-" len "-" mode))
+                     (mode (stx-identifier #'name "Cipher::" #'name "-" mode))
+                     (else
+                      (stx-identifier #'name "Cipher::" #'name)))))
+       (with-identifier (::init! ,::init!)
+         #'(begin
+             (defstruct (klass Cipher) ())
+             (defmethod {:init! klass}
+               (lambda (self)
+                 (let* ((type (evp-cipher))
+                        (ctx (check-pointer Cipher:::init! (EVP_CIPHER_CTX_create))))
+                   (set! (Cipher-type self) type)
+                   (set! (Cipher-ctx self) ctx))))))))))
 
-(def (decrypt-u8vector! cipher key iv bytes start end buf)
-  (decrypt-init! cipher key iv)
-  (let* ((ulen (decrypt-update! cipher buf 0 bytes start end))
-         (flen (decrypt-final! cipher buf ulen))
-         (olen (##fx+ ulen flen)))
-    olen))
+(defrules defcipher* ()
+  ((_ name len (mode ...))
+   (begin (defcipher name len mode) ...))
+  ((_ name (mode ...))
+   (begin (defcipher name #f mode) ...))
+  ((_ name)
+   (defcipher name #f #f)))
 
-(def (decrypt-port cipher key iv inp)
-  (cipher-port-encrypt/decrypt cipher key iv inp
-                               decrypt-init!
-                               decrypt-update!
-                               decrypt-final!))
-
-;;; Library defined Ciphers
-(defsyntax (define-cipher stx)
-  (def (generate-defn name len mode)
-    (let (len (and len (number->string (stx-e len))))
-      (with-syntax
-          ((evp-cipher
-            (cond
-             (len
-              (format-id name "EVP_~a_~a_~a" name len mode))
-             (mode
-              (format-id name "EVP_~a_~a" name mode))
-             (else
-              (format-id name "EVP_~a" name))))
-           (cipher-t
-            (cond
-             (len
-              (format-id name "cipher::~a-~a-~a" name len mode))
-             (mode
-              (format-id name "cipher::~a-~a" name mode))
-             (else
-              (format-id name "cipher::~a" name))))
-           (make-cipher-t
-            (cond
-             (len
-              (format-id name "make-~a-~a-~a-cipher" name len mode))
-             (mode
-              (format-id name "make-~a-~a-cipher" name mode))
-             (else
-              (format-id name "make-~a-cipher" name))))
-           (cipher-t?
-            (cond
-             (len
-              (format-id name "~a-~a-~a-cipher?" name len mode))
-             (mode
-              (format-id name "~a-~a-cipher?" name mode))
-             (else
-              (format-id name "~a-cipher?" name)))))
-        #'(begin
-            (def cipher-t (evp-cipher))
-            (def (make-cipher-t)
-              (make-cipher cipher-t))
-            (def (cipher-t? obj)
-              (and (cipher? obj)
-                   (eq? (EVP_CIPHER_nid (cipher-type obj))
-                        (EVP_CIPHER_nid cipher-t))))
-            (export cipher-t make-cipher-t cipher-t?)))))
-  (syntax-case stx ()
-    ((_ name len (mode ...))
-     (with-syntax (((defn ...)
-                    (stx-map (cut generate-defn #'name #'len <>)
-                             #'(mode ...))))
-       #'(begin defn ...)))
-    ((_ name (mode ...))
-     (with-syntax (((defn ...)
-                    (stx-map (cut generate-defn #'name #f <>)
-                             #'(mode ...))))
-       #'(begin defn ...)))
-    ((_ name)
-     (generate-defn #'name #f #f))))
-
-(define-cipher aes 128 (ecb cbc cfb ofb ctr ccm gcm xts))
-(define-cipher aes 192 (ecb cbc cfb ofb ctr ccm gcm))
-(define-cipher aes 256 (ecb cbc cfb ofb ctr ccm gcm xts))
-(define-cipher camellia 128 (ecb cbc cfb ofb))
-(define-cipher camellia 192 (ecb cbc cfb ofb))
-(define-cipher camellia 256 (ecb cbc cfb ofb))
-(define-cipher cast5 (ecb cbc cfb ofb))
-(define-cipher bf (ecb cbc cfb ofb))
-(define-cipher rc4)
+(defcipher* aes 128 (ecb cbc cfb ofb ctr ccm gcm xts))
+(defcipher* aes 192 (ecb cbc cfb ofb ctr ccm gcm))
+(defcipher* aes 256 (ecb cbc cfb ofb ctr ccm gcm xts))
+(defcipher* camellia 128 (ecb cbc cfb ofb))
+(defcipher* camellia 192 (ecb cbc cfb ofb))
+(defcipher* camellia 256 (ecb cbc cfb ofb))
+(defcipher* cast5 (ecb cbc cfb ofb))
+(defcipher* bf (ecb cbc cfb ofb))
+(defcipher* rc4)

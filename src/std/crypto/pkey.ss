@@ -1,79 +1,91 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo at hackzen.org
-;;; libcrypto public-key signatures
-
-(import (only-in :gerbil/gambit foreign-release!)
-        :std/error
+;;; © fare, vyzo
+;;; libcrypto public key signatures
+(import :std/error
+        :std/ffi
         ./libcrypto
-        ./etc)
+        ./error)
+(export #t)
 
-(export
-  keygen/ed25519 EVP_PKEY_ED25519
-  bytes->private-key bytes->public-key
-  private-key->bytes public-key->bytes
-  digest-sign digest-verify)
-;; NB: for other key types, there may be parameters to set before keygen
-(def (keygen/ed25519)
-  (def ctx (EVP_PKEY_CTX_new_id EVP_PKEY_ED25519 #f))
-  (unless (and ctx (< 0 (EVP_PKEY_keygen_init ctx)))
-    (error "Can't create ED25519 keygen context"))
-  (unwind-protect
-    (EVP_PKEY_keygen ctx)
-    (foreign-release! ctx)))
+(defstruct PrivKey
+  ((type : :fixnum)
+   (key :- :foreign))
+  transparent: #f)
 
-(def (bytes->private-key type bytes engine: (engine #f))
-  (EVP_PKEY_new_raw_private_key type engine bytes))
-(def (bytes->public-key type bytes engine: (engine #f))
-  (EVP_PKEY_new_raw_public_key type engine bytes))
+(defstruct PubKey
+  ((type : :fixnum)
+   (key :- :foreign))
+  transparent: #f)
 
-(def (bytes-argument bytes)
-  (cond
-   ((u8vector? bytes) bytes)
-   ((fixnum? bytes) (make-u8vector bytes))
-   ((not bytes) #f)
-   (else (error "invalid bytes argument" bytes))))
+(def (keygen-ed25519)
+  => PrivKey
+  (let (ctx (check-pointer keygen-ed25519 (EVP_PKEY_CTX_new_id EVP_PKEY_ED25519 #f)))
+    (with-libcrypto-error keygen-ed25519
+      (EVP_PKEY_keygen_init ctx)
+      (cut >= <> 0))
+    (let (evp (check-pointer keygen-ed25519 (EVP_PKEY_keygen ctx)))
+      (foreign-release! ctx)
+      (PrivKey EVP_PKEY_ED25519 evp))))
 
-(def (bytes-result bytes len)
-  (cond
-   ((zero? len) #f)
-   ((= len (u8vector-length bytes)) bytes)
-   ((< len (u8vector-length bytes))
-    (u8vector-shrink! bytes len)
-    bytes)
-   (else #f)))
+(def (private-key->private-bytes (pk : PrivKey))
+  => :u8vector
+  (key->bytes pk.key EVP_PKEY_get_raw_private_key))
 
-(def (key->bytes pkey bytes get_raw)
-  (def b (or (bytes-argument bytes) (make-u8vector (get_raw pkey #f))))
-  (def len (get_raw pkey b))
-  (bytes-result b len))
+(def (private-key->public-bytes (pk : PrivKey))
+  => :u8vector
+  (key->bytes pk.key EVP_PKEY_get_raw_public_key))
 
-(def (private-key->bytes pkey (bytes #f))
-  (key->bytes pkey bytes EVP_PKEY_get_raw_private_key))
+(def (public-key->bytes (pk : PubKey))
+  => :u8vector
+  (key->bytes pk.key EVP_PKEY_get_raw_public_key))
 
-(def (public-key->bytes pkey (bytes #f))
-  (key->bytes pkey bytes EVP_PKEY_get_raw_public_key))
+(defrule (key->bytes pkey get_raw)
+  (let (bytes (make-u8vector (get_raw pkey #f)))
+    (with-libcrypto-error key->bytes
+      (get_raw pkey bytes)
+      (cut > <> 0))
+    bytes))
 
-(def (digest-sign pkey bytes engine: (engine #f) sig: (sig #f))
-  (let (mctx (EVP_MD_CTX_create))
-    (unless mctx
-      (error "Cannot create signing context"))
-    (unwind-protect
-      (begin
-        (with-libcrypto-error (EVP_DigestSignInit mctx pkey))
-        (let* ((s (or (bytes-argument sig) (make-u8vector 8192)))
-               (result (EVP_DigestSign mctx s bytes)))
-          (if (##fxzero? result)
-            (raise-libcrypto-error digest-sign)
-            (bytes-result s result))))
-      (foreign-release! mctx))))
+(def (bytes->ed25519-private-key (bytes : :u8vector))
+  => PrivKey
+  (bytes->private-key EVP_PKEY_ED25519 bytes))
 
-;; NB: for other key types, there may be parameters to set before DigestVerify
-(def (digest-verify pkey sig bytes engine: (engine #f))
-  (let (mctx (EVP_MD_CTX_create))
-    (unless mctx
-      (error "Cannot create signing context"))
-    (unwind-protect
-      (begin
-        (with-libcrypto-error (EVP_DigestVerifyInit mctx pkey))
-        (= 1 (EVP_DigestVerify mctx sig bytes)))
+(def (bytes->ed25519-public-key (bytes : :u8vector))
+  => PubKey
+  (bytes->public-key EVP_PKEY_ED25519 bytes))
+
+(def (bytes->private-key (type  : :fixnum)
+                         (bytes : :u8vector))
+  => PrivKey
+  (PrivKey type
+           (check-pointer bytes->private-key
+                          (EVP_PKEY_new_raw_private_key type #f bytes))))
+(def (bytes->public-key (type  : :fixnum)
+                        (bytes : :u8vector))
+  => PubKey
+  (PubKey type
+          (check-pointer bytes->public-key
+                         (EVP_PKEY_new_raw_public_key type #f bytes))))
+
+(def (digest-sign! (pk    : PrivKey)
+                   (bytes : :u8vector)
+                   (sig   : :u8vector := (make-u8vector 256)))
+  => :u8vector
+  (let (mctx (check-pointer digest-sign! (EVP_MD_CTX_new)))
+    (with-libcrypto-error digest-sign! (EVP_DigestSignInit mctx pk.key))
+    (let (len (with-libcrypto-error digest-sign!
+                (EVP_DigestSign mctx sig bytes)))
+      (when (fx< len (u8vector-length sig))
+        (u8vector-shrink! sig len))
+      (foreign-release! mctx)
+      sig)))
+
+(def (digest-verify! (pk    : PubKey)
+                     (bytes : :u8vector)
+                     (sig   : :u8vector))
+  => :boolean
+  (let (mctx (check-pointer digest-verify! (EVP_MD_CTX_new)))
+    (with-libcrypto-error digest-verify!
+      (EVP_DigestVerifyInit mctx pk.key))
+    (begin0 (fx= 1 (EVP_DigestVerify mctx sig bytes))
       (foreign-release! mctx))))

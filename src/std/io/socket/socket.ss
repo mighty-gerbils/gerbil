@@ -1,72 +1,65 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; POSIX/BSD sockets
-(import :std/sugar
-        :std/error
+(import :std/error
         :std/os/error
+        :std/os/device
         :std/os/socket
-        :std/os/fd
-        :std/event
-        ./types)
+        :std/os/sockaddr
+        :std/os/sockopt
+        :std/net/address/types
+        :std/time/timeout
+        ./types
+        ./sockaddr)
 (export #t)
 
-(defrule (with-error-close sock body ...)
-  (try body ...
-       (catch (e)
-         (socket-close sock)
-         (raise e))))
+(def (socket-connect (addr  : EndpointAddress)
+                     (type  : :fixnum)
+                     (proto : :fixnum)
+                     (timeo : IOTimeout))
+  => SocketDevice
+  (let (domain
+        (case addr.domain
+          ((inet4) AF_INET)
+          ((inet6) AF_INET6)
+          ((unix)  AF_UNIX)
+          (else
+           (raise-bad-argument connect "bad address domain" address: addr))))
+    (let* ((sock (open-client-socket-device domain type proto))
+           (sa   (address->sockaddr addr)))
+      (with-error-device-close sock
+        (let (errno (socket-device-connect sock sa))
+          (if (fx< errno 0)
+            (let (complete? (device-wait-output! sock timeo))
+              (if complete?
+                (let (errno (socket-device-getsockopt sock SOL_SOCKET.SO_ERROR))
+                  (if (fx= errno 0)
+                    sock
+                    (raise-os-error connect errno address: addr)))
+                (raise-timeout connect "connection timeout" address: addr)))
+            sock))))))
 
-(def (connect address timeo)
-  (let* ((sockaddr (socket-address address))
-         (family (socket-address-family sockaddr)))
-    (let* ((sock (socket family SOCK_STREAM))
-           (connected? (with-error-close sock (socket-connect sock sockaddr))))
-      (if connected?
-        sock
-        (begin
-          (unless (&wait-io! (fd-io-out sock) timeo)
-            (socket-close sock)
-            (raise-timeout connect "connection timeout" address))
-          (let (errno (socket-getsockopt sock SOL_SOCKET SO_ERROR))
-            (if (fx= errno 0)
-              sock
-              (begin
-                (socket-close sock)
-                (raise-os-error connect errno address timeo)))))))))
-
-(def (listen address backlog sockopts)
-  (let* ((sockaddr (socket-address address))
-         (sock (server-socket (socket-address-family sockaddr) SOCK_STREAM)))
-    (with-error-close sock
-      (for-each (cut socket-setsockopt sock SOL_SOCKET <> 1)
-                sockopts)
-      (socket-bind sock sockaddr)
-      (socket-listen sock backlog)
-      sock)))
-
-(def (udp-new af)
-  (socket af SOCK_DGRAM))
-
-(def (udp-new-multicast domain group-ip-address local-address iface-index)
-  (let* ((local-sockaddr (socket-address local-address))
-         (sock (udp-new domain)))
-    (with-error-close sock
-      (socket-setsockopt sock SOL_SOCKET SO_REUSEADDR 1)
-      (socket-bind sock local-sockaddr)
-      (if (fx= domain AF_INET)
-        (begin
-          (socket-setsockopt sock IPPROTO_IP IP_ADD_MEMBERSHIP
-                             (cons group-ip-address (car local-address)))
-          (socket-setsockopt sock IPPROTO_IP IP_MULTICAST_LOOP 0))
-        (begin
-          (socket-setsockopt sock IPPROTO_IPV6 IPV6_ADD_MEMBERSHIP
-                             (cons group-ip-address iface-index))
-          (socket-setsockopt sock IPPROTO_IPV6 IPV6_MULTICAST_LOOP 0)))
-      sock)))
-
-(def (udp-bind sock address)
-  (let* ((sockaddr (socket-address address))
-         (family (socket-address-family sockaddr)))
-    (with-error-close sock
-      (socket-setsockopt sock SOL_SOCKET SO_REUSEADDR 1)
-      (socket-bind sock sockaddr))))
+(def (socket-listen (addr     : EndpointAddress)
+                    (type     : :fixnum)
+                    (proto    : :fixnum)
+                    (backlog  : :fixnum)
+                    (sockopts : :list))
+  => SocketDevice
+  (let (domain
+        (case addr.domain
+          ((inet4) AF_INET)
+          ((inet6) AF_INET6)
+          ((unix)  AF_UNIX)
+          (else
+           (raise-bad-argument stream-listen "bad address domain" address: addr))))
+    (let* ((sock (open-server-socket-device domain type proto))
+           (sa   (address->sockaddr addr)))
+      (begin0
+          (with-error-device-close sock
+            (for-each
+              (lambda (kv)
+                (socket-device-setsockopt sock (car kv) (cdr kv)))
+              sockopts)
+            (socket-device-bind   sock sa)
+            (socket-device-listen sock backlog)
+            sock)))))

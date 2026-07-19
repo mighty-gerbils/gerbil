@@ -18,7 +18,7 @@ MacOS is well supported by gerbil.
 
   - If you've got [[https://brew.sh/][Homebrew]] you can use the [[#homebrew-formula-and-binaries][Tap and/or Formula]].
   - If you've got some time to spare it can [[#raw-build][be built]] easily.
-    
+
 Because there are many different versions and processors your
 configuration may be slightly different than expected. If anything at
 all seems out of the ordinary please [[https://github.com/mighty-gerbils/gerbil/issues][file an issue]] ot get in touch
@@ -40,7 +40,7 @@ brew install mighty-gerbils/gerbil/gerbil-scheme
 That repository is also available in the gerbil source [[file:homebrew/README.org][as a subtree]].
 
 #+begin_src sh
-   git subtree add --prefix macos/homebrew git@github.com:mighty-gerbils/homebrew-gerbil.git main --squash
+   git subtree add --prefix macos/homebrew https://git.cons.io/mighty-gerbils/homebrew-gerbil.git main --squash
 #+end_src
 
 * Build from source
@@ -74,7 +74,7 @@ binary may outperform modern =gcc= and building binaries with =clang=
 without setting =GERBIL_GCC= is something so it's a toss up.
 
    #+begin_src sh
-     git clone https://github.com/mighty-gerbils/gerbil.git
+     git clone https://git.cons.io/mighty-gerbils/gerbil.git
 
      # On Sonama, Silicon not Intel, we set the prefix as so.
      # You may want it elsewhere.
@@ -107,7 +107,7 @@ You can install it using [[https://www.macports.org/][MacPorts]] or [[https://br
 
   cd $(mktemp -d);
 
-  git clone https://github.com/mighty-gerbils/gerbil.git
+  git clone https://git.cons.io/mighty-gerbils/gerbil.git
 
   cd gerbil;
   ./configure --prefix=/opt/gerbil && make -j$GERBIL_BUILD_CORES
@@ -130,7 +130,7 @@ You can install it using [[https://www.macports.org/][MacPorts]] or [[https://br
 
   cd $(mktemp -d);
 
-  git clone https://github.com/mighty-gerbils/gerbil.git
+  git clone https://git.cons.io/mighty-gerbils/gerbil.git
 
   cd gerbil;
   ./configure --prefix=/opt/gerbil && make -j$GERBIL_BUILD_CORES
@@ -161,7 +161,7 @@ You can install it using [[https://www.macports.org/][MacPorts]] or [[https://br
 
   cd $(mktemp -d);
 
-  git clone https://github.com/mighty-gerbils/gerbil.git
+  git clone https://git.cons.io/mighty-gerbils/gerbil.git
 
   cd gerbil;
   ./configure --prefix=/opt/gerbil && make -j$GERBIL_BUILD_CORES
@@ -184,8 +184,7 @@ You can install it using [[https://www.macports.org/][MacPorts]] or [[https://br
   export GERBIL_BUILD_CORES=4
 
   cd $(mktemp -d);
-
-  git clone https://github.com/mighty-gerbils/gerbil.git
+  git clone https://git.cons.io/mighty-gerbils/gerbil.git
 
   cd gerbil;
   ./configure --prefix=/opt/gerbil && make -j$GERBIL_BUILD_CORES

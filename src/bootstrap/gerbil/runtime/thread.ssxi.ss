@@ -3,6 +3,131 @@ package: gerbil/runtime
 
 (begin
   (declare-type
+   __system_thread-group
+   (optimizer-resolve-class
+    '(typedecl __system_thread-group)
+    'thread-group::t))
+  (declare-type
+   system-thread-group
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             thread-group::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   __make-system-thread
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             thread::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   make-system-thread
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             thread::t
+             effect:
+             #f
+             arguments:
+             (procedure::t symbol::t)
+             unchecked:
+             __make-system-thread
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   __system-thread!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             thread::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   system-thread!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             thread::t
+             effect:
+             #f
+             arguments:
+             (procedure::t symbol::t)
+             unchecked:
+             __system-thread!
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   __system-actor!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             thread::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   system-actor!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             thread::t
+             effect:
+             #f
+             arguments:
+             (procedure::t symbol::t)
+             unchecked:
+             __system-actor!
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   __spawn
+   (@lambda (1)
+            #f
+            signature:
+            (return:
+             thread::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
    spawn
    (@lambda (1)
             #f
@@ -18,8 +143,8 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/thread)))
   (declare-type
-   __spawn
-   (@lambda (1)
+   __spawn/name
+   (@lambda (2)
             #f
             signature:
             (return:
@@ -48,7 +173,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/thread)))
   (declare-type
-   __spawn/name
+   __spawn/group
    (@lambda (2)
             #f
             signature:
@@ -75,21 +200,6 @@ package: gerbil/runtime
              (t::t procedure::t . t::t)
              unchecked:
              __spawn/group
-             origin:
-             gerbil/runtime/thread)))
-  (declare-type
-   __spawn/group
-   (@lambda (2)
-            #f
-            signature:
-            (return:
-             thread::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
              origin:
              gerbil/runtime/thread)))
   (declare-type
@@ -194,6 +304,21 @@ package: gerbil/runtime
       #f
       origin:
       gerbil/runtime/thread))))
+  (declare-type
+   thread-main
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/thread)))
   (declare-type
    thread-local-ref__%
    (@lambda 2
@@ -328,10 +453,25 @@ package: gerbil/runtime
    __unhandled-actor-exception-hook
    (optimizer-resolve-class
     '(typedecl __unhandled-actor-exception-hook)
-    't::t))
+    'builtin::t))
   (declare-type
    unhandled-actor-exception-hook
    (@lambda 0
+            #f
+            signature:
+            (return:
+             builtin::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   __unhandled-actor-exception-hook-set!
+   (@lambda 1
             #f
             signature:
             (return:
@@ -360,12 +500,12 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/thread)))
   (declare-type
-   __unhandled-actor-exception-hook-set!
-   (@lambda 1
+   current-thread-group
+   (@lambda 0
             #f
             signature:
             (return:
-             t::t
+             thread-group::t
              effect:
              #f
              arguments:
@@ -375,12 +515,12 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/thread)))
   (declare-type
-   current-thread-group
-   (@lambda 0
+   __with-lock
+   (@lambda 2
             #f
             signature:
             (return:
-             thread-group::t
+             t::t
              effect:
              #f
              arguments:
@@ -405,7 +545,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/thread)))
   (declare-type
-   __with-lock
+   __with-dynamic-lock
    (@lambda 2
             #f
             signature:
@@ -434,80 +574,6 @@ package: gerbil/runtime
              __with-dynamic-lock
              origin:
              gerbil/runtime/thread)))
-  (declare-type
-   __with-dynamic-lock
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/thread)))
-  (declare-type
-   with-exception-stack-trace__%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             (procedure::t port::t)
-             unchecked:
-             __with-exception-stack-trace
-             origin:
-             gerbil/runtime/thread)))
-  (declare-type
-   with-exception-stack-trace__0
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/thread)))
-  (declare-type
-   with-exception-stack-trace
-   (@case-lambda
-    (1
-     with-exception-stack-trace__0
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/thread))
-    (2
-     with-exception-stack-trace__%
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/thread))))
   (declare-type
    __with-exception-stack-trace__%
    (@lambda 2
@@ -556,6 +622,65 @@ package: gerbil/runtime
       gerbil/runtime/thread))
     (2
      __with-exception-stack-trace__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/thread))))
+  (declare-type
+   with-exception-stack-trace__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (procedure::t port::t)
+             unchecked:
+             __with-exception-stack-trace
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   with-exception-stack-trace__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   with-exception-stack-trace
+   (@case-lambda
+    (1
+     with-exception-stack-trace__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/thread))
+    (2
+     with-exception-stack-trace__%
      signature:
      (return:
       t::t
@@ -625,4 +750,34 @@ package: gerbil/runtime
       unchecked:
       #f
       origin:
-      gerbil/runtime/thread)))))
+      gerbil/runtime/thread))))
+  (declare-type
+   __thread-dead?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   thread-dead?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             (thread::t)
+             unchecked:
+             __thread-dead?
+             origin:
+             gerbil/runtime/thread))))

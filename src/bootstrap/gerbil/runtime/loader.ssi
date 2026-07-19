@@ -16,14 +16,33 @@ namespace: #f
          (%#define-runtime __load-order-next __load-order-next)
          (%#define-runtime load-path load-path)
          (%#define-runtime add-load-path! add-load-path!)
-         (%#define-runtime set-load-path! set-load-path!)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/runtime/loader~1")))
+                  (%#define-syntax @set-load-path! |[:0:]#@set-load-path!|))
          (%#define-runtime __set-load-path! __set-load-path!)
-         (%#define-runtime load-module load-module)
+         (%#define-runtime
+          set-load-path!
+          set-load-path!
+          macro:
+          @set-load-path!)
+         (%#define-syntax @load-module |[:0:]#@load-module|)
          (%#define-runtime __load-module __load-module)
-         (%#define-runtime reload-module! reload-module!)
+         (%#define-runtime load-module load-module macro: @load-module)
+         (%#define-syntax @reload-module! |[:0:]#@reload-module!|)
          (%#define-runtime __reload-module! __reload-module!)
+         (%#define-runtime
+          reload-module!
+          reload-module!
+          macro:
+          @reload-module!)
          (%#define-runtime __find-library-module __find-library-module)
          (%#define-runtime list-modules list-modules)
-         (%#define-runtime module-load-order module-load-order)
-         (%#define-runtime __module-load-order __module-load-order))
+         (%#define-syntax @module-load-order |[:0:]#@module-load-order|)
+         (%#define-runtime __module-load-order __module-load-order)
+         (%#define-runtime
+          module-load-order
+          module-load-order
+          macro:
+          @module-load-order))
 (%#call (%#ref load-module) (%#quote "gerbil/runtime/loader~0"))

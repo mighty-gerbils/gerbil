@@ -14,6 +14,10 @@ namespace: gxc
         "optimize-xform")
 (export #t)
 
+(def (mutable-binding? id)
+  (let (sym (identifier-symbol id))
+    (hash-get (current-compile-mutators) sym)))
+
 ;; method to collect top level type information; types for top level bindings
 (defcompile-method (apply-collect-top-level-type-info)
   (::collect-top-level-type-info ::void)
@@ -1059,20 +1063,18 @@ namespace: gxc
      stx))
 
   (def (opt-lambda-dispatch-name id)
-    (if (uninterned-symbol? id)
-      (let (str (symbol->string id))
-        (if (string-prefix? "opt-lambda" str)
-          "%"
-          id))
-      id))
+    (let (str (symbol->string id))
+      (if (or (string-prefix? "opt-lambda" str)
+              (string-prefix? "$%opt-lambda" str))
+        "%"
+        id)))
 
   (def (kw-lambda-dispatch-name id name)
-    (if (uninterned-symbol? id)
-      (let (str (symbol->string id))
-        (if (string-prefix? "kw-lambda" str)
-          name
-          id))
-      id))
+    (let (str (symbol->string id))
+      (if (or (string-prefix? "kw-lambda" str)
+              (string-prefix? "$%kw-lambda" str))
+        name
+        id)))
 
   (ast-case stx ()
     ((_ (id) expr)

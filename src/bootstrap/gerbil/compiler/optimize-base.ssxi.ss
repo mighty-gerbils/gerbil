@@ -259,6 +259,21 @@ package: gerbil/compiler
    (@mutator gxc#!procedure::t signature #f))
   (declare-type gxc#&!procedure-id-set! (@mutator gxc#!procedure::t id #f))
   (declare-type
+   gxc#__make-!procedure
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             gxc#!procedure::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
+  (declare-type
    gxc#make-!procedure
    (@lambda 2
             #f
@@ -274,12 +289,12 @@ package: gerbil/compiler
              origin:
              gerbil/compiler/optimize-base)))
   (declare-type
-   gxc#__make-!procedure
+   gxc#__!procedure-signature-set!
    (@lambda 2
             #f
             signature:
             (return:
-             gxc#!procedure::t
+             void::t
              effect:
              #f
              arguments:
@@ -301,21 +316,6 @@ package: gerbil/compiler
              (gxc#!procedure::t #f)
              unchecked:
              gxc#__!procedure-signature-set!
-             origin:
-             gerbil/compiler/optimize-base)))
-  (declare-type
-   gxc#__!procedure-signature-set!
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             void::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
              origin:
              gerbil/compiler/optimize-base)))
   (declare-class
@@ -1178,11 +1178,11 @@ package: gerbil/compiler
       gerbil/compiler/optimize-base))))
   (declare-type
    gxc#compute-class-fields
-   (@lambda 4
+   (@lambda 3
             #f
             signature:
             (return:
-             list::t
+             t::t
              effect:
              #f
              arguments:

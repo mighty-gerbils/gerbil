@@ -1,9 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; gxc compilation test
-(import :gerbil/gambit
-        :std/test
-        :std/os/temporaries)
+(import :std/test
+        :std/io/tempfile)
 (export gxc-test make-test test-setup! test-cleanup!)
 
 (extern namespace: #f this-source-file)

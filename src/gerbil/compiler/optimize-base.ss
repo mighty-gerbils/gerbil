@@ -185,7 +185,7 @@ namespace: gxc
                     (foldl cons '(object::t t::t) head)))))))
             (fields
              ;; 4. compute slot->field mapping for direct instances/structs
-             (compute-class-fields `(!class ,id) base-struct precedence-list slots)))
+             (compute-class-fields `(!class ,id) precedence-list slots)))
        (set! self.id id)
        (set! self.super super)
        (set! self.precedence-list precedence-list)
@@ -210,29 +210,12 @@ namespace: gxc
      (when methods
        (set! self.methods (list->hash-table-eq methods))))))
 
-(def (compute-class-fields where base-struct precedence-list direct-slots)
-  ;; TODO this has to become a base utility in :gerbil/runtime/c4
-  (let* ((base-fields
-          (if base-struct
-            (!class-fields (optimizer-resolve-class where base-struct))
-            []))
-         (r-fields (reverse base-fields))
-         (seen-slots
-          (let (tab (make-hash-table-eq))
-            (for-each (cut hash-put! tab <> #t) base-fields)
-            tab))
-         (process-slot
-          (lambda (slot)
-            (unless (hash-get seen-slots slot)
-              (hash-put! seen-slots slot #t)
-              (set! r-fields (cons slot r-fields))))))
-    (for-each (lambda (mixin)
-                (let (klass (optimizer-resolve-class where mixin))
-                  (unless (!class-struct? klass)
-                    (for-each process-slot (!class-fields klass)))))
-              precedence-list)
-    (for-each process-slot direct-slots)
-    (reverse r-fields)))
+(def (compute-class-fields where precedence-list direct-slots)
+  (c4-compute-class-slots precedence-list direct-slots
+    (lambda (mixin)
+      (!class-fields (optimizer-resolve-class where mixin)))
+    (lambda (slot-list slot-table)
+      (cdr slot-list))))
 
 (def (!class-slot->field-offset klass slot)
   (let lp ((rest (!class-fields klass)) (offset 1))
@@ -356,7 +339,11 @@ namespace: gxc
                 (eq? (!type-id type-b) 'procedure))
            (and (!class? type-a)
                 (!class? type-b)
-                (!class-subclass? type-a type-b)))))
+                (!class-subclass? type-a type-b))
+           ;; ugly, need to unify interfaces and classes
+           (and (!interface? type-a)
+                (eq? (!type-id type-b) 'interface-descriptor::t))
+           )))
 
 (def (!class-subclass? klass-a klass-b)
   (or (eq? (!type-id klass-a) (!type-id klass-b))

@@ -74,7 +74,19 @@ namespace: gerbil/core/more-sugar
            |gerbil/core/more-sugar[1]#syntax-local-setq-macro?|)
           (%#define-runtime
            expand-set!
-           |gerbil/core/more-sugar[1]#expand-set!|))
+           |gerbil/core/more-sugar[1]#expand-set!|)
+          (%#define-runtime
+           stx-re-source
+           |gerbil/core/more-sugar[1]#stx-re-source|)
+          (%#begin (%#define-runtime
+                    stx-substitute__%
+                    |gerbil/core/more-sugar[1]#stx-substitute__%|)
+                   (%#begin (%#define-runtime
+                             stx-substitute__0
+                             |gerbil/core/more-sugar[1]#stx-substitute__0|)
+                            (%#define-runtime
+                             stx-substitute
+                             |gerbil/core/more-sugar[1]#stx-substitute|))))
          (%#define-syntax set! |gerbil/core/more-sugar[:0:]#set!|)
          (%#define-syntax
           values-set!
@@ -100,6 +112,8 @@ namespace: gerbil/core/more-sugar
           ~hash-table
           |gerbil/core/more-sugar[:0:]#~hash-table|)
          (%#define-syntax @bytes |gerbil/core/more-sugar[:0:]#@bytes|)
+         (%#define-syntax @eval |gerbil/core/more-sugar[:0:]#@eval|)
          (%#define-syntax
           eval-when-compile
-          |gerbil/core/more-sugar[:0:]#eval-when-compile|))
+          |gerbil/core/more-sugar[:0:]#eval-when-compile|)
+         (%#define-syntax with-id |gerbil/core/more-sugar[:0:]#with-id|))

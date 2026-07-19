@@ -3,7 +3,7 @@
 ;; Copyright (c) 2007-2019 Dimitris Vyzovitis & Contributors
 ;;
 ;; Author: Dimitris Vyzovitis <vyzo@hackzen.org>
-;; URL: https://github.com/mighty-gerbils/gerbil
+;; URL: https://git.cons.io/mighty-gerbils/gerbil
 ;; Version: 1.0
 ;; Package-Requires: ((emacs "27.1"))
 ;; Keywords: gerbil major-mode
@@ -289,6 +289,9 @@
                 with-struct
                 with-class
                 with-contract
+                with-identifier
+                with-identifiers
+                do-write
                 )
               'scheme-indent-function 1)
   (gerbil-put '(syntax-case ast-case core-syntax-case core-ast-case
@@ -297,11 +300,14 @@
                  )
               'scheme-indent-function 2)
   (gerbil-put '(def defvalues extern
-                defalias defsyntax defrule defrules defrules*
-                defstruct defclass defgeneric defmethod defmessage deftype
-                definline definline*
-                define-values define-syntaxes
+                    defalias defsyntax defsyntax-case
+                    defrule defrules
+                defstruct defclass deftype defmethod interface
+                definline
+                define-values-syntaxes
                 defcall-actor
+                defcall-interface-method
+                implement
                 )
               'scheme-indent-function 'defun)
   )
@@ -437,7 +443,7 @@
      (1 font-lock-keyword-face)
      (2 font-lock-variable-name-face)))
   (gerbil-fontlock-add
-   '("(\\(defstruct\\|defclass\\|defmessage\\|interface\\|deferror-class\\)\\s-+(?\\(@*\\sw+\\)"
+   '("(\\(defstruct\\|defclass\\|defmessage\\|interface\\|implement\\|deferror-class\\)\\s-+(?\\(@*\\sw+\\)"
      (1 font-lock-keyword-face)
      (2 font-lock-type-face)))
   (gerbil-fontlock-add

@@ -65,17 +65,17 @@
 
     (test-case "equality"
       ;; Equality without inheritance
-      (defstruct a (x)) ;; opaque by default
+      (defstruct a (x) transparent: #f) ;; transparent is the new default
       (let (x (a 4)) (check (equal? x x) => #t))
       (check (equal? (a 4) (a 4)) => #f)
       (check (equal? (a 4) (a 5)) => #f)
       (defstruct b (x) transparent: #t) ;; transparent implies equal
       (check (equal? (b 4) (b 4)) => #t)
       (check (equal? (b 4) (b 5)) => #f)
-      (defstruct c (x) equal: #t) ;; equal: objects are equal if same slots
+      (defstruct c (x) equal: #t transparent: #f) ;; equal: objects are equal if same slots
       (check (equal? (c 4) (c 4)) => #t)
       (check (equal? (c 4) (c 5)) => #f)
-      (defstruct d (x) equal: #f) ;; opaque: only eq? objects are equal!
+      (defstruct d (x) equal: #f transparent: #f) ;; opaque: only eq? objects are equal!
       (let (x (d 4)) (check (equal? x x) => #t))
       (check (equal? (d 4) (d 4)) => #f)
       (check (equal? (d 4) (d 5)) => #f)
@@ -85,6 +85,8 @@
       (check (equal? (e 2 2) (e 1 2)) => #f)
       (defstruct f (x y) equal: ()) ;; not opaque, but no slots to compare: all objects are equal!
       (check (equal? (f 5 6) (f 7 8)) => #t)
+      (defstruct f2 (x y) equal: #f)
+      (check (equal? (f2 5 6) (f2 7 8)) => #t)
       (defstruct g (x y) equal: #t) ;; equality comparison with two slots
       (check (equal? (g 1 2) (g 1 2)) => #t)
       (check (equal? (g 1 2) (g 1 3)) => #f)

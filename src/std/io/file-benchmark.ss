@@ -1,8 +1,7 @@
-(import :gerbil/gambit
-        :std/iter
-        :std/os/temporaries
+(import :std/iter
         ./interface
-        ./api
+        ./file
+        ./tempfile
         ./bio/api)
 (export main)
 (declare (not safe))

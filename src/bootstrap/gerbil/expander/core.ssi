@@ -313,22 +313,40 @@ namespace: gx
          (%#define-runtime binding-id gx#binding-id)
          (%#define-runtime binding-key gx#binding-key)
          (%#define-runtime binding-phi gx#binding-phi)
+         (%#define-runtime binding-properties gx#binding-properties)
          (%#define-runtime binding-id-set! gx#binding-id-set!)
          (%#define-runtime binding-key-set! gx#binding-key-set!)
          (%#define-runtime binding-phi-set! gx#binding-phi-set!)
+         (%#define-runtime binding-properties-set! gx#binding-properties-set!)
          (%#define-runtime &binding-id gx#&binding-id)
          (%#define-runtime &binding-key gx#&binding-key)
          (%#define-runtime &binding-phi gx#&binding-phi)
+         (%#define-runtime &binding-properties gx#&binding-properties)
          (%#define-runtime &binding-id-set! gx#&binding-id-set!)
          (%#define-runtime &binding-key-set! gx#&binding-key-set!)
          (%#define-runtime &binding-phi-set! gx#&binding-phi-set!)
+         (%#define-runtime
+          &binding-properties-set!
+          gx#&binding-properties-set!)
          (%#define-syntax binding |gx[:0:]#binding|)
+         (%#define-runtime binding:::init! gx#binding:::init!)
          (%#define-runtime runtime-binding::t gx#runtime-binding::t)
          (%#define-runtime runtime-binding? gx#runtime-binding?)
          (%#define-runtime make-runtime-binding gx#make-runtime-binding)
+         (%#define-runtime runtime-binding-type gx#runtime-binding-type)
+         (%#define-runtime runtime-binding-macro gx#runtime-binding-macro)
          (%#define-runtime runtime-binding-id gx#runtime-binding-id)
          (%#define-runtime runtime-binding-key gx#runtime-binding-key)
          (%#define-runtime runtime-binding-phi gx#runtime-binding-phi)
+         (%#define-runtime
+          runtime-binding-properties
+          gx#runtime-binding-properties)
+         (%#define-runtime
+          runtime-binding-type-set!
+          gx#runtime-binding-type-set!)
+         (%#define-runtime
+          runtime-binding-macro-set!
+          gx#runtime-binding-macro-set!)
          (%#define-runtime runtime-binding-id-set! gx#runtime-binding-id-set!)
          (%#define-runtime
           runtime-binding-key-set!
@@ -336,9 +354,23 @@ namespace: gx
          (%#define-runtime
           runtime-binding-phi-set!
           gx#runtime-binding-phi-set!)
+         (%#define-runtime
+          runtime-binding-properties-set!
+          gx#runtime-binding-properties-set!)
+         (%#define-runtime &runtime-binding-type gx#&runtime-binding-type)
+         (%#define-runtime &runtime-binding-macro gx#&runtime-binding-macro)
          (%#define-runtime &runtime-binding-id gx#&runtime-binding-id)
          (%#define-runtime &runtime-binding-key gx#&runtime-binding-key)
          (%#define-runtime &runtime-binding-phi gx#&runtime-binding-phi)
+         (%#define-runtime
+          &runtime-binding-properties
+          gx#&runtime-binding-properties)
+         (%#define-runtime
+          &runtime-binding-type-set!
+          gx#&runtime-binding-type-set!)
+         (%#define-runtime
+          &runtime-binding-macro-set!
+          gx#&runtime-binding-macro-set!)
          (%#define-runtime
           &runtime-binding-id-set!
           gx#&runtime-binding-id-set!)
@@ -348,59 +380,129 @@ namespace: gx
          (%#define-runtime
           &runtime-binding-phi-set!
           gx#&runtime-binding-phi-set!)
+         (%#define-runtime
+          &runtime-binding-properties-set!
+          gx#&runtime-binding-properties-set!)
          (%#define-syntax runtime-binding |gx[:0:]#runtime-binding|)
          (%#define-runtime local-binding::t gx#local-binding::t)
          (%#define-runtime local-binding? gx#local-binding?)
          (%#define-runtime make-local-binding gx#make-local-binding)
+         (%#define-runtime local-binding-type gx#local-binding-type)
+         (%#define-runtime local-binding-macro gx#local-binding-macro)
          (%#define-runtime local-binding-id gx#local-binding-id)
          (%#define-runtime local-binding-key gx#local-binding-key)
          (%#define-runtime local-binding-phi gx#local-binding-phi)
+         (%#define-runtime
+          local-binding-properties
+          gx#local-binding-properties)
+         (%#define-runtime local-binding-type-set! gx#local-binding-type-set!)
+         (%#define-runtime
+          local-binding-macro-set!
+          gx#local-binding-macro-set!)
          (%#define-runtime local-binding-id-set! gx#local-binding-id-set!)
          (%#define-runtime local-binding-key-set! gx#local-binding-key-set!)
          (%#define-runtime local-binding-phi-set! gx#local-binding-phi-set!)
+         (%#define-runtime
+          local-binding-properties-set!
+          gx#local-binding-properties-set!)
+         (%#define-runtime &local-binding-type gx#&local-binding-type)
+         (%#define-runtime &local-binding-macro gx#&local-binding-macro)
          (%#define-runtime &local-binding-id gx#&local-binding-id)
          (%#define-runtime &local-binding-key gx#&local-binding-key)
          (%#define-runtime &local-binding-phi gx#&local-binding-phi)
+         (%#define-runtime
+          &local-binding-properties
+          gx#&local-binding-properties)
+         (%#define-runtime
+          &local-binding-type-set!
+          gx#&local-binding-type-set!)
+         (%#define-runtime
+          &local-binding-macro-set!
+          gx#&local-binding-macro-set!)
          (%#define-runtime &local-binding-id-set! gx#&local-binding-id-set!)
          (%#define-runtime &local-binding-key-set! gx#&local-binding-key-set!)
          (%#define-runtime &local-binding-phi-set! gx#&local-binding-phi-set!)
+         (%#define-runtime
+          &local-binding-properties-set!
+          gx#&local-binding-properties-set!)
          (%#define-syntax local-binding |gx[:0:]#local-binding|)
          (%#define-runtime top-binding::t gx#top-binding::t)
          (%#define-runtime top-binding? gx#top-binding?)
          (%#define-runtime make-top-binding gx#make-top-binding)
+         (%#define-runtime top-binding-type gx#top-binding-type)
+         (%#define-runtime top-binding-macro gx#top-binding-macro)
          (%#define-runtime top-binding-id gx#top-binding-id)
          (%#define-runtime top-binding-key gx#top-binding-key)
          (%#define-runtime top-binding-phi gx#top-binding-phi)
+         (%#define-runtime top-binding-properties gx#top-binding-properties)
+         (%#define-runtime top-binding-type-set! gx#top-binding-type-set!)
+         (%#define-runtime top-binding-macro-set! gx#top-binding-macro-set!)
          (%#define-runtime top-binding-id-set! gx#top-binding-id-set!)
          (%#define-runtime top-binding-key-set! gx#top-binding-key-set!)
          (%#define-runtime top-binding-phi-set! gx#top-binding-phi-set!)
+         (%#define-runtime
+          top-binding-properties-set!
+          gx#top-binding-properties-set!)
+         (%#define-runtime &top-binding-type gx#&top-binding-type)
+         (%#define-runtime &top-binding-macro gx#&top-binding-macro)
          (%#define-runtime &top-binding-id gx#&top-binding-id)
          (%#define-runtime &top-binding-key gx#&top-binding-key)
          (%#define-runtime &top-binding-phi gx#&top-binding-phi)
+         (%#define-runtime &top-binding-properties gx#&top-binding-properties)
+         (%#define-runtime &top-binding-type-set! gx#&top-binding-type-set!)
+         (%#define-runtime &top-binding-macro-set! gx#&top-binding-macro-set!)
          (%#define-runtime &top-binding-id-set! gx#&top-binding-id-set!)
          (%#define-runtime &top-binding-key-set! gx#&top-binding-key-set!)
          (%#define-runtime &top-binding-phi-set! gx#&top-binding-phi-set!)
+         (%#define-runtime
+          &top-binding-properties-set!
+          gx#&top-binding-properties-set!)
          (%#define-syntax top-binding |gx[:0:]#top-binding|)
          (%#define-runtime module-binding::t gx#module-binding::t)
          (%#define-runtime module-binding? gx#module-binding?)
          (%#define-runtime make-module-binding gx#make-module-binding)
          (%#define-runtime module-binding-context gx#module-binding-context)
+         (%#define-runtime module-binding-type gx#module-binding-type)
+         (%#define-runtime module-binding-macro gx#module-binding-macro)
          (%#define-runtime module-binding-id gx#module-binding-id)
          (%#define-runtime module-binding-key gx#module-binding-key)
          (%#define-runtime module-binding-phi gx#module-binding-phi)
          (%#define-runtime
+          module-binding-properties
+          gx#module-binding-properties)
+         (%#define-runtime
           module-binding-context-set!
           gx#module-binding-context-set!)
+         (%#define-runtime
+          module-binding-type-set!
+          gx#module-binding-type-set!)
+         (%#define-runtime
+          module-binding-macro-set!
+          gx#module-binding-macro-set!)
          (%#define-runtime module-binding-id-set! gx#module-binding-id-set!)
          (%#define-runtime module-binding-key-set! gx#module-binding-key-set!)
          (%#define-runtime module-binding-phi-set! gx#module-binding-phi-set!)
+         (%#define-runtime
+          module-binding-properties-set!
+          gx#module-binding-properties-set!)
          (%#define-runtime &module-binding-context gx#&module-binding-context)
+         (%#define-runtime &module-binding-type gx#&module-binding-type)
+         (%#define-runtime &module-binding-macro gx#&module-binding-macro)
          (%#define-runtime &module-binding-id gx#&module-binding-id)
          (%#define-runtime &module-binding-key gx#&module-binding-key)
          (%#define-runtime &module-binding-phi gx#&module-binding-phi)
          (%#define-runtime
+          &module-binding-properties
+          gx#&module-binding-properties)
+         (%#define-runtime
           &module-binding-context-set!
           gx#&module-binding-context-set!)
+         (%#define-runtime
+          &module-binding-type-set!
+          gx#&module-binding-type-set!)
+         (%#define-runtime
+          &module-binding-macro-set!
+          gx#&module-binding-macro-set!)
          (%#define-runtime &module-binding-id-set! gx#&module-binding-id-set!)
          (%#define-runtime
           &module-binding-key-set!
@@ -408,19 +510,47 @@ namespace: gx
          (%#define-runtime
           &module-binding-phi-set!
           gx#&module-binding-phi-set!)
+         (%#define-runtime
+          &module-binding-properties-set!
+          gx#&module-binding-properties-set!)
          (%#define-syntax module-binding |gx[:0:]#module-binding|)
          (%#define-runtime extern-binding::t gx#extern-binding::t)
          (%#define-runtime extern-binding? gx#extern-binding?)
          (%#define-runtime make-extern-binding gx#make-extern-binding)
+         (%#define-runtime extern-binding-type gx#extern-binding-type)
+         (%#define-runtime extern-binding-macro gx#extern-binding-macro)
          (%#define-runtime extern-binding-id gx#extern-binding-id)
          (%#define-runtime extern-binding-key gx#extern-binding-key)
          (%#define-runtime extern-binding-phi gx#extern-binding-phi)
+         (%#define-runtime
+          extern-binding-properties
+          gx#extern-binding-properties)
+         (%#define-runtime
+          extern-binding-type-set!
+          gx#extern-binding-type-set!)
+         (%#define-runtime
+          extern-binding-macro-set!
+          gx#extern-binding-macro-set!)
          (%#define-runtime extern-binding-id-set! gx#extern-binding-id-set!)
          (%#define-runtime extern-binding-key-set! gx#extern-binding-key-set!)
          (%#define-runtime extern-binding-phi-set! gx#extern-binding-phi-set!)
+         (%#define-runtime
+          extern-binding-properties-set!
+          gx#extern-binding-properties-set!)
+         (%#define-runtime &extern-binding-type gx#&extern-binding-type)
+         (%#define-runtime &extern-binding-macro gx#&extern-binding-macro)
          (%#define-runtime &extern-binding-id gx#&extern-binding-id)
          (%#define-runtime &extern-binding-key gx#&extern-binding-key)
          (%#define-runtime &extern-binding-phi gx#&extern-binding-phi)
+         (%#define-runtime
+          &extern-binding-properties
+          gx#&extern-binding-properties)
+         (%#define-runtime
+          &extern-binding-type-set!
+          gx#&extern-binding-type-set!)
+         (%#define-runtime
+          &extern-binding-macro-set!
+          gx#&extern-binding-macro-set!)
          (%#define-runtime &extern-binding-id-set! gx#&extern-binding-id-set!)
          (%#define-runtime
           &extern-binding-key-set!
@@ -428,7 +558,15 @@ namespace: gx
          (%#define-runtime
           &extern-binding-phi-set!
           gx#&extern-binding-phi-set!)
+         (%#define-runtime
+          &extern-binding-properties-set!
+          gx#&extern-binding-properties-set!)
          (%#define-syntax extern-binding |gx[:0:]#extern-binding|)
+         (%#define-runtime runtime-binding:::init! gx#runtime-binding:::init!)
+         (%#define-runtime local-binding:::init! gx#local-binding:::init!)
+         (%#define-runtime top-binding:::init! gx#top-binding:::init!)
+         (%#define-runtime module-binding:::init! gx#module-binding:::init!)
+         (%#define-runtime extern-binding:::init! gx#extern-binding:::init!)
          (%#define-runtime syntax-binding::t gx#syntax-binding::t)
          (%#define-runtime syntax-binding? gx#syntax-binding?)
          (%#define-runtime make-syntax-binding gx#make-syntax-binding)
@@ -436,14 +574,23 @@ namespace: gx
          (%#define-runtime syntax-binding-id gx#syntax-binding-id)
          (%#define-runtime syntax-binding-key gx#syntax-binding-key)
          (%#define-runtime syntax-binding-phi gx#syntax-binding-phi)
+         (%#define-runtime
+          syntax-binding-properties
+          gx#syntax-binding-properties)
          (%#define-runtime syntax-binding-e-set! gx#syntax-binding-e-set!)
          (%#define-runtime syntax-binding-id-set! gx#syntax-binding-id-set!)
          (%#define-runtime syntax-binding-key-set! gx#syntax-binding-key-set!)
          (%#define-runtime syntax-binding-phi-set! gx#syntax-binding-phi-set!)
+         (%#define-runtime
+          syntax-binding-properties-set!
+          gx#syntax-binding-properties-set!)
          (%#define-runtime &syntax-binding-e gx#&syntax-binding-e)
          (%#define-runtime &syntax-binding-id gx#&syntax-binding-id)
          (%#define-runtime &syntax-binding-key gx#&syntax-binding-key)
          (%#define-runtime &syntax-binding-phi gx#&syntax-binding-phi)
+         (%#define-runtime
+          &syntax-binding-properties
+          gx#&syntax-binding-properties)
          (%#define-runtime &syntax-binding-e-set! gx#&syntax-binding-e-set!)
          (%#define-runtime &syntax-binding-id-set! gx#&syntax-binding-id-set!)
          (%#define-runtime
@@ -452,6 +599,9 @@ namespace: gx
          (%#define-runtime
           &syntax-binding-phi-set!
           gx#&syntax-binding-phi-set!)
+         (%#define-runtime
+          &syntax-binding-properties-set!
+          gx#&syntax-binding-properties-set!)
          (%#define-syntax syntax-binding |gx[:0:]#syntax-binding|)
          (%#define-runtime import-binding::t gx#import-binding::t)
          (%#define-runtime import-binding? gx#import-binding?)
@@ -462,6 +612,9 @@ namespace: gx
          (%#define-runtime import-binding-id gx#import-binding-id)
          (%#define-runtime import-binding-key gx#import-binding-key)
          (%#define-runtime import-binding-phi gx#import-binding-phi)
+         (%#define-runtime
+          import-binding-properties
+          gx#import-binding-properties)
          (%#define-runtime import-binding-e-set! gx#import-binding-e-set!)
          (%#define-runtime
           import-binding-context-set!
@@ -472,12 +625,18 @@ namespace: gx
          (%#define-runtime import-binding-id-set! gx#import-binding-id-set!)
          (%#define-runtime import-binding-key-set! gx#import-binding-key-set!)
          (%#define-runtime import-binding-phi-set! gx#import-binding-phi-set!)
+         (%#define-runtime
+          import-binding-properties-set!
+          gx#import-binding-properties-set!)
          (%#define-runtime &import-binding-e gx#&import-binding-e)
          (%#define-runtime &import-binding-context gx#&import-binding-context)
          (%#define-runtime &import-binding-weak? gx#&import-binding-weak?)
          (%#define-runtime &import-binding-id gx#&import-binding-id)
          (%#define-runtime &import-binding-key gx#&import-binding-key)
          (%#define-runtime &import-binding-phi gx#&import-binding-phi)
+         (%#define-runtime
+          &import-binding-properties
+          gx#&import-binding-properties)
          (%#define-runtime &import-binding-e-set! gx#&import-binding-e-set!)
          (%#define-runtime
           &import-binding-context-set!
@@ -492,6 +651,9 @@ namespace: gx
          (%#define-runtime
           &import-binding-phi-set!
           gx#&import-binding-phi-set!)
+         (%#define-runtime
+          &import-binding-properties-set!
+          gx#&import-binding-properties-set!)
          (%#define-syntax import-binding |gx[:0:]#import-binding|)
          (%#define-runtime alias-binding::t gx#alias-binding::t)
          (%#define-runtime alias-binding? gx#alias-binding?)
@@ -500,19 +662,34 @@ namespace: gx
          (%#define-runtime alias-binding-id gx#alias-binding-id)
          (%#define-runtime alias-binding-key gx#alias-binding-key)
          (%#define-runtime alias-binding-phi gx#alias-binding-phi)
+         (%#define-runtime
+          alias-binding-properties
+          gx#alias-binding-properties)
          (%#define-runtime alias-binding-e-set! gx#alias-binding-e-set!)
          (%#define-runtime alias-binding-id-set! gx#alias-binding-id-set!)
          (%#define-runtime alias-binding-key-set! gx#alias-binding-key-set!)
          (%#define-runtime alias-binding-phi-set! gx#alias-binding-phi-set!)
+         (%#define-runtime
+          alias-binding-properties-set!
+          gx#alias-binding-properties-set!)
          (%#define-runtime &alias-binding-e gx#&alias-binding-e)
          (%#define-runtime &alias-binding-id gx#&alias-binding-id)
          (%#define-runtime &alias-binding-key gx#&alias-binding-key)
          (%#define-runtime &alias-binding-phi gx#&alias-binding-phi)
+         (%#define-runtime
+          &alias-binding-properties
+          gx#&alias-binding-properties)
          (%#define-runtime &alias-binding-e-set! gx#&alias-binding-e-set!)
          (%#define-runtime &alias-binding-id-set! gx#&alias-binding-id-set!)
          (%#define-runtime &alias-binding-key-set! gx#&alias-binding-key-set!)
          (%#define-runtime &alias-binding-phi-set! gx#&alias-binding-phi-set!)
+         (%#define-runtime
+          &alias-binding-properties-set!
+          gx#&alias-binding-properties-set!)
          (%#define-syntax alias-binding |gx[:0:]#alias-binding|)
+         (%#define-runtime syntax-binding:::init! gx#syntax-binding:::init!)
+         (%#define-runtime import-binding:::init! gx#import-binding:::init!)
+         (%#define-runtime alias-binding:::init! gx#alias-binding:::init!)
          (%#define-runtime expander::t gx#expander::t)
          (%#define-runtime expander? gx#expander?)
          (%#define-runtime make-expander gx#make-expander)
@@ -816,6 +993,12 @@ namespace: gx
          (%#begin (%#define-runtime eval-syntax__% gx#eval-syntax__%)
                   (%#begin (%#define-runtime eval-syntax__0 gx#eval-syntax__0)
                            (%#define-runtime eval-syntax gx#eval-syntax)))
+         (%#begin (%#define-runtime eval-syntax+1__% gx#eval-syntax+1__%)
+                  (%#begin (%#define-runtime
+                            eval-syntax+1__0
+                            gx#eval-syntax+1__0)
+                           (%#define-runtime eval-syntax+1 gx#eval-syntax+1)))
+         (%#define-runtime eval-expression+1 gx#eval-expression+1)
          (%#define-runtime eval-syntax* gx#eval-syntax*)
          (%#begin (%#define-runtime core-expand__% gx#core-expand__%)
                   (%#begin (%#define-runtime core-expand__0 gx#core-expand__0)
@@ -1061,6 +1244,7 @@ namespace: gx
          (%#define-runtime syntax-local-rewrap gx#syntax-local-rewrap)
          (%#define-runtime syntax-local-unwrap gx#syntax-local-unwrap)
          (%#define-runtime syntax-local-introduce gx#syntax-local-introduce)
+         (%#define-runtime syntax-local-temp gx#syntax-local-temp)
          (%#begin (%#define-runtime syntax-local-e__% gx#syntax-local-e__%)
                   (%#begin (%#define-runtime
                             syntax-local-e__0

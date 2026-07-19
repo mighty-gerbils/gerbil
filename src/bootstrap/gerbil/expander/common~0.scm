@@ -1,22 +1,22 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/common::timestamp 1756721295)
+  (define gerbil/expander/common::timestamp 1784279015)
   (begin
     (define gx#AST::t
-      (let ((__tmp125462 (list))
-            (__tmp125461 (cons (cons 'struct: '#t) '((print: e)))))
+      (let ((__tmp180980 (list))
+            (__tmp180979 (cons (cons 'struct: '#t) '((print: e)))))
         (declare (not safe))
         (__make-class-type
          'gerbil#AST::t
          'syntax
-         __tmp125462
+         __tmp180980
          '(e source)
-         __tmp125461
+         __tmp180979
          '#f)))
     (define gx#AST?
       (let () (declare (not safe)) (__make-class-predicate gx#AST::t)))
     (define gx#make-AST
-      (lambda _%$args125360%_ (apply make-instance gx#AST::t _%$args125360%_)))
+      (lambda _%$args180878%_ (apply make-instance gx#AST::t _%$args180878%_)))
     (define gx#AST-e
       (let () (declare (not safe)) (__make-class-slot-accessor gx#AST::t 'e)))
     (define gx#AST-source
@@ -44,4 +44,14 @@
     (define gx#&AST-source-set!
       (let ()
         (declare (not safe))
-        (__make-class-slot-unchecked-mutator gx#AST::t 'source)))))
+        (__make-class-slot-unchecked-mutator gx#AST::t 'source)))
+    (define gx#__DEBUG-EXPANDER
+      (if (string? __DEBUG)
+          (let ()
+            (declare (not safe))
+            (##string-contains __DEBUG '"expansion"))
+          '#f))
+    (define gx#__DEBUG-VERBOSE
+      (if (string? __DEBUG)
+          (let () (declare (not safe)) (##string-contains __DEBUG '"verbose"))
+          '#f))))

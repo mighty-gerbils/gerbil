@@ -26,7 +26,7 @@ package: gerbil/core
     stx-for-each stx-map stx-foldl stx-foldr stx-reverse
     stx-last stx-last-pair stx-list-tail stx-list-ref
     stx-andmap stx-ormap
-    stx-plist? stx-getq
+    stx-plist? stx-getq stx-plist-assq
     macro-expand-syntax
     macro-expand-syntax-case
     syntax-pattern? syntax-local-pattern?
@@ -49,18 +49,24 @@ package: gerbil/core
     expander-context-id  module-context-ns
     module-context-import module-context-export module-context-code
     make-local-context
-    eval-syntax core-expand core-expand-head core-expand-expression+1
+    eval-syntax eval-syntax+1
+    core-expand core-expand-head
+    core-expand-expression+1
     import-module eval-module
     core-library-module-path? core-resolve-library-module-path
     core-resolve-module-path
     core-quote-syntax
     core-identifier=? core-identifier-key
     core-apply-expander
-    syntax-local-introduce syntax-local-rewrap syntax-local-unwrap
+    syntax-local-introduce syntax-local-temp syntax-local-rewrap syntax-local-unwrap
     syntax-local-e syntax-local-value
     resolve-identifier core-resolve-identifier
     binding? binding-id
-    runtime-binding? top-binding? module-binding? extern-binding?
+    biding-properties binding-properties-set!
+    runtime-binding?
+    runtime-binding-type runtime-binding-type-set!
+    runtime-binding-macro runtime-binding-macro-set!
+    top-binding? module-binding? extern-binding?
     syntax-binding? syntax-binding-e
     alias-binding? alias-binding-e
     import-binding? import-binding-e

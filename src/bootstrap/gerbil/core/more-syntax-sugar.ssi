@@ -3,10 +3,13 @@ package: gerbil/core
 namespace: gerbil/core/more-syntax-sugar
 
 (%#begin (%#import
+          :gerbil/core/runtime
           :gerbil/core/expander
           :gerbil/core/sugar
           :gerbil/core/more-sugar
-          (phi: 1 :gerbil/core/runtime))
+          (phi: 1 :gerbil/core/runtime)
+          (phi: 1 :gerbil/core/expander)
+          (phi: 1 :gerbil/core/sugar))
          (%#export #t)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
@@ -14,6 +17,12 @@ namespace: gerbil/core/more-syntax-sugar
                   (%#define-syntax
                    identifier-rules
                    |gerbil/core/more-syntax-sugar[:0:]#identifier-rules|))
+         (%#define-syntax
+          with-identifiers
+          |gerbil/core/more-syntax-sugar[:0:]#with-identifiers|)
+         (%#define-syntax
+          with-identifier
+          |gerbil/core/more-syntax-sugar[:0:]#with-identifier|)
          (%#define-syntax
           quasisyntax
           |gerbil/core/more-syntax-sugar[:0:]#quasisyntax|))

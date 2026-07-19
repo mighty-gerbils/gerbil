@@ -1,119 +1,136 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo at hackzen.org
-;;; OS fcntl interface
-
-(import :std/foreign
+;;; © vyzo
+;;; OS File Control(import :std/ffi
+(import :std/ffi
         ./error
-        ./fd)
+        ./device)
 (export #t)
 
-(def* fcntl
-  ((raw cmd)
-   (let (fd (if (fd? raw) (fd-e raw) raw))
-     (check-os-error (_fcntl0 fd cmd)
-       (fcntl raw cmd))))
-  ((raw cmd arg)
-   (let (fd (if (fd? raw) (fd-e raw) raw))
-     (check-os-error (_fcntl1 fd cmd arg)
-       (fcntl raw cmd arg)))))
+(def (fcntl-getfl (fd : :fixnum))
+  => :fixnum
+  (do-syscall (__fcntl1 fd F_GETFL)))
 
-(def (fd-getfl raw)
-  (fcntl raw F_GETFL))
+(def (fcntl-setfl! (fd : :fixnum) (flags : :fixnum))
+  => :void
+  (let* ((current (fcntl-getfl fd))
+         (flags   (fxior flags current)))
+    (do-syscall (__fcntl2 fd F_SETFL flags))))
 
-(def (fd-setfl raw xflags)
-  (let* ((flags (fcntl raw F_GETFL))
-         (flags (##fxior flags xflags)))
-    (fcntl raw F_SETFL flags)))
+(def (fcntl-getfd (fd : :fixnum))
+  => :fixnum
+  (do-syscall (__fcntl1 fd F_GETFD)))
 
-(def (fd-setfl! raw flags)
-  (fcntl raw F_SETFL flags))
+(def (fcntl-setfd! (fd : :fixnum) (flags : :fixnum))
+  => :void
+  (let* ((current (fcntl-getfd fd))
+         (flags   (fxior flags current)))
+    (do-syscall (__fcntl2 fd F_SETFD flags))))
 
-(def (fd-getfd raw)
-  (fcntl raw F_GETFD))
+(C-ffi-macrology)
+(C-include  "<unistd.h>"
+            "<fcntl.h>"
+            "<errno.h>")
 
-(def (fd-setfd raw xflags)
-  (let* ((flags (fcntl raw F_GETFD))
-         (flags (##fxior flags xflags)))
-    (fcntl raw F_SETFD flags)))
+(def-C-syscall (__fcntl1 (fd  :- :fixnum)
+                         (cmd :- :fixnum))
+  "fcntl(___arg1, ___arg2)")
 
-(def (fd-setfd! raw flags)
-  (fcntl raw F_SETFD flags))
+(def-C-syscall (__fcntl2 (fd  :- :fixnum)
+                         (cmd :- :fixnum)
+                         (arg :- :fixnum))
+  "fcntl(___arg1, ___arg2, ___arg3)")
 
-(def (fd-set-nonblock raw)
-  (fd-setfl raw O_NONBLOCK))
+(def-C-const*
+  F_GETFL
+  F_SETFL
+  F_GETFD
+  F_SETFD
+  F_DUPFD
+  FD_CLOEXEC
+  F_DUPFD_CLOEXEC
+  F_SETLK
+  F_SETLKW
+  F_GETLK
+  F_OFD_SETLK
+  F_OFD_SETLKW
+  F_OFD_GETLK
+  F_GETOWN
+  F_SETOWN
+  F_GETOWN_EX
+  F_SETOWN_EX
+  F_GETSIG
+  F_SETSIG
+  F_SETLEASE
+  F_GETLEASE
+  F_NOTIFY
+  F_SETPIPE_SZ
+  F_GETPIPE_SZ
+  F_ADD_SEALS
+  F_GET_SEALS
+  F_GET_RW_HINT
+  F_SET_RW_HINT
+  F_GET_FILE_RW_HINT
+  F_SET_FILE_RW_HINT
 
-(def (fd-set-closeonexec raw)
-  (fd-setfd raw FD_CLOEXEC))
+  F_RDLCK
+  F_WRLCK
+  F_UNLCK
 
-(def (fd-set-nonblock/closeonexec raw)
-  (fd-setfl raw O_NONBLOCK)
-  (fd-setfd raw FD_CLOEXEC))
+  F_OWNER_TID
+  F_OWNER_PID
+  F_OWNER_PGRP
 
-;;; FFI impl
-(begin-ffi (F_DUPFD F_GETFD F_SETFD F_GETFL F_SETFL
-            FD_CLOEXEC
-            O_CREAT O_EXCL O_NOCTTY O_TRUNC
-            O_APPEND O_NONBLOCK O_SYNC
-            O_ACCMODE
-            O_RDONLY O_RDWR O_WRONLY
+  DN_ACCESS
+  DN_MODIFY
+  DN_CREATE
+  DN_DELETE
+  DN_RENAME
+  DN_ATTRIB
 
-            O_CLOEXEC O_DIRECT O_DSYNC
-            O_NOATIME
-            O_NOFOLLOW O_TMPFILE
+  F_SEAL_SEAL
+  F_SEAL_SHRINK
+  F_SEAL_GROW
+  F_SEAL_WRITE
+  F_SEAL_FUTURE_WRITE
 
-            ;; F_SETLK F_SETLK F_SETLKW
-            ;; F_RDLCK F_UNLCK F_WRLCK
-            _fcntl0 _fcntl1
-            )
-  (c-declare "#include <unistd.h>")
-  (c-declare "#include <sys/types.h>")
-  (c-declare "#include <sys/stat.h>")
-  (c-declare "#include <fcntl.h>")
+  RWH_WRITE_LIFE_NOT_SET
+  RWH_WRITE_LIFE_NONE
+  RWH_WRITE_LIFE_SHORT
+  RWH_WRITE_LIFE_MEDIUM
+  RWH_WRITE_LIFE_LONG
+  RWH_WRITE_LIFE_EXTREME
 
-  (namespace ("std/os/fcntl#" __fcntl0 __fcntl1))
+  O_APPEND
+  O_ASYNC
+  O_CLOEXEC
+  O_CREAT
+  O_DIRECT
+  O_DIRECTORY
+  O_DSYNC
+  O_EXCL
+  O_LARGEFILE
+  O_NOATIME
+  O_NOCTTY
+  O_NOFOLLOW
+  O_NONBLOCK
+  O_NDELAY
+  O_PATH
+  O_SYNC
+  O_TMPFILE
+  O_TRUNC
 
-  ;; POSIX commands
-  (define-const F_DUPFD)
-  (define-const F_GETFD)
-  (define-const F_SETFD)
-  (define-const F_GETFL)
-  (define-const F_SETFL)
-  ;; (define-const F_GETLK)
-  ;; (define-const F_SETLK)
-  ;; (define-const F_SETLKW)
-
-  ;; POSIX flags
-  (define-const FD_CLOEXEC)
-
-  ;; (define-const F_RDLCK)
-  ;; (define-const F_UNLCK)
-  ;; (define-const F_WRLCK)
-
-  (define-const O_CREAT)
-  (define-const O_EXCL)
-  (define-const O_NOCTTY)
-  (define-const O_TRUNC)
-
-  (define-const O_APPEND)
-  (define-const O_NONBLOCK)
-  (define-const O_SYNC)
-  (define-const O_ACCMODE)
-
-  (define-const O_RDONLY)
-  (define-const O_RDWR)
-  (define-const O_WRONLY)
-
-  (define-const* O_CLOEXEC)
-  (define-const* O_DIRECT)
-  (define-const* O_DSYNC)
-  (define-const* O_EXCL)
-  (define-const* O_NOATIME)
-  (define-const* O_NOCTTY)
-  (define-const* O_NOFOLLOW)
-  (define-const* O_TMPFILE)
-
-  (define-c-lambda __fcntl0 (int int) int "fcntl")
-  (define-c-lambda __fcntl1 (int int int) int "fcntl")
-
-  (define-with-errno _fcntl0 __fcntl0 (fd cmd))
-  (define-with-errno _fcntl1 __fcntl1 (fd cmd arg)))
+  S_IRWXU
+  S_IRUSR
+  S_IWUSR
+  S_IXUSR
+  S_IRWXG
+  S_IRGRP
+  S_IWGRP
+  S_IXGRP
+  S_IRWXO
+  S_IROTH
+  S_IWOTH
+  S_IXOTH
+  S_ISUID
+  S_ISGID
+  S_ISVTX)

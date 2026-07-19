@@ -1,23 +1,18 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; socket api tests
-(import :gerbil/gambit
-        :std/error
-        :std/sugar
+(import :std/error
         :std/test
-        :std/text/utf8
-        :std/os/temporaries
+        :std/net/address
+        :std/net/address/parser
+        :std/time/timeout
+        :std/os/sockopt
         ../interface
         ../util
+        ../tempfile
         ./api)
 (export stream-socket-test
-        datagram-socket-test
-        test-setup! test-cleanup!)
-
-(def (test-setup!)
-  unhandled-actor-exception-hook-set! dump-stack-trace!)
-(def (test-cleanup!)
-  unhandled-actor-exception-hook-set! #f)
+        datagram-socket-test)
 
 (def (echo-server srv)
   (let lp ()
@@ -30,12 +25,12 @@
         (writer (StreamSocket-writer cli)))
     (io-copy! reader writer)
     (Reader-close reader)
-    (Reader-close writer)))
+    (Writer-close writer)))
 
 (def (do-echo sock msg (timeo-in #f))
   (let* ((input (string->utf8 msg))
          (_ (when timeo-in
-              (StreamSocket-set-input-timeout! sock timeo-in)))
+              (StreamSocket-set-input-timeout! sock (IOTimeout timeo-in))))
          (reader (StreamSocket-reader sock))
          (writer (StreamSocket-writer sock))
          (wrote (Writer-write writer input))
@@ -54,6 +49,7 @@
         (lp)))))
 
 (def (do-echo-udp sock input peer)
+  (Socket-set-input-timeout! sock (IOTimeout 1))
   (let* ((wrote (DatagramSocket-sendto sock peer (string->utf8 input)))
          (buffer (make-u8vector wrote))
          (read (DatagramSocket-recvfrom sock (box #f) buffer)))
@@ -66,11 +62,16 @@
          (read (DatagramSocket-recv sock buffer)))
     (utf8->string buffer)))
 
-(def echo-server-address "127.0.0.1:20001")
-(def echo-server-multicast-ip-address "224.100.100.100")
-(def echo-server-multicast-address (cons echo-server-multicast-ip-address 20001))
-(def echo-server-address-any (cons inaddr-any4 20001))
-(def echo-client-address-any (cons inaddr-any4 0))
+(def echo-server-address
+  (string->address "inet4:127.0.0.1:20001"))
+(def echo-server-multicast-ip-address
+  (string->ip4-address "224.100.100.100"))
+(def echo-server-multicast-address
+  (InetAddress echo-server-multicast-ip-address 20001))
+(def echo-server-address-any
+  (InetAddress inaddr-any4 20001))
+(def echo-client-address-any
+  (InetAddress inaddr-any4 0))
 
 (def stream-socket-test
   (test-suite "stream sockets"
@@ -78,6 +79,7 @@
       (let* ((input "the quick brown fox jumped over the fence")
              (srv (tcp-listen echo-server-address))
              (server (spawn/name 'echo-server echo-server srv))
+             (_ (thread-yield!))
              (cli (tcp-connect echo-server-address)))
         (check (do-echo cli input) => input)
         (Socket-close cli)
@@ -87,9 +89,11 @@
       (call-with-temporary-file-name "echo"
         (lambda (path)
           (let* ((input "the quick brown fox jumped over the fence")
-                 (srv (unix-listen path))
+                 (addr (UnixAddress path))
+                 (srv (unix-listen addr))
                  (server (spawn/name 'echo-server echo-server srv))
-                 (cli (unix-connect path)))
+                 (_ (thread-yield!))
+                 (cli (unix-connect addr)))
         (check (do-echo cli input) => input)
         (Socket-close cli)
         (Socket-close srv)
@@ -97,6 +101,7 @@
     (test-case "timeout"
       (let* ((input "the quick brown fox jumped over the fence")
              (srv (tcp-listen echo-server-address))
+             (_ (thread-yield!))
              (cli (tcp-connect echo-server-address)))
         (check-exception (do-echo cli input 1.0) timeout-error?)
         (Socket-close cli)
@@ -108,6 +113,7 @@
       (let* ((input "the quick brown fox jumped over the fence")
              (srv (udp-socket echo-server-address))
              (server (spawn/name 'echo-server-udp echo-server-udp srv))
+             (_ (thread-yield!))
              (cli (udp-socket)))
         (check (do-echo-udp cli input echo-server-address) => input)
         (Socket-close cli)
@@ -117,6 +123,7 @@
       (let* ((input "the quick brown fox jumped over the fence")
              (srv (udp-socket echo-server-address))
              (server (spawn/name 'echo-server-udp echo-server-udp srv))
+             (_ (thread-yield!))
              (cli (udp-socket)))
         (check (do-echo-udp/connect cli input echo-server-address) => input)
         (Socket-close cli)
@@ -126,7 +133,9 @@
       (let* ((input "the quick brown fox jumped over the fence")
              (srv (udp-multicast-socket echo-server-multicast-ip-address echo-server-address-any))
              (server (spawn/name 'echo-server-udp echo-server-udp srv))
+             (_ (thread-yield!))
              (cli (udp-socket)))
+        (Socket-setsockopt cli IPPROTO_IP.IP_MULTICAST_TTL 1)
         (check (do-echo-udp cli input echo-server-multicast-address) => input)
         (Socket-close cli)
         (Socket-close srv)

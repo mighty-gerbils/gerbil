@@ -27,7 +27,7 @@ ARG configure_args
 ARG cores
 ARG repo
 ARG shared
-RUN cd /tmp && eval git clone -b "${branch}" "https://github.com/${repo}" gerbil \
+RUN cd /tmp && eval git clone -b "${branch}" "https://git.cons.io/${repo}" gerbil \
     && cd /tmp/gerbil && eval ./configure --prefix=/opt/gerbil
 
 RUN cd /tmp/gerbil && make

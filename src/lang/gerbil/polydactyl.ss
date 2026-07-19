@@ -3,8 +3,7 @@
 ;;; Polydactyl Gerbil prelude
 ;;; This is :gerbil/core with a readtable that treats [] as plain parentheses.
 
-(import :gerbil/core
-        (for-syntax :gerbil/gambit))
+(import :gerbil/core)
 (export (import: :gerbil/core)
         (for-syntax read-module-body))
 

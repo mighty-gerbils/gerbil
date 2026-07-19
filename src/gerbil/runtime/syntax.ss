@@ -6,7 +6,7 @@ package: gerbil/runtime
 namespace: #f
 
 (export #t)
-(import "gambit" "util" "mop" "error")
+(import "gambit" "util" "mop" "error" "system")
 
 (declare (not safe))
 
@@ -147,7 +147,7 @@ namespace: #f
              (newline))
            rest))
         (else (void)))
-      (when (getenv "GERBIL_DEBUG" #f)
+      (when __DEBUG
         (alet (cont self.continuation)
           (display "--- continuation backtrace:")
           (newline)
@@ -172,8 +172,9 @@ namespace: #f
 
 ;;; ASTs
 (defstruct AST (e source)
-  id:   gerbil#AST::t
-  name: syntax)
+  id:   gerbil#AST::t ;; FIXME
+  name: syntax
+  print: (e))
 
 (define (__AST-e stx)
   (if (AST? stx)

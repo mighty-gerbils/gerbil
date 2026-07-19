@@ -123,7 +123,11 @@ namespace: gx
     (%#set!             expr:    ,core-expand-setq%
                         ,core-compile-top-setq%)
     (%#expression       expr:    ,core-expand-expression%
-                        #f)))
+                        #f)
+    ;; binding properties
+    (%#bind-runtime-properties!
+     special: ,core-expand-bind-runtime-properties%
+     #f)))
 
 (def *core-macro-expanders*
   `((begin            => %#begin)
@@ -141,10 +145,11 @@ namespace: gx
     (quote-syntax     => %#quote-syntax)
     (let-syntax       => %#let-syntax)
     (letrec-syntax    => %#letrec-syntax)
+    (define-values    => %#define-values)
+    (define-runtime   => %#define-runtime)
+    (define-syntax    => %#define-syntax)
+    (define-alias     => %#define-alias)
     (extern          ,macro-expand-extern)
-    (define-values   ,macro-expand-define-values)
-    (define-syntax   ,macro-expand-define-syntax)
-    (define-alias    ,macro-expand-define-alias)
     (lambda%              ,macro-expand-lambda%)
     (case-lambda          ,macro-expand-case-lambda)
     (let-values      ,macro-expand-let-values)

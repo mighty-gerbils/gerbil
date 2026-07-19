@@ -1,12 +1,11 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo at hackzen.org
+;;; © vyzo
 ;;; URI support; rfc3986
 
-(import :gerbil/gambit
-        :std/error
-        :std/text/utf8)
+(import :std/error
+        :std/iter)
 
-(export uri-encode uri-decode form-url-encode form-url-decode query-string
+(export uri-encode uri-decode form-url-encode form-url-decode
         make-uri-encoding-table
         uri-unreserved-chars uri-gendelim-chars uri-subdelim-chars)
 
@@ -18,16 +17,19 @@
 (def uri-subdelim-chars
   "!$&'()*+,;=")
 
-(def (make-uri-encoding-table self-chars (sub-chars []))
+(def (make-uri-encoding-table (self-chars : :string)
+                              (sub-chars [] : :list)) ; AList char char
+  => :vector
   (let ((vt (make-vector 256 #f))
         (len (string-length self-chars)))
-    (let lp ((n 0))
-      (when (##fx< n len)
-        (let (char (##string-ref self-chars n))
+    (let loop ((i 0 :- :fixnum))
+      (when (fx< i len)
+        (let (char (##string-ref self-chars i))
           (vector-set! vt (char->integer char) char)
-          (lp (##fx+ n 1)))))
+          (loop (fx+ i 1)))))
     (for-each (match <>
-                ([char . sub] (vector-set! vt (char->integer char) sub)))
+                ([char . sub]
+                 (vector-set! vt (char->integer char) sub)))
               sub-chars)
     vt))
 
@@ -38,17 +40,16 @@
 (def uri-space-encoding
   (make-uri-encoding-table uri-unreserved-chars '((#\space . #\+))))
 
-;; uri-encode: string => string
-(def (uri-encode str (vt uri-encoding))
-  (unless (and (vector? vt) (##fx= (vector-length vt) 256))
-    (raise-bad-argument uri-encode "encoding table; vector of length 256" vt))
+;; uri-encode a string
+(def (uri-encode (str : :string) (vt uri-encoding : :vector))
+  => :string
   (with-output-to-string []
-    (lambda ()
-      (write-uri-encoded str vt))))
+    (lambda () (write-uri-encoded str vt))))
 
 ;; form-url-encode: [[string . string/#f] ...] => string
 ;; if +space? is #t, #\space is encoded as #\+ (otherwise %20)
-(def (form-url-encode fields (+space? #t))
+(def (form-url-encode (fields : :list) (+space? #t))
+  => :string
   (def encoding
     (if +space? uri-space-encoding uri-encoding))
 
@@ -65,114 +66,91 @@
      (with-output-to-string []
        (lambda ()
          (encode-field first)
-         (for-each (lambda (field) (write-char #\&) (encode-field field))
-                   rest))))
+         (for (field (in-list rest))
+           (write-char #\&)
+           (encode-field field)))))
     ([] "")))
 
-;; Create a query string...
-;; BEWARE!!! This does NO VALIDATION of the command and option syntax.
-;; The command should already be a valid URL path prefix.
-;; The options fields ought to be explicitly encoded with uri-encode if needed.
-(def (query-string path . options)
-  (call-with-output-string
-    '()
-    (lambda (o)
-      (display path o)
-      (let loop ((options options)
-                 (separator #\?))
-        (match options
-          ([] (void))
-          ([key value . more]
-           (if value
-             (begin
-               (display separator o)
-               (display key o)
-               (display #\= o)
-               (display value o)
-               (loop more #\&))
-             (loop more separator))))))))
-
-(def (write-uri-encoded str encoding)
+(def (write-uri-encoded (str : :string) (encoding : :vector))
   (def (write-hex n)
     (write-char (##string-ref "0123456789ABCDEF" n)))
 
   (let* ((utf8 (string->utf8 str))
          (len  (u8vector-length utf8)))
-    (let lp ((n 0))
-      (when (##fx< n len)
-        (let (byte (##u8vector-ref utf8 n))
+    (let loop ((i 0 :- :fixnum))
+      (when (fx< i len)
+        (let (byte (##u8vector-ref utf8 i))
           (cond
-           ((##vector-ref encoding byte) => write-char)
+           ((vector-ref encoding byte) => write-char)
            (else
             (write-char #\%)
-            (write-hex (##fxand (##fxarithmetic-shift byte -4) #xf))
-            (write-hex (##fxand byte #xf))))
-          (lp (##fx+ n 1)))))))
+            (write-hex (fxand (fxarithmetic-shift byte -4) #xf))
+            (write-hex (fxand byte #xf))))
+          (loop (fx+ i 1)))))))
 
-;; uri-decode: string => string
+;; uri-decoding
 (def hex-bytes
   (let (ht (make-hash-table-eq))
-    (for-each
-      (lambda (n)
-        (let (char (##string-ref "0123456789ABCDEF" n))
-          (hash-put! ht char n)
-          (hash-put! ht (char-downcase char) n)))
-      (iota 16))
+    (for (i (in-range 0 16))
+      (let (char (string-ref "0123456789ABCDEF" i))
+        (hash-put! ht char i)
+        (hash-put! ht (char-downcase char) i)))
     ht))
 
-(def (uri-decode str (encoding #f))
+(def (uri-decode (str : :string) (encoding #f :? :vector))
+  => :string
   (def (hex-byte byte)
     (let (char (integer->char byte))
       (cond
        ((hash-get hex-bytes char))
        (else
-        (raise-bad-argument uri-decode "uri encoded string: unexecpted character" str char)))))
-
-  (when encoding
-    (unless (and (vector? encoding) (##fx= (vector-length encoding) 256))
-      (raise-bad-argument uri-decode "encoding table; vector of length 256" encoding)))
+        (raise-bad-argument uri-decode "uri encoded string: unexpected character" str char)))))
 
   (let* ((utf8 (string->utf8 str))
          (len  (u8vector-length utf8))
-         (pct  (char->integer #\%)))
-    (utf8->string
-     (with-output-to-u8vector []
-       (lambda ()
-         (let lp ((n 0))
-           (when (##fx< n len)
-             (let (next (##u8vector-ref utf8 n))
-               (cond
-                ((and encoding (##vector-ref encoding next))
-                 => (lambda (char)
-                      (write-char char)
-                      (lp (##fx+ n 1))))
-                ((eq? next pct)
-                 (let (n (##fx+ n 1))
-                   (if (##fx< (##fx+ n 1) len)
-                     (let ((hi (##u8vector-ref utf8 n))
-                           (lo (##u8vector-ref utf8 (##fx+ n 1))))
-                       (write-u8 (##fxior (##fxarithmetic-shift (hex-byte hi) 4)
-                                          (hex-byte lo)))
-                       (lp (##fx+ n 2)))
-                     (raise-bad-argument uri-decode "uri encoded string: malformed compoent" str))))
-                (else
-                 (write-u8 next)
-                 (lp (##fx+ n 1))))))))))))
+         (pct  (char->integer #\%))
+         (u8-buffer  (make-u8vector len)))
+    (let loop ((i 0 :- :fixnum)
+               (j 0 :- :fixnum))
+      (if (fx< i len)
+        (let (next (##u8vector-ref utf8 i))
+          (cond
+           ((and encoding (vector-ref encoding next))
+            => (lambda (char)
+                 (##u8vector-set! u8-buffer j (##char->integer char))
+                 (loop (fx+ i 1) (fx+ j 1))))
+           ((eq? next pct)
+            (let (i (fx+ i 1))
+              (if (fx< (fx+ i 1) len)
+                (let ((hi (##u8vector-ref utf8 i))
+                      (lo (##u8vector-ref utf8 (fx+ i 1))))
+                  (##u8vector-set! u8-buffer j (fxior (fxarithmetic-shift (hex-byte hi) 4)
+                                                      (hex-byte lo)))
+                  (loop (fx+ i 2) (fx+ j 1)))
+                (raise-bad-argument uri-decode "uri encoded string: malformed component" str i))))
+           (else
+            (##u8vector-set! u8-buffer j next)
+            (loop (fx+ i 1) (fx+ j 1)))))
+
+        (utf8->string u8-buffer 0 j)))))
 
 (def uri-space-decoding
   (make-uri-encoding-table "" '((#\+ . #\space))))
 
-;; form-url-decode: string => [[string . string] ...]
-(def (form-url-decode str)
+;; form-url-decode: string => [[string . string/#f] ...]
+(def (form-url-decode (str : :string))
+  => :list
   (filter-map
    (lambda (part)
      (and (not (string-empty? part))
-          (match (string-split part #\=)
-            ([key val]
-             (cons (uri-decode key uri-space-decoding)
-                   (uri-decode val uri-space-decoding)))
-            ([key]
-             (cons (uri-decode key uri-space-decoding) #f))
-            (else
-             (raise-bad-argument form-url-decode "form url encoded string: malformed component" str part)))))
+          (let (idx (string-index part #\=))
+            (if idx
+              ;; Split at '='. "key=" returns "" instead of #f to follow
+              ;; web standards and prevent JSON/Struct type errors later.
+              (let ((key (substring part 0 idx))
+                    (val (substring part (fx+ idx 1) (string-length part))))
+                (cons (uri-decode key uri-space-decoding)
+                      (uri-decode val uri-space-decoding)))
+              ;; No '=', it is a boolean flag (returns #f).
+              (cons (uri-decode part uri-space-decoding) #f)))))
    (string-split str #\&)))

@@ -1,10 +1,7 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo
-;;; Gerbil error objects
-(import :gerbil/runtime/error
-        :gerbil/runtime/hash
-        :gerbil/runtime/thread
-        (for-syntax :gerbil/expander))
+;;; © vyzo
+;;; Gerbil standard error objects
+(import (for-syntax :gerbil/expander))
 (export Exception Exception?
         RuntimeException RuntimeException?
         Error Error?
@@ -29,13 +26,17 @@
         raise-bad-argument
         (rename: raise-bug BUG)
         is-it-bug?
+        (rename: raise-todo TODO)
+        is-it-todo?
         with-exception-stack-trace
         dump-stack-trace?
         dump-stack-trace!
         exit-with-error
         exit-on-error?
         call-with-exit-on-error
-        with-exit-on-error)
+        with-exit-on-error
+        ignore-errors
+        report-errors)
 
 ;; utility macro for definint error classes
 (defsyntax (deferror-class stx)
@@ -59,7 +60,7 @@
      (identifier-list? #'(Class Mixin ...))
      (with-syntax ((defpredicate-alias
                      (if (stx-e #'predicate-alias)
-                       (with-syntax ((Class? (stx-identifier #'Class #'Class "?")))
+                       (with-identifier (Class? #'Class #'Class "?")
                          #'(def predicate-alias Class?))
                        #'(begin))))
        #'(begin
@@ -81,6 +82,10 @@
 
 ;; unsupported interface methods
 (deferror-class UnsupportedMethod () unsupported-method-error?)
+
+;; arithematic errors
+(deferror-class ArithmeticError () arithmetic-error?)
+(deferror-class (ArithmeticOverflow ArithmeticError) () arithmetic-overflow-error?)
 
 ;; utility macros
 (defsyntax (exception-context stx)
@@ -140,23 +145,32 @@
 (defraise/context (raise-context-error where message irritants ...)
   (ContextError message irritants: [irritants ...]))
 
-(defraise/context (raise-unsupported-method where)
-  (UnsupportedMethod "unsupported method" irritants: []))
+(defraise/context (raise-unsupported-method where method irritants ...)
+  (UnsupportedMethod "unsupported method" irritants: [method: 'method irritants ...]))
 
 (defraise/context (raise-contract-violation where contract irritants ...)
-  (ContractViolation "contract violation" irritants: ['contract irritants ...]))
+  (ContractViolation "contract violation" irritants: [contract: 'contract irritants ...]))
 
 (defraise/context (raise-bad-argument where expectation irritants ...)
-  (ContractViolation "contract violation" irritants: [expectation irritants ...]))
+  (ContractViolation "contract violation" irritants: [expectation: expectation irritants ...]))
 
 (defraise/context (raise-unbound-key where irritants ...)
   (UnboundKeyError "no value associated with key" irritants: [irritants ...]))
+
+(defraise/context (raise-arithmetic-overflow where irritants ...)
+  (ArithmeticOverflow "arithmetic operation overflow" irritants: [irritants ...]))
 
 ;; it's a bug
 (deferror-class BUG () is-it-bug?)
 
 (defraise/context (raise-bug where message irritants ...)
   (BUG (string-append "BUG: " message) irritants: [irritants ...]))
+
+;; it's not implemented yet
+(deferror-class TODO () is-it-todo?)
+
+(defraise/context (raise-todo where irritants ...)
+  (TODO (string-append "TODO: " (symbol->string 'where)) irritants: [irritants ...]))
 
 ;; runtime exceptions
 (defrules export-runtime-exceptions ()
@@ -384,3 +398,19 @@
 
 (defrules with-exit-on-error ()
   ((_ body ...) (call-with-exit-on-error (lambda () body ...))))
+
+(defrules ignore-errors (=>)
+  ((_ => value expr rest ...)
+   (with-catch (lambda (e) value) (lambda () expr rest ...)))
+  ((_ expr rest ...)
+   (ignore-errors => #!void expr rest ...)))
+
+(defrules report-errors (=>)
+  ((_ => value expr rest ...)
+   (with-catch
+    (lambda (e)
+      (display-exception e (current-error-port))
+      value)
+    (lambda () expr rest ...)))
+  ((_ expr rest ...)
+   (report-errors => #!void expr rest ...)))

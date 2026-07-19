@@ -1,52 +1,76 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; stdio utilities
-(import :std/sugar
-        :std/error
-        ./interface)
-(export io-copy!)
+(import :std/error
+        :std/iter
+        ./interface
+        ./bio/cache)
+(export io-copy!
+        read-all-from-reader
+        append-u8vectors)
 
-(def default-u8vector-buffer-size (expt 2 15)) ; 32K
-(def default-string-buffer-size (expt 2 13))   ; 32KB - 4kchars
-
-(def (io-copy! reader writer (buffer-or-size #f))
-  (cond
-   ((is-Reader? reader)
-    (io-copy-binary! reader writer (make-u8vector-buffer buffer-or-size)))
-   ((is-StringReader? reader)
-    (io-copy-textual! reader writer (make-string-buffer buffer-or-size)))
-   (else
-    (raise-bad-argument io-copy! "Reader or StringReader instance" reader))))
-
-(defrule (defio-copy proc reader-t read-e writer-t write-e)
-  (def (proc reader writer buffer)
-    (let ((reader (reader-t reader))
-          (writer (writer-t writer)))
-      (let lp ((copied 0))
-        (let (r (read-e reader buffer))
-          (if (fx= r 0)
-            copied
-            (let (w (write-e writer buffer 0 r))
-              (lp (fx+ copied w)))))))))
-
-(defio-copy io-copy-binary!
-  Reader &Reader-read
-  Writer &Writer-write)
-(defio-copy io-copy-textual!
-  StringReader &StringReader-read-string
-  StringWriter &StringWriter-write-string)
-
-(defrule (defmake-buffer proc buffer? make-buffer default-size)
-  (def (proc buffer-or-size)
+(def (io-copy! reader writer (buffer-or-size default-buffer-size))
+  => :integer
+  (let ((reader (Reader reader))
+        (writer (Writer writer)))
     (cond
-     ((not buffer-or-size)
-      (make-buffer default-size))
-     ((buffer? buffer-or-size)
-      buffer-or-size)
-     ((fixnum? buffer-or-size)
-      (make-buffer buffer-or-size))
+     ((u8vector? buffer-or-size)
+      (do-copy reader writer buffer-or-size))
+     ((nonnegative-fixnum? buffer-or-size)
+      (let (buffer (buffer-cache.get buffer-or-size))
+        (begin0 (do-copy reader writer buffer)
+          (buffer-cache.put! buffer))))
      (else
-      (raise-bad-argument make-buffer "buffer, fixnum or #f" buffer-or-size)))))
+      (raise-bad-argument io-copy! "u8vector or nonnegative fixnum" buffer-or-size)))))
 
-(defmake-buffer make-u8vector-buffer u8vector? make-u8vector default-u8vector-buffer-size)
-(defmake-buffer make-string-buffer string? make-string default-string-buffer-size)
+(def (do-copy (reader : Reader) (writer : Writer) (buffer : :u8vector))
+  => :integer
+  (let loop ((copied 0))
+    => :integer
+    (let (r (reader.read buffer))
+      (if (fx= r 0)
+        (:- copied :integer)
+        (let (w (writer.write buffer 0 r))
+          (loop (+ copied w)))))))
+
+(def (read-all-from-reader (reader : Reader)
+                           (buffer-size small-buffer-size : :fixnum))
+  => :u8vector
+  (let loop ((current (buffer-cache.get buffer-size) :- :u8vector)
+             (start   0  :- :fixnum)
+             (buffers [] :- :list))
+    => :u8vector
+    (if (fx< start (u8vector-length current))
+      (let (rd (reader.read current start))
+        (if (fx= rd 0)
+          (let (buffers (reverse! buffers))
+            (begin0
+                (if (fx> start 0)
+                  (begin
+                    (u8vector-shrink! current start)
+                    (if (null? buffers)
+                      current
+                      (append-u8vectors buffers [current])))
+                  (begin
+                    (buffer-cache.put! current)
+                    (append-u8vectors buffers)))
+              (for-each buffer-cache.put! buffers)))
+          (loop current
+                (fx+ start rd)
+                buffers)))
+      (loop (buffer-cache.get buffer-size)
+            0
+            (cons current buffers)))))
+
+(def (append-u8vectors . lsts)
+  (let* ((size
+          (for/fold (r 0) (lst (in-list lsts))
+            (for/fold (r r) (u8v lst)
+              (fx+ r (u8vector-length u8v)))))
+         (result (make-u8vector size)))
+    (for/fold (start 0) (lst (in-list lsts))
+      (for/fold (start start) (u8v lst)
+        (subu8vector-move! u8v 0 (u8vector-length u8v)
+                           result start)
+        (fx+ start (u8vector-length u8v))))
+    result))

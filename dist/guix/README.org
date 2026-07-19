@@ -167,7 +167,7 @@ git-fetch is to see the version.
        (method git-fetch)
        (uri (git-reference
     	 (recursive? #t)
-             (url "https://github.com/mighty-gerbils/gerbil.git")
+             (url "https://git.cons.io/mighty-gerbils/gerbil.git")
              (commit "0917172a519d28c7833886b445938fd250717b2a")))
        (file-name (git-file-name name version))
        (sha256

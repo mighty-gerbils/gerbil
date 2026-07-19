@@ -58,11 +58,13 @@ namespace: #f
   (or (getenv "GERBIL_PATH" #f)
       (path-expand "~/.gerbil")))
 
-(def __smp? (void))
+(def __smp?
+  (delay-atomic
+   (and (member "--enable-smp" (string-split (configure-command-string) #\'))
+        #t)))
 
 (def (gerbil-runtime-smp?)
-  (when (void? __smp?)
-    (set! __smp?
-      (and (member "--enable-smp" (string-split (configure-command-string) #\'))
-           #t)))
-  __smp?)
+  (force __smp?))
+
+(def __DEBUG
+  (getenv "GERBIL_DEBUG" #f))

@@ -7,12 +7,6 @@ namespace: #f
 
 (export #t)
 
-;; compatibilityf for prerelease gambit changes
-(cond-expand
-  (,(with-catch false (cut eval 'max-char-code)))
-  (else
-   (def max-char-code #x10ffff)))
-
 ;; gambit runtime builtin refs that are not in the core prelude <host-runtime>
 (extern
   pp
@@ -81,12 +75,19 @@ namespace: #f
   macro-gc-hash-table-flag-need-rehash
   macro-gc-hash-table-flag-mem-alloc-keys
   macro-gc-hash-table-flag-weak-keys
+  macro-gc-hash-table-flag-weak-vals
   macro-gc-hash-table-count
   macro-gc-hash-table-count-set!
   macro-gc-hash-table-free
   macro-gc-hash-table-free-set!
   macro-gc-hash-table-size
   macro-gc-hash-table-key0
+  macro-table-flags
+  macro-table-gcht
+  macro-table-hash
+  macro-table-init
+  macro-table-loads
+  macro-table-test
   macro-type-fixnum
   macro-type-mem1
   macro-type-mem2
@@ -166,6 +167,7 @@ namespace: #f
   macro-character-port-output-width-set!
   macro-mutex-lock!
   macro-mutex-unlock!
-  macro-current-thread)
+  macro-current-thread
+  macro-thread-end-condvar)
 
 (##void) ;; so that the __0 file exists

@@ -12,12 +12,12 @@ namespace: gerbil/core/mop
           #t
           (import: (in: #f MOP-1))
           (import: (in: #f MOP-4))
-          (import: (in: #f MOP-5))
+          (import: (in: #f MOP-system-classes))
           (phi: 1 (import: (in: #f MOP-1)))
           (phi: 1 (import: (in: #f MOP-2)))
           (phi: 1 (import: (in: #f MOP-3)))
           (phi: 1 (import: (in: #f MOP-4)))
-          (phi: 1 (import: (in: #f MOP-5))))
+          (phi: 1 (import: (in: #f MOP-system-classes))))
          (%#module
           MOP-1
           (%#begin (%#export
@@ -46,6 +46,72 @@ namespace: gerbil/core/mop
           (%#begin (%#import :gerbil/core/expander (in: #f MOP-1))
                    (%#export #t)
                    (%#define-runtime
+                    runtime-type-info::t
+                    gerbil/core/mop~MOP-2#runtime-type-info::t)
+                   (%#define-runtime
+                    runtime-type-info?
+                    gerbil/core/mop~MOP-2#runtime-type-info?)
+                   (%#define-runtime
+                    make-runtime-type-info
+                    gerbil/core/mop~MOP-2#make-runtime-type-info)
+                   (%#define-runtime
+                    !runtime-type-id
+                    gerbil/core/mop~MOP-2#!runtime-type-id)
+                   (%#define-runtime
+                    !runtime-type-name
+                    gerbil/core/mop~MOP-2#!runtime-type-name)
+                   (%#define-runtime
+                    !runtime-type-descriptor
+                    gerbil/core/mop~MOP-2#!runtime-type-descriptor)
+                   (%#define-runtime
+                    !runtime-type-id-set!
+                    gerbil/core/mop~MOP-2#!runtime-type-id-set!)
+                   (%#define-runtime
+                    !runtime-type-name-set!
+                    gerbil/core/mop~MOP-2#!runtime-type-name-set!)
+                   (%#define-runtime
+                    !runtime-type-descriptor-set!
+                    gerbil/core/mop~MOP-2#!runtime-type-descriptor-set!)
+                   (%#define-runtime
+                    &!runtime-type-id
+                    gerbil/core/mop~MOP-2#&!runtime-type-id)
+                   (%#define-runtime
+                    &!runtime-type-name
+                    gerbil/core/mop~MOP-2#&!runtime-type-name)
+                   (%#define-runtime
+                    &!runtime-type-descriptor
+                    gerbil/core/mop~MOP-2#&!runtime-type-descriptor)
+                   (%#define-runtime
+                    &!runtime-type-id-set!
+                    gerbil/core/mop~MOP-2#&!runtime-type-id-set!)
+                   (%#define-runtime
+                    &!runtime-type-name-set!
+                    gerbil/core/mop~MOP-2#&!runtime-type-name-set!)
+                   (%#define-runtime
+                    &!runtime-type-descriptor-set!
+                    gerbil/core/mop~MOP-2#&!runtime-type-descriptor-set!)
+                   (%#define-runtime
+                    meta-object::t
+                    gerbil/core/mop~MOP-2#meta-object::t)
+                   (%#define-runtime
+                    meta-object?
+                    gerbil/core/mop~MOP-2#meta-object?)
+                   (%#define-runtime
+                    make-meta-object
+                    gerbil/core/mop~MOP-2#make-meta-object)
+                   (%#define-runtime
+                    meta-object-methods
+                    gerbil/core/mop~MOP-2#meta-object-methods)
+                   (%#define-runtime
+                    meta-object-methods-set!
+                    gerbil/core/mop~MOP-2#meta-object-methods-set!)
+                   (%#define-runtime
+                    &meta-object-methods
+                    gerbil/core/mop~MOP-2#&meta-object-methods)
+                   (%#define-runtime
+                    &meta-object-methods-set!
+                    gerbil/core/mop~MOP-2#&meta-object-methods-set!)
+                   (%#define-runtime
                     class-type-info::t
                     gerbil/core/mop~MOP-2#class-type-info::t)
                    (%#define-runtime
@@ -54,12 +120,6 @@ namespace: gerbil/core/mop
                    (%#define-runtime
                     make-class-type-info
                     gerbil/core/mop~MOP-2#make-class-type-info)
-                   (%#define-runtime
-                    !class-type-id
-                    gerbil/core/mop~MOP-2#!class-type-id)
-                   (%#define-runtime
-                    !class-type-name
-                    gerbil/core/mop~MOP-2#!class-type-name)
                    (%#define-runtime
                     !class-type-super
                     gerbil/core/mop~MOP-2#!class-type-super)
@@ -88,9 +148,6 @@ namespace: gerbil/core/mop
                     !class-type-constructor-method
                     gerbil/core/mop~MOP-2#!class-type-constructor-method)
                    (%#define-runtime
-                    !class-type-descriptor
-                    gerbil/core/mop~MOP-2#!class-type-descriptor)
-                   (%#define-runtime
                     !class-type-constructor
                     gerbil/core/mop~MOP-2#!class-type-constructor)
                    (%#define-runtime
@@ -118,11 +175,20 @@ namespace: gerbil/core/mop
                     !class-type-slot-contracts
                     gerbil/core/mop~MOP-2#!class-type-slot-contracts)
                    (%#define-runtime
-                    !class-type-id-set!
-                    gerbil/core/mop~MOP-2#!class-type-id-set!)
+                    !class-type-slot-offsets
+                    gerbil/core/mop~MOP-2#!class-type-slot-offsets)
                    (%#define-runtime
-                    !class-type-name-set!
-                    gerbil/core/mop~MOP-2#!class-type-name-set!)
+                    !class-type-id
+                    gerbil/core/mop~MOP-2#!class-type-id)
+                   (%#define-runtime
+                    !class-type-name
+                    gerbil/core/mop~MOP-2#!class-type-name)
+                   (%#define-runtime
+                    !class-type-descriptor
+                    gerbil/core/mop~MOP-2#!class-type-descriptor)
+                   (%#define-runtime
+                    !class-type-methods
+                    gerbil/core/mop~MOP-2#!class-type-methods)
                    (%#define-runtime
                     !class-type-super-set!
                     gerbil/core/mop~MOP-2#!class-type-super-set!)
@@ -151,9 +217,6 @@ namespace: gerbil/core/mop
                     !class-type-constructor-method-set!
                     gerbil/core/mop~MOP-2#!class-type-constructor-method-set!)
                    (%#define-runtime
-                    !class-type-descriptor-set!
-                    gerbil/core/mop~MOP-2#!class-type-descriptor-set!)
-                   (%#define-runtime
                     !class-type-constructor-set!
                     gerbil/core/mop~MOP-2#!class-type-constructor-set!)
                    (%#define-runtime
@@ -181,11 +244,20 @@ namespace: gerbil/core/mop
                     !class-type-slot-contracts-set!
                     gerbil/core/mop~MOP-2#!class-type-slot-contracts-set!)
                    (%#define-runtime
-                    &!class-type-id
-                    gerbil/core/mop~MOP-2#&!class-type-id)
+                    !class-type-slot-offsets-set!
+                    gerbil/core/mop~MOP-2#!class-type-slot-offsets-set!)
                    (%#define-runtime
-                    &!class-type-name
-                    gerbil/core/mop~MOP-2#&!class-type-name)
+                    !class-type-id-set!
+                    gerbil/core/mop~MOP-2#!class-type-id-set!)
+                   (%#define-runtime
+                    !class-type-name-set!
+                    gerbil/core/mop~MOP-2#!class-type-name-set!)
+                   (%#define-runtime
+                    !class-type-descriptor-set!
+                    gerbil/core/mop~MOP-2#!class-type-descriptor-set!)
+                   (%#define-runtime
+                    !class-type-methods-set!
+                    gerbil/core/mop~MOP-2#!class-type-methods-set!)
                    (%#define-runtime
                     &!class-type-super
                     gerbil/core/mop~MOP-2#&!class-type-super)
@@ -214,9 +286,6 @@ namespace: gerbil/core/mop
                     &!class-type-constructor-method
                     gerbil/core/mop~MOP-2#&!class-type-constructor-method)
                    (%#define-runtime
-                    &!class-type-descriptor
-                    gerbil/core/mop~MOP-2#&!class-type-descriptor)
-                   (%#define-runtime
                     &!class-type-constructor
                     gerbil/core/mop~MOP-2#&!class-type-constructor)
                    (%#define-runtime
@@ -244,11 +313,20 @@ namespace: gerbil/core/mop
                     &!class-type-slot-contracts
                     gerbil/core/mop~MOP-2#&!class-type-slot-contracts)
                    (%#define-runtime
-                    &!class-type-id-set!
-                    gerbil/core/mop~MOP-2#&!class-type-id-set!)
+                    &!class-type-slot-offsets
+                    gerbil/core/mop~MOP-2#&!class-type-slot-offsets)
                    (%#define-runtime
-                    &!class-type-name-set!
-                    gerbil/core/mop~MOP-2#&!class-type-name-set!)
+                    &!class-type-id
+                    gerbil/core/mop~MOP-2#&!class-type-id)
+                   (%#define-runtime
+                    &!class-type-name
+                    gerbil/core/mop~MOP-2#&!class-type-name)
+                   (%#define-runtime
+                    &!class-type-descriptor
+                    gerbil/core/mop~MOP-2#&!class-type-descriptor)
+                   (%#define-runtime
+                    &!class-type-methods
+                    gerbil/core/mop~MOP-2#&!class-type-methods)
                    (%#define-runtime
                     &!class-type-super-set!
                     gerbil/core/mop~MOP-2#&!class-type-super-set!)
@@ -277,9 +355,6 @@ namespace: gerbil/core/mop
                     &!class-type-constructor-method-set!
                     gerbil/core/mop~MOP-2#&!class-type-constructor-method-set!)
                    (%#define-runtime
-                    &!class-type-descriptor-set!
-                    gerbil/core/mop~MOP-2#&!class-type-descriptor-set!)
-                   (%#define-runtime
                     &!class-type-constructor-set!
                     gerbil/core/mop~MOP-2#&!class-type-constructor-set!)
                    (%#define-runtime
@@ -307,8 +382,32 @@ namespace: gerbil/core/mop
                     &!class-type-slot-contracts-set!
                     gerbil/core/mop~MOP-2#&!class-type-slot-contracts-set!)
                    (%#define-runtime
+                    &!class-type-slot-offsets-set!
+                    gerbil/core/mop~MOP-2#&!class-type-slot-offsets-set!)
+                   (%#define-runtime
+                    &!class-type-id-set!
+                    gerbil/core/mop~MOP-2#&!class-type-id-set!)
+                   (%#define-runtime
+                    &!class-type-name-set!
+                    gerbil/core/mop~MOP-2#&!class-type-name-set!)
+                   (%#define-runtime
+                    &!class-type-descriptor-set!
+                    gerbil/core/mop~MOP-2#&!class-type-descriptor-set!)
+                   (%#define-runtime
+                    &!class-type-methods-set!
+                    gerbil/core/mop~MOP-2#&!class-type-methods-set!)
+                   (%#define-runtime
                     class-type-info::apply-macro-expander
                     gerbil/core/mop~MOP-2#class-type-info::apply-macro-expander)
+                   (%#begin (%#define-runtime
+                             syntax-local-runtime-type-info?__%
+                             gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?__%)
+                            (%#begin (%#define-runtime
+                                      syntax-local-runtime-type-info?__0
+                                      gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?__0)
+                                     (%#define-runtime
+                                      syntax-local-runtime-type-info?
+                                      gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?)))
                    (%#begin (%#define-runtime
                              syntax-local-class-type-info?__%
                              gerbil/core/mop~MOP-2#syntax-local-class-type-info?__%)
@@ -327,8 +426,14 @@ namespace: gerbil/core/mop
                              (%#call (%#ref load-module)
                                      (%#quote "gerbil/core/mop~2")))
                             (%#define-syntax
-                             class-type-info
-                             |gerbil/core/mop~MOP-3[:0:]#class-type-info|))))
+                             runtime-type-info
+                             |gerbil/core/mop~MOP-3[:0:]#runtime-type-info|))
+                   (%#define-syntax
+                    meta-object
+                    |gerbil/core/mop~MOP-3[:0:]#meta-object|)
+                   (%#define-syntax
+                    class-type-info
+                    |gerbil/core/mop~MOP-3[:0:]#class-type-info|)))
          (%#module
           MOP-4
           (%#begin (%#import
@@ -367,204 +472,306 @@ namespace: gerbil/core/mop
           MOP-5
           (%#begin (%#import (phi: 1 (in: #f MOP-2)))
                    (%#export #t)
+                   (%#begin-syntax
+                    (%#call (%#ref load-module) (%#quote "gerbil/core/mop~4"))
+                    (%#define-runtime
+                     generate-simple-system-class
+                     |gerbil/core/mop~MOP-5[1]#generate-simple-system-class|)
+                    (%#define-runtime
+                     generate-system-class-with-fields
+                     |gerbil/core/mop~MOP-5[1]#generate-system-class-with-fields|)
+                    (%#define-runtime
+                     emit-system-class
+                     |gerbil/core/mop~MOP-5[1]#emit-system-class|))
+                   (%#define-syntax
+                    defsystem-class-info
+                    |gerbil/core/mop~MOP-5[:0:]#defsystem-class-info|)))
+         (%#module
+          MOP-system-classes
+          (%#begin (%#import (in: #f MOP-5) (phi: 1 (in: #f MOP-2)))
+                   (%#export #t)
                    (%#begin (%#begin-syntax
                              (%#call (%#ref load-module)
-                                     (%#quote "gerbil/core/mop~4")))
+                                     (%#quote "gerbil/core/mop~5")))
                             (%#define-syntax
-                             defsystem-class-info
-                             |gerbil/core/mop~MOP-5[:0:]#defsystem-class-info|))
-                   (%#define-syntax :t |gerbil/core/mop~MOP-5[:0:]#:t|)
-                   (%#define-syntax :class |gerbil/core/mop~MOP-5[:0:]#:class|)
-                   (%#define-syntax class |gerbil/core/mop~MOP-5[:0:]#class|)
+                             :t
+                             |gerbil/core/mop~MOP-system-classes[:0:]#:t|))
+                   (%#define-syntax
+                    :class
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:class|)
+                   (%#define-syntax
+                    class
+                    |gerbil/core/mop~MOP-system-classes[:0:]#class|)
                    (%#define-syntax
                     :object
-                    |gerbil/core/mop~MOP-5[:0:]#:object|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:object|)
+                   (%#define-syntax
+                    :builtin
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:builtin|)
+                   (%#define-syntax
+                    :subtyped
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:subtyped|)
+                   (%#define-syntax
+                    :structure
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:structure|)
                    (%#define-syntax
                     :immediate
-                    |gerbil/core/mop~MOP-5[:0:]#:immediate|)
-                   (%#define-syntax :char |gerbil/core/mop~MOP-5[:0:]#:char|)
-                   (%#define-syntax
-                    :boolean
-                    |gerbil/core/mop~MOP-5[:0:]#:boolean|)
-                   (%#define-syntax :atom |gerbil/core/mop~MOP-5[:0:]#:atom|)
-                   (%#define-syntax :void |gerbil/core/mop~MOP-5[:0:]#:void|)
-                   (%#define-syntax :eof |gerbil/core/mop~MOP-5[:0:]#:eof|)
-                   (%#define-syntax :true |gerbil/core/mop~MOP-5[:0:]#:true|)
-                   (%#define-syntax :false |gerbil/core/mop~MOP-5[:0:]#:false|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:immediate|)
                    (%#define-syntax
                     :special
-                    |gerbil/core/mop~MOP-5[:0:]#:special|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:special|)
+                   (%#define-syntax
+                    :atom
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:atom|)
+                   (%#define-syntax
+                    :char
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:char|)
+                   (%#define-syntax
+                    :boolean
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:boolean|)
+                   (%#define-syntax
+                    :true
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:true|)
+                   (%#define-syntax
+                    :false
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:false|)
+                   (%#define-syntax
+                    :eof
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:eof|)
+                   (%#define-syntax
+                    :void
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:void|)
+                   (%#define-syntax
+                    :unbound
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:unbound|)
+                   (%#define-syntax
+                    :unbound2
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:unbound2|)
+                   (%#define-syntax
+                    :unused
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:unused|)
+                   (%#define-syntax
+                    :deleted
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:deleted|)
+                   (%#define-syntax
+                    :absent
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:absent|)
+                   (%#define-syntax
+                    :dssl-token
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:dssl-token|)
+                   (%#define-syntax
+                    :dssl-optional
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:dssl-optional|)
+                   (%#define-syntax
+                    :dssl-rest
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:dssl-rest|)
+                   (%#define-syntax
+                    :dssl-key
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:dssl-key|)
                    (%#define-syntax
                     :number
-                    |gerbil/core/mop~MOP-5[:0:]#:number|)
-                   (%#define-syntax :real |gerbil/core/mop~MOP-5[:0:]#:real|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:number|)
+                   (%#define-syntax
+                    :real
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:real|)
                    (%#define-syntax
                     :integer
-                    |gerbil/core/mop~MOP-5[:0:]#:integer|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:integer|)
                    (%#define-syntax
                     :fixnum
-                    |gerbil/core/mop~MOP-5[:0:]#:fixnum|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:fixnum|)
                    (%#define-syntax
                     :bignum
-                    |gerbil/core/mop~MOP-5[:0:]#:bignum|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:bignum|)
                    (%#define-syntax
                     :ratnum
-                    |gerbil/core/mop~MOP-5[:0:]#:ratnum|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:ratnum|)
                    (%#define-syntax
                     :flonum
-                    |gerbil/core/mop~MOP-5[:0:]#:flonum|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:flonum|)
+                   (%#define-syntax
+                    :stflonum
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:stflonum|)
+                   (%#define-syntax
+                    :haflonum
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:haflonum|)
                    (%#define-syntax
                     :cpxnum
-                    |gerbil/core/mop~MOP-5[:0:]#:cpxnum|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:cpxnum|)
                    (%#define-syntax
                     :symbolic
-                    |gerbil/core/mop~MOP-5[:0:]#:symbolic|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:symbolic|)
                    (%#define-syntax
                     :symbol
-                    |gerbil/core/mop~MOP-5[:0:]#:symbol|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:symbol|)
                    (%#define-syntax
                     :keyword
-                    |gerbil/core/mop~MOP-5[:0:]#:keyword|)
-                   (%#define-syntax :list |gerbil/core/mop~MOP-5[:0:]#:list|)
-                   (%#define-syntax :pair |gerbil/core/mop~MOP-5[:0:]#:pair|)
-                   (%#define-syntax :null |gerbil/core/mop~MOP-5[:0:]#:null|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:keyword|)
+                   (%#define-syntax
+                    :list
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:list|)
+                   (%#define-syntax
+                    :pair
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:pair|)
+                   (%#define-syntax
+                    :null
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:null|)
                    (%#define-syntax
                     :sequence
-                    |gerbil/core/mop~MOP-5[:0:]#:sequence|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:sequence|)
                    (%#define-syntax
                     :vector
-                    |gerbil/core/mop~MOP-5[:0:]#:vector|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:vector|)
                    (%#define-syntax
                     :string
-                    |gerbil/core/mop~MOP-5[:0:]#:string|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:string|)
                    (%#define-syntax
                     :hvector
-                    |gerbil/core/mop~MOP-5[:0:]#:hvector|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:hvector|)
                    (%#define-syntax
                     :u8vector
-                    |gerbil/core/mop~MOP-5[:0:]#:u8vector|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:u8vector|)
                    (%#define-syntax
                     :s8vector
-                    |gerbil/core/mop~MOP-5[:0:]#:s8vector|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:s8vector|)
                    (%#define-syntax
                     :u16vector
-                    |gerbil/core/mop~MOP-5[:0:]#:u16vector|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:u16vector|)
                    (%#define-syntax
                     :s16vector
-                    |gerbil/core/mop~MOP-5[:0:]#:s16vector|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:s16vector|)
                    (%#define-syntax
                     :u32vector
-                    |gerbil/core/mop~MOP-5[:0:]#:u32vector|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:u32vector|)
                    (%#define-syntax
                     :s32vector
-                    |gerbil/core/mop~MOP-5[:0:]#:s32vector|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:s32vector|)
                    (%#define-syntax
                     :u64vector
-                    |gerbil/core/mop~MOP-5[:0:]#:u64vector|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:u64vector|)
                    (%#define-syntax
                     :s64vector
-                    |gerbil/core/mop~MOP-5[:0:]#:s64vector|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:s64vector|)
                    (%#define-syntax
                     :f32vector
-                    |gerbil/core/mop~MOP-5[:0:]#:f32vector|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:f32vector|)
                    (%#define-syntax
                     :f64vector
-                    |gerbil/core/mop~MOP-5[:0:]#:f64vector|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:f64vector|)
                    (%#define-syntax
                     :values
-                    |gerbil/core/mop~MOP-5[:0:]#:values|)
-                   (%#define-syntax :box |gerbil/core/mop~MOP-5[:0:]#:box|)
-                   (%#define-syntax :frame |gerbil/core/mop~MOP-5[:0:]#:frame|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:values|)
+                   (%#define-syntax
+                    :box
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:box|)
+                   (%#define-syntax
+                    :frame
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:frame|)
                    (%#define-syntax
                     :continuation
-                    |gerbil/core/mop~MOP-5[:0:]#:continuation|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:continuation|)
                    (%#define-syntax
                     :promise
-                    |gerbil/core/mop~MOP-5[:0:]#:promise|)
-                   (%#define-syntax :weak |gerbil/core/mop~MOP-5[:0:]#:weak|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:promise|)
+                   (%#define-syntax
+                    :weak
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:weak|)
                    (%#define-syntax
                     :foreign
-                    |gerbil/core/mop~MOP-5[:0:]#:foreign|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:foreign|)
                    (%#define-syntax
                     :procedure
-                    |gerbil/core/mop~MOP-5[:0:]#:procedure|)
-                   (%#define-syntax :time |gerbil/core/mop~MOP-5[:0:]#:time|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:procedure|)
+                   (%#define-syntax
+                    :return
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:return|)
+                   (%#define-syntax
+                    :time
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:time|)
                    (%#define-syntax
                     :thread
-                    |gerbil/core/mop~MOP-5[:0:]#:thread|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:thread|)
                    (%#define-syntax
                     :thread-group
-                    |gerbil/core/mop~MOP-5[:0:]#:thread-group|)
-                   (%#define-syntax :mutex |gerbil/core/mop~MOP-5[:0:]#:mutex|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:thread-group|)
+                   (%#define-syntax
+                    :mutex
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:mutex|)
                    (%#define-syntax
                     :condvar
-                    |gerbil/core/mop~MOP-5[:0:]#:condvar|)
-                   (%#define-syntax :port |gerbil/core/mop~MOP-5[:0:]#:port|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:condvar|)
+                   (%#define-syntax
+                    :port
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:port|)
                    (%#define-syntax
                     :object-port
-                    |gerbil/core/mop~MOP-5[:0:]#:object-port|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:object-port|)
                    (%#define-syntax
                     :character-port
-                    |gerbil/core/mop~MOP-5[:0:]#:character-port|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:character-port|)
                    (%#define-syntax
                     :byte-port
-                    |gerbil/core/mop~MOP-5[:0:]#:byte-port|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:byte-port|)
                    (%#define-syntax
                     :device-port
-                    |gerbil/core/mop~MOP-5[:0:]#:device-port|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:device-port|)
                    (%#define-syntax
                     :vector-port
-                    |gerbil/core/mop~MOP-5[:0:]#:vector-port|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:vector-port|)
                    (%#define-syntax
                     :string-port
-                    |gerbil/core/mop~MOP-5[:0:]#:string-port|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:string-port|)
                    (%#define-syntax
                     :u8vector-port
-                    |gerbil/core/mop~MOP-5[:0:]#:u8vector-port|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:u8vector-port|)
                    (%#define-syntax
                     :raw-device-port
-                    |gerbil/core/mop~MOP-5[:0:]#:raw-device-port|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:raw-device-port|)
                    (%#define-syntax
                     :tcp-server-port
-                    |gerbil/core/mop~MOP-5[:0:]#:tcp-server-port|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:tcp-server-port|)
                    (%#define-syntax
                     :udp-port
-                    |gerbil/core/mop~MOP-5[:0:]#:udp-port|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:udp-port|)
                    (%#define-syntax
                     :directory-port
-                    |gerbil/core/mop~MOP-5[:0:]#:directory-port|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:directory-port|)
                    (%#define-syntax
                     :event-queue-port
-                    |gerbil/core/mop~MOP-5[:0:]#:event-queue-port|)
-                   (%#define-syntax :table |gerbil/core/mop~MOP-5[:0:]#:table|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:event-queue-port|)
+                   (%#define-syntax
+                    :table
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:table|)
                    (%#define-syntax
                     :readenv
-                    |gerbil/core/mop~MOP-5[:0:]#:readenv|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:readenv|)
                    (%#define-syntax
                     :writeenv
-                    |gerbil/core/mop~MOP-5[:0:]#:writeenv|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:writeenv|)
                    (%#define-syntax
                     :readtable
-                    |gerbil/core/mop~MOP-5[:0:]#:readtable|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:readtable|)
                    (%#define-syntax
                     :processor
-                    |gerbil/core/mop~MOP-5[:0:]#:processor|)
-                   (%#define-syntax :vm |gerbil/core/mop~MOP-5[:0:]#:vm|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:processor|)
+                   (%#define-syntax
+                    :vm
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:vm|)
                    (%#define-syntax
                     :file-info
-                    |gerbil/core/mop~MOP-5[:0:]#:file-info|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:file-info|)
                    (%#define-syntax
                     :socket-info
-                    |gerbil/core/mop~MOP-5[:0:]#:socket-info|)
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:socket-info|)
                    (%#define-syntax
                     :address-info
-                    |gerbil/core/mop~MOP-5[:0:]#:address-info|)))
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:address-info|)))
          (%#import
           (in: #f MOP-1)
           (in: #f MOP-4)
-          (in: #f MOP-5)
+          (in: #f MOP-system-classes)
           (phi: 1 (in: #f MOP-1))
           (phi: 1 (in: #f MOP-2))
           (phi: 1 (in: #f MOP-3))
           (phi: 1 (in: #f MOP-4))
-          (phi: 1 (in: #f MOP-5))))
+          (phi: 1 (in: #f MOP-system-classes))))

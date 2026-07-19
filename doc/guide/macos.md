@@ -5,7 +5,7 @@ MacOS is well supported by gerbil.
 -   If you've got [Homebrew](https://brew.sh/) you can use the [Tap and/or Formula](#homebrew-formula-and-binaries).
 -   If you've got some time to spare it can [be built](#raw-build) easily.
 
-Because there are many different versions and processors your configuration may be slightly different than expected. If anything at all seems out of the ordinary please [file an issue](https://github.com/mighty-gerbils/gerbil/issues) ot get in touch another way and we'll be on top of it.
+Because there are many different versions and processors your configuration may be slightly different than expected. If anything at all seems out of the ordinary please [file an issue](https://git.cons.io/mighty-gerbils/gerbil/issues) ot get in touch another way and we'll be on top of it.
 
 
 <a id="homebrew-formula-and-binaries"></a>
@@ -41,7 +41,7 @@ There are a few different ways to build a working `gerbil` on `MacOS`.
 -   **Compile and Install OpenSSL:** We need it for crypto so cannot use the built in ssl.
     
     ```sh
-    git clone https://github.com/openssl/openssl.git
+    git clone https://git.cons.io/openssl/openssl.git
     cd openssl;
     ./config && make
     sudo make install
@@ -55,7 +55,7 @@ If you want to be as native as possible this is the easy way. Most of us have Ma
 This takes a long time as `clang` is a lot slower to build. But the binary may outperform modern `gcc` and building binaries with `clang` without setting `GERBIL_GCC` is something so it's a toss up.
 
 ```sh
-git clone https://github.com/mighty-gerbils/gerbil.git
+git clone https://git.cons.io/mighty-gerbils/gerbil.git
 
 # On Sonama, Silicon not Intel, we set the prefix as so.
 # You may want it elsewhere.
@@ -87,7 +87,7 @@ export GERBIL_BUILD_CORES=4
 
 cd $(mktemp -d);
 
-git clone https://github.com/mighty-gerbils/gerbil.git
+git clone https://git.cons.io/mighty-gerbils/gerbil.git
 
 cd gerbil;
 ./configure --prefix=/opt/gerbil && make -j$GERBIL_BUILD_CORES
@@ -111,7 +111,7 @@ export GERBIL_BUILD_CORES=4
 
 cd $(mktemp -d);
 
-git clone https://github.com/mighty-gerbils/gerbil.git
+git clone https://git.cons.io/mighty-gerbils/gerbil.git
 
 cd gerbil;
 ./configure --prefix=/opt/gerbil && make -j$GERBIL_BUILD_CORES
@@ -142,7 +142,7 @@ export GERBIL_BUILD_CORES=4
 
 cd $(mktemp -d);
 
-git clone https://github.com/mighty-gerbils/gerbil.git
+git clone https://git.cons.io/mighty-gerbils/gerbil.git
 
 cd gerbil;
 ./configure --prefix=/opt/gerbil && make -j$GERBIL_BUILD_CORES
@@ -166,7 +166,7 @@ export GERBIL_BUILD_CORES=4
 
 cd $(mktemp -d);
 
-git clone https://github.com/mighty-gerbils/gerbil.git
+git clone https://git.cons.io/mighty-gerbils/gerbil.git
 
 cd gerbil;
 ./configure --prefix=/opt/gerbil && make -j$GERBIL_BUILD_CORES

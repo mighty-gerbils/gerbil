@@ -89,6 +89,28 @@ namespace: gxc
                   (%#define-runtime
                    apply-expression-subst*
                    gxc#apply-expression-subst*))
+         (%#define-runtime ::inline-subst::t gxc#::inline-subst::t)
+         (%#define-runtime ::inline-subst? gxc#::inline-subst?)
+         (%#define-runtime make-::inline-subst gxc#make-::inline-subst)
+         (%#define-runtime ::inline-subst-subst gxc#::inline-subst-subst)
+         (%#define-runtime
+          ::inline-subst-subst-set!
+          gxc#::inline-subst-subst-set!)
+         (%#define-runtime &::inline-subst-subst gxc#&::inline-subst-subst)
+         (%#define-runtime
+          &::inline-subst-subst-set!
+          gxc#&::inline-subst-subst-set!)
+         (%#define-syntax ::inline-subst |gxc[:0:]#::inline-subst|)
+         (%#define-runtime
+          ::inline-subst-bind-methods!
+          gxc#::inline-subst-bind-methods!)
+         (%#begin (%#define-runtime
+                   apply-inline-subst__%
+                   gxc#apply-inline-subst__%)
+                  (%#define-runtime
+                   apply-inline-subst__@
+                   gxc#apply-inline-subst__@)
+                  (%#define-runtime apply-inline-subst gxc#apply-inline-subst))
          (%#define-runtime ::find-expression::t gxc#::find-expression::t)
          (%#define-runtime ::find-expression? gxc#::find-expression?)
          (%#define-runtime make-::find-expression gxc#make-::find-expression)
@@ -159,6 +181,8 @@ namespace: gxc
          (%#define-runtime expression-subst*-ref% gxc#expression-subst*-ref%)
          (%#define-runtime expression-subst-setq% gxc#expression-subst-setq%)
          (%#define-runtime expression-subst*-setq% gxc#expression-subst*-setq%)
+         (%#define-runtime inline-subst-ref% gxc#inline-subst-ref%)
+         (%#define-runtime inline-subst-setq% gxc#inline-subst-setq%)
          (%#define-runtime
           collect-runtime-refs-ref%
           gxc#collect-runtime-refs-ref%)

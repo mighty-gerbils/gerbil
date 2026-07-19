@@ -5,48 +5,60 @@
 (cond-expand
   (config-have-sqlite
    (import :std/test
-           :std/db/dbi
-           :std/db/sqlite
-           :std/os/temporaries)
+           :std/iter
+           ./interface
+           ./db
+           ./sqlite)
    (export sqlite-test test-setup! test-cleanup!)
+
+   (def (collect q)
+     (for/collect (x q) x))
 
    (def db #f)
    (def (test-setup!)
-     (set! db (sql-connect sqlite-open ":memory:")) )
+     (set! db (new-db (sqlite-open ":memory:"))))
    (def (test-cleanup!)
-     (sql-close db))
+     (DB-close db))
 
    (def sqlite-test
-     (test-suite "test :std/db/sqlite"
-
+     (test-suite ":std/db/sqlite"
        (test-case "prepare table"
-         (let (stmt (sql-prepare db "CREATE TABLE Users (FirstName VARCHAR, LastName VARCHAR, Secret VARCHAR)"))
-           (check (sql-exec stmt) => #!void)
-           (sql-finalize stmt))
+         (using (stmt (DB-prepare db "CREATE TABLE Users (FirstName VARCHAR, LastName VARCHAR, Secret VARCHAR)")
+                      : Statement)
+           (check (stmt.exec!) => #!void)
+           (stmt.close))
 
-         (let (stmt (sql-prepare db "INSERT INTO Users (FirstName, LastName, Secret) VALUES (?, ?, ?)"))
-           (sql-bind stmt "John" "Smith" "very secret")
-           (check (sql-exec stmt) => #!void)
-           (sql-bind stmt "Marc" "Smith" "oh so secret")
-           (check (sql-exec stmt) => #!void)
-           (sql-finalize stmt)))
+         (using (stmt (DB-prepare db "INSERT INTO Users (FirstName, LastName, Secret) VALUES (?, ?, ?)")
+                      : Statement)
+           (stmt.bind! '("John" "Smith" "very secret"))
+           (check (stmt.exec!) => #!void)
+           (stmt.bind! '("Marc" "Smith" "oh so secret"))
+           (check (stmt.exec!) => #!void)
+           (stmt.close)))
 
        (test-case "read and modify table"
+         (using (stmt (DB-prepare db "SELECT * FROM Users")
+                      : Statement)
+           (check (collect (stmt.query))
+                  => '(#("John" "Smith" "very secret")
+                       #("Marc" "Smith" "oh so secret")))
+           (stmt.close))
 
-         (let (stmt (sql-prepare db "SELECT * FROM Users"))
-           (check (sql-query stmt) => '(#("John" "Smith" "very secret")
-                                        #("Marc" "Smith" "oh so secret"))))
+         (using (stmt (DB-prepare db "SELECT * FROM Users WHERE FirstName = ?")
+                      : Statement)
+           (stmt.bind! '("John"))
+           (check (collect (stmt.query))
+                  => '(#("John" "Smith" "very secret")))
+           (stmt.close))
 
-         (let (stmt (sql-prepare db "SELECT * FROM Users WHERE FirstName = ?"))
-           (sql-bind stmt "John")
-           (check (sql-query stmt) => '(#("John" "Smith" "very secret")))
-           (sql-finalize stmt))
+         (using (stmt (DB-prepare db "DELETE FROM Users WHERE FirstName = ?")
+                      : Statement)
+           (stmt.bind! '("Marc"))
+           (check (stmt.exec!) => #!void)
+           (stmt.close))
 
-         (let (stmt (sql-prepare db "DELETE FROM Users WHERE FirstName = ?"))
-           (sql-bind stmt "Marc")
-           (check (sql-exec stmt) => #!void)
-           (sql-finalize stmt))
-
-         (let (stmt (sql-prepare db "SELECT * FROM Users"))
-           (check (sql-query stmt) => '(#("John" "Smith" "very secret")))
-           (sql-finalize stmt)))))))
+         (using (stmt (DB-prepare db "SELECT * FROM Users")
+                      : Statement)
+           (check (collect (stmt.query))
+                  => '(#("John" "Smith" "very secret")))
+           (stmt.close)))))))

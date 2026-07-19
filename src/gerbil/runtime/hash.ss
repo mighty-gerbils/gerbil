@@ -29,6 +29,7 @@ namespace: #f
   (delete! key) => :void
   (for-each (proc : :procedure)) => :void
   (copy) => @HashTable
+  (new (size-hint :? :fixnum := #f)) => @HashTable
   (clear!) => :void
   (length) => :fixnum)
 
@@ -46,6 +47,7 @@ namespace: #f
 (bind-method! __table::t 'HashTable::for-each raw-table-for-each)
 (bind-method! __table::t 'HashTable::length &raw-table-count)
 (bind-method! __table::t 'HashTable::copy raw-table-copy)
+(bind-method! __table::t 'HashTable::new raw-table-new)
 (bind-method! __table::t 'HashTable::clear! raw-table-clear!)
 
 (bind-method! __gc-table::t 'HashTable::ref gc-table-ref)
@@ -55,11 +57,12 @@ namespace: #f
 (bind-method! __gc-table::t 'HashTable::for-each gc-table-for-each)
 (bind-method! __gc-table::t 'HashTable::length gc-table-length)
 (bind-method! __gc-table::t 'HashTable::copy gc-table-copy)
+(bind-method! __gc-table::t 'HashTable::new gc-table-new)
 (bind-method! __gc-table::t 'HashTable::clear! gc-table-clear!)
 
 (def (gambit-table-update! table key update default)
   (let (result (table-ref table key default))
-    (table-set! table key (update default))))
+    (table-set! table key (update result))))
 
 (def (gambit-table-for-each table proc)
   (table-for-each proc table))
@@ -74,19 +77,20 @@ namespace: #f
 (bind-method! (macro-type-table) 'HashTable::for-each gambit-table-for-each)
 (bind-method! (macro-type-table) 'HashTable::length table-length)
 (bind-method! (macro-type-table) 'HashTable::copy table-copy)
+(bind-method! (macro-type-table) 'HashTable::new table-new)
 (bind-method! (macro-type-table) 'HashTable::clear! gambit-table-clear!)
 
 ;; immediate hash-table class; reifies the raw-table type
 (def hash-table::t
   (begin-annotation
-      (@mop.class gerbil#hash-table::t              ; type-id
+      (@mop.class hash-table::t                     ; type-id
                   (object::t)                       ; super
-                  (table count free hash test seed) ; slots
+                  (table count free hash test seed lock) ; slots
                   #f                                ; constructor
                   #t                                ; struct?
                   #f                                ; final?
                   #f)                               ; metaclass
-    (let* ((slots '(table count free hash test seed))
+    (let* ((slots '(table count free hash test seed lock))
            (slot-vector
             (list->vector (cons #f slots)))
            (slot-table
@@ -107,7 +111,7 @@ namespace: #f
               (struct: . #t))))
       (##structure
        class::t                      ; type
-       'gerbil#hash-table::t         ; type-id
+       'hash-table::t                ; type-id
        'hash-table                   ; type-name
        flags                         ; type-flags
        __table::t                    ; type-super
@@ -117,18 +121,21 @@ namespace: #f
        slot-table                    ; class-type-slot-table
        properties                    ; class-type-properties
        #f                            ; class-type-constructor
-       #f))))
+       #f                            ; class-type-methods
+       #f                            ; class-type-specializer
+       #f                            ; class-type-interface
+       ))))
 
 ;; immediate gc-hash-table class; reifies the gc-table type
 (def gc-hash-table::t
   (begin-annotation
-      (@mop.class gerbil#gc-hash-table::t ; type-id
+      (@mop.class gc-hash-table::t        ; type-id
                   (object::t)             ; super
                   (gcht immediate)        ; slots
                   #f                      ; constructor
                   #t                      ; struct?
                   #f                      ; final?
-                  #f)                               ; metaclass
+                  #f)                     ; metaclass
     (let* ((slots '(gcht immediate))
            (slot-vector
             (list->vector (cons #f slots)))
@@ -150,8 +157,8 @@ namespace: #f
               (struct: . #t))))
       (##structure
        class::t                         ; type
-       'gerbil#gc-hash-table::t         ; type-id
-       'hash-table                      ; type-name
+       'gc-hash-table::t                ; type-id
+       'gc-hash-table                   ; type-name
        flags                            ; type-flags
        __gc-table::t                    ; type-super
        fields                           ; type-fields
@@ -160,7 +167,10 @@ namespace: #f
        slot-table                       ; class-type-slot-table
        properties                       ; class-type-properties
        #f                               ; class-type-constructor
-       #f))))
+       #f                               ; class-type-methods
+       #f                               ; class-type-specializer
+       #f                               ; class-type-interface
+       ))))
 
 ;; locked hash table; wraps a HashTable instance to lock on primitive operations
 (defstruct locked-hash-table (table lock)
@@ -173,24 +183,19 @@ namespace: #f
 ;; specializer types
 (defstruct-type eq-hash-table::t (hash-table::t)
   make-eq-hash-table eq-hash-table?
-  id: gerbil#eq-hash-table
-  name: hash-table)
+  name: eq-hash-table)
 (defstruct-type eqv-hash-table::t (hash-table::t)
   make-eqv-hash-table eqv-hash-table?
-  id: gerbil#eqv-hash-table
-  name: hash-table)
+  name: eqv-hash-table)
 (defstruct-type symbol-hash-table::t (hash-table::t)
   make-symbol-hash-table symbol-hash-table?
-  id: gerbil#symbol-hash-table
-  name: hash-table)
+  name: symbol-hash-table)
 (defstruct-type string-hash-table::t (hash-table::t)
   make-string-hash-table string-hash-table?
-  id: gerbil#string-hash-table
-  name: hash-table)
+  name: string-hash-table)
 (defstruct-type immediate-hash-table::t (hash-table::t)
   make-immediate-hash-table immediate-hash-table?
-  id: gerbil#immediate-hash-table::t
-  name: hash-table)
+  name: immediate-hash-table)
 
 (bind-method! hash-table::t 'HashTable::ref raw-table-ref)
 (bind-method! hash-table::t 'HashTable::set! raw-table-set!)
@@ -199,6 +204,7 @@ namespace: #f
 (bind-method! hash-table::t 'HashTable::for-each raw-table-for-each)
 (bind-method! hash-table::t 'HashTable::length &raw-table-count)
 (bind-method! hash-table::t 'HashTable::copy raw-table-copy)
+(bind-method! hash-table::t 'HashTable::new raw-table-new)
 (bind-method! hash-table::t 'HashTable::clear! raw-table-clear!)
 
 (bind-method! eq-hash-table::t 'HashTable::ref eq-table-ref)
@@ -233,6 +239,7 @@ namespace: #f
 (bind-method! gc-hash-table::t 'HashTable::for-each gc-table-for-each)
 (bind-method! gc-hash-table::t 'HashTable::length gc-table-length)
 (bind-method! gc-hash-table::t 'HashTable::copy gc-table-copy)
+(bind-method! gc-hash-table::t 'HashTable::new gc-table-new)
 (bind-method! gc-hash-table::t 'HashTable::clear! gc-table-clear!)
 
 ;; HashTable interface methods
@@ -299,6 +306,8 @@ namespace: #f
   &Locker-read-unlock!
   HashTable)
 
+(deflocked-hash-method (new size-hint) &Locker-read-lock! &HashTable-new &Locker-read-unlock! HashTable)
+
 (deflocked-hash-method (clear!)
   &Locker-write-lock!
   &HashTable-clear!
@@ -356,12 +365,14 @@ namespace: #f
   void
   &HashTable-copy)
 
+(defchecked-hash-method (new self size-hint) void &HashTable-new)
+
 (defchecked-hash-method (clear! self)
   void
   &HashTable-clear!)
 
-(def (make-generic-hash-table table count free hash test seed)
-  (##structure hash-table::t table count free hash test seed))
+(def (make-generic-hash-table table count free hash test seed (lock #f))
+  (##structure hash-table::t table count free hash test seed (ensure-lock lock)))
 
 (def (make-hash-table size: (size-hint #f)
                       seed: (seed #f)
@@ -398,7 +409,7 @@ namespace: #f
     (let* ((size (raw-table-size-hint->size size-hint))
            (table (make-vector size (macro-unused-obj)))
            (ht (HashTable
-                (kons table 0 (fxquotient size 2) hash test (table-seed)))))
+                (kons table 0 (fxquotient size 2) hash test (table-seed) #f))))
       (wrap-checked
        (wrap-lock ht)
        key?)))
@@ -546,7 +557,7 @@ namespace: #f
   => :fixnum
   (h.length))
 
-(defhash-method (hash-ref h key (default (macro-absent-obj)))
+(defhash-method (hash-ref h key (default absent-obj))
   (let (result (h.ref key default))
     (if (eq? result (macro-absent-obj))
       (raise-unbound-key-error 'hash-ref "unknown hash key" hash: h key: key)
@@ -614,6 +625,8 @@ namespace: #f
 (defhash-method (hash-copy h)
   => HashTable
   (h.copy))
+
+(defhash-method (hash-new h) => HashTable (h.new))
 
 (defhash-method (hash-clear! h)
   (h.clear!))

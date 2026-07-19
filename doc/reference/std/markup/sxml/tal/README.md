@@ -1,6 +1,6 @@
 # TAL: The Template Attribute Language
 
-I, (drewc <me at drewc dot ca>), first got introduced to `TAL` around '05 by [@segv](https://github.com/segv) in his [Common Lisp YACLML](https://web.archive.org/web/20160315020505/http://www.3ofcoins.net/2010/01/21/yaclml-in-pictures-part-ii-templating/) library.
+I, (drewc <me at drewc dot ca>), first got introduced to `TAL` around '05 by [@segv](https://git.cons.io/segv) in his [Common Lisp YACLML](https://web.archive.org/web/20160315020505/http://www.3ofcoins.net/2010/01/21/yaclml-in-pictures-part-ii-templating/) library.
 
 Its usefulness cannot be understated!
 

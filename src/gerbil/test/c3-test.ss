@@ -1,29 +1,25 @@
 ;; -*- Gerbil -*-
 ;;; © fare@tunes.org
 ;;;; Testing the c4 linearization algorithm (a.k.a. c3 plus proper handling of structs)
-;;prelude: "../core"
 
 (export c3-test)
 
 (import
-  ;; :gerbil/runtime/c3
   :gerbil/runtime/mop
-  (only-in :gerbil/runtime/util append-reverse-until)
-  (only-in :std/misc/hash hash-ensure-ref)
-  (only-in :std/sugar defrule)
+  (only-in :gerbil/runtime/util append-reverse-until remove-nulls!) ;;<-- comment out to test with custom runtime/util.ss
+  (only-in :std/hash/misc hash-ensure-ref)
   (only-in :std/test test-suite test-case check check-exception)
   (only-in :std/values first-value))
 
-;;(define gerbil/runtime 'gerbil/runtime)
-;;(define :gerbil/core ':gerbil/core)
+;; Uncomment below to test custom runtime/c3.ss
+;;(define gerbil/runtime 'gerbil/runtime) (include "../runtime/c3.ss")
+;; Uncomment below to test custom runtime/util.ss
 ;;(include "../../gerbil/runtime/util.ss")
-;;(include "../runtime/c3.ss")
-;;(extern namespace: #f append-reverse-until)
 
 (module <tsi>
   (export #t)
-  (import (only-in :std/text/char-set char-ascii-lowercase?))
-  (def (test-struct? sym)
+  (import (only-in :std/text/parser/char-set char-ascii-lowercase?))
+  (def (test-suffix? sym)
     (char-ascii-lowercase? (string-ref (symbol->string sym) 0))))
 
 (import <tsi> (phi: +1 <tsi>))
@@ -33,7 +29,7 @@
   (syntax-case stx ()
     ((ctx (my-objects my-supers my-descriptors) (object supers ...) ...)
      (with-syntax ((((struct? descr) ...)
-                    (stx-map (lambda (o) [(test-struct? (syntax-e o))
+                    (stx-map (lambda (o) [(test-suffix? (syntax-e o))
                                      (stx-identifier #'ctx o "::t")])
                              #'(object ...))))
        #'(begin
@@ -62,7 +58,13 @@
   ;; https://stackoverflow.com/questions/40478154/does-pythons-mro-c3-linearization-work-depth-first-empirically-it-does-not
   (HH) (GG HH) (II GG) (FF HH) (EE HH) (DD FF) (CC EE FF GG) (BB) (AA BB CC DD)
   (o O) (a o) (b a) (c b o) (d D c) (M A B b a) (N C c) (L M N) (k D L) (j E k A) (I N M)
-  (x1) (x2 x1) (x3 x2) (x4 x3) (x5 x4 x1))
+  ;; Regression test for (bug #1328): merge-sis! must properly handle non-simultaneous null? cases
+  (x1) (x2 x1) (x3 x2) (x4 x3) (x5 x4 x1)
+  ;; Check that suffix support filters out cases that break the suffix
+  (SBA) (SBB) (SBS SBA) (sBs SBA) (SBC SBS SBB) ;; works, but (SBc sBs SBB) fails
+  ;; Check a case from the compiler that failed during one bootstrap
+  (t) (object t) (type object) (procedure type)
+  (Primitive object) (primitive-predicate Primitive procedure))
 
 (def my-precedence-lists
   '((O) (A O) (B O) (C O) (D O) (E O)
@@ -73,10 +75,16 @@
     (GL O) (HG GL O) (VG GL O) (HVG HG VG GL O) (VHG VG HG GL O) #;(CG --- error!)
     (HH) (GG HH) (II GG HH) (FF HH) (EE HH) (DD FF HH)
     (CC EE FF GG HH) (BB) (AA BB CC EE DD FF GG HH)
+    ;; C4 extension with suffixes:
     (o O) (a o O) (b a o O) (c b a o O) (d D c b a o O) (M A B b a o O)
     (N C c b a o O) (L M A B N C c b a o O) (k D L M A B N C c b a o O)
     (j E k D L M A B N C c b a o O) (I N C M A B c b a o O)
-    (x1) (x2 x1) (x3 x2 x1) (x4 x3 x2 x1) (x5 x4 x3 x2 x1)))
+    (x1) (x2 x1) (x3 x2 x1) (x4 x3 x2 x1) (x5 x4 x3 x2 x1)
+    ;; Check that suffix support filters out cases that break the suffix
+    (SBA) (SBB) (SBS SBA) (sBs SBA) (SBC SBS SBA SBB) ;; works, but later (SBc sBs SBB) should fail
+    (t) (object t) (type object t) (procedure type object t)
+    (Primitive object t) (primitive-predicate Primitive procedure type object t)
+    ))
 
 (defrule (def-alist-getter getter alist table)
   (begin (def table (list->hash-table alist)) (def getter (cut hash-get table <>))))
@@ -89,11 +97,11 @@
   (hash-ensure-ref
    my-compute-precedence-list-cache x
    (cut first-value
-        (c4-linearize [x] (my-get-supers x) ;; rely on values being reified first-class objects
-                      get-precedence-list: my-compute-precedence-list
-                      struct: test-struct?
-                      eq: eq?
-                      get-name: identity))))
+        (c4-linearize* [x] [(my-get-supers x)] ;; rely on values being reified first-class objects
+                       get-precedence-list: my-compute-precedence-list
+                       suffix: test-suffix?
+                       eq: gx#free-identifier=? ;; test same path as in src/gerbil/core/contract.ss
+                       get-name: identity))))
 
 ;;; Previous implementation:
 (def (old-linearize-supers x (get-supers my-get-supers))
@@ -149,8 +157,11 @@
   (test-suite "test :gerbil/runtime/c3"
     (test-case "utils"
       (check (values->list (append-reverse-until odd? [2 4 6 9 12 14 15] '(a b c d e)))
-             => '((9 12 14 15) (6 4 2 a b c d e))))
-    (test-case "c3 linearization"
+             => '((9 12 14 15) (6 4 2 a b c d e)))
+      (check (remove-nulls! [[] [] [] [1] [2] [] [] [3] [] []]) => [[1][2][3]])
+      (check (remove-nulls! [[1] [2] [] [] [3]]) => [[1][2][3]]))
+    (test-case "c4 linearization"
+      ;; check all the working cases above
       (check (map my-compute-precedence-list my-objects) => my-precedence-lists)
       ;; check discrepancy with old MRO resolution algorithm
       (check (my-compute-precedence-list 'Z) =>  '(Z K1 K2 K3 D A B C E O))
@@ -162,11 +173,25 @@
       (check (my-compute-precedence-list 'AA) => '(AA BB CC EE DD FF GG HH))
       (check (old-linearize-supers 'AA) =>       '(AA BB CC EE DD FF GG HH)) ; same
       (check (my-compute-precedence-list 'a) =>  '(a o O))
-
       ;; Try and fail to compute a precedence-list for the confused-grid example in the C3 paper
-      (hash-put! my-supers-table 'CG '(HVG VHG))
+      (hash-put! my-supers-table 'CG '(HVG VHG)) ;; beware: breaks the table so tests can't run twice
       (check-exception (my-compute-precedence-list 'CG) true)
-
+      ;; Try and fail to compute a precedence-list for a case that fails to preserve suffix property
+      (hash-put! my-supers-table 'SBc '(sBs SBB))
+      (check-exception (my-compute-precedence-list 'SBc) true)
+      ;; Try with the local-order as a DAG
+      (def (my-c4-linearize* local-order)
+        (first-value
+         (c4-linearize* [] local-order
+                        get-precedence-list: my-compute-precedence-list
+                        suffix: test-suffix?
+                        eq: eq?
+                        get-name: identity)))
+      (check (my-c4-linearize* '((A) (B) (C))) => '(A B C O))
+      (check (my-c4-linearize* '((A B) (C A))) => '(C A B O))
+      (check (my-c4-linearize* '((C A) (C B))) => '(C A B O))
+      (check (my-c4-linearize* '((C B) (C A))) => '(C B A O))
+      (check-exception (my-c4-linearize* '((A B) (B C) (C A))) true))
     (test-case "class inheritance"
       (check (map (lambda (t) (map ##type-name (class-precedence-list t))) my-descriptors)
              => (map (lambda (lst) (append lst '(object t))) my-precedence-lists))
@@ -175,6 +200,6 @@
       (check (map ##type-name (class-precedence-list Y::t)) => '(Y J1 C J3 A J2 B D E O object t))
       ;; Slot computation order now follows the MRO!
       ;; Previously returned (O A B C K1 D E K2 K3 Z), which is so wrong:
-      (check (class-type-slot-vector Z::t) => #(__class O E C B A D K3 K2 K1 Z))
+      (check (class-type-slot-vector Z::t) => #(class O E C B A D K3 K2 K1 Z))
       ;; Previously returned (O C A B J1 D J3 E J2 Y)), which is so wrong:
-      (check (class-type-slot-vector Y::t) => #(__class O E D B J2 A J3 C J1 Y)))))) ;; same!
+      (check (class-type-slot-vector Y::t) => #(class O E D B J2 A J3 C J1 Y))))) ;; same!

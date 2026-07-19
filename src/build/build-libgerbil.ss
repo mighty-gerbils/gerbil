@@ -4,11 +4,10 @@
 ;;; libgerbil build script
 
 (import :gerbil/expander
-        :gerbil/gambit
         :std/build-config
         :std/make
         :std/iter
-        :std/misc/wg)
+        :std/sync/wg)
 
 (include "../std/build-spec.ss")
 
@@ -50,9 +49,6 @@
     "gerbil/runtime/loader"
     "gerbil/runtime/init"
     "gerbil/runtime"))
-
-(def gerbil-prelude-gambit
-  '("gerbil/gambit"))
 
 (def gerbil-expander
   '("gerbil/expander/common"
@@ -152,13 +148,9 @@
                  (lp rest r))))
             ((import-set? in)
              (let (xphi (fx+ iphi (import-set-phi in)))
-               (cond
-                ((fxzero? xphi)
-                 (lp rest (cons (import-set-source in) r)))
-                ((fxpositive? xphi)
-                 (lp rest (foldl cons r (import-set-template in iphi))))
-                (else
-                 (lp rest r)))))
+               (if (fxzero? xphi)
+                 (lp rest (cons (import-set-source in) r))
+                 (lp rest r))))
             (else
              (lp rest r))))
           (else r)))))
@@ -312,7 +304,6 @@
          (ordered-modules (order-modules stdlib-modules))
          (ordered-modules (remove-duplicates
                            (append gerbil-runtime
-                                   gerbil-prelude-gambit
                                    gerbil-expander
                                    gerbil-compiler
                                    ordered-modules)))

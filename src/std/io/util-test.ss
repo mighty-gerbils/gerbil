@@ -2,11 +2,10 @@
 ;;; © vyzo
 ;;; io utilities test
 (import :std/test
-        :std/os/temporaries
-        :std/misc/ports
         ./interface
         ./util
         ./file
+        ./tempfile
         ./bio/api)
 (export io-util-test)
 
