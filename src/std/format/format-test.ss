@@ -16,21 +16,21 @@
     ht))
 
 (defrule (check-format x ...)
-  (multicheck (((fmt args (... ...) => res)
-                (begin
-                  (check (format 'fmt args (... ...)) => res)
-                  (check (format fmt args (... ...)) => res)))
-               ((fmt args (... ...) =>! pred)
-                (begin
-                  (check (format 'fmt args (... ...)) =>! pred)
-                  (check (format fmt args (... ...)) =>! pred))))
+  (multicheck (... (((fmt args ... => res)
+                     (begin
+                       (check (format 'fmt args ...) => res)
+                       (check (format fmt args ...) => res)))
+                    ((fmt args ... =>! pred)
+                     (begin
+                       (check (format 'fmt args ...) =>! pred)
+                       (check (format fmt args ...) =>! pred)))))
     x ...))
 
 (defrule (check-printf x ...)
-  (multicheck (((fmt args (... ...) => res)
-                (begin
-                  (check-output (printf 'fmt args (... ...)) res)
-                  (check-output (printf fmt args (... ...)) res))))
+  (multicheck (... (((fmt args ... => res)
+                     (begin
+                       (check-output (printf 'fmt args ...) res)
+                       (check-output (printf fmt args ...) res)))))
     x ...))
 
 (def format-test

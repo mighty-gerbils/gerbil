@@ -168,8 +168,8 @@
                   (begin checks ...))))))))))
 
 (defrule (check-function fun x ...)
-  (multicheck (((args (... ...) => val) (check (fun args (... ...)) => val))
-               ((args (... ...) =>! pred) (check (fun args (... ...)) =>! pred)))
+  (multicheck (... (((args ... => val) (check (fun args ...) => val))
+                    ((args ... =>! pred) (check (fun args ...) =>! pred))))
     x ...))
 
 (defrule (check-codec encoder decoder x ...)
