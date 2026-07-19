@@ -112,7 +112,7 @@ namespace: #f
               (##fxior type-flag-extensible type-flag-concrete type-flag-id
                        class-type-flag-struct))
              (fields ;; exclude those from ##type-type because this is for Gambit type use
-              ;; the field-flags of 5 mean "(1) printable, (4) equalable",
+              ;; the field-flags of 5 mean "(1) not-printable, (4) not-equalable",
               ;; the drop of 5 is the number of type-type slots
               (list->vector (apply append (map (cut list <> 5 #f) (drop slots 5)))))
              (properties
@@ -283,12 +283,21 @@ namespace: #f
               (error "metaclass is not a class type" class: type-id metaclass: metaclass))
             metaclass))
          (system? (agetq system: properties))
-         (opaque? (not transparent?))
+         ;; opaque? iff every own field has non-equalable (bit 2) set in its flags,
+         ;; AND the super (if any) is also opaque — recursive definition.
+         ;; This allows Gambit to optimize equal? into eq?
+         (opaque?
+          (and (or (not type-super) (type-opaque? type-super))
+               (let loop ((j 1))
+                 (if (##fx>= j field-info-length)
+                   #t
+                   (and (##fx= (##fxand (vector-ref field-info j) 4) 4)
+                        (loop (##fx+ j 3)))))))
          (acyclic? (agetq acyclic: properties))
          (type-flags
           (##fxior type-flag-id type-flag-concrete
                    (if final? 0 type-flag-extensible)
-                   (if (and opaque? (not (agetq equal: properties))) type-flag-opaque 0)
+                   (if opaque? type-flag-opaque 0)
                    (if struct? class-type-flag-struct 0)
                    (if metaclass class-type-flag-metaclass 0)
                    (if system? class-type-flag-system 0)
@@ -334,6 +343,34 @@ namespace: #f
       (agetq direct-supers: properties []))
     klass))
 
+
+;; Fold over all Gambit structure fields of klass, root-first.
+;;
+;; (kons slot-index field-index type acc) -> acc
+;;   slot-index:   1-based slot index in the Gambit ##structure (slot 0 is the type descriptor)
+;;   acc:          running accumulator
+;;   type:         the ##type descriptor that directly defines this field
+;;   field-index:  0-based index within type's field triple in (##type-fields type)
+;;                 name    = (vector-ref (##type-fields type) (fx* field-index 3))
+;;                 flags   = (vector-ref (##type-fields type) (fx+ (fx* field-index 3) 1))
+;;                 default = (vector-ref (##type-fields type) (fx+ (fx* field-index 3) 2))
+(def (struct-field-fold klass kons knil)
+  ;; Collect the chain from root to klass (root first), stopping before ##type-type.
+  (let (chain
+        (let loop ((type klass) (chain []))
+          (if (##type? type)
+            (loop (##type-super type) (cons type chain))
+            chain)))
+    (let lp ((chain chain) (si 1) (acc knil))
+      (match chain
+        ([] acc)
+        ([type . rest]
+         (let* ((fields  (##type-fields type))
+                (nfields (fx/ (vector-length fields) 3)))
+           (let inner ((fi 0 :- :fixnum) (si si :- :fixnum) (acc acc))
+             (if (fx< fi nfields)
+               (inner (fx+ fi 1) (fx+ si 1) (kons si fi type acc))
+               (lp rest si acc)))))))))
 
 ;;; class type utilities
 (defsyntax (defrefset stx)
