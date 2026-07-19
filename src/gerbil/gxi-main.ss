@@ -78,7 +78,8 @@
                 (let (expr (read port))
                   (unless (eof-object? expr)
                     (eval expr)
-                    (loop))))))
+                    (loop)))))
+            (lp rest))
            (else
             (error "improperly placed eval option"))))
         ((member hd '("-"))
