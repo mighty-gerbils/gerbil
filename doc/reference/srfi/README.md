@@ -2,6 +2,8 @@
 
 The following SRFIs are supported by gerbil:
 
+For individual procedure definitions, see the [SRFI-1 procedure index](./srfi-1.md).
+
 | SRFI                                                     | Title                                                  | support      | import                    |
 |----------------------------------------------------------|--------------------------------------------------------|--------------|---------------------------|
 | [SRFI  0](https://srfi.schemers.org/srfi-0/srfi-0.html)  | Feature-based conditional expansion construct          | core prelude |                           |
